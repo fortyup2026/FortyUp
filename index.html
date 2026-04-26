@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>FortyUp v15</title>
+<title>FortyUp</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--border2:#D1E8DF;--g1:#064E3B;--g2:#10B981;--g3:#059669;--gold:#F2B705;--bg:#F0FDF8;--bg2:#FFFDF7;--bg3:#ECFDF5;--txt:#10231D;--txt2:#2D4A40;--txt3:#6B7C76;--border:#D1E8DF;--card:rgba(255,255,255,.97);--r:16px;--r2:24px;--r3:50px;--sh:0 4px 20px rgba(6,78,59,.09);--sh2:0 12px 36px rgba(6,78,59,.14)}
@@ -282,9 +282,10 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .chat-msgs{flex:1;overflow-y:auto;padding:1.1rem;background:#f5fef9;border:1.5px solid var(--border);border-top:none;border-bottom:none;display:flex;flex-direction:column;gap:.65rem}
 .chat-msg{max-width:73%;padding:.58rem .9rem;border-radius:17px;font-size:.86rem;line-height:1.5;word-wrap:break-word}
 .chat-msg-t{font-size:.62rem;opacity:.56;margin-top:.2rem}
-.chat-msg.mine{background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;align-self:flex-end;border-radius:17px 17px 4px 17px}
-.chat-msg.mine .chat-msg-t{text-align:right}
-.chat-msg.theirs{background:#fff;color:var(--txt);align-self:flex-start;border:1.5px solid var(--border);border-radius:17px 17px 17px 4px}
+.chat-msg.mine{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;align-self:flex-end;border-radius:17px 17px 4px 17px}
+.chat-msg.mine .chat-msg-t{text-align:right;color:rgba(255,255,255,.65)}
+.chat-msg.theirs{background:#FFFDE7;color:var(--txt);align-self:flex-start;border:1.5px solid #FDE68A;border-radius:17px 17px 17px 4px}
+.chat-msg.theirs .chat-msg-t{color:#9a7d00}
 .chat-in-a{display:flex;gap:.55rem;padding:.8rem .95rem;background:var(--card);border:1.5px solid var(--border);border-radius:0 0 var(--r2) var(--r2);border-top:none}
 .chat-in{flex:1;background:var(--bg3);border:1.5px solid #A7F3D0;border-radius:var(--r3);padding:.58rem .95rem;font-size:.88rem;color:var(--txt);font-family:'Nunito',sans-serif}
 .chat-in:focus{outline:none;border-color:var(--g2);background:#fff}
@@ -516,93 +517,13 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .self-badge{position:absolute;top:.58rem;left:.58rem;z-index:3;background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;font-size:.62rem;font-weight:900;padding:.18rem .55rem;border-radius:999px;box-shadow:0 3px 10px rgba(242,183,5,.35)}
 .pref-note{background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:16px;padding:.62rem .82rem;font-size:.78rem;font-weight:800;line-height:1.45;margin:.55rem 0 .9rem}
 .av-c img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-/* ===== FORTYUP V15 - BASE V9 + CAMBIOS SEGUROS ===== */
 
-/* Home: separar diamante y botón + para que no se tapen */
-@media(max-width:750px){
-  .h-btns{padding-top:8.4rem!important;margin-top:1.7rem!important}
-  .h-btns:before{
-    top:-4.25rem!important;
-    font-size:6.25rem!important;
-    z-index:1!important;
-    pointer-events:none!important;
-  }
-  .h-btns:after{
-    top:8.72rem!important;
-    width:78px!important;
-    height:78px!important;
-    z-index:2!important;
-    cursor:pointer!important;
-  }
-  .h-btns .btn-p{margin-top:8.25rem!important}
-}
+/* FORTI GEM - rombo amarillo */
+.forti-gem{display:inline-block;width:13px;height:13px;background:var(--gold);transform:rotate(45deg);border-radius:2px;vertical-align:middle;margin-right:3px;box-shadow:0 1px 4px rgba(242,183,5,.5)}
+.forti-gem-lg{display:inline-block;width:20px;height:20px;background:var(--gold);transform:rotate(45deg);border-radius:3px;vertical-align:middle;margin-right:5px;box-shadow:0 2px 8px rgba(242,183,5,.5)}
+.super-gem{display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:rotate(45deg);border-radius:2px;vertical-align:middle;margin-right:3px;box-shadow:0 1px 4px rgba(96,165,250,.5)}
 
-/* Forti = diamantito amarillo simple */
-.forti-gem{
-  display:inline-block!important;
-  width:.72em!important;
-  height:.72em!important;
-  background:#F2B705!important;
-  border-radius:2px!important;
-  transform:rotate(45deg)!important;
-  margin-right:.35rem!important;
-  box-shadow:0 1px 4px rgba(242,183,5,.38)!important;
-  vertical-align:-.02em!important;
-}
-.pa-forti{
-  background:#fff!important;
-  color:#064E3B!important;
-  border:1.6px solid #F2B705!important;
-  box-shadow:0 4px 12px rgba(242,183,5,.14)!important;
-}
-.pa-forti.sent{
-  background:#FFF8DB!important;
-  color:#7c5500!important;
-  border-color:#F2B705!important;
-}
-
-/* Mis Fortis: icono correcto */
-.myp-ico.forti-ico,
-.myp-card .myp-ico:first-child{
-  width:54px!important;
-  height:54px!important;
-  border-radius:16px!important;
-  background:#FFF8DB!important;
-  border:1.7px solid #F2B705!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  font-size:0!important;
-  position:relative!important;
-}
-.myp-ico.forti-ico:after,
-.myp-card .myp-ico:first-child:after{
-  content:''!important;
-  width:24px!important;
-  height:24px!important;
-  background:#F2B705!important;
-  border-radius:4px!important;
-  transform:rotate(45deg)!important;
-  box-shadow:0 3px 10px rgba(242,183,5,.35)!important;
-}
-
-/* Álbum público/privado */
-.album-swipe-v15{display:flex;gap:.7rem;overflow-x:auto;padding:.35rem .1rem .8rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.album-item-v15{flex:0 0 145px;height:145px;border-radius:20px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 18px rgba(6,78,59,.08)}
-.album-item-v15 img,.album-item-v15 video{width:100%;height:100%;object-fit:cover}
-.album-lock-v15{position:absolute;top:.45rem;right:.45rem;background:rgba(6,78,59,.85);color:#fff;border-radius:999px;padding:.16rem .42rem;font-size:.64rem;font-weight:900}
-.album-add-grid-v15{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.8rem 0}
-.album-add-v15{border:1.8px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:1rem;text-align:center;color:#064E3B;font-weight:900;cursor:pointer}
-.album-empty-v15{padding:1rem;border-radius:18px;background:#F8FFFB;border:1.5px dashed #D1E8DF;color:#6B7C76;font-size:.84rem;text-align:center}
-
-/* Súper diamante recibido */
-.super-sender-v15{display:flex;align-items:center;gap:.7rem;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:18px;padding:.75rem;margin:.8rem 0}
-.super-sender-v15 img{width:46px;height:46px;border-radius:50%;object-fit:cover}
-.super-sender-v15 .ss-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
-
-/* Header/chat: fotos redondas */
-.av-c img,.chat-av img,.chat-hav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-
+@keyframes rainFall{0%{transform:translateY(-30px) rotate(-10deg);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translateY(100vh) rotate(10deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -794,7 +715,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
   <button class="bn" id="bn-profiles" onclick="goTo('profiles');setBn('profiles')"><span class="bn-ico">👥</span><span class="bn-l">Perfiles</span></button>
-  <button class="bn" id="bn-plus" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><div class="bn-plus">🔑</div><span class="bn-l" style="margin-top:-.1rem">Ingresar</span></button>
+  <button class="bn" id="bn-plus" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
   <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative">
   <span style="position:relative;display:inline-block">
     <span class="bn-ico">💬</span>
@@ -805,7 +726,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <button class="bn" id="bn-me" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><span class="bn-ico" id="bn-me-ico">👤</span><span class="bn-l" id="bn-me-lbl">Ingresar</span></button>
 </div>
 <div class="tw" id="tw"></div>
-<div class="forti-match-ov" id="matchOv"><div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💛</div><h3>¡Conexión creada!</h3><p id="matchTxt">Ambos se mandaron un Forti.</p><div class="forti-match-actions"><button class="fm-primary" id="matchChatBtn">Ir al chat →</button><button class="fm-secondary" onclick="closeMatch()">Seguir viendo</button></div></div></div>
+<div class="forti-match-ov" id="matchOv"><div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom"><span style="display:inline-block;width:32px;height:32px;background:var(--gold);transform:rotate(45deg);border-radius:4px;box-shadow:0 4px 16px rgba(242,183,5,.5)"></span></div><h3>Conexión FortyUp</h3><p id="matchTxt">Se mandaron Forti mutuamente.</p><div class="forti-match-actions"><button class="fm-primary" id="matchChatBtn" onclick="closeMatch()">¡Genial!</button><button class="fm-secondary" onclick="closeMatch()">Seguir viendo</button></div></div></div>
 
 <script>
 var K={U:'fu_u',S:'fu_s',BL:'fu_bl'};
@@ -895,11 +816,15 @@ function upNav(){
   var dr=document.getElementById('dReg');if(dr)dr.style.display=CU?'none':'block';
   var dlo=document.getElementById('dLogout');if(dlo)dlo.style.display=CU?'block':'none';
   var bc=document.getElementById('bn-chats'),bm=document.getElementById('bn-me'),bpi=document.querySelector('#bn-plus .bn-plus'),bpl=document.querySelector('#bn-plus .bn-l'),bml=document.getElementById('bn-me-lbl');
-  if(bc)bc.style.display=CU?'flex':'none';
-  if(bm)bm.style.display=CU?'flex':'none';
-  if(bpi)bpi.textContent=CU?'＋':'🔑';
-  if(bpl)bpl.textContent=CU?'Perfil':'Ingresar';
+  // Bottom nav: always 5 items. + always center.
+  if(bc)bc.style.display='flex';
+  if(bm)bm.style.display='flex';
+  if(bpi)bpi.textContent='＋';
+  if(bpl)bpl.textContent='Unirme';
   if(bml)bml.textContent=CU?'Mi perfil':'Ingresar';
+  // Update me icon
+  var bMeIco=document.getElementById('bn-me-ico');
+  if(bMeIco)bMeIco.textContent=CU?(CU.name?CU.name[0].toUpperCase():'👤'):'👤';
   var badge=document.getElementById('chatBadge');if(badge&&!CU)badge.style.display='none';
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];
@@ -959,7 +884,7 @@ function doAuth(){
     var found=users.filter(function(u){return !u.is&&normEmail(u.email)===email&&u.pass===pass})[0];
     if(!found){ee.textContent='Email o contraseña incorrectos.';ee.style.display='block';return}
     CU=found;sv(K.S,{id:found.id});upNav();closeAuth();checkUnread();clearReg();
-    toast('¡Bienvenido/a '+e(found.name||found.email.split('@')[0])+'! 💚','ok');
+    toast('¡Bienvenido/a '+e(found.name||found.email.split('@')[0])+'! 💚','ok');checkSuperDiamNotif();
     if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);
   }
 }
@@ -981,7 +906,7 @@ function addChatBoth(id){
 function showMatch(id){
   var u=g(K.U,[]).filter(function(x){return x.id===id})[0];
   var ov=document.getElementById('matchOv'),txt=document.getElementById('matchTxt'),btn=document.getElementById('matchChatBtn');
-  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron un Forti. Ahora pueden empezar a hablar.';
+  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron Forti mutuamente.';
   if(btn)btn.onclick=function(){closeMatch();startChat(id,u?(u.name||'Chat'):'Chat')};
   if(ov)ov.classList.add('open');
 }
@@ -1056,18 +981,22 @@ function sendForti(id){
 function sendSuperDiamond(id){
   if(!CU){openAuth('login');return}
   var key=kF(CU.id),fs=g(key,[]);
-  if(fs.some(function(f){return f.t===id&&f.type==='super'})){toast('Ya le mandaste tu Súper Diamante a esta persona 💎✨','gd');return}
+  if(fs.some(function(f){return f.t===id&&f.type==='super'})){toast('Ya le mandaste tu Súper Diamante a esta persona 💎','gd');return}
   var available=(typeof CU.superDiamonds==='number'?CU.superDiamonds:1);
-  if(available<=0){toast('Ya usaste tu Súper Diamante gratis. Comprar más: próximamente 💎','w');return}
-  fs.push({t:id,at:new Date().toISOString(),type:'super'});sv(key,fs);
-  CU.superDiamonds=available-1;
-  var users=g(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{superDiamonds:CU.superDiamonds}):u});
-  sv(K.U,users);sv(K.S,{id:CU.id});
-  var btn=document.getElementById('sp-'+id);if(btn){btn.classList.add('used');btn.innerHTML='✓'}
-  toast('💎✨ Súper Diamante enviado. Ahora sí llamaste la atención 😉','gd');
-  rProfiles();
-  if(document.getElementById('myPC')&&document.getElementById('page-myprofile').classList.contains('active'))rMyP();
+  if(available<=0){toast('Ya usaste tu Súper Diamante gratis 💎','w');return}
+  fs.push({t:id,type:'super',at:new Date().toISOString()});sv(key,fs);
+  // Deduct
+  var users=g(K.U,[]);
+  users=users.map(function(u){if(u.id!==CU.id)return u;return Object.assign({},u,{superDiamonds:0})});
+  sv(K.U,users);refreshCU();
+  // Store notification for receiver
+  var notifKey='fu_sdnotif_'+id;
+  var notifs=g(notifKey,[]);
+  notifs.push({from:CU.id,at:new Date().toISOString()});
+  sv(notifKey,notifs);
+  toast('💎 ¡Súper Diamante enviado!','gd');
 }
+
 function togFav(id){
   if(!CU){openAuth('login');return}
   var key=kFv(CU.id),favs=g(key,[]),idx=favs.indexOf(id),btn=document.getElementById('fv-'+id);
@@ -1084,35 +1013,85 @@ function rFavs(){
 }
 function rMyP(){
   if(!CU){goTo('home');return}
-  var allUsers=g(K.U,[]);
-  var received=allUsers.filter(function(u){return g(kF(u.id),[]).some(function(f){return f.t===CU.id&&isNormalFortiActive(f)})});
-  var fR=received.length;
-  var sentAll=g(kF(CU.id),[]);
-  var fS=sentAll.filter(function(f){return isNormalFortiActive(f)}).length;
-  var superLeft=(typeof CU.superDiamonds==='number'?CU.superDiamonds:1);
-  var fvC=g(kFv(CU.id),[]).length;var chC=g(kCh(CU.id),[]).length;
+  refreshCU();
+  var fR=g(K.U,[]).filter(function(u){return g(kF(u.id),[]).some(function(f){return f.t===CU.id&&isNormalFortiActive(f)})}).length;
+  var fS=g(kF(CU.id),[]).filter(function(f){return isNormalFortiActive(f)}).length;
+  var fvC=g(kFv(CU.id),[]).length;
+  var chC=g(kCh(CU.id),[]).filter(function(uid){return g(kMs(CU.id,uid),[]).length>0}).length;
+  var sd=typeof CU.superDiamonds!=='undefined'?CU.superDiamonds:1;
   var nm=CU.name||CU.email.split('@')[0];
-  document.getElementById('myPC').innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><div><h2 class="pg-tit">FortyUp</h2><p class="pg-sub">Nuevas etapas. Conexiones <strong style="color:var(--g1)">reales</strong>.</p></div><div style="font-weight:900;color:var(--g1);font-size:1.05rem">💎 '+superLeft+'</div></div>'
-    +'<div class="myp-hdr">'
-    +'<div class="myp-av">'+(CU.photo?'<img src="'+e(CU.photo)+'" onerror="this.style.display=\'none\'">':nm[0].toUpperCase())+'</div>'
-    +'<div class="myp-info"><div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')
-    +'<div class="myp-bdgs"><span class="myp-bdg">● Perfil activo</span><span class="myp-bdg">Busca: '+e(prefLabel(CU.interestedIn||CU.pref||'todos'))+'</span>'+(CU.email?'<span class="myp-bdg v">✓ Email verificado</span>':'')+'</div></div>'
-    +'<button class="myp-edit" onclick="goTo(\'register\')">✏ Editar perfil</button></div>'
-    +'<div class="myp-cards">'
-    +'<div class="myp-card" onclick="goTo(\'profiles\')"><div class="myp-ico forti-ico"><span class="forti-gem forti-big"></span></div><div class="myp-ct">Mis Fortis</div><div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card" onclick="needLogin(function(){goTo(\'chats\');rChatList()})"><div class="myp-ico">💬</div><div class="myp-ct">Mensajes</div><div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card myp-card-g" onclick="needLogin(function(){goTo(\'favorites\');rFavs()})"><div class="myp-ico">⭐</div><div class="myp-ct">Favoritos</div><div class="myp-cd">Personas guardadas <strong style="color:#7c5500">'+fvC+'</strong></div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card myp-card-g" onclick="toast(\'Comprar Súper Diamantes: próximamente 💎\',\'gd\')"><div class="myp-ico">💎</div><div class="myp-ct">Súper Diamante</div><div class="myp-cd">Disponibles <strong style="color:#7c5500">'+superLeft+'</strong><br>Comprar más: próximamente</div><div class="myp-arr">→</div></div>'
+  var avHtml=CU.photo
+    ?'<img src="'+e(CU.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none'">'
+    :'<span style="font-size:1.9rem;font-weight:700;color:#fff">'+nm[0].toUpperCase()+'</span>';
+
+  document.getElementById('myPC').innerHTML=
+    '<div class="myp-hdr">'
+    +'<div class="myp-av">'+avHtml+'</div>'
+    +'<div class="myp-info">'
+    +'<div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'
+    +(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')
+    +'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>'
     +'</div>'
-    +'<div style="font-weight:900;color:var(--txt);font-size:.95rem;margin-bottom:.72rem;display:flex;align-items:center;gap:.38rem">⚙ Configuración</div>'
+    +'<button class="myp-edit" onclick="goTo('register')">✏ Editar</button>'
+    +'</div>'
+
+    // Stats cards
+    +'<div class="myp-cards">'
+    +'<div class="myp-card" onclick="goTo('profiles')">'
+    +'<div class="myp-ico"><span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px;box-shadow:0 2px 6px rgba(242,183,5,.4)"></span></div>'
+    +'<div class="myp-ct">Mis Fortis</div>'
+    +'<div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div>'
+    +'<div class="myp-arr">→</div></div>'
+
+    +'<div class="myp-card" onclick="if(CU){goTo('chats');rChatList()}">'
+    +'<div class="myp-ico">💬</div>'
+    +'<div class="myp-ct">Mensajes</div>'
+    +'<div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div>'
+    +'<div class="myp-arr">→</div></div>'
+
+    +'<div class="myp-card myp-card-g" onclick="if(CU){goTo('favorites');rFavs()}">'
+    +'<div class="myp-ico">⭐</div>'
+    +'<div class="myp-ct">Favoritos</div>'
+    +'<div class="myp-cd">Guardados <strong style="color:#7c5500">'+fvC+'</strong></div>'
+    +'<div class="myp-arr">→</div></div>'
+
+    +'<div class="myp-card" onclick="goTo('register')">'
+    +'<div class="myp-ico">✏️</div>'
+    +'<div class="myp-ct">Editar perfil</div>'
+    +'<div class="myp-cd">Actualizá tu info, fotos e intereses</div>'
+    +'<div class="myp-arr">→</div></div>'
+    +'</div>'
+
+    // Álbumes
+    +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;display:flex;align-items:center;gap:.35rem">📸 Fotos y videos</div>'
+    +'<div class="myp-cfg" style="margin-bottom:1.1rem">'
+    +'<div class="cfg-item" onclick="showAlbum('pub')">'
+    +'<div class="cfg-ico">🖼</div><div class="cfg-nm">Álbum público</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="showAlbum('priv')">'
+    +'<div class="cfg-ico">🔐</div><div class="cfg-nm">Álbum privado</div><span class="cfg-arr">›</span></div>'
+    +'</div>'
+
+    // Redes sociales
+    +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">🔗 Redes sociales</div>'
+    +'<div class="myp-cfg" style="margin-bottom:1.1rem">'
+    +'<div class="cfg-item" onclick="showSocial()">'
+    +'<div class="cfg-ico">📱</div><div class="cfg-nm">Instagram, Facebook, TikTok, LinkedIn</div><span class="cfg-arr">›</span></div>'
+    +'</div>'
+
+    // Configuración
+    +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">⚙ Configuración</div>'
     +'<div class="myp-cfg">'
-    +'<div class="cfg-item" onclick="toast(\'Privacidad: próximamente 🔒\',\'ok\')"><div class="cfg-ico">🔒</div><div class="cfg-nm">Privacidad</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="toast(\'Seguridad: próximamente 🛡️\',\'ok\')"><div class="cfg-ico">🛡️</div><div class="cfg-nm">Seguridad</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="rBlocked()"><div class="cfg-ico">🚫</div><div class="cfg-nm">Bloqueados</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="logout()"><div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="delAccount()"><div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="showBlocked()">'
+    +'<div class="cfg-ico">🚫</div><div class="cfg-nm">Privacidad · Usuarios bloqueados</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="changePass()">'
+    +'<div class="cfg-ico">🔑</div><div class="cfg-nm">Seguridad · Cambiar contraseña</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="logout()">'
+    +'<div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="delAccount()">'
+    +'<div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
     +'</div>';
 }
+
 function rBlocked(){
   var bl=g(K.BL,[]),users=g(K.U,[]).filter(function(u){return bl.indexOf(u.id)!==-1});
   var html='<div class="m-body"><div class="m-nm">🚫 Bloqueados</div><p class="m-desc" style="margin:.5rem 0 1rem">Acá aparecen las personas que bloqueaste.</p>';
@@ -1143,7 +1122,16 @@ function startChat(uid,unm){
   // Mark as read
   localStorage.setItem('fu_read_'+CU.id+'_'+uid,new Date().toISOString());
   var badge=document.getElementById('chatBadge');if(badge)badge.style.display='none';
-  document.getElementById('cHAv').textContent=unm?unm[0]:'?';
+  var cHAv=document.getElementById('cHAv');
+  var otherU=g(K.U,[]).filter(function(x){return x.id===uid})[0];
+  if(cHAv){
+    cHAv.innerHTML='';
+    if(otherU&&otherU.photo){
+      var img=document.createElement('img');img.src=otherU.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+      img.onerror=function(){cHAv.textContent=unm?unm[0]:'?'};
+      cHAv.appendChild(img);
+    }else{cHAv.textContent=unm?unm[0]:'?'}
+  }
   document.getElementById('cHNm').textContent=e(unm||'Usuario');
   rChatMsgs();goTo('chatwindow');
 }
@@ -1202,7 +1190,7 @@ function rChatList(){
     var prev='Sin mensajes aún';
     if(last){prev=last.photo?'📷 Foto':(last.audio?'🎤 Audio':e(last.text||''))}
     return '<div class="chat-item" onclick="startChat(\''+uid+'\',\''+e(other.name||other.email)+'\')" '+holdDeleteAttrs(uid)+'>'
-      +'<div class="chat-av">'+(other.name?other.name[0]:'?')+'</div>'
+      +'<div class="chat-av">'+(other.photo?'<img src="'+e(other.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.textContent=\''+e(other.name?other.name[0]:'?')+'\'">':e(other.name?other.name[0]:'?'))+'</div>'
       +'<div class="chat-info"><div class="chat-nm">'+e(other.name||other.email)+(unread?'<span class="chat-unread-sm"></span>':'')+'</div><div class="chat-pv">'+prev+'</div></div>'
       +(last?'<div class="chat-tm">'+fmtT(last.at)+'</div>':'')+(unread?'<div class="chat-unread"></div>':'')+'</div>'
   }).join('')+'</div>';
@@ -1396,6 +1384,161 @@ function enhanceRegisterUI(){
   if(header&&header.parentNode)header.parentNode.insertBefore(steps,header.nextSibling);
 }
 
+
+function showSuperDiamPop(fromId){
+  var pop=document.getElementById('superDiamPop');
+  if(!pop)return;
+  pop.style.display='flex';
+  // Rain effect
+  var rain=document.getElementById('superRain');rain.innerHTML='';
+  for(var i=0;i<22;i++){
+    var span=document.createElement('span');
+    span.textContent='FortyUp';
+    span.style.cssText='position:absolute;font-family:Playfair Display,serif;font-weight:800;font-size:'+(0.65+Math.random()*.7)+'rem;color:rgba(242,183,5,'+(0.25+Math.random()*.5)+');left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation:rainFall '+(2+Math.random()*3)+'s linear infinite;animation-delay:'+(Math.random()*3)+'s';
+    rain.appendChild(span);
+  }
+  // Who btn
+  var btn=document.getElementById('superWhoBtn');
+  if(btn){
+    btn.onclick=function(){
+      closeSuperDiam();
+      if(fromId){openMod(fromId)}
+    };
+  }
+}
+function closeSuperDiam(){
+  var pop=document.getElementById('superDiamPop');
+  if(pop)pop.style.display='none';
+}
+
+
+function changePass(){
+  if(!CU)return;
+  var np=prompt('Ingresá tu nueva contraseña (mínimo 6 caracteres):');
+  if(!np){return}
+  if(np.length<6){toast('La contraseña debe tener al menos 6 caracteres.','w');return}
+  var users=g(K.U,[]);
+  users=users.map(function(u){if(u.id!==CU.id)return u;return Object.assign({},u,{pass:np})});
+  sv(K.U,users);refreshCU();
+  toast('✓ Contraseña actualizada','ok');
+}
+
+function delAccount(){
+  if(!confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.'))return;
+  var users=g(K.U,[]).filter(function(u){return u.id!==CU.id});
+  sv(K.U,users);logout();toast('Cuenta eliminada.','w');
+}
+
+
+// ── ALBUMS ──
+
+function closePopById(id){var el=document.getElementById(id);if(el)el.remove()}
+
+function showAlbum(type){
+  if(!CU)return;
+  var key='fu_album_'+type+'_'+CU.id;
+  var items=g(key,[]);
+  var title=type==='pub'?'Álbum público':'Álbum privado';
+  var icon=type==='pub'?'🖼':'🔐';
+  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem" id="albumPop">'
+    +'<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:1.65rem;max-height:85vh;overflow-y:auto">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
+    +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">'+icon+' '+title+'</strong>'
+    +'<button onclick="closePopById('albumPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
+    +'</div>'
+    +(type==='priv'?'<p style="font-size:.75rem;color:var(--txt3);margin-bottom:.85rem">Solo vos podés ver este álbum.</p>':'<p style="font-size:.75rem;color:var(--txt3);margin-bottom:.85rem">Visible en tu perfil público.</p>')
+    +'<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">'
+    +items.map(function(item,i){
+      if(item.type==='video')return'<div style="position:relative;width:calc(33% - .35rem);aspect-ratio:1;background:#000;border-radius:8px;overflow:hidden"><video src="'+item.src+'" style="width:100%;height:100%;object-fit:cover"></video><span style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:.6rem;padding:1px 4px;border-radius:4px">▶</span><button onclick="rmAlbumItem(''+key+'','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer">✕</button></div>';
+      return'<div style="position:relative;width:calc(33% - .35rem);aspect-ratio:1;border-radius:8px;overflow:hidden"><img src="'+item.src+'" style="width:100%;height:100%;object-fit:cover"><button onclick="rmAlbumItem(''+key+'','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer">✕</button></div>';
+    }).join('')
+    +'</div>'
+    +'<div style="display:flex;gap:.5rem">'
+    +'<button onclick="addAlbumItem(''+key+'','image')" style="flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer">📷 Foto</button>'
+    +'<button onclick="addAlbumItem(''+key+'','video')" style="flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer">🎥 Video</button>'
+    +'</div>'
+    +'</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+function addAlbumItem(key,type){
+  var input=document.createElement('input');input.type='file';input.accept=type==='video'?'video/*':'image/*';
+  input.onchange=function(){
+    var file=input.files[0];if(!file)return;
+    if(file.size>5*1024*1024){toast('Archivo demasiado grande (máx 5MB)','w');return}
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var items=g(key,[]);items.push({type:type,src:ev.target.result,at:new Date().toISOString()});sv(key,items);
+      var pop=document.getElementById('albumPop');if(pop)pop.remove();
+      toast('✓ Agregado al álbum','ok');
+    };reader.readAsDataURL(file);
+  };input.click();
+}
+function rmAlbumItem(key,idx){
+  var items=g(key,[]);items.splice(idx,1);sv(key,items);
+  var pop=document.getElementById('albumPop');if(pop)pop.remove();
+  toast('Eliminado del álbum.','ok');
+}
+
+// ── REDES SOCIALES ──
+function showSocial(){
+  if(!CU)return;
+  var soc=CU.social||{};
+  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem" id="socPop">'
+    +'<div style="background:#fff;border-radius:20px;max-width:360px;width:100%;padding:1.65rem">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
+    +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">🔗 Redes sociales</strong>'
+    +'<button onclick="closePopById('socPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
+    +'</div>'
+    +['instagram','facebook','tiktok','linkedin','otra'].map(function(red){
+      var label={'instagram':'📸 Instagram','facebook':'📘 Facebook','tiktok':'🎵 TikTok','linkedin':'💼 LinkedIn','otra':'🌐 Otra red'}[red]||red;
+      return'<div style="margin-bottom:.65rem"><label style="font-size:.72rem;font-weight:800;color:var(--txt2);display:block;margin-bottom:.22rem">'+label+'</label>'
+        +'<input id="soc_'+red+'" type="text" value="'+(soc[red]||'')+'" placeholder="@usuario o URL" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.58rem .85rem;font-size:.85rem;font-family:Nunito,sans-serif"></div>';
+    }).join('')
+    +'<button onclick="saveSocial()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.75rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Guardar</button>'
+    +'</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+function saveSocial(){
+  if(!CU)return;
+  var soc={};
+  ['instagram','facebook','tiktok','linkedin','otra'].forEach(function(red){
+    var el=document.getElementById('soc_'+red);if(el&&el.value.trim())soc[red]=el.value.trim();
+  });
+  var users=g(K.U,[]);
+  users=users.map(function(u){if(u.id!==CU.id)return u;return Object.assign({},u,{social:soc})});
+  sv(K.U,users);refreshCU();
+  var pop=document.getElementById('socPop');if(pop)pop.remove();
+  toast('✓ Redes sociales guardadas','ok');
+}
+
+// ── BLOCKED USERS ──
+function showBlocked(){
+  var bl=g(K.BL,[]);
+  var users=g(K.U,[]).filter(function(u){return bl.indexOf(u.id)!==-1});
+  if(!users.length){toast('No tenés personas bloqueadas.','ok');return}
+  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem" id="blPop">'
+    +'<div style="background:#fff;border-radius:20px;max-width:340px;width:100%;padding:1.75rem;max-height:80vh;overflow-y:auto">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
+    +'<strong style="font-family:Playfair Display,serif;font-size:1.1rem;color:#064E3B">🚫 Bloqueados</strong>'
+    +'<button onclick="closePopById('blPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem">✕</button>'
+    +'</div>'
+    +users.map(function(u){
+      var av=u.photo?'<img src="'+e(u.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':e(u.name?u.name[0]:'?');
+      return'<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--bg3)">'
+        +'<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden">'+av+'</div>'
+        +'<div style="flex:1"><div style="font-weight:700;font-size:.88rem">'+e(u.name||'Usuario')+'</div><div style="font-size:.74rem;color:var(--txt3)">'+e(u.city||'')+'</div></div>'
+        +'<button onclick="unblockU(''+u.id+'')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.3rem .75rem;font-size:.74rem;font-weight:800;color:var(--g1);cursor:pointer">Desbloquear</button>'
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+function unblockU(id){
+  var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);
+  var pop=document.getElementById('blPop');if(pop)pop.remove();
+  toast('Desbloqueado ✓','ok');
+}
+
 function closeAgePop(){
   localStorage.setItem('fu_age_ok','1');
   var el=document.getElementById('agePop');
@@ -1404,6 +1547,16 @@ function closeAgePop(){
 // Check if already verified
 if(localStorage.getItem('fu_age_ok')==='1'){
   var el=document.getElementById('agePop');if(el)el.style.display='none';
+}
+// Check super diamond notifications for current user
+function checkSuperDiamNotif(){
+  if(!CU)return;
+  var notifKey='fu_sdnotif_'+CU.id;
+  var notifs=g(notifKey,[]);
+  if(notifs.length){
+    var n=notifs.shift();sv(notifKey,notifs);
+    setTimeout(function(){showSuperDiamPop(n.from)},1000);
+  }
 }
 init();goTo('home');setInterval(checkUnread,5000);
 </script>
@@ -1414,215 +1567,26 @@ init();goTo('home');setInterval(checkUnread,5000);
     <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
     <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
     <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
-    <button onclick="closeAgePop()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
-    <button onclick="window.history.back()" style="width:100%;background:none;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
+    <button onclick="closeAgePop()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
+    <button onclick="window.history.back()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
   </div>
 </div>
 
-<script>
-/* ===== FORTYUP V15 - PATCH SEGURO SOBRE V9 ===== */
-(function(){
-  // +40: si aparece agePop, que el botón funcione sin bloquear la app
-  window.closeAgePop = function(){
-    try{ localStorage.setItem('fu_age_ok','1'); }catch(e){}
-    var el=document.getElementById('agePop');
-    if(el){ el.remove(); }
-  };
-  document.addEventListener('click',function(ev){
-    var t=ev.target;
-    if(t && typeof t.textContent==='string' && t.textContent.indexOf('Tengo más de 40')>-1){
-      window.closeAgePop();
-    }
-  },true);
 
-  // Home: el círculo grande + del hero también acciona igual que crear perfil
-  document.addEventListener('click',function(ev){
-    var target=ev.target;
-    if(!target)return;
-    var heroBtns=target.closest && target.closest('.h-btns');
-    if(heroBtns){
-      var r=heroBtns.getBoundingClientRect();
-      var x=ev.clientX-r.left, y=ev.clientY-r.top;
-      // zona aproximada del + generado por CSS
-      if(window.innerWidth<=750 && x>r.width/2-70 && x<r.width/2+70 && y>120 && y<260){
-        ev.preventDefault();
-        ev.stopPropagation();
-        if(typeof needLogin==='function'){
-          needLogin(function(){ if(typeof goTo==='function'){goTo('register')} });
-        }else if(typeof openAuth==='function'){
-          openAuth('register');
-        }
-      }
-    }
-  },true);
-
-  // Helpers de usuario
-  window.fuV15Users=function(){
-    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
-  };
-  window.fuV15Current=function(){
-    if(typeof CU!=='undefined' && CU)return CU;
-    try{
-      var s=JSON.parse(localStorage.getItem('fu_s')||'null');
-      var users=fuV15Users();
-      return users.find(function(u){return u.id===s||u.email===s||u.id===(s&&s.id)})||null;
-    }catch(e){return null}
-  };
-  window.fuV15SaveUser=function(patch){
-    var cu=fuV15Current(); if(!cu)return;
-    var users=fuV15Users().map(function(u){return u.id===cu.id?Object.assign({},u,patch):u});
-    try{ localStorage.setItem('fu_u',JSON.stringify(users)); }catch(e){}
-    if(typeof refreshCU==='function')refreshCU();
-    if(typeof upNav==='function')upNav();
-  };
-
-  // Álbumes
-  window.fuV15EnsureAlbums=function(u){
-    if(!u.albums)u.albums={public:[],private:[]};
-    if(!Array.isArray(u.albums.public))u.albums.public=[];
-    if(!Array.isArray(u.albums.private))u.albums.private=[];
-    return u.albums;
-  };
-  window.fuV15MediaType=function(src,type){
-    if(type && /^video\//.test(type))return 'video';
-    return /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(src||'')?'video':'image';
-  };
-  window.fuV15AlbumSwipe=function(items,editable){
-    items=items||[];
-    if(!items.length)return '<div class="album-empty-v15">Todavía no hay contenido cargado.</div>';
-    return '<div class="album-swipe-v15">'+items.map(function(it,idx){
-      var body=it.type==='video'?'<video src="'+(it.src||'')+'" controls playsinline></video>':'<img src="'+(it.src||'')+'" onclick="window.open(this.src,\\'_blank\\')">';
-      return '<div class="album-item-v15">'+body+(it.kind==='private'?'<span class="album-lock-v15">Privado</span>':'')+(editable?'<button onclick="fuV15RemoveAlbum(\\''+it.kind+'\\','+idx+')" style="position:absolute;left:.45rem;top:.45rem;background:#fff;color:#dc2626;border:1px solid #fca5a5;border-radius:50%;width:26px;height:26px;font-weight:900">×</button>':'')+'</div>';
-    }).join('')+'</div>';
-  };
-  window.fuV15ProfileAlbumHtml=function(u){
-    var albums=fuV15EnsureAlbums(u), html='';
-    if((albums.public||[]).length){
-      html+='<div class="m-sec"><div class="m-sl">Álbum público</div>'+fuV15AlbumSwipe(albums.public,false)+'</div>';
-    }
-    var cu=fuV15Current();
-    if(cu && u.id===cu.id && (albums.private||[]).length){
-      html+='<div class="m-sec"><div class="m-sl">Álbum privado</div>'+fuV15AlbumSwipe(albums.private,false)+'</div>';
-    }
-    return html;
-  };
-  window.fuV15AddAlbum=function(kind,src,type){
-    var cu=fuV15Current(); if(!cu||!src)return;
-    kind=kind==='private'?'private':'public';
-    var albums=fuV15EnsureAlbums(cu);
-    albums[kind].push({src:src,type:type||fuV15MediaType(src),kind:kind,at:new Date().toISOString()});
-    fuV15SaveUser({albums:albums});
-    if(typeof toast==='function')toast(kind==='private'?'Contenido privado agregado 🔒':'Contenido público agregado 📸','ok');
-    if(typeof rMediaManager==='function')rMediaManager();
-  };
-  window.fuV15AddAlbumUrl=function(kind){
-    var id=kind==='private'?'albUrlPrivate':'albUrlPublic';
-    var el=document.getElementById(id);
-    var src=el?el.value.trim():'';
-    if(!src){ if(typeof toast==='function')toast('Pegá una URL primero.','w'); return; }
-    fuV15AddAlbum(kind,src,fuV15MediaType(src));
-  };
-  window.fuV15HandleAlbumFile=function(kind,input){
-    var file=input.files&&input.files[0]; if(!file)return;
-    if(file.size>4*1024*1024){ if(typeof toast==='function')toast('Archivo pesado. Probá con una foto más chica o URL.','w'); input.value=''; return; }
-    var reader=new FileReader();
-    reader.onload=function(e){fuV15AddAlbum(kind,e.target.result,fuV15MediaType(e.target.result,file.type)); input.value='';};
-    reader.readAsDataURL(file);
-  };
-  window.fuV15RemoveAlbum=function(kind,idx){
-    var cu=fuV15Current(); if(!cu)return;
-    var albums=fuV15EnsureAlbums(cu);
-    kind=kind==='private'?'private':'public';
-    albums[kind].splice(idx,1);
-    fuV15SaveUser({albums:albums});
-    if(typeof toast==='function')toast('Contenido eliminado.','ok');
-    if(typeof rMediaManager==='function')rMediaManager();
-  };
-
-  // Sobrescribir rMediaManager sin tocar navegación
-  window.rMediaManager=function(){
-    var cu=fuV15Current(); if(!cu)return;
-    var albums=fuV15EnsureAlbums(cu);
-    var html='<div class="m-body"><div class="m-nm">📸 Fotos, videos y álbumes</div><p class="m-desc" style="margin:.5rem 0 1rem">Agregá fotos o videos. El álbum público se ve en tu perfil con swipe; el privado queda solo para vos.</p>'
-      +'<div class="album-add-grid-v15">'
-      +'<label class="album-add-v15">＋ Foto pública<input type="file" accept="image/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'public\\',this)"></label>'
-      +'<label class="album-add-v15">＋ Video público<input type="file" accept="video/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'public\\',this)"></label>'
-      +'<label class="album-add-v15">🔒 Foto privada<input type="file" accept="image/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'private\\',this)"></label>'
-      +'<label class="album-add-v15">🔒 Video privado<input type="file" accept="video/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'private\\',this)"></label>'
-      +'</div>'
-      +'<div class="afld"><label>URL pública</label><input id="albUrlPublic" placeholder="URL de foto/video"><button class="btn btn-o btn-fw" onclick="fuV15AddAlbumUrl(\\'public\\')">Agregar al público</button></div>'
-      +'<div class="afld"><label>URL privada</label><input id="albUrlPrivate" placeholder="URL de foto/video"><button class="btn btn-o btn-fw" onclick="fuV15AddAlbumUrl(\\'private\\')">Agregar al privado</button></div>'
-      +'<div class="m-sec"><div class="m-sl">Álbum público</div>'+fuV15AlbumSwipe(albums.public,true)+'</div>'
-      +'<div class="m-sec"><div class="m-sl">Álbum privado</div>'+fuV15AlbumSwipe(albums.private,true)+'</div>'
-      +'<button class="btn btn-p btn-fw" onclick="closeMod();goTo(\\'register\\')">Cambiar foto principal / video principal</button>'
-      +'</div>';
-    document.getElementById('mCont').innerHTML=html;
-    document.getElementById('mOv').classList.add('open');
-  };
-
-  // Meter álbum público en modal de perfil sin romper openMod original
-  var oldOpenMod=window.openMod;
-  if(typeof oldOpenMod==='function'){
-    window.openMod=function(id){
-      oldOpenMod(id);
-      setTimeout(function(){
-        try{
-          var users=fuV15Users();
-          var u=users.find(function(x){return x.id===id});
-          if(!u)return;
-          var html=fuV15ProfileAlbumHtml(u);
-          if(!html)return;
-          var body=document.querySelector('#mCont .m-body');
-          if(body && body.innerHTML.indexOf('Álbum público')<0){
-            var acts=body.querySelector('.m-acts');
-            var wrap=document.createElement('div');
-            wrap.innerHTML=html;
-            if(acts)body.insertBefore(wrap,acts);else body.appendChild(wrap);
-          }
-        }catch(e){}
-      },60);
-    };
-  }
-
-  // Súper diamante: mostrar remitente y botón "Mirá quién fue"
-  window.showSuperReceived=function(fromUser){
-    fromUser=fromUser||{};
-    var ov=document.createElement('div');ov.className='forti-match-ov open';
-    var rain=document.createElement('div');rain.className='super-rain';
-    for(var i=0;i<34;i++){
-      var s=document.createElement('span');s.textContent=(i%3===0?'FortyUp':'💎 FortyUp');
-      s.style.left=(Math.random()*100)+'%';s.style.fontSize=(.8+Math.random()*1.1)+'rem';s.style.animationDelay=(Math.random()*1.4)+'s';
-      rain.appendChild(s);
-    }
-    var av=fromUser.photo?'<img src="'+fromUser.photo+'">':'<div class="ss-av">'+((fromUser.name||'?')[0])+'</div>';
-    ov.innerHTML='<div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💎</div><h3>Te enviaron un Súper Diamante</h3><p>Alguien quiso llamar tu atención.</p><div class="super-sender-v15">'+av+'<div style="text-align:left"><strong>'+(fromUser.name||'Alguien')+'</strong><br><span style="font-size:.78rem;color:#6B7C76">'+(fromUser.city||'')+'</span></div></div><div class="forti-match-actions"><button class="fm-primary" onclick="this.closest(\\'.forti-match-ov\\').remove(); if(window.openMod)openMod(\\''+(fromUser.id||'')+'\\')">Mirá quién fue</button><button class="fm-secondary" onclick="this.closest(\\'.forti-match-ov\\').remove()">Después</button></div></div>';
-    document.body.appendChild(ov);document.body.appendChild(rain);
-    setTimeout(function(){rain.remove()},3600);
-  };
-
-  // Fotos en círculos de chats/header cuando existan
-  var oldUpNav=window.upNav;
-  if(typeof oldUpNav==='function'){
-    window.upNav=function(){ oldUpNav(); setTimeout(fuV15PaintAvatars,30); };
-  }
-  var oldRChatList=window.rChatList;
-  if(typeof oldRChatList==='function'){
-    window.rChatList=function(){ oldRChatList(); setTimeout(fuV15PaintAvatars,30); };
-  }
-  var oldOpenChat=window.openChat||window.rChat;
-  window.fuV15PaintAvatars=function(){
-    var users=fuV15Users();
-    document.querySelectorAll('.chat-item').forEach(function(item){
-      var nameEl=item.querySelector('.chat-nm'); if(!nameEl)return;
-      var nm=nameEl.textContent.trim();
-      var u=users.find(function(x){return (x.name||'').trim()===nm});
-      var av=item.querySelector('.chat-av');
-      if(u&&u.photo&&av)av.innerHTML='<img src="'+u.photo+'">';
-    });
-  };
-
-})();
-</script>
+<!-- SUPER DIAMANTE POPUP -->
+<div id="superDiamPop" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(6,20,16,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1.5rem;flex-direction:column">
+  <div id="superRain" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+  <div style="position:relative;z-index:2;background:#fff;border-radius:24px;max-width:340px;width:100%;padding:2.2rem;text-align:center;box-shadow:0 32px 80px rgba(6,78,59,.35)">
+    <div style="font-size:.75rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--g2);margin-bottom:.5rem">Para vos</div>
+    <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.4rem;margin-bottom:.75rem">Te enviaron un<br>Súper Diamante 💎</h2>
+    <div style="display:flex;align-items:center;justify-content:center;margin:1.2rem 0">
+      <div style="width:70px;height:70px;background:linear-gradient(135deg,#60a5fa,#2563eb);transform:rotate(45deg);border-radius:8px;box-shadow:0 8px 32px rgba(96,165,250,.55)"></div>
+    </div>
+    <p style="font-size:.85rem;color:#6B7C76;margin-bottom:1.4rem">Alguien quiso destacarte de manera especial.</p>
+    <button id="superWhoBtn" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.6rem">Mirá quién fue →</button>
+    <button onclick="closeSuperDiam()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.6rem;font-size:.82rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">Cerrar</button>
+  </div>
+</div>
 
 </body>
 </html>
