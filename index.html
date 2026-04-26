@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>FortyUp</title>
+<title>FortyUp v13</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--border2:#D1E8DF;--g1:#064E3B;--g2:#10B981;--g3:#059669;--gold:#F2B705;--bg:#F0FDF8;--bg2:#FFFDF7;--bg3:#ECFDF5;--txt:#10231D;--txt2:#2D4A40;--txt3:#6B7C76;--border:#D1E8DF;--card:rgba(255,255,255,.97);--r:16px;--r2:24px;--r3:50px;--sh:0 4px 20px rgba(6,78,59,.09);--sh2:0 12px 36px rgba(6,78,59,.14)}
@@ -549,6 +549,27 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .media-grid-v12{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:.7rem}
 .media-box-v12{border:1.5px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:.9rem;text-align:center;color:#064E3B;font-weight:900}
 
+/* ===== FORTYUP V13 AJUSTES SEBAS ===== */
+@media(max-width:750px){
+  .h-btns{padding-top:8.2rem!important;margin-top:1.6rem!important}
+  .h-btns:before{top:-4.15rem!important;font-size:6.25rem!important;z-index:1!important;pointer-events:none!important}
+  .h-btns:after{top:8.65rem!important;width:78px!important;height:78px!important;z-index:2!important}
+  .h-btns .btn-p{margin-top:8.2rem!important}
+}
+.album-swipe-v13{display:flex;gap:.7rem;overflow-x:auto;padding:.35rem .1rem .8rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.album-swipe-v13::-webkit-scrollbar{height:5px}
+.album-swipe-v13::-webkit-scrollbar-thumb{background:#CDE9DD;border-radius:20px}
+.album-item-v13{flex:0 0 145px;height:145px;border-radius:20px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 18px rgba(6,78,59,.08)}
+.album-item-v13 img,.album-item-v13 video{width:100%;height:100%;object-fit:cover}
+.album-lock-v13{position:absolute;top:.45rem;right:.45rem;background:rgba(6,78,59,.85);color:#fff;border-radius:999px;padding:.16rem .42rem;font-size:.64rem;font-weight:900}
+.album-add-grid-v13{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.8rem 0}
+.album-add-v13{border:1.8px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:1rem;text-align:center;color:#064E3B;font-weight:900;cursor:pointer}
+.album-add-v13:hover{background:#E6F8EF}
+.album-empty-v13{padding:1rem;border-radius:18px;background:#F8FFFB;border:1.5px dashed #D1E8DF;color:#6B7C76;font-size:.84rem;text-align:center}
+.super-sender-v13{display:flex;align-items:center;gap:.7rem;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:18px;padding:.75rem;margin:.8rem 0}
+.super-sender-v13 img{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.super-sender-v13 .ss-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
+
 </style>
 
 <!-- FortyUp v12: Firebase sync entre celulares -->
@@ -993,7 +1014,7 @@ function addChatBoth(id){
 function showMatch(id){
   var u=g(K.U,[]).filter(function(x){return x.id===id})[0];
   var ov=document.getElementById('matchOv'),txt=document.getElementById('matchTxt'),btn=document.getElementById('matchChatBtn');
-  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron un Forti. Ahora pueden empezar a hablar.';
+  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron Forti mutuamente.';
   if(btn)btn.onclick=function(){closeMatch();startChat(id,u?(u.name||'Chat'):'Chat')};
   if(ov)ov.classList.add('open');
 }
@@ -1292,7 +1313,7 @@ function openMod(id){
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
   var desc=u.desc||u.description||'';var int=u.int||u.interests||'';
-  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
+  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div>'+profileAlbumHtml(u,false)+'<div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
   document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeMod(){document.getElementById('mOv').classList.remove('open');document.body.style.overflow=''}
@@ -1430,12 +1451,13 @@ function showWelcome(name){
 function showSuperReceived(fromUser){
   var ov=document.createElement('div');ov.className='forti-match-ov open';
   var rain=document.createElement('div');rain.className='super-rain';
-  for(var i=0;i<28;i++){
+  for(var i=0;i<34;i++){
     var s=document.createElement('span');s.textContent=(i%3===0?'FortyUp':'💎 FortyUp');
     s.style.left=(Math.random()*100)+'%';s.style.fontSize=(.8+Math.random()*1.1)+'rem';s.style.animationDelay=(Math.random()*1.4)+'s';
     rain.appendChild(s);
   }
-  ov.innerHTML='<div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💎</div><h3>Te enviaron un Súper Diamante</h3><p>'+e(fromUser.name||'Alguien')+' quiso llamar tu atención.</p><div class="forti-match-actions"><button class="fm-primary" onclick="closeMod();this.closest(\'.forti-match-ov\').remove();openProfile(\''+fromUser.id+'\')">Mirá quién fue</button><button class="fm-secondary" onclick="this.closest(\'.forti-match-ov\').remove()">Después</button></div></div>';
+  var av=fromUser.photo?'<img src="'+e(fromUser.photo)+'" onerror="this.outerHTML=\\'<div class=ss-av>'+(fromUser.name?fromUser.name[0]:'?')+'</div>\\'">':'<div class="ss-av">'+(fromUser.name?fromUser.name[0]:'?')+'</div>';
+  ov.innerHTML='<div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💎</div><h3>Te enviaron un Súper Diamante</h3><p>Alguien quiso llamar tu atención.</p><div class="super-sender-v13">'+av+'<div style="text-align:left"><strong>'+e(fromUser.name||'Alguien')+'</strong><br><span style="font-size:.78rem;color:#6B7C76">'+e(fromUser.city||'')+'</span></div></div><div class="forti-match-actions"><button class="fm-primary" onclick="this.closest(\\'.forti-match-ov\\').remove();openMod(\\''+fromUser.id+'\\')">Mirá quién fue</button><button class="fm-secondary" onclick="this.closest(\\'.forti-match-ov\\').remove()">Después</button></div></div>';
   document.body.appendChild(ov);document.body.appendChild(rain);
   setTimeout(function(){rain.remove()},3600);
 }
@@ -1474,7 +1496,21 @@ function changeLocalPass(){
   sv(K.U,users);toast('Contraseña actualizada.','ok');closeMod();
 }
 function rMediaManager(){
-  var html='<div class="m-body"><div class="m-nm">📸 Fotos y videos</div><p class="m-desc" style="margin:.5rem 0 1rem">Por ahora podés cambiar tu foto/video desde Editar perfil. Esta sección queda preparada para álbumes.</p><div class="media-grid-v12"><div class="media-box-v12" onclick="closeMod();goTo(\'register\')">Cambiar foto principal</div><div class="media-box-v12" onclick="closeMod();goTo(\'register\')">Agregar video</div><div class="media-box-v12" onclick="toast(\'Álbum público: próximamente\',\'ok\')">Álbum público</div><div class="media-box-v12" onclick="toast(\'Álbum privado: próximamente\',\'ok\')">Álbum privado</div></div></div>';
+  var albums=(CU&&CU.albums)?CU.albums:{public:[],private:[]};
+  var pub=(albums.public||[]).length, pri=(albums.private||[]).length;
+  var html='<div class="m-body"><div class="m-nm">📸 Fotos, videos y álbumes</div><p class="m-desc" style="margin:.5rem 0 1rem">Agregá fotos o videos a tu álbum público o privado. El público se ve en tu perfil con swipe.</p>'
+  +'<div class="album-add-grid-v13">'
+  +'<label class="album-add-v13">＋ Foto pública<input type="file" accept="image/*" style="display:none" onchange="handleAlbumFile(\\'public\\',this)"></label>'
+  +'<label class="album-add-v13">＋ Video público<input type="file" accept="video/*" style="display:none" onchange="handleAlbumFile(\\'public\\',this)"></label>'
+  +'<label class="album-add-v13">🔒 Foto privada<input type="file" accept="image/*" style="display:none" onchange="handleAlbumFile(\\'private\\',this)"></label>'
+  +'<label class="album-add-v13">🔒 Video privado<input type="file" accept="video/*" style="display:none" onchange="handleAlbumFile(\\'private\\',this)"></label>'
+  +'</div>'
+  +'<div class="afld"><label>Agregar por URL al álbum público</label><input id="albUrlPublic" placeholder="URL de foto o video"><button class="btn btn-o btn-fw" onclick="addAlbumUrl(\\'public\\')">Agregar URL pública</button></div>'
+  +'<div class="afld"><label>Agregar por URL al álbum privado</label><input id="albUrlPrivate" placeholder="URL de foto o video"><button class="btn btn-o btn-fw" onclick="addAlbumUrl(\\'private\\')">Agregar URL privada</button></div>'
+  +'<div class="m-sec"><div class="m-sl">Álbum público ('+pub+')</div>'+albumSwipeHtml(albums.public||[],true)+'</div>'
+  +'<div class="m-sec"><div class="m-sl">Álbum privado ('+pri+')</div>'+albumSwipeHtml(albums.private||[],true)+'</div>'
+  +'<button class="btn btn-p btn-fw" onclick="closeMod();goTo(\\'register\\')">Cambiar foto principal / video principal</button>'
+  +'</div>';
   document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
 }
 function rSocialManager(){
@@ -1490,6 +1526,74 @@ function enhanceHomePlus(){
       if(CU){goTo('myprofile');rMyP();setBn('me')}else openAuth('register');
     });
   }
+}
+
+/* ===== FORTYUP V13 ALBUMES / SWIPE ===== */
+function ensureAlbums(u){
+  if(!u.albums)u.albums={public:[],private:[]};
+  if(!Array.isArray(u.albums.public))u.albums.public=[];
+  if(!Array.isArray(u.albums.private))u.albums.private=[];
+  return u.albums;
+}
+function mediaTypeFromSrc(src,fileType){
+  if(fileType&&/^video\//.test(fileType))return 'video';
+  return /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(src||'')?'video':'image';
+}
+function albumSwipeHtml(items,editable){
+  items=items||[];
+  if(!items.length)return '<div class="album-empty-v13">Todavía no hay contenido cargado.</div>';
+  return '<div class="album-swipe-v13">'+items.map(function(it,idx){
+    var body=it.type==='video'?'<video src="'+e(it.src)+'" controls playsinline></video>':'<img src="'+e(it.src)+'" onclick="window.open(this.src,\\'_blank\\')">';
+    return '<div class="album-item-v13">'+body+(it.kind==='private'?'<span class="album-lock-v13">Privado</span>':'')+(editable?'<button onclick="removeAlbumItem(\\''+it.kind+'\\','+idx+')" style="position:absolute;left:.45rem;top:.45rem;background:#fff;color:#dc2626;border:1px solid #fca5a5;border-radius:50%;width:26px;height:26px;font-weight:900">×</button>':'')+'</div>';
+  }).join('')+'</div>';
+}
+function profileAlbumHtml(u,editable){
+  var albums=ensureAlbums(u), html='';
+  if((albums.public||[]).length){
+    html+='<div class="m-sec"><div class="m-sl">Álbum público</div>'+albumSwipeHtml(albums.public,false)+'</div>';
+  }
+  if(CU&&u.id===CU.id&&(albums.private||[]).length){
+    html+='<div class="m-sec"><div class="m-sl">Álbum privado</div>'+albumSwipeHtml(albums.private,false)+'</div>';
+  }
+  return html;
+}
+function saveCurrentUserPatch(patch){
+  if(!CU)return;
+  var users=normalizeUsers().map(function(u){
+    if(u.id===CU.id){return Object.assign({},u,patch)}
+    return u;
+  });
+  sv(K.U,users);refreshCU();upNav();
+}
+function addAlbumItem(kind,src,type){
+  if(!CU||!src)return;
+  kind=kind==='private'?'private':'public';
+  var albums=ensureAlbums(CU);
+  albums[kind].push({src:src,type:type||mediaTypeFromSrc(src),kind:kind,at:new Date().toISOString()});
+  saveCurrentUserPatch({albums:albums});
+  toast(kind==='private'?'Contenido privado agregado 🔒':'Contenido público agregado 📸','ok');
+  rMediaManager();
+}
+function addAlbumUrl(kind){
+  var id=kind==='private'?'albUrlPrivate':'albUrlPublic';
+  var src=fv(id);
+  if(!src){toast('Pegá una URL primero.','w');return}
+  addAlbumItem(kind,src,mediaTypeFromSrc(src));
+}
+function handleAlbumFile(kind,input){
+  var file=input.files&&input.files[0];if(!file)return;
+  if(file.size>4*1024*1024){toast('Archivo muy pesado para esta prueba. Usá uno corto o una URL.','w');input.value='';return}
+  var reader=new FileReader();
+  reader.onload=function(ev){addAlbumItem(kind,ev.target.result,mediaTypeFromSrc(ev.target.result,file.type));input.value=''};
+  reader.readAsDataURL(file);
+}
+function removeAlbumItem(kind,idx){
+  if(!CU)return;
+  var albums=ensureAlbums(CU);kind=kind==='private'?'private':'public';
+  albums[kind].splice(idx,1);
+  saveCurrentUserPatch({albums:albums});
+  toast('Contenido eliminado.','ok');
+  rMediaManager();
 }
 
 init();startFirebaseSync();goTo('home');enhanceHomePlus();setInterval(function(){checkUnread();checkSuperReceived();},5000);
