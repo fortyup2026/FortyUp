@@ -524,6 +524,30 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .super-gem{display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:rotate(45deg);border-radius:2px;vertical-align:middle;margin-right:3px;box-shadow:0 1px 4px rgba(96,165,250,.5)}
 
 @keyframes rainFall{0%{transform:translateY(-30px) rotate(-10deg);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translateY(100vh) rotate(10deg);opacity:0}}
+/* ===== FIX SEBAS: HOME DIAMANTE + BOTÓN SEPARADOS ===== */
+@media(max-width:750px){
+  .h-btns{
+    padding-top:9.2rem!important;
+    margin-top:1.8rem!important;
+  }
+  .h-btns:before{
+    top:-3.65rem!important;
+    font-size:6.45rem!important;
+    z-index:1!important;
+    pointer-events:none!important;
+    filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))!important;
+  }
+  .h-btns:after{
+    top:8.55rem!important;
+    width:78px!important;
+    height:78px!important;
+    z-index:2!important;
+  }
+  .h-btns .btn-p{
+    margin-top:8.4rem!important;
+  }
+}
+
 </style>
 </head>
 <body>
