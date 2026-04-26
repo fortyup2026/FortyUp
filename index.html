@@ -524,29 +524,45 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .super-gem{display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:rotate(45deg);border-radius:2px;vertical-align:middle;margin-right:3px;box-shadow:0 1px 4px rgba(96,165,250,.5)}
 
 @keyframes rainFall{0%{transform:translateY(-30px) rotate(-10deg);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translateY(100vh) rotate(10deg);opacity:0}}
-/* ===== FIX SEBAS: HOME DIAMANTE + BOTÓN SEPARADOS ===== */
+/* ===== FIX SEBAS FINAL: HOME + REGISTRO POR PASOS ===== */
 @media(max-width:750px){
+  .h-tag{
+    margin-bottom:4.1rem!important;
+    position:relative!important;
+    z-index:5!important;
+  }
   .h-btns{
-    padding-top:9.2rem!important;
-    margin-top:1.8rem!important;
+    padding-top:8.2rem!important;
+    margin-top:.25rem!important;
   }
   .h-btns:before{
-    top:-3.65rem!important;
-    font-size:6.45rem!important;
+    top:-2rem!important;
+    font-size:5.65rem!important;
     z-index:1!important;
     pointer-events:none!important;
-    filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))!important;
+    filter:drop-shadow(0 14px 18px rgba(6,78,59,.22))!important;
   }
   .h-btns:after{
-    top:8.55rem!important;
+    top:8.05rem!important;
     width:78px!important;
     height:78px!important;
     z-index:2!important;
   }
   .h-btns .btn-p{
-    margin-top:8.4rem!important;
+    margin-top:7.7rem!important;
   }
 }
+.reg-steps.reg-steps-5{gap:.22rem}
+.reg-steps.reg-steps-5 .reg-step{font-size:.62rem}
+.reg-steps.reg-steps-5 .reg-step:not(:last-child):after{left:56%;right:-44%}
+.reg-panel{display:none}
+.reg-panel.active{display:block;animation:regFade .18s ease both}
+@keyframes regFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.reg-actions{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin-top:1.25rem}
+.reg-actions .btn{flex:1;justify-content:center}
+.reg-help{background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:16px;padding:.8rem .95rem;color:#064E3B;font-size:.82rem;line-height:1.45;margin:.85rem 0}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:520px){.social-grid{grid-template-columns:1fr}.reg-steps.reg-steps-5 .reg-step{font-size:.56rem}.reg-dot{width:29px!important;height:29px!important}}
 
 </style>
 </head>
@@ -2070,6 +2086,213 @@ function checkSuperDiamNotif(){
   }
 }
 init();goTo('home');setInterval(checkUnread,5000);
+</script>
+
+<script>
+/* ===== SEBAS PATCH: REGISTRO REAL POR PASOS + SOCIAL ===== */
+(function(){
+  var oldGoTo = window.goTo;
+  var oldLoadProfileForm = window.loadProfileForm;
+  var oldSaveProfile = window.saveProfile;
+  var oldClearReg = window.clearReg;
+  var REG_STEP = 1;
+
+  function buildRegisterWizard(){
+    var page=document.getElementById('page-register');
+    if(!page)return;
+    var inner=page.querySelector('.inner');
+    if(!inner || inner.getAttribute('data-wizard-ok')==='1')return;
+    inner.setAttribute('data-wizard-ok','1');
+    inner.innerHTML = ''
+      +'<button class="back-b" onclick="goTo(\\'home\\')">← Volver</button>'
+      +'<div style="margin-bottom:1.15rem"><h2 class="pg-tit">Creá tu perfil</h2><p class="pg-sub">Solo para mayores de 40.</p></div>'
+      +'<div class="reg-steps reg-steps-5" id="regSteps">'
+        +'<div class="reg-step active"><div class="reg-dot">1</div><span>Cuenta</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">2</div><span>Gustos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">3</div><span>Sobre vos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">4</div><span>Fotos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">5</div><span>Redes</span></div>'
+      +'</div>'
+      +'<div class="fcard">'
+        +'<div id="rErr" class="alert alert-e" style="display:none"></div>'
+        +'<div id="rOk" class="alert alert-ok" style="display:none"></div>'
+
+        +'<div class="reg-panel active" data-reg-step="1">'
+          +'<p class="fsec">Datos personales</p>'
+          +'<div class="frow">'
+            +'<div class="fld"><label>Nombre <span class="req">*</span></label><input type="text" id="rN" placeholder="Tu nombre"></div>'
+            +'<div class="fld"><label>Edad <span class="req">*</span></label><input type="number" id="rA" placeholder="Tu edad" min="40" max="120"></div>'
+          +'</div>'
+          +'<div class="frow">'
+            +'<div class="fld"><label>Ciudad <span class="req">*</span></label><input type="text" id="rC" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div>'
+            +'<div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div>'
+          +'</div>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>'
+          +'<input type="hidden" id="rLat"><input type="hidden" id="rLng">'
+        +'</div>'
+
+        +'<div class="reg-panel" data-reg-step="2">'
+          +'<p class="fsec">Gustos y búsqueda</p>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a mostrarte perfiles acordes a lo que buscás.</div></div></div>'
+          +'<p class="fsec" style="margin-top:1.1rem">¿Qué buscás?</p>'
+          +'<div class="chips">'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Amistad">Amistad</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Compañía">Compañía</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Relación seria">Relación seria</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Salir a tomar algo">Salir a tomar algo</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Viajar">Viajar</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Charlar">Charlar</label>'
+          +'</div>'
+          +'<p class="fsec" style="margin-top:1.1rem">Plan ideal</p>'
+          +'<div class="chips">'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="☕ Café">☕ Café</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍷 Vino">🍷 Vino</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🚶 Caminata">🚶 Caminata</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍽️ Cena">🍽️ Cena</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎬 Cine">🎬 Cine</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎵 Música en vivo">🎵 Música en vivo</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="✈️ Viaje corto">✈️ Viaje corto</label>'
+          +'</div>'
+        +'</div>'
+
+        +'<div class="reg-panel" data-reg-step="3">'
+          +'<p class="fsec">Sobre vos</p>'
+          +'<div class="fld"><label>Descripción <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><textarea id="rD" rows="5" placeholder="Contá algo sobre vos..."></textarea></div>'
+          +'<div class="fld" style="margin-top:.85rem"><label>Intereses</label><input type="text" id="rI" placeholder="viajes, música, cocina..."></div>'
+          +'<div class="reg-help">La descripción es opcional. Si no querés escribir nada ahora, podés continuar igual y completarla después.</div>'
+        +'</div>'
+
+        +'<div class="reg-panel" data-reg-step="4">'
+          +'<p class="fsec">Fotos y videos</p>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto principal</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById(\\'rPF\\').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Video de perfil <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById(\\'rVF\\').click()">🎥 Cargar video corto</button><span class="photo-or">o pegá una URL de video</span><input type="url" id="rV" placeholder="https://... video" oninput="prevVideo(this.value)"><input type="file" id="rVF" accept="video/*" style="display:none" onchange="handleVideoFile(this)"></div><span class="gps-st" id="vidSt">Tip: para esta versión conviene usar videos cortos o URL.</span></div></div>'
+          +'<div class="reg-help">Después vas a poder agregar álbum público y privado desde Mi perfil.</div>'
+        +'</div>'
+
+        +'<div class="reg-panel" data-reg-step="5">'
+          +'<p class="fsec">Redes sociales</p>'
+          +'<div class="reg-help">Opcional. Podés agregarlas ahora o más adelante desde Mi perfil.</div>'
+          +'<div class="social-grid">'
+            +'<div class="fld"><label>Instagram</label><input id="rSocInstagram" placeholder="@usuario o link"></div>'
+            +'<div class="fld"><label>Facebook</label><input id="rSocFacebook" placeholder="perfil o link"></div>'
+            +'<div class="fld"><label>TikTok</label><input id="rSocTiktok" placeholder="@usuario o link"></div>'
+            +'<div class="fld"><label>LinkedIn</label><input id="rSocLinkedin" placeholder="perfil o link"></div>'
+            +'<div class="fld" style="grid-column:1/-1"><label>Otra red</label><input id="rSocOtra" placeholder="otra red o link"></div>'
+          +'</div>'
+        +'</div>'
+
+        +'<div class="reg-actions">'
+          +'<button type="button" class="btn btn-o btn-lg" id="regBackBtn" onclick="regPrev()">← Volver</button>'
+          +'<button type="button" class="btn btn-p btn-lg" id="regNextBtn" onclick="regNext()">Continuar →</button>'
+        +'</div>'
+      +'</div>';
+  }
+
+  function setStep(n){
+    REG_STEP=Math.max(1,Math.min(5,n));
+    document.querySelectorAll('.reg-panel').forEach(function(p){
+      p.classList.toggle('active',parseInt(p.getAttribute('data-reg-step'),10)===REG_STEP);
+    });
+    document.querySelectorAll('#regSteps .reg-step').forEach(function(s,i){
+      var step=i+1;
+      s.classList.toggle('active',step===REG_STEP);
+      s.classList.toggle('done',step<REG_STEP);
+      var dot=s.querySelector('.reg-dot');
+      if(dot)dot.textContent=step<REG_STEP?'✓':step;
+    });
+    var back=document.getElementById('regBackBtn'), next=document.getElementById('regNextBtn');
+    if(back)back.style.visibility=REG_STEP===1?'hidden':'visible';
+    if(next)next.textContent=REG_STEP===5?'Guardar perfil ✦':'Continuar →';
+    var ee=document.getElementById('rErr');if(ee)ee.style.display='none';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function regValidate(){
+    var ee=document.getElementById('rErr');
+    function err(msg){if(ee){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'});}return false}
+    if(REG_STEP===1){
+      var name=(document.getElementById('rN')||{}).value||'';
+      var age=parseInt((document.getElementById('rA')||{}).value||'',10);
+      var city=(document.getElementById('rC')||{}).value||'';
+      var gender=(document.getElementById('rG')||{}).value||'';
+      var email=(document.getElementById('rE')||{}).value||'';
+      if(!name.trim()||!city.trim()||!gender.trim())return err('Completá nombre, ciudad y género.');
+      if(!age||isNaN(age)||age<40)return err('FortyUp es solo para mayores de 40 años.');
+      if(!CU && (!email.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())))return err('Ingresá un email válido.');
+    }
+    return true;
+  }
+
+  window.regNext=function(){
+    if(!regValidate())return;
+    if(REG_STEP<5){setStep(REG_STEP+1);return;}
+    saveProfile();
+    saveSocialFromRegister();
+  };
+  window.regPrev=function(){setStep(REG_STEP-1)};
+
+  function saveSocialFromRegister(){
+    var cu=window.CU;
+    if(!cu)return;
+    var soc={
+      instagram:(document.getElementById('rSocInstagram')||{}).value||'',
+      facebook:(document.getElementById('rSocFacebook')||{}).value||'',
+      tiktok:(document.getElementById('rSocTiktok')||{}).value||'',
+      linkedin:(document.getElementById('rSocLinkedin')||{}).value||'',
+      otra:(document.getElementById('rSocOtra')||{}).value||''
+    };
+    try{
+      var users=normalizeUsers().map(function(u){return u.id===cu.id?Object.assign({},u,{social:soc}):u});
+      sv(K.U,users);refreshCU();upNav();
+    }catch(e){}
+  }
+
+  function loadSocialToRegister(){
+    var cu=window.CU;if(!cu)return;
+    var soc=cu.social||{};
+    var set=function(id,val){var el=document.getElementById(id);if(el)el.value=val||''};
+    set('rSocInstagram',soc.instagram);set('rSocFacebook',soc.facebook);set('rSocTiktok',soc.tiktok);set('rSocLinkedin',soc.linkedin);set('rSocOtra',soc.otra);
+  }
+
+  window.goTo=function(pg){
+    oldGoTo(pg);
+    if(pg==='register'){
+      setTimeout(function(){
+        buildRegisterWizard();
+        if(typeof oldLoadProfileForm==='function')oldLoadProfileForm();
+        loadSocialToRegister();
+        setStep(1);
+      },0);
+    }
+  };
+
+  window.loadProfileForm=function(){
+    buildRegisterWizard();
+    if(typeof oldLoadProfileForm==='function')oldLoadProfileForm();
+    loadSocialToRegister();
+    setStep(1);
+  };
+
+  window.clearReg=function(){
+    if(typeof oldClearReg==='function')oldClearReg();
+    ['rSocInstagram','rSocFacebook','rSocTiktok','rSocLinkedin','rSocOtra'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
+  };
+
+  window.saveProfile=function(){
+    oldSaveProfile();
+    setTimeout(saveSocialFromRegister,50);
+  };
+
+  window.enhanceRegisterUI=function(){
+    buildRegisterWizard();
+    setStep(REG_STEP||1);
+  };
+
+  // Si la página ya está cargada y entra a registro, que también funcione.
+  if(document.getElementById('page-register') && document.getElementById('page-register').classList.contains('active')){
+    buildRegisterWizard();setStep(1);
+  }
+})();
 </script>
 
 </body>
