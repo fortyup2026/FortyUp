@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -6,7 +6,7 @@
 <title>FortyUp</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--g1:#064E3B;--g2:#10B981;--g3:#059669;--gold:#F2B705;--bg:#F0FDF8;--bg2:#FFFDF7;--bg3:#ECFDF5;--txt:#10231D;--txt2:#2D4A40;--txt3:#6B7C76;--border:#D1E8DF;--card:rgba(255,255,255,.97);--r:16px;--r2:24px;--r3:50px;--sh:0 4px 20px rgba(6,78,59,.09);--sh2:0 12px 36px rgba(6,78,59,.14)}
+:root{--border2:#D1E8DF;--g1:#064E3B;--g2:#10B981;--g3:#059669;--gold:#F2B705;--bg:#F0FDF8;--bg2:#FFFDF7;--bg3:#ECFDF5;--txt:#10231D;--txt2:#2D4A40;--txt3:#6B7C76;--border:#D1E8DF;--card:rgba(255,255,255,.97);--r:16px;--r2:24px;--r3:50px;--sh:0 4px 20px rgba(6,78,59,.09);--sh2:0 12px 36px rgba(6,78,59,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8FDF4 0%,#FFFDF7 60%,#FFF9EC 100%);background-attachment:fixed;color:var(--txt);min-height:100vh;overflow-x:hidden;padding-bottom:80px}
 h1,h2,h3{font-family:'Playfair Display',serif}
@@ -332,6 +332,8 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .chat-audio-btn.recording{background:#fef2f2;border-color:#fca5a5;animation:recpulse 1s infinite}
 @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3)}50%{box-shadow:0 0 0 6px rgba(220,38,38,.0)}}
 .chat-msg audio{max-width:180px;height:32px;margin-top:.35rem}
+.chat-unread{width:15px;height:15px;background:linear-gradient(135deg,var(--gold),#ffd75a);transform:rotate(45deg);border:2px solid #fff;box-shadow:0 1px 6px rgba(242,183,5,.55);border-radius:3px;flex-shrink:0}
+.chat-unread-sm{display:inline-block;width:9px;height:9px;background:var(--gold);transform:rotate(45deg);border-radius:2px;margin-left:.32rem;box-shadow:0 1px 5px rgba(242,183,5,.55)}
 </style>
 </head>
 <body>
@@ -378,6 +380,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
     <div class="afld"><label>Contraseña</label><input type="password" id="aPass" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doAuth()"></div>
     <div class="afld" id="aPCF" style="display:none"><label>Confirmar contraseña</label><input type="password" id="aPassC" placeholder="Repetí tu contraseña"></div>
     <button class="btn btn-p btn-fw btn-lg" onclick="doAuth()" id="aBtn" style="margin-top:.32rem">Iniciar sesión</button>
+    <button id="forgotBtn" onclick="forgotPass()" style="display:block;margin:.75rem auto 0;color:var(--g1);font-size:.8rem;font-weight:800;text-decoration:underline">¿Olvidaste tu contraseña?</button>
   </div>
 </div>
 
@@ -519,11 +522,11 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
   <button class="bn" id="bn-profiles" onclick="goTo('profiles');setBn('profiles')"><span class="bn-ico">👥</span><span class="bn-l">Perfiles</span></button>
-  <button class="bn" id="bn-plus" onclick="needLogin(function(){goTo('register')})"><div class="bn-plus">＋</div><span class="bn-l" style="margin-top:-.1rem">Unirme</span></button>
+  <button class="bn" id="bn-plus" onclick="if(CU){goTo('register');setBn('plus')}else{openAuth('login')}"><div class="bn-plus">🔑</div><span class="bn-l" style="margin-top:-.1rem">Ingresar</span></button>
   <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative">
   <span style="position:relative;display:inline-block">
     <span class="bn-ico">💬</span>
-    <span id="chatBadge" style="display:none;position:absolute;top:-3px;right:-5px;background:#F2B705;width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(242,183,5,.5)"></span>
+    <span id="chatBadge" style="display:none;position:absolute;top:-4px;right:-6px;background:#F2B705;width:12px;height:12px;border-radius:3px;transform:rotate(45deg);border:2px solid #fff;box-shadow:0 1px 6px rgba(242,183,5,.55)"></span>
   </span>
   <span class="bn-l">Mensajes</span>
 </button>
@@ -552,10 +555,12 @@ function fv(id){var el=document.getElementById(id);return el?(el.value||'').trim
 function cv(n){var r=[];document.querySelectorAll('input[name="'+n+'"]:checked').forEach(function(c){r.push(c.value)});return r}
 function init(){
   var u=g(K.U,[]);
-  if(!u.some(function(x){return x.is})){u=SP.concat(u);sv(K.U,u)}
+  if(!u.some(function(x){return x.is})){u=SP.concat(u)}
+  u=u.map(function(x){if(!x.is&&typeof x.superDiamonds==='undefined')x.superDiamonds=1;return x});
+  sv(K.U,u);
   var sess=g(K.S,null);
   if(sess){var found=g(K.U,[]).filter(function(x){return x.id===sess.id})[0];if(found)CU=found}
-  upNav();upCount();getMyLoc();
+  upNav();upCount();getMyLoc();checkUnread();
 }
 function upCount(){
   var n=g(K.U,[]).length;
@@ -580,10 +585,12 @@ function upNav(){
   var dl=document.getElementById('dLogin');if(dl)dl.style.display=CU?'none':'block';
   var dr=document.getElementById('dReg');if(dr)dr.style.display=CU?'none':'block';
   var dlo=document.getElementById('dLogout');if(dlo)dlo.style.display=CU?'block':'none';
-  // Bottom nav - always 5 items, just update icons/labels
-  var bmi=document.getElementById('bMeIco');var bml=document.getElementById('bMeLbl');
-  if(bmi)bmi.textContent=CU?'👤':'🔑';
-  if(bml)bml.textContent=CU?'Mi perfil':'Ingresar';
+  var bc=document.getElementById('bn-chats'),bm=document.getElementById('bn-me'),bpi=document.querySelector('#bn-plus .bn-plus'),bpl=document.querySelector('#bn-plus .bn-l');
+  if(bc)bc.style.display=CU?'flex':'none';
+  if(bm)bm.style.display=CU?'flex':'none';
+  if(bpi)bpi.textContent=CU?'＋':'🔑';
+  if(bpl)bpl.textContent=CU?'Perfil':'Ingresar';
+  var badge=document.getElementById('chatBadge');if(badge&&!CU)badge.style.display='none';
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];
     nr.innerHTML='<div class="nav-av"><div class="av-c">'+nm[0].toUpperCase()+'</div><span class="av-nm">'+e(nm)+'</span><button class="btn-out" onclick="logout()">Salir</button></div>';
@@ -608,8 +615,21 @@ function switchTab(mode){
   document.getElementById('tabR').className='atab'+(mode==='register'?' active':'');
   document.getElementById('aPCF').style.display=mode==='register'?'flex':'none';
   document.getElementById('aBtn').textContent=mode==='login'?'Iniciar sesión':'Crear cuenta';
+  var fb=document.getElementById('forgotBtn');if(fb)fb.style.display=mode==='login'?'block':'none';
   document.getElementById('aErr').style.display='none';
   document.getElementById('aOk').style.display='none';
+}
+function forgotPass(){
+  var email=fv('aEmail')||prompt('Ingresá el email de tu cuenta:');
+  if(!email)return;
+  var users=g(K.U,[]),idx=users.findIndex(function(u){return !u.is&&u.email&&u.email.toLowerCase()===email.toLowerCase()});
+  var ee=document.getElementById('aErr'),oe=document.getElementById('aOk');ee.style.display='none';oe.style.display='none';
+  if(idx===-1){ee.textContent='No encontramos una cuenta con ese email.';ee.style.display='block';return}
+  var np=prompt('Escribí tu nueva contraseña (mínimo 6 caracteres):');
+  if(!np||np.length<6){ee.textContent='La contraseña debe tener al menos 6 caracteres.';ee.style.display='block';return}
+  users[idx].pass=np;sv(K.U,users);
+  oe.textContent='Contraseña actualizada. Ya podés iniciar sesión.';oe.style.display='block';
+  switchTab('login');
 }
 function doAuth(){
   var email=fv('aEmail'),pass=document.getElementById('aPass').value;
@@ -622,7 +642,7 @@ function doAuth(){
     var pc=document.getElementById('aPassC').value;
     if(pass!==pc){ee.textContent='Las contraseñas no coinciden.';ee.style.display='block';return}
     if(users.some(function(u){return!u.is&&u.email&&u.email.toLowerCase()===email.toLowerCase()})){ee.textContent='Ya existe una cuenta con ese email.';ee.style.display='block';return}
-    var nu={id:'u_'+Date.now(),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass,photo:'',desc:'',int:'',looking:[],plans:[],lat:null,lng:null,createdAt:new Date().toISOString()};
+    var nu={id:'u_'+Date.now(),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass,photo:'',desc:'',int:'',looking:[],plans:[],lat:null,lng:null,createdAt:new Date().toISOString(),superDiamonds:1};
     users.push(nu);sv(K.U,users);CU=nu;sv(K.S,{id:nu.id});upNav();upCount();closeAuth();checkUnread();
     toast('¡Cuenta creada! Completá tu perfil 🌿','ok');goTo('register');
   }else{
@@ -633,7 +653,7 @@ function doAuth(){
     if(!found.name)setTimeout(function(){goTo('register')},400);
   }
 }
-function logout(){CU=null;sv(K.S,null);upNav();goTo('home');toast('Sesión cerrada.','ok')}
+function logout(){CU=null;sv(K.S,null);upNav();checkUnread();goTo('home');toast('Sesión cerrada.','ok')}
 function rProfiles(){
   var grid=document.getElementById('pgrid');grid.innerHTML='';
   var bl=g(K.BL,[]);
@@ -659,7 +679,7 @@ function bCard(u,forti,fav,idx){
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
   bd.innerHTML='<div class="pcard-name">'+e(u.name)+', '+u.age+'</div><div class="pcard-meta">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+db+'<div class="ptags" style="margin-top:.38rem">'+lt+'</div><p class="pcard-desc">'+e(u.desc||u.description||'')+'</p>'+((u.int||u.interests)?'<p class="pcard-int"><strong>Intereses:</strong> '+e(u.int||u.interests)+'</p>':'')+'<div class="ptags" style="margin-top:.32rem">'+pt+'</div>';
   var ac=document.createElement('div');ac.className='pcard-acts';
-  ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'💎 Forti enviado':'💎 Forti')+'</button>'
+  ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'💎 Enviado':'💎 Super')+'</button>'
     +'<button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver más</button>'
     +'<button class="pa-fav'+(fav?' saved':'')+'" id="fv-'+u.id+'" onclick="cuTogFav(\''+u.id+'\')">'+(fav?'⭐':'☆')+'</button>'
     +'<button class="pa-chat" onclick="cuChat(\''+u.id+'\',\''+e(u.name)+'\')">💬</button>'
@@ -669,10 +689,16 @@ function bCard(u,forti,fav,idx){
 function sendForti(id){
   if(!CU){openAuth('login');return}
   var key=kF(CU.id),fs=g(key,[]);
-  if(fs.some(function(f){return f.t===id})){toast('Ya enviaste un Forti a esta persona.','w');return}
-  fs.push({t:id,at:new Date().toISOString()});sv(key,fs);
-  var btn=document.getElementById('ft-'+id);if(btn){btn.classList.add('sent');btn.innerHTML='💎 Forti enviado';btn.disabled=true}
-  toast('💎 ¡Forti enviado!','gd');
+  if(fs.some(function(f){return f.t===id})){toast('Ya enviaste tu super diamante a esta persona.','w');return}
+  var available=(typeof CU.superDiamonds==='number'?CU.superDiamonds:1);
+  if(available<=0){toast('Ya usaste tu super diamante gratis. Comprar más: próximamente 💎','w');return}
+  fs.push({t:id,at:new Date().toISOString(),type:'super'});sv(key,fs);
+  CU.superDiamonds=available-1;
+  var users=g(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{superDiamonds:CU.superDiamonds}):u});
+  sv(K.U,users);sv(K.S,{id:CU.id});
+  var btn=document.getElementById('ft-'+id);if(btn){btn.classList.add('sent');btn.innerHTML='💎 Super diamante enviado';btn.disabled=true}
+  toast('💎 ¡Super diamante enviado!','gd');
+  if(document.getElementById('myPC')&&document.getElementById('page-myprofile').classList.contains('active'))rMyP();
 }
 function togFav(id){
   if(!CU){openAuth('login');return}
@@ -699,7 +725,7 @@ function rMyP(){
     +'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div></div>'
     +'<button class="myp-edit" onclick="goTo(\'register\')">✏ Editar</button></div>'
     +'<div class="myp-cards">'
-    +'<div class="myp-card" onclick="goTo(\'profiles\')"><div class="myp-ico">💎</div><div class="myp-ct">Mis Fortis</div><div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div><div class="myp-arr">→</div></div>'
+    +'<div class="myp-card myp-card-g" onclick="goTo(\'profiles\')"><div class="myp-ico">💎</div><div class="myp-ct">Super diamante</div><div class="myp-cd">Disponibles <strong style="color:#7c5500">'+(typeof CU.superDiamonds==='number'?CU.superDiamonds:1)+'</strong><br><span onclick="event.stopPropagation();toast(\'Compra de diamantes: próximamente 💎\',\'gd\')" style="text-decoration:underline">Comprar más</span></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card" onclick="needLogin(function(){goTo(\'chats\');rChatList()})"><div class="myp-ico">💬</div><div class="myp-ct">Mensajes</div><div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card myp-card-g" onclick="needLogin(function(){goTo(\'favorites\');rFavs()})"><div class="myp-ico">⭐</div><div class="myp-ct">Favoritos</div><div class="myp-cd">Personas guardadas <strong style="color:#7c5500">'+fvC+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card" onclick="goTo(\'register\')"><div class="myp-ico">✏️</div><div class="myp-ct">Editar perfil</div><div class="myp-cd">Actualizá tu info, fotos e intereses</div><div class="myp-arr">→</div></div>'
@@ -728,7 +754,16 @@ function rChatMsgs(){
   if(!CU||!CW)return;
   var msgs=g(kMs(CU.id,CW.id),[]);var cont=document.getElementById('chatMsgs');
   if(!msgs.length){cont.innerHTML='<div style="text-align:center;color:var(--txt3);font-size:.84rem;padding:2rem;font-style:italic">Todavía no hay mensajes. ¡Escribí algo! 💬</div>';return}
-  cont.innerHTML=msgs.map(function(m){var mine=m.from===CU.id;return'<div class="chat-msg '+(mine?'mine':'theirs')+'">'+e(m.text)+'<div class="chat-msg-t">'+fmtT(m.at)+'</div></div>'}).join('');
+  cont.innerHTML=msgs.map(function(m){
+    var mine=m.from===CU.id,body='';
+    if(m.text)body+='<div>'+e(m.text)+'</div>';
+    if(m.photo)body+='<img class="chat-msg-img" src="'+m.photo+'" onclick="window.open(this.src,\'_blank\')">';
+    if(m.audio)body+='<audio controls src="'+m.audio+'"></audio>';
+    if(!body)body='<div></div>';
+    return '<div class="chat-msg '+(mine?'mine':'theirs')+'">'+body+'<div class="chat-msg-t">'+fmtT(m.at)+'</div></div>'
+  }).join('');
+  localStorage.setItem('fu_read_'+CU.id+'_'+CW.id,new Date().toISOString());
+  checkUnread();
   cont.scrollTop=cont.scrollHeight;
 }
 function sendPhoto(input){
@@ -738,7 +773,7 @@ function sendPhoto(input){
   reader.onload=function(ev){
     var key=kMs(CU.id,CW.id),msgs=g(key,[]);
     msgs.push({from:CU.id,to:CW.id,text:'',photo:ev.target.result,at:new Date().toISOString()});
-    sv(key,msgs);input.value='';rChatMsgs();
+    sv(key,msgs);input.value='';rChatMsgs();checkUnread();checkUnread();
   };reader.readAsDataURL(file);
 }
 function sendMsg(){
@@ -751,7 +786,19 @@ function rChatList(){
   if(!CU){goTo('home');return}
   var chats=g(kCh(CU.id),[]);var users=g(K.U,[]);var cont=document.getElementById('chatLC');
   if(!chats.length){cont.innerHTML='<div style="text-align:center;padding:3rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.75rem">💬</div><p style="font-size:.92rem">Todavía no tenés conversaciones.<br>Buscá un perfil y tocá 💬</p></div>';return}
-  cont.innerHTML='<div class="chat-list">'+chats.map(function(uid){var other=users.filter(function(u){return u.id===uid})[0];if(!other)return'';var msgs=g(kMs(CU.id,uid),[]);var last=msgs.length?msgs[msgs.length-1]:null;return'<div class="chat-item" onclick="startChat(\''+uid+'\',\''+e(other.name||other.email)+'\')">'+'<div class="chat-av">'+(other.name?other.name[0]:'?')+'</div>'+'<div class="chat-info"><div class="chat-nm">'+e(other.name||other.email)+'</div><div class="chat-pv">'+(last?e(last.text):'Sin mensajes aún')+'</div></div>'+(last?'<div class="chat-tm">'+fmtT(last.at)+'</div>':'')+'</div>'}).join('')+'</div>';
+  cont.innerHTML='<div class="chat-list">'+chats.map(function(uid){
+    var other=users.filter(function(u){return u.id===uid})[0];if(!other)return'';
+    var msgs=g(kMs(CU.id,uid),[]),last=msgs.length?msgs[msgs.length-1]:null;
+    var readKey='fu_read_'+CU.id+'_'+uid,lastRead=localStorage.getItem(readKey)||'';
+    var unread=last&&last.from!==CU.id&&last.at>lastRead;
+    var prev='Sin mensajes aún';
+    if(last){prev=last.photo?'📷 Foto':(last.audio?'🎤 Audio':e(last.text||''))}
+    return '<div class="chat-item" onclick="startChat(\''+uid+'\',\''+e(other.name||other.email)+'\')">'
+      +'<div class="chat-av">'+(other.name?other.name[0]:'?')+'</div>'
+      +'<div class="chat-info"><div class="chat-nm">'+e(other.name||other.email)+(unread?'<span class="chat-unread-sm"></span>':'')+'</div><div class="chat-pv">'+prev+'</div></div>'
+      +(last?'<div class="chat-tm">'+fmtT(last.at)+'</div>':'')+(unread?'<div class="chat-unread"></div>':'')+'</div>'
+  }).join('')+'</div>';
+  checkUnread();
 }
 function fmtT(iso){if(!iso)return'';var d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return'Ahora';if(diff<3600000)return Math.floor(diff/60000)+'m';if(diff<86400000)return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');return d.getDate()+'/'+(d.getMonth()+1)}
 function blkU(id){var bl=g(K.BL,[]);if(bl.indexOf(id)===-1){bl.push(id);sv(K.BL,bl)}var c=document.getElementById('card-'+id);if(c){c.style.transition='all .3s';c.style.opacity='0';c.style.transform='scale(.95)';setTimeout(function(){c.remove()},300)}toast('Perfil bloqueado.','w')}
@@ -770,7 +817,7 @@ function saveProfile(){
   }else{
     if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showE('Ingresá un email válido.');return}
     if(users.some(function(u){return!u.is&&u.email&&u.email.toLowerCase()===email.toLowerCase()})){showE('Ya existe un perfil con ese email.');return}
-    var nu={id:'u_'+Date.now(),is:0,name:name,age:age,city:city,gender:gender,email:email,pass:'',photo:photo||'',desc:desc,int:int,looking:looking,plans:plans,lat:lat?parseFloat(lat):null,lng:lng?parseFloat(lng):null,createdAt:new Date().toISOString()};
+    var nu={id:'u_'+Date.now(),is:0,name:name,age:age,city:city,gender:gender,email:email,pass:'',photo:photo||'',desc:desc,int:int,looking:looking,plans:plans,lat:lat?parseFloat(lat):null,lng:lng?parseFloat(lng):null,createdAt:new Date().toISOString(),superDiamonds:1};
     users.push(nu);sv(K.U,users);upCount();oe.textContent='✦ ¡Perfil creado! Redirigiendo...';oe.style.display='block';
     clearReg();setTimeout(function(){goTo('profiles')},1800);
   }
@@ -832,6 +879,7 @@ var mediaRec=null,audioChunks=[],isRec=false;
 function toggleAudio(){
   if(!CU||!CW)return;
   if(!isRec){
+    if(!navigator.mediaDevices||!window.MediaRecorder){toast('Tu navegador no permite grabar audio acá.','w');return}
     navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
       mediaRec=new MediaRecorder(stream);
       audioChunks=[];
@@ -842,7 +890,7 @@ function toggleAudio(){
         reader.onload=function(ev){
           var key=kMs(CU.id,CW.id),msgs=g(key,[]);
           msgs.push({from:CU.id,to:CW.id,text:'',audio:ev.target.result,at:new Date().toISOString()});
-          sv(key,msgs);rChatMsgs();
+          sv(key,msgs);rChatMsgs();checkUnread();
         };reader.readAsDataURL(blob);
         stream.getTracks().forEach(function(t){t.stop()});
       };
@@ -860,7 +908,8 @@ function toggleAudio(){
 
 // ── UNREAD BADGE ──
 function checkUnread(){
-  if(!CU)return;
+  var badge=document.getElementById('chatBadge');
+  if(!CU){if(badge)badge.style.display='none';return;}
   var chats=g(kCh(CU.id),[]);
   var hasNew=false;
   chats.forEach(function(uid){
@@ -874,7 +923,6 @@ function checkUnread(){
       }
     }
   });
-  var badge=document.getElementById('chatBadge');
   if(badge)badge.style.display=hasNew?'block':'none';
 }
 
