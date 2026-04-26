@@ -728,7 +728,39 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 <div class="tw" id="tw"></div>
 <div class="forti-match-ov" id="matchOv"><div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom"><span style="display:inline-block;width:32px;height:32px;background:var(--gold);transform:rotate(45deg);border-radius:4px;box-shadow:0 4px 16px rgba(242,183,5,.5)"></span></div><h3>Conexión FortyUp</h3><p id="matchTxt">Se mandaron Forti mutuamente.</p><div class="forti-match-actions"><button class="fm-primary" id="matchChatBtn" onclick="closeMatch()">¡Genial!</button><button class="fm-secondary" onclick="closeMatch()">Seguir viendo</button></div></div></div>
 
+
+<!-- AGE POPUP -->
+<div id="agePop" style="position:fixed;inset:0;z-index:9999;background:rgba(6,20,16,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.5rem">
+  <div style="background:#fff;border-radius:24px;max-width:340px;width:100%;padding:2rem;text-align:center;box-shadow:0 32px 80px rgba(6,78,59,.35)">
+    <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
+    <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
+    <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
+    <button onclick="localStorage.setItem('fu_age_ok','1');var p=document.getElementById('agePop');if(p){p.style.opacity='0';p.style.transition='opacity .3s';setTimeout(function(){p.style.display='none'},300)}" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
+    <button onclick="window.history.back()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
+  </div>
+</div>
+
+
+<!-- SUPER DIAMANTE POPUP -->
+<div id="superDiamPop" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(6,20,16,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1.5rem;flex-direction:column">
+  <div id="superRain" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+  <div style="position:relative;z-index:2;background:#fff;border-radius:24px;max-width:340px;width:100%;padding:2.2rem;text-align:center;box-shadow:0 32px 80px rgba(6,78,59,.35)">
+    <div style="font-size:.75rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--g2);margin-bottom:.5rem">Para vos</div>
+    <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.4rem;margin-bottom:.75rem">Te enviaron un<br>Súper Diamante 💎</h2>
+    <div style="display:flex;align-items:center;justify-content:center;margin:1.2rem 0">
+      <div style="width:70px;height:70px;background:linear-gradient(135deg,#60a5fa,#2563eb);transform:rotate(45deg);border-radius:8px;box-shadow:0 8px 32px rgba(96,165,250,.55)"></div>
+    </div>
+    <p style="font-size:.85rem;color:#6B7C76;margin-bottom:1.4rem">Alguien quiso destacarte de manera especial.</p>
+    <button id="superWhoBtn" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.6rem">Mirá quién fue →</button>
+    <button onclick="closeSuperDiam()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.6rem;font-size:.82rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">Cerrar</button>
+  </div>
+</div>
+
 <script>
+function closePop(el){var p=el;while(p&&p.tagName!=='BODY'){if(p.style.position==='fixed'&&p.style.inset==='0px'){p.remove();return;}p=p.parentElement;}}
+
+function imgErr(el){el.style.visibility="hidden"}
+
 var K={U:'fu_u',S:'fu_s',BL:'fu_bl'};
 function kF(u){return'fu_f_'+u}function kFv(u){return'fu_fv_'+u}function kCh(u){return'fu_ch_'+u}function kMs(a,b){return'fu_m_'+[a,b].sort().join('_')}
 var SP=[
@@ -951,7 +983,7 @@ function bCard(u,forti,fav,idx,superSent){
   var ac=document.createElement('div');ac.className='pcard-acts';
   var noSuper=CU && ((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
   if(CU&&u.id===CU.id){
-    ac.innerHTML='<button class="pa-more" style="flex:1" onclick="goTo(\'register\')">✏ Editar mi perfil</button><button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver</button>';
+    ac.innerHTML='<button class="pa-more" style="flex:1" onclick="fuGoReg()">✏ Editar mi perfil</button><button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver</button>';
   }else{
     ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'
       +'<button class="pa-super'+((superSent||noSuper)?' used':'')+'" id="sp-'+u.id+'" onclick="sendSuperDiamond(\''+u.id+'\')" title="Súper Diamante: 1 gratis">'+(superSent?'✓':'💎')+'</button>'
@@ -1011,6 +1043,12 @@ function rFavs(){
   if(!users.length){cont.innerHTML='<div style="text-align:center;padding:3rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.75rem">⭐</div><p style="font-size:.92rem">Todavía no guardaste favoritos.<br>Explorá perfiles y tocá el ☆</p></div>';return}
   cont.innerHTML='<div class="favs-grid">'+users.map(function(u){return'<div class="fav-card"><div class="fav-ph">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=fav-av>'+u.name[0]+'</div>\'">':'<div class="fav-av">'+u.name[0]+'</div>')+'</div><div class="fav-info"><div class="fav-nm">'+e(u.name)+', '+u.age+'</div><div class="fav-city">📍 '+e(u.city)+'</div><button class="fav-rm" onclick="togFav(\''+u.id+'\');rFavs()">✕ Quitar</button></div></div>'}).join('')+'</div>';
 }
+function mkAvHtml(photo, initial){
+  if(!photo)return'<span style="font-size:1.9rem;font-weight:700;color:#fff">'+e(initial)+'</span>';
+  return'<img src="'+e(photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="imgErr(this)">';
+}
+
+function fuGoReg(){goTo("register")}
 function rMyP(){
   if(!CU){goTo('home');return}
   refreshCU();
@@ -1018,87 +1056,62 @@ function rMyP(){
   var fS=g(kF(CU.id),[]).filter(function(f){return isNormalFortiActive(f)}).length;
   var fvC=g(kFv(CU.id),[]).length;
   var chC=g(kCh(CU.id),[]).filter(function(uid){return g(kMs(CU.id,uid),[]).length>0}).length;
-  var sd=typeof CU.superDiamonds!=='undefined'?CU.superDiamonds:1;
   var nm=CU.name||CU.email.split('@')[0];
-  var avHtml=CU.photo
-    ?'<img src="'+e(CU.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display='none'">'
-    :'<span style="font-size:1.9rem;font-weight:700;color:#fff">'+nm[0].toUpperCase()+'</span>';
+  var cont=document.getElementById('myPC');
+  if(!cont)return;
 
-  document.getElementById('myPC').innerHTML=
-    '<div class="myp-hdr">'
-    +'<div class="myp-av">'+avHtml+'</div>'
-    +'<div class="myp-info">'
-    +'<div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'
-    +(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')
-    +'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>'
+  // Build avatar
+  var avDiv=document.createElement('div');avDiv.className='myp-av';
+  if(CU.photo){var avImg=document.createElement('img');avImg.src=CU.photo;avImg.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';avImg.onerror=function(){avDiv.textContent=nm[0].toUpperCase()};avDiv.appendChild(avImg)}
+  else{avDiv.textContent=nm[0].toUpperCase()}
+
+  // Build header
+  var hdr=document.createElement('div');hdr.className='myp-hdr';
+  var infoDiv=document.createElement('div');infoDiv.className='myp-info';
+  infoDiv.innerHTML='<div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')+'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>';
+  var editBtn=document.createElement('button');editBtn.className='myp-edit';editBtn.textContent='✏ Editar';editBtn.onclick=function(){goTo('register')};
+  hdr.appendChild(avDiv);hdr.appendChild(infoDiv);hdr.appendChild(editBtn);
+
+  // Build cards
+  var cards=document.createElement('div');cards.className='myp-cards';
+  var cardData=[
+    {ico:'<span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px"></span>',tit:'Mis Fortis',det:'Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong>',fn:function(){goTo('profiles')},cls:'myp-card'},
+    {ico:'💬',tit:'Mensajes',det:'Chats activos <strong style="color:var(--g1)">'+chC+'</strong>',fn:function(){if(CU){goTo('chats');rChatList()}},cls:'myp-card'},
+    {ico:'⭐',tit:'Favoritos',det:'Guardados <strong style="color:#7c5500">'+fvC+'</strong>',fn:function(){if(CU){goTo('favorites');rFavs()}},cls:'myp-card myp-card-g'},
+    {ico:'✏️',tit:'Editar perfil',det:'Actualizá tu info, fotos e intereses',fn:function(){goTo('register')},cls:'myp-card'}
+  ];
+  cardData.forEach(function(d){
+    var card=document.createElement('div');card.className=d.cls;card.onclick=d.fn;
+    card.innerHTML='<div class="myp-ico">'+d.ico+'</div><div class="myp-ct">'+d.tit+'</div><div class="myp-cd">'+d.det+'</div><div class="myp-arr">→</div>';
+    cards.appendChild(card);
+  });
+
+  // Config section
+  var cfgHtml='<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;margin-top:1rem">📸 Fotos y videos</div>'
+    +'<div class="myp-cfg" style="margin-bottom:1rem">'
+    +'<div class="cfg-item" onclick="showAlbum(\'pub\')"><div class="cfg-ico">🖼</div><div class="cfg-nm">Álbum público</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="showAlbum(\'priv\')"><div class="cfg-ico">🔐</div><div class="cfg-nm">Álbum privado</div><span class="cfg-arr">›</span></div>'
     +'</div>'
-    +'<button class="myp-edit" onclick="goTo('register')">✏ Editar</button>'
-    +'</div>'
-
-    // Stats cards
-    +'<div class="myp-cards">'
-    +'<div class="myp-card" onclick="goTo('profiles')">'
-    +'<div class="myp-ico"><span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px;box-shadow:0 2px 6px rgba(242,183,5,.4)"></span></div>'
-    +'<div class="myp-ct">Mis Fortis</div>'
-    +'<div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div>'
-    +'<div class="myp-arr">→</div></div>'
-
-    +'<div class="myp-card" onclick="if(CU){goTo('chats');rChatList()}">'
-    +'<div class="myp-ico">💬</div>'
-    +'<div class="myp-ct">Mensajes</div>'
-    +'<div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div>'
-    +'<div class="myp-arr">→</div></div>'
-
-    +'<div class="myp-card myp-card-g" onclick="if(CU){goTo('favorites');rFavs()}">'
-    +'<div class="myp-ico">⭐</div>'
-    +'<div class="myp-ct">Favoritos</div>'
-    +'<div class="myp-cd">Guardados <strong style="color:#7c5500">'+fvC+'</strong></div>'
-    +'<div class="myp-arr">→</div></div>'
-
-    +'<div class="myp-card" onclick="goTo('register')">'
-    +'<div class="myp-ico">✏️</div>'
-    +'<div class="myp-ct">Editar perfil</div>'
-    +'<div class="myp-cd">Actualizá tu info, fotos e intereses</div>'
-    +'<div class="myp-arr">→</div></div>'
-    +'</div>'
-
-    // Álbumes
-    +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;display:flex;align-items:center;gap:.35rem">📸 Fotos y videos</div>'
-    +'<div class="myp-cfg" style="margin-bottom:1.1rem">'
-    +'<div class="cfg-item" onclick="showAlbum('pub')">'
-    +'<div class="cfg-ico">🖼</div><div class="cfg-nm">Álbum público</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="showAlbum('priv')">'
-    +'<div class="cfg-ico">🔐</div><div class="cfg-nm">Álbum privado</div><span class="cfg-arr">›</span></div>'
-    +'</div>'
-
-    // Redes sociales
     +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">🔗 Redes sociales</div>'
-    +'<div class="myp-cfg" style="margin-bottom:1.1rem">'
-    +'<div class="cfg-item" onclick="showSocial()">'
-    +'<div class="cfg-ico">📱</div><div class="cfg-nm">Instagram, Facebook, TikTok, LinkedIn</div><span class="cfg-arr">›</span></div>'
+    +'<div class="myp-cfg" style="margin-bottom:1rem">'
+    +'<div class="cfg-item" onclick="showSocial()"><div class="cfg-ico">📱</div><div class="cfg-nm">Instagram, Facebook, TikTok, LinkedIn</div><span class="cfg-arr">›</span></div>'
     +'</div>'
-
-    // Configuración
     +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">⚙ Configuración</div>'
     +'<div class="myp-cfg">'
-    +'<div class="cfg-item" onclick="showBlocked()">'
-    +'<div class="cfg-ico">🚫</div><div class="cfg-nm">Privacidad · Usuarios bloqueados</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="changePass()">'
-    +'<div class="cfg-ico">🔑</div><div class="cfg-nm">Seguridad · Cambiar contraseña</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="logout()">'
-    +'<div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="delAccount()">'
-    +'<div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="showBlocked()"><div class="cfg-ico">🚫</div><div class="cfg-nm">Privacidad · Usuarios bloqueados</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="changePass()"><div class="cfg-ico">🔑</div><div class="cfg-nm">Seguridad · Cambiar contraseña</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="logout()"><div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="delAccount()"><div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
     +'</div>';
+
+  cont.innerHTML='';
+  cont.appendChild(hdr);
+  cont.appendChild(cards);
+  cont.insertAdjacentHTML('beforeend', cfgHtml);
 }
 
-function rBlocked(){
-  var bl=g(K.BL,[]),users=g(K.U,[]).filter(function(u){return bl.indexOf(u.id)!==-1});
-  var html='<div class="m-body"><div class="m-nm">🚫 Bloqueados</div><p class="m-desc" style="margin:.5rem 0 1rem">Acá aparecen las personas que bloqueaste.</p>';
-  if(!users.length){html+='<p style="color:var(--txt3);font-size:.9rem">No bloqueaste a nadie todavía.</p>'}
-  else{html+=users.map(function(u){return '<div class="cfg-item"><div class="cfg-ico">🚫</div><div class="cfg-nm">'+e(u.name||u.email)+'</div><button class="btn btn-o btn-sm" onclick="unblockU(\''+u.id+'\')">Desbloquear</button></div>'}).join('')}
-  html+='</div>';document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
-}
+function rBlocked(){showBlocked()}
+
 function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
 function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);logout();toast('Cuenta eliminada.','w')}}
 function ensureChatPair(uid){
@@ -1440,26 +1453,66 @@ function showAlbum(type){
   var items=g(key,[]);
   var title=type==='pub'?'Álbum público':'Álbum privado';
   var icon=type==='pub'?'🖼':'🔐';
-  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem" id="albumPop">'
-    +'<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:1.65rem;max-height:85vh;overflow-y:auto">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
-    +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">'+icon+' '+title+'</strong>'
-    +'<button onclick="closePopById('albumPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
-    +'</div>'
-    +(type==='priv'?'<p style="font-size:.75rem;color:var(--txt3);margin-bottom:.85rem">Solo vos podés ver este álbum.</p>':'<p style="font-size:.75rem;color:var(--txt3);margin-bottom:.85rem">Visible en tu perfil público.</p>')
-    +'<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem">'
-    +items.map(function(item,i){
-      if(item.type==='video')return'<div style="position:relative;width:calc(33% - .35rem);aspect-ratio:1;background:#000;border-radius:8px;overflow:hidden"><video src="'+item.src+'" style="width:100%;height:100%;object-fit:cover"></video><span style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:.6rem;padding:1px 4px;border-radius:4px">▶</span><button onclick="rmAlbumItem(''+key+'','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer">✕</button></div>';
-      return'<div style="position:relative;width:calc(33% - .35rem);aspect-ratio:1;border-radius:8px;overflow:hidden"><img src="'+item.src+'" style="width:100%;height:100%;object-fit:cover"><button onclick="rmAlbumItem(''+key+'','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer">✕</button></div>';
-    }).join('')
-    +'</div>'
-    +'<div style="display:flex;gap:.5rem">'
-    +'<button onclick="addAlbumItem(''+key+'','image')" style="flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer">📷 Foto</button>'
-    +'<button onclick="addAlbumItem(''+key+'','video')" style="flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer">🎥 Video</button>'
-    +'</div>'
-    +'</div></div>';
-  document.body.insertAdjacentHTML('beforeend',html);
+
+  // Build popup using createElement
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem';
+  ov.id='albumPop';
+
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:20px;max-width:380px;width:100%;padding:1.65rem;max-height:85vh;overflow-y:auto';
+
+  // Header
+  var hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem';
+  var ttl=document.createElement('strong');
+  ttl.style.cssText='font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B';
+  ttl.textContent=icon+' '+title;
+  var cls=document.createElement('button');
+  cls.style.cssText='background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer';
+  cls.textContent='✕';
+  cls.onclick=function(){ov.remove()};
+  hdr.appendChild(ttl);hdr.appendChild(cls);
+
+  // Info text
+  var info=document.createElement('p');
+  info.style.cssText='font-size:.75rem;color:var(--txt3);margin-bottom:.85rem';
+  info.textContent=type==='priv'?'Solo vos podés ver este álbum.':'Visible en tu perfil público.';
+
+  // Items grid
+  var grid=document.createElement('div');
+  grid.style.cssText='display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem';
+  items.forEach(function(item,i){
+    var cell=document.createElement('div');
+    cell.style.cssText='position:relative;width:calc(33% - .35rem);aspect-ratio:1;border-radius:8px;overflow:hidden;'+(item.type==='video'?'background:#000':'');
+    if(item.type==='video'){
+      var v=document.createElement('video');v.src=item.src;v.style.cssText='width:100%;height:100%;object-fit:cover';cell.appendChild(v);
+    }else{
+      var im=document.createElement('img');im.src=item.src;im.style.cssText='width:100%;height:100%;object-fit:cover';cell.appendChild(im);
+    }
+    var rm=document.createElement('button');
+    rm.style.cssText='position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer';
+    rm.textContent='✕';
+    (function(idx){rm.onclick=function(){rmAlbumItem(key,idx);ov.remove()}})(i);
+    cell.appendChild(rm);
+    grid.appendChild(cell);
+  });
+
+  // Add buttons
+  var btns=document.createElement('div');btns.style.cssText='display:flex;gap:.5rem';
+  var bImg=document.createElement('button');
+  bImg.style.cssText='flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer';
+  bImg.textContent='📷 Foto';bImg.onclick=function(){addAlbumItem(key,'image')};
+  var bVid=document.createElement('button');
+  bVid.style.cssText='flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer';
+  bVid.textContent='🎥 Video';bVid.onclick=function(){addAlbumItem(key,'video')};
+  btns.appendChild(bImg);btns.appendChild(bVid);
+
+  box.appendChild(hdr);box.appendChild(info);box.appendChild(grid);box.appendChild(btns);
+  ov.appendChild(box);
+  document.body.appendChild(ov);
 }
+
 function addAlbumItem(key,type){
   var input=document.createElement('input');input.type='file';input.accept=type==='video'?'video/*':'image/*';
   input.onchange=function(){
@@ -1487,7 +1540,7 @@ function showSocial(){
     +'<div style="background:#fff;border-radius:20px;max-width:360px;width:100%;padding:1.65rem">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
     +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">🔗 Redes sociales</strong>'
-    +'<button onclick="closePopById('socPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
+    +'<button onclick="closePop(this)" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
     +'</div>'
     +['instagram','facebook','tiktok','linkedin','otra'].map(function(red){
       var label={'instagram':'📸 Instagram','facebook':'📘 Facebook','tiktok':'🎵 TikTok','linkedin':'💼 LinkedIn','otra':'🌐 Otra red'}[red]||red;
@@ -1512,27 +1565,461 @@ function saveSocial(){
 }
 
 // ── BLOCKED USERS ──
-function showBlocked(){
-  var bl=g(K.BL,[]);
-  var users=g(K.U,[]).filter(function(u){return bl.indexOf(u.id)!==-1});
-  if(!users.length){toast('No tenés personas bloqueadas.','ok');return}
-  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.7);display:flex;align-items:center;justify-content:center;padding:1.5rem" id="blPop">'
-    +'<div style="background:#fff;border-radius:20px;max-width:340px;width:100%;padding:1.75rem;max-height:80vh;overflow-y:auto">'
+
+function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
+function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);logout();toast('Cuenta eliminada.','w')}}
+function ensureChatPair(uid){
+  if(!CU||!uid)return;
+  var mc=g(kCh(CU.id),[]);if(mc.indexOf(uid)===-1){mc.push(uid);sv(kCh(CU.id),mc)}
+  var tc=g(kCh(uid),[]);if(tc.indexOf(CU.id)===-1){tc.push(CU.id);sv(kCh(uid),tc)}
+}
+function deleteChat(uid){
+  if(!CU||!uid)return;
+  if(!confirm('¿Eliminar esta conversación de tu lista?'))return;
+  var arr=g(kCh(CU.id),[]).filter(function(x){return x!==uid});sv(kCh(CU.id),arr);
+  localStorage.removeItem('fu_read_'+CU.id+'_'+uid);
+  toast('Conversación eliminada de tu lista.','ok');rChatList();checkUnread();
+}
+function holdDeleteAttrs(uid){
+  return ' oncontextmenu="event.preventDefault();deleteChat(\''+uid+'\');return false" ontouchstart="this._holdTimer=setTimeout(function(){deleteChat(\''+uid+'\')},650)" ontouchend="clearTimeout(this._holdTimer)" ontouchmove="clearTimeout(this._holdTimer)"';
+}
+function startChat(uid,unm){
+  if(!CU){openAuth('login');return}
+  CW={id:uid,name:unm};
+  // Mark as read
+  localStorage.setItem('fu_read_'+CU.id+'_'+uid,new Date().toISOString());
+  var badge=document.getElementById('chatBadge');if(badge)badge.style.display='none';
+  var cHAv=document.getElementById('cHAv');
+  var otherU=g(K.U,[]).filter(function(x){return x.id===uid})[0];
+  if(cHAv){
+    cHAv.innerHTML='';
+    if(otherU&&otherU.photo){
+      var img=document.createElement('img');img.src=otherU.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+      img.onerror=function(){cHAv.textContent=unm?unm[0]:'?'};
+      cHAv.appendChild(img);
+    }else{cHAv.textContent=unm?unm[0]:'?'}
+  }
+  document.getElementById('cHNm').textContent=e(unm||'Usuario');
+  rChatMsgs();goTo('chatwindow');
+}
+function rChatMsgs(){
+  if(!CU||!CW)return;
+  var msgs=g(kMs(CU.id,CW.id),[]);var cont=document.getElementById('chatMsgs');
+  if(!msgs.length){cont.innerHTML='<div style="text-align:center;color:var(--txt3);font-size:.84rem;padding:2rem;font-style:italic">Todavía no hay mensajes. ¡Escribí algo! 💬</div>';return}
+  cont.innerHTML=msgs.map(function(m){
+    var mine=m.from===CU.id,body='';
+    if(m.text)body+='<div>'+e(m.text)+'</div>';
+    if(m.photo)body+='<img class="chat-msg-img" src="'+m.photo+'" onclick="window.open(this.src,\'_blank\')">';
+    if(m.audio)body+='<audio controls src="'+m.audio+'"></audio>';
+    if(!body)body='<div></div>';
+    return '<div class="chat-msg '+(mine?'mine':'theirs')+'">'+body+'<div class="chat-msg-t">'+fmtT(m.at)+'</div></div>'
+  }).join('');
+  localStorage.setItem('fu_read_'+CU.id+'_'+CW.id,new Date().toISOString());
+  checkUnread();
+  cont.scrollTop=cont.scrollHeight;
+}
+function sendPhoto(input){
+  if(!CU||!CW)return;
+  var file=input.files[0];if(!file)return;
+  if(!file.type.match(/^image\//)){toast('Elegí una imagen válida','w');input.value='';return}
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=new Image();
+    img.onload=function(){
+      var max=900, w=img.width, h=img.height;
+      if(w>h&&w>max){h=Math.round(h*max/w);w=max}else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}
+      var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      var ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
+      var data=canvas.toDataURL('image/jpeg',0.72);
+      var key=kMs(CU.id,CW.id),msgs=g(key,[]);
+      msgs.push({from:CU.id,to:CW.id,text:'',photo:data,at:new Date().toISOString()});
+      sv(key,msgs);ensureChatPair(CW.id);input.value='';rChatMsgs();checkUnread();
+    };
+    img.onerror=function(){toast('No pude leer esa imagen','w');input.value=''}
+    img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+function sendMsg(){
+  if(!CU||!CW)return;var input=document.getElementById('chatIn'),text=input.value.trim();if(!text)return;
+  var key=kMs(CU.id,CW.id),msgs=g(key,[]);
+  msgs.push({from:CU.id,to:CW.id,text:text,at:new Date().toISOString()});
+  sv(key,msgs);ensureChatPair(CW.id);input.value='';rChatMsgs();checkUnread();
+}
+function rChatList(){
+  if(!CU){goTo('home');return}
+  var chats=g(kCh(CU.id),[]).filter(function(uid){return g(kMs(CU.id,uid),[]).length>0});var users=normalizeUsers();var cont=document.getElementById('chatLC');
+  if(!chats.length){cont.innerHTML='<div style="text-align:center;padding:3rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.75rem">💬</div><p style="font-size:.92rem">Todavía no tenés conversaciones.<br>Buscá un perfil y tocá 💬</p></div>';return}
+  cont.innerHTML='<div class="chat-list">'+chats.map(function(uid){
+    var other=users.filter(function(u){return u.id===uid})[0];if(!other)return'';
+    var msgs=g(kMs(CU.id,uid),[]),last=msgs.length?msgs[msgs.length-1]:null;
+    var readKey='fu_read_'+CU.id+'_'+uid,lastRead=localStorage.getItem(readKey)||'';
+    var unread=last&&last.from!==CU.id&&last.at>lastRead;
+    var prev='Sin mensajes aún';
+    if(last){prev=last.photo?'📷 Foto':(last.audio?'🎤 Audio':e(last.text||''))}
+    return '<div class="chat-item" onclick="startChat(\''+uid+'\',\''+e(other.name||other.email)+'\')" '+holdDeleteAttrs(uid)+'>'
+      +'<div class="chat-av">'+(other.photo?'<img src="'+e(other.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.textContent=\''+e(other.name?other.name[0]:'?')+'\'">':e(other.name?other.name[0]:'?'))+'</div>'
+      +'<div class="chat-info"><div class="chat-nm">'+e(other.name||other.email)+(unread?'<span class="chat-unread-sm"></span>':'')+'</div><div class="chat-pv">'+prev+'</div></div>'
+      +(last?'<div class="chat-tm">'+fmtT(last.at)+'</div>':'')+(unread?'<div class="chat-unread"></div>':'')+'</div>'
+  }).join('')+'</div>';
+  checkUnread();
+}
+function fmtT(iso){if(!iso)return'';var d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return'Ahora';if(diff<3600000)return Math.floor(diff/60000)+'m';if(diff<86400000)return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');return d.getDate()+'/'+(d.getMonth()+1)}
+function blkU(id){var bl=g(K.BL,[]);if(bl.indexOf(id)===-1){bl.push(id);sv(K.BL,bl)}var c=document.getElementById('card-'+id);if(c){c.style.transition='all .3s';c.style.opacity='0';c.style.transform='scale(.95)';setTimeout(function(){c.remove()},300)}toast('Perfil bloqueado.','w')}
+function loadProfileForm(){
+  clearReg();
+  var emailEl=document.getElementById('rE');
+  if(emailEl){emailEl.readOnly=!!CU;emailEl.style.opacity=CU?'.72':'1';emailEl.style.background=CU?'#EEF7F3':'';}
+  if(!CU){return}
+  refreshCU();
+  var set=function(id,val){var el=document.getElementById(id);if(el)el.value=(val||'')};
+  set('rN',CU.name||'');set('rA',CU.age||'');set('rC',CU.city||'');set('rG',CU.gender||'');set('rPref',CU.interestedIn||CU.pref||'todos');set('rE',CU.email||'');set('rD',CU.desc||CU.description||'');set('rI',CU.int||CU.interests||'');set('rV',CU.video||'');
+  if(CU.lat)set('rLat',CU.lat);if(CU.lng)set('rLng',CU.lng);
+  document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){
+    var arr=c.name==='lk'?(CU.looking||[]):(CU.plans||[]);c.checked=arr.indexOf(c.value)!==-1;
+  });
+  if(CU.photo){
+    window._photo=CU.photo;
+    var pp=document.getElementById('phprev'),im=document.getElementById('phimg');
+    if(pp&&im){im.src=CU.photo;pp.style.display='block'}
+    if(/^https?:/i.test(CU.photo)){set('rP',CU.photo)}
+  }
+}
+function resetTestData(){
+  if(!confirm('Esto borra cuentas, perfiles, chats, Fortis y pruebas guardadas en ESTE celular. ¿Continuar?'))return;
+  Object.keys(localStorage).forEach(function(k){if(k.indexOf('fu_')===0)localStorage.removeItem(k)});
+  CU=null;CW=null;location.reload();
+}
+function saveProfile(){
+  var ee=document.getElementById('rErr'),oe=document.getElementById('rOk');ee.style.display='none';oe.style.display='none';
+  var name=fv('rN'),age=parseInt(fv('rA'),10),city=fv('rC'),gender=fv('rG'),pref=fv('rPref')||'todos',photo=window._photo||fv('rP'),video=window._video||fv('rV'),desc=fv('rD'),int=fv('rI');
+  var looking=cv('lk'),plans=cv('pl'),lat=fv('rLat'),lng=fv('rLng');
+  function showE(msg){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'})}
+  if(!name||!city||!gender){showE('Completá nombre, ciudad y género. La descripción es opcional.');return}
+  if(!age||isNaN(age)||age<40){showE('FortyUp es solo para mayores de 40 años.');return}
+  var users=normalizeUsers();
+  if(CU){
+    refreshCU();users=normalizeUsers();
+    users=users.map(function(u){
+      if(u.id!==CU.id)return u;
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo,video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+    });
+    sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
+    oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');
+  }else{
+    var email=normEmail(fv('rE'));
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showE('Ingresá un email válido.');return}
+    if(users.some(function(u){return!u.is&&normEmail(u.email)===email})){showE('Ya existe un perfil con ese email. Iniciá sesión con esa cuenta.');return}
+    var nu={id:newId(),is:0,name:name,age:age,city:city,gender:gender,interestedIn:pref,email:email,pass:'',photo:photo||'',video:video||'',desc:desc,int:int,looking:looking,plans:plans,lat:lat?parseFloat(lat):null,lng:lng?parseFloat(lng):null,createdAt:new Date().toISOString(),superDiamonds:1};
+    users.push(nu);sv(K.U,users);upCount();oe.textContent='✦ ¡Perfil creado! Redirigiendo...';oe.style.display='block';
+    clearReg();setTimeout(function(){goTo('profiles')},1800);
+  }
+}
+function clearReg(){
+  window._photo=null;
+  ['rN','rA','rC','rE','rP','rV','rD','rI'].forEach(function(id){var el=document.getElementById(id);if(el){el.value='';if(id==='rE'){el.readOnly=false;el.style.opacity='1';el.style.background=''}}});
+  var rg=document.getElementById('rG');if(rg)rg.value='';var rp=document.getElementById('rPref');if(rp)rp.value='todos';
+  document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){c.checked=false});
+  var pp=document.getElementById('phprev');if(pp)pp.style.display='none';
+  var pf=document.getElementById('rPF');if(pf)pf.value='';var vf=document.getElementById('rVF');if(vf)vf.value='';
+  var gs=document.getElementById('gpsSt');if(gs)gs.textContent='';
+  var rl=document.getElementById('rLat');if(rl)rl.value='';var rn=document.getElementById('rLng');if(rn)rn.value='';
+  window._photo=null;window._video=null;
+}
+function openMod(id){
+  var u=g(K.U,[]).filter(function(x){return x.id===id})[0];if(!u)return;
+  var forti=CU?g(kF(CU.id),[]).some(function(f){return f.t===id&&isNormalFortiActive(f)}):false;
+  var fav=CU?g(kFv(CU.id),[]).indexOf(id)!==-1:false;
+  var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
+  var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
+  var desc=u.desc||u.description||'';var int=u.int||u.interests||'';
+  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
+  document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeMod(){document.getElementById('mOv').classList.remove('open');document.body.style.overflow=''}
+function hMov(e){if(e.target===document.getElementById('mOv'))closeMod()}
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeMod()});
+function rAdmin(){
+  var users=g(K.U,[]);var tf=0,tfv=0;
+  users.forEach(function(u){tf+=g(kF(u.id),[]).length;tfv+=g(kFv(u.id),[]).length});
+  document.getElementById('aU').textContent=users.length;
+  document.getElementById('aF').textContent=tf;
+  document.getElementById('aFv').textContent=tfv;
+  document.getElementById('aMs').textContent=0;
+  var list=document.getElementById('admList');list.innerHTML='';
+  if(!users.length){list.innerHTML='<div style="padding:2rem;text-align:center;color:var(--txt3)">Sin usuarios aún.</div>';return}
+  users.forEach(function(u){var row=document.createElement('div');row.className='adm-row';row.innerHTML='<div><div class="adm-nm">'+e(u.name||'(sin nombre)')+', '+(u.age||'?')+' · '+e(u.city||'?')+'</div><div class="adm-dt">'+e(u.email||'—')+'</div></div><span class="abadge '+(u.is?'ab-s':'ab-r')+'">'+(u.is?'★ Muestra':'✓ Real')+'</span>';list.appendChild(row)});
+}
+function getGPS(){
+  var st=document.getElementById('gpsSt');
+  if(!navigator.geolocation){if(st)st.textContent='GPS no disponible.';return}
+  if(st)st.textContent='⏳ Obteniendo ubicación...';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude,lng=pos.coords.longitude;
+    var lE=document.getElementById('rLat'),gE=document.getElementById('rLng');if(lE)lE.value=lat;if(gE)gE.value=lng;
+    fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=es').then(function(r){return r.json()}).then(function(d){var city=d.address.city||d.address.town||d.address.village||'';var cE=document.getElementById('rC');if(city&&cE)cE.value=city+(d.address.country?', '+d.address.country:'');if(st)st.textContent='✓ Ubicación detectada: '+city}).catch(function(){if(st)st.textContent='✓ Coordenadas guardadas'});
+  },function(){if(st)st.textContent='No se pudo obtener ubicación.'});
+}
+function getMyLoc(){if(CU&&CU.lat&&CU.lng){MLAT=CU.lat;MLNG=CU.lng}if(navigator.geolocation)navigator.geolocation.getCurrentPosition(function(p){MLAT=p.coords.latitude;MLNG=p.coords.longitude;if(document.getElementById('page-profiles').classList.contains('active'))rProfiles()},function(){},{timeout:5000})}
+function cDist(a,b,c,d){var R=6371,dL=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;var x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dl/2)*Math.sin(dl/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function openMedia(id,type){
+  var u=g(K.U,[]).filter(function(x){return x.id===id})[0];if(!u)return;
+  var src=type==='video'?u.video:u.photo;
+  if(!src){toast(type==='video'?'Este perfil todavía no tiene video.':'Este perfil todavía no tiene foto.','w');return}
+  var html='<div class="photo-view"><button class="m-cl" onclick="closeMod()">✕</button>'+(type==='video'?'<video src="'+e(src)+'" controls playsinline></video>':'<img src="'+e(src)+'" alt="'+e(u.name)+'">')+'<div class="photo-view-title">'+e(u.name||'Perfil')+'</div></div>';
+  document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
+}
+function handleVideoFile(input){
+  var file=input.files[0];if(!file)return;
+  var st=document.getElementById('vidSt');
+  if(file.size>4*1024*1024){if(st)st.textContent='El video pesa mucho para esta versión de prueba. Usá uno corto o una URL.';toast('Video muy pesado para guardar acá.','w');input.value='';return}
+  var reader=new FileReader();reader.onload=function(ev){window._video=ev.target.result;if(st)st.textContent='✓ Video cargado';toast('Video cargado ✓','ok')};reader.readAsDataURL(file);
+}
+function prevVideo(url){var st=document.getElementById('vidSt');if(st)st.textContent=url?'✓ URL de video cargada':'Tip: para esta versión de prueba conviene usar videos cortos o URL.'}
+function handleFile(input){var file=input.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){window._photo=ev.target.result;var w=document.getElementById('phprev'),img=document.getElementById('phimg');if(img)img.src=ev.target.result;if(w)w.style.display='block';toast('Foto cargada ✓','ok')};reader.readAsDataURL(file)}
+function prevPhoto(url){var w=document.getElementById('phprev'),img=document.getElementById('phimg');if(!w||!img)return;if(!url||!url.startsWith('http')){w.style.display='none';return}img.src=url;img.onerror=function(){w.style.display='none'};img.onload=function(){w.style.display='block'}}
+function toast(msg,type){var w=document.getElementById('tw');var t=document.createElement('div');t.className='toast t-'+(type||'ok');t.textContent=msg;w.appendChild(t);setTimeout(function(){t.classList.add('t-out');t.addEventListener('animationend',function(){t.remove()})},3200)}
+// Age verification
+
+
+// ── AUDIO RECORDING ──
+var mediaRec=null,audioChunks=[],isRec=false;
+function toggleAudio(){
+  if(!CU||!CW)return;
+  if(!isRec){
+    if(!navigator.mediaDevices||!window.MediaRecorder){toast('Tu navegador no permite grabar audio acá.','w');return}
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      mediaRec=new MediaRecorder(stream);
+      audioChunks=[];
+      mediaRec.ondataavailable=function(e){audioChunks.push(e.data)};
+      mediaRec.onstop=function(){
+        var blob=new Blob(audioChunks,{type:'audio/webm'});
+        var reader=new FileReader();
+        reader.onload=function(ev){
+          var key=kMs(CU.id,CW.id),msgs=g(key,[]);
+          msgs.push({from:CU.id,to:CW.id,text:'',audio:ev.target.result,at:new Date().toISOString()});
+          sv(key,msgs);ensureChatPair(CW.id);rChatMsgs();checkUnread();
+        };reader.readAsDataURL(blob);
+        stream.getTracks().forEach(function(t){t.stop()});
+      };
+      mediaRec.start();isRec=true;
+      var btn=document.getElementById('audioBtn');
+      if(btn){btn.classList.add('recording');btn.title='Detener grabación'}
+    }).catch(function(){toast('No se pudo acceder al micrófono.','w')});
+  }else{
+    if(mediaRec)mediaRec.stop();
+    isRec=false;
+    var btn=document.getElementById('audioBtn');
+    if(btn){btn.classList.remove('recording');btn.title='Grabar audio'}
+  }
+}
+
+// ── UNREAD BADGE ──
+function checkUnread(){
+  var badge=document.getElementById('chatBadge');
+  if(!CU){if(badge)badge.style.display='none';return;}
+  var chats=g(kCh(CU.id),[]).filter(function(uid){return g(kMs(CU.id,uid),[]).length>0});
+  var hasNew=false;
+  chats.forEach(function(uid){
+    var msgs=g(kMs(CU.id,uid),[]);
+    if(msgs.length){
+      var last=msgs[msgs.length-1];
+      if(last.from!==CU.id){
+        var readKey='fu_read_'+CU.id+'_'+uid;
+        var lastRead=localStorage.getItem(readKey)||'';
+        if(last.at>lastRead)hasNew=true;
+      }
+    }
+  });
+  if(badge)badge.style.display=hasNew?'block':'none';
+}
+
+function cuChat(id,nm){if(CU)startChat(id,nm);else openAuth('login')}
+function cuSendForti(id){if(CU)sendForti(id);else openAuth('login')}
+function cuTogFav(id){if(CU)togFav(id);else openAuth('login')}
+function cuBlkU(id){if(CU)blkU(id);else openAuth('login')}
+function bnMe(){if(CU){goTo('myprofile');rMyP();setBn('me')}else openAuth('login')}
+
+
+function enhanceRegisterUI(){
+  var page=document.getElementById('page-register');
+  if(!page||page.querySelector('.reg-steps'))return;
+  var inner=page.querySelector('.inner');
+  var header=inner.querySelector('div[style*="margin-bottom"]');
+  var steps=document.createElement('div');
+  steps.className='reg-steps';
+  steps.innerHTML='<div class="reg-step done"><div class="reg-dot">✓</div><span>Cuenta</span></div><div class="reg-step active"><div class="reg-dot">2</div><span>Gustos</span></div><div class="reg-step"><div class="reg-dot">3</div><span>Sobre vos</span></div><div class="reg-step"><div class="reg-dot">4</div><span>Fotos</span></div>';
+  if(header&&header.parentNode)header.parentNode.insertBefore(steps,header.nextSibling);
+}
+
+
+function showSuperDiamPop(fromId){
+  var pop=document.getElementById('superDiamPop');
+  if(!pop)return;
+  pop.style.display='flex';
+  // Rain effect
+  var rain=document.getElementById('superRain');rain.innerHTML='';
+  for(var i=0;i<22;i++){
+    var span=document.createElement('span');
+    span.textContent='FortyUp';
+    span.style.cssText='position:absolute;font-family:Playfair Display,serif;font-weight:800;font-size:'+(0.65+Math.random()*.7)+'rem;color:rgba(242,183,5,'+(0.25+Math.random()*.5)+');left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation:rainFall '+(2+Math.random()*3)+'s linear infinite;animation-delay:'+(Math.random()*3)+'s';
+    rain.appendChild(span);
+  }
+  // Who btn
+  var btn=document.getElementById('superWhoBtn');
+  if(btn){
+    btn.onclick=function(){
+      closeSuperDiam();
+      if(fromId){openMod(fromId)}
+    };
+  }
+}
+function closeSuperDiam(){
+  var pop=document.getElementById('superDiamPop');
+  if(pop)pop.style.display='none';
+}
+
+
+function changePass(){
+  if(!CU)return;
+  var np=prompt('Ingresá tu nueva contraseña (mínimo 6 caracteres):');
+  if(!np){return}
+  if(np.length<6){toast('La contraseña debe tener al menos 6 caracteres.','w');return}
+  var users=g(K.U,[]);
+  users=users.map(function(u){if(u.id!==CU.id)return u;return Object.assign({},u,{pass:np})});
+  sv(K.U,users);refreshCU();
+  toast('✓ Contraseña actualizada','ok');
+}
+
+function delAccount(){
+  if(!confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.'))return;
+  var users=g(K.U,[]).filter(function(u){return u.id!==CU.id});
+  sv(K.U,users);logout();toast('Cuenta eliminada.','w');
+}
+
+
+// ── ALBUMS ──
+
+function closePopById(id){var el=document.getElementById(id);if(el)el.remove()}
+
+function showAlbum(type){
+  if(!CU)return;
+  var key='fu_album_'+type+'_'+CU.id;
+  var items=g(key,[]);
+  var title=type==='pub'?'Álbum público':'Álbum privado';
+  var icon=type==='pub'?'🖼':'🔐';
+
+  // Build popup using createElement
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem';
+  ov.id='albumPop';
+
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:20px;max-width:380px;width:100%;padding:1.65rem;max-height:85vh;overflow-y:auto';
+
+  // Header
+  var hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem';
+  var ttl=document.createElement('strong');
+  ttl.style.cssText='font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B';
+  ttl.textContent=icon+' '+title;
+  var cls=document.createElement('button');
+  cls.style.cssText='background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer';
+  cls.textContent='✕';
+  cls.onclick=function(){ov.remove()};
+  hdr.appendChild(ttl);hdr.appendChild(cls);
+
+  // Info text
+  var info=document.createElement('p');
+  info.style.cssText='font-size:.75rem;color:var(--txt3);margin-bottom:.85rem';
+  info.textContent=type==='priv'?'Solo vos podés ver este álbum.':'Visible en tu perfil público.';
+
+  // Items grid
+  var grid=document.createElement('div');
+  grid.style.cssText='display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem';
+  items.forEach(function(item,i){
+    var cell=document.createElement('div');
+    cell.style.cssText='position:relative;width:calc(33% - .35rem);aspect-ratio:1;border-radius:8px;overflow:hidden;'+(item.type==='video'?'background:#000':'');
+    if(item.type==='video'){
+      var v=document.createElement('video');v.src=item.src;v.style.cssText='width:100%;height:100%;object-fit:cover';cell.appendChild(v);
+    }else{
+      var im=document.createElement('img');im.src=item.src;im.style.cssText='width:100%;height:100%;object-fit:cover';cell.appendChild(im);
+    }
+    var rm=document.createElement('button');
+    rm.style.cssText='position:absolute;top:2px;right:2px;background:rgba(220,38,38,.8);color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer';
+    rm.textContent='✕';
+    (function(idx){rm.onclick=function(){rmAlbumItem(key,idx);ov.remove()}})(i);
+    cell.appendChild(rm);
+    grid.appendChild(cell);
+  });
+
+  // Add buttons
+  var btns=document.createElement('div');btns.style.cssText='display:flex;gap:.5rem';
+  var bImg=document.createElement('button');
+  bImg.style.cssText='flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer';
+  bImg.textContent='📷 Foto';bImg.onclick=function(){addAlbumItem(key,'image')};
+  var bVid=document.createElement('button');
+  bVid.style.cssText='flex:1;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.78rem;font-weight:800;color:var(--g1);cursor:pointer';
+  bVid.textContent='🎥 Video';bVid.onclick=function(){addAlbumItem(key,'video')};
+  btns.appendChild(bImg);btns.appendChild(bVid);
+
+  box.appendChild(hdr);box.appendChild(info);box.appendChild(grid);box.appendChild(btns);
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+}
+
+function addAlbumItem(key,type){
+  var input=document.createElement('input');input.type='file';input.accept=type==='video'?'video/*':'image/*';
+  input.onchange=function(){
+    var file=input.files[0];if(!file)return;
+    if(file.size>5*1024*1024){toast('Archivo demasiado grande (máx 5MB)','w');return}
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var items=g(key,[]);items.push({type:type,src:ev.target.result,at:new Date().toISOString()});sv(key,items);
+      var pop=document.getElementById('albumPop');if(pop)pop.remove();
+      toast('✓ Agregado al álbum','ok');
+    };reader.readAsDataURL(file);
+  };input.click();
+}
+function rmAlbumItem(key,idx){
+  var items=g(key,[]);items.splice(idx,1);sv(key,items);
+  var pop=document.getElementById('albumPop');if(pop)pop.remove();
+  toast('Eliminado del álbum.','ok');
+}
+
+// ── REDES SOCIALES ──
+function showSocial(){
+  if(!CU)return;
+  var soc=CU.social||{};
+  var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem" id="socPop">'
+    +'<div style="background:#fff;border-radius:20px;max-width:360px;width:100%;padding:1.65rem">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
-    +'<strong style="font-family:Playfair Display,serif;font-size:1.1rem;color:#064E3B">🚫 Bloqueados</strong>'
-    +'<button onclick="closePopById('blPop')" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.85rem">✕</button>'
+    +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">🔗 Redes sociales</strong>'
+    +'<button onclick="closePop(this)" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
     +'</div>'
-    +users.map(function(u){
-      var av=u.photo?'<img src="'+e(u.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':e(u.name?u.name[0]:'?');
-      return'<div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--bg3)">'
-        +'<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden">'+av+'</div>'
-        +'<div style="flex:1"><div style="font-weight:700;font-size:.88rem">'+e(u.name||'Usuario')+'</div><div style="font-size:.74rem;color:var(--txt3)">'+e(u.city||'')+'</div></div>'
-        +'<button onclick="unblockU(''+u.id+'')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.3rem .75rem;font-size:.74rem;font-weight:800;color:var(--g1);cursor:pointer">Desbloquear</button>'
-        +'</div>';
+    +['instagram','facebook','tiktok','linkedin','otra'].map(function(red){
+      var label={'instagram':'📸 Instagram','facebook':'📘 Facebook','tiktok':'🎵 TikTok','linkedin':'💼 LinkedIn','otra':'🌐 Otra red'}[red]||red;
+      return'<div style="margin-bottom:.65rem"><label style="font-size:.72rem;font-weight:800;color:var(--txt2);display:block;margin-bottom:.22rem">'+label+'</label>'
+        +'<input id="soc_'+red+'" type="text" value="'+(soc[red]||'')+'" placeholder="@usuario o URL" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.58rem .85rem;font-size:.85rem;font-family:Nunito,sans-serif"></div>';
     }).join('')
+    +'<button onclick="saveSocial()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.75rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Guardar</button>'
     +'</div></div>';
   document.body.insertAdjacentHTML('beforeend',html);
 }
+function saveSocial(){
+  if(!CU)return;
+  var soc={};
+  ['instagram','facebook','tiktok','linkedin','otra'].forEach(function(red){
+    var el=document.getElementById('soc_'+red);if(el&&el.value.trim())soc[red]=el.value.trim();
+  });
+  var users=g(K.U,[]);
+  users=users.map(function(u){if(u.id!==CU.id)return u;return Object.assign({},u,{social:soc})});
+  sv(K.U,users);refreshCU();
+  var pop=document.getElementById('socPop');if(pop)pop.remove();
+  toast('✓ Redes sociales guardadas','ok');
+}
+
+// ── BLOCKED USERS ──
+
 function unblockU(id){
   var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);
   var pop=document.getElementById('blPop');if(pop)pop.remove();
@@ -1560,33 +2047,6 @@ function checkSuperDiamNotif(){
 }
 init();goTo('home');setInterval(checkUnread,5000);
 </script>
-
-<!-- AGE POPUP -->
-<div id="agePop" style="position:fixed;inset:0;z-index:9999;background:rgba(6,20,16,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.5rem">
-  <div style="background:#fff;border-radius:24px;max-width:340px;width:100%;padding:2rem;text-align:center;box-shadow:0 32px 80px rgba(6,78,59,.35)">
-    <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
-    <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
-    <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
-    <button onclick="closeAgePop()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
-    <button onclick="window.history.back()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
-  </div>
-</div>
-
-
-<!-- SUPER DIAMANTE POPUP -->
-<div id="superDiamPop" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(6,20,16,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1.5rem;flex-direction:column">
-  <div id="superRain" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
-  <div style="position:relative;z-index:2;background:#fff;border-radius:24px;max-width:340px;width:100%;padding:2.2rem;text-align:center;box-shadow:0 32px 80px rgba(6,78,59,.35)">
-    <div style="font-size:.75rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--g2);margin-bottom:.5rem">Para vos</div>
-    <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.4rem;margin-bottom:.75rem">Te enviaron un<br>Súper Diamante 💎</h2>
-    <div style="display:flex;align-items:center;justify-content:center;margin:1.2rem 0">
-      <div style="width:70px;height:70px;background:linear-gradient(135deg,#60a5fa,#2563eb);transform:rotate(45deg);border-radius:8px;box-shadow:0 8px 32px rgba(96,165,250,.55)"></div>
-    </div>
-    <p style="font-size:.85rem;color:#6B7C76;margin-bottom:1.4rem">Alguien quiso destacarte de manera especial.</p>
-    <button id="superWhoBtn" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.6rem">Mirá quién fue →</button>
-    <button onclick="closeSuperDiam()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.6rem;font-size:.82rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">Cerrar</button>
-  </div>
-</div>
 
 </body>
 </html>
