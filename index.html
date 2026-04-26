@@ -334,6 +334,84 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .chat-msg audio{max-width:180px;height:32px;margin-top:.35rem}
 .chat-unread{width:15px;height:15px;background:linear-gradient(135deg,var(--gold),#ffd75a);transform:rotate(45deg);border:2px solid #fff;box-shadow:0 1px 6px rgba(242,183,5,.55);border-radius:3px;flex-shrink:0}
 .chat-unread-sm{display:inline-block;width:9px;height:9px;background:var(--gold);transform:rotate(45deg);border-radius:2px;margin-left:.32rem;box-shadow:0 1px 5px rgba(242,183,5,.55)}
+
+/* ===== FortyUp V3 - retoques visuales Sebas ===== */
+:root{--cream:#FFFDF7;--soft:#F4FBF7;--dark:#063D33;--emerald:#008A63;--emerald2:#10B981;--yellow:#F2B705;--yellowSoft:#FFF3BF}
+.hero{background:
+  radial-gradient(circle at 50% 68%,rgba(16,185,129,.16),transparent 26%),
+  linear-gradient(180deg,#FFFDF7 0%,#F7FEFA 58%,#063D33 58%,#063D33 100%);
+}
+.hero-in{max-width:980px}
+.h-title{font-size:clamp(3.4rem,9vw,6rem)}
+.h-sub{font-size:clamp(1.7rem,4.5vw,3rem);text-align:inherit}
+.hcard{border:0;box-shadow:0 18px 44px rgba(6,78,59,.18)}
+@media(max-width:750px){
+  .nav{background:#F5FFF9}
+  .nav-in{height:74px}
+  .nav-logo{font-size:2rem}
+  .btn-join{padding:.62rem 1.25rem}
+  .hero{padding:2.2rem 1.15rem 0;min-height:calc(100vh - 74px);align-items:flex-start;border-radius:0 0 36px 36px}
+  .hero-in{display:block;text-align:center}
+  .hero-left{padding-top:.6rem}
+  .h-pill{font-size:.78rem;background:#fff;border-color:#CDE9DD;box-shadow:0 8px 24px rgba(6,78,59,.05)}
+  .h-p{font-size:1rem;line-height:1.75;margin:1.25rem auto .85rem}
+  .h-tag{font-family:'Nunito',sans-serif;font-weight:800;color:#9B7610}
+  .h-btns{margin-top:2.8rem;padding-top:4.4rem;position:relative;display:block}
+  .h-btns:before{content:'💎';position:absolute;top:-2.4rem;left:50%;transform:translateX(-50%);font-size:6.5rem;filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))}
+  .h-btns:after{content:'+';position:absolute;top:4.15rem;left:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#008A63,#064E3B);color:#fff;border:8px solid #fff;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:300;box-shadow:0 10px 32px rgba(6,78,59,.35)}
+  .h-btns .btn{width:100%;justify-content:center;margin:.5rem 0}
+  .h-btns .btn-p{margin-top:5.2rem;background:transparent;box-shadow:none;font-size:1.35rem!important;padding:.45rem!important}
+  .h-btns .btn-p:before{content:'Unite a FortyUp';display:block;color:#fff;font-weight:900}
+  .h-btns .btn-p{font-size:0!important}
+  .h-btns .btn-o{border-color:#61C99B;color:#8FE2BC;background:transparent;font-size:1.1rem!important}
+  .h-proof,.hcard,.sec-pil,.sec-st,.sec-cta,.footer{display:none}
+}
+.pcard-acts{display:grid;grid-template-columns:1fr auto auto auto auto;align-items:center}
+.pa-forti{background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;box-shadow:0 3px 12px rgba(242,183,5,.32)}
+.pa-forti.sent{background:#FFF3BF;color:#7c5500;border:1px solid #FDE68A}
+.pa-super{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 30% 20%,#fff7b0,#F2B705 42%,#cc8f00 100%);color:#064E3B;border:2px solid #fff;box-shadow:0 6px 18px rgba(242,183,5,.45);font-size:1.12rem;font-weight:900;display:flex;align-items:center;justify-content:center;transition:.2s}
+.pa-super:hover{transform:translateY(-1px) scale(1.07)}
+.pa-super.used{filter:grayscale(.45);opacity:.65}
+.super-pill{display:inline-flex;align-items:center;gap:.35rem;background:#FFFBEB;border:1px solid #FDE68A;color:#7c5500;border-radius:50px;padding:.18rem .52rem;font-size:.68rem;font-weight:900;margin-left:.3rem}
+.chat-win{height:calc(100vh - 152px);max-height:none}
+.chat-msgs{background:#F3FFF8;padding:1rem .9rem}
+.chat-msg{max-width:78%;box-shadow:0 6px 18px rgba(6,78,59,.06)}
+.chat-msg.mine{background:linear-gradient(135deg,#007A5A,#10B981);color:#fff;align-self:flex-end;border-radius:18px 18px 4px 18px;margin-left:auto}
+.chat-msg.theirs{background:linear-gradient(135deg,#FFF7CC,#FDE68A);color:#664800;align-self:flex-start;border:1.5px solid #F7D767;border-radius:18px 18px 18px 4px;margin-right:auto}
+.chat-msg.mine audio{filter:none}
+.chat-msg.theirs audio{filter:sepia(.15) saturate(1.1)}
+.chat-msg-img{max-width:min(230px,62vw);border-radius:18px;border:2px solid rgba(255,255,255,.55)}
+.chat-in-a{display:grid;grid-template-columns:42px 1fr 42px 46px;align-items:center;gap:.45rem;padding:.65rem .8rem;background:#fff;border-radius:0 0 24px 24px}
+.chat-photo-btn,.chat-audio-btn{width:42px;height:42px;border-radius:50%;background:#fff;border:1.5px solid #CDE9DD;font-size:1.12rem}
+.chat-in{height:44px;padding:.55rem 1rem;border-radius:50px;background:#F0FDF8}
+.chat-sd{width:46px;height:46px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-size:1rem;background:linear-gradient(135deg,#007A5A,#064E3B);box-shadow:0 8px 18px rgba(6,78,59,.25)}
+.chat-sd:hover{transform:scale(1.05)}
+@media(max-width:480px){
+  .chat-win{height:calc(100vh - 145px)}
+  .chat-in-a{grid-template-columns:40px minmax(0,1fr) 40px 44px;padding:.55rem .55rem}
+  .chat-photo-btn,.chat-audio-btn{width:40px;height:40px}
+  .chat-sd{width:44px;height:44px}
+}
+.myp-hdr{background:
+  radial-gradient(circle at 82% 35%,rgba(242,183,5,.22),transparent 24%),
+  linear-gradient(135deg,#064E3B,#007A5A);padding:1.6rem;border-radius:28px}
+.myp-hdr::after{font-size:5rem;opacity:.9;right:1.4rem;color:#F2B705;filter:drop-shadow(0 8px 12px rgba(0,0,0,.15))}
+.myp-card{border-radius:24px;background:linear-gradient(135deg,#F5FFF9,#fff)}
+.myp-card-g{background:linear-gradient(135deg,#FFFBEB,#FFF7D6)}
+.cfg-ico{background:#E6F8EF;color:#007A5A}
+.reg-steps{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin:.6rem 0 1.6rem}
+.reg-step{display:flex;flex-direction:column;align-items:center;gap:.25rem;color:#7B8E88;font-size:.68rem;font-weight:800;flex:1;position:relative}
+.reg-step:not(:last-child):after{content:'';position:absolute;top:16px;left:58%;right:-42%;height:3px;background:#DDE8E3;z-index:0}
+.reg-dot{width:32px;height:32px;border-radius:50%;background:#EDEFEF;display:flex;align-items:center;justify-content:center;color:#6B7C76;position:relative;z-index:1}
+.reg-step.done .reg-dot,.reg-step.active .reg-dot{background:linear-gradient(135deg,#009667,#064E3B);color:#fff}
+.reg-step.done:after{background:#009667}
+#page-register .pg-tit{font-size:2.3rem;color:#064E3B}
+#page-register .fcard{border-radius:28px;box-shadow:0 18px 50px rgba(6,78,59,.1);border-color:#E4EFEA}
+#page-register .fcard:before{content:'💎';display:block;text-align:center;font-size:3.8rem;margin-bottom:.2rem;filter:drop-shadow(0 10px 18px rgba(242,183,5,.25))}
+#page-register .fsec{font-size:.8rem;color:#064E3B;border:0;margin-top:1.1rem}
+.chip{border-radius:16px;padding:.72rem 1rem;background:#fff}
+.chip:has(input:checked){background:#F0FDF8;border-color:#009667}
+
 </style>
 </head>
 <body>
@@ -560,7 +638,7 @@ function init(){
   sv(K.U,u);
   var sess=g(K.S,null);
   if(sess){var found=g(K.U,[]).filter(function(x){return x.id===sess.id})[0];if(found)CU=found}
-  upNav();upCount();getMyLoc();checkUnread();
+  upNav();upCount();getMyLoc();checkUnread();enhanceRegisterUI();
 }
 function upCount(){
   var n=g(K.U,[]).length;
@@ -573,6 +651,7 @@ function goTo(pg){
   if(pg==='admin')rAdmin();
   if(pg==='favorites')rFavs();
   if(pg==='chats')rChatList();
+  if(pg==='register')enhanceRegisterUI();
 }
 function toggleNav(){document.getElementById('hbg').classList.toggle('open');document.getElementById('drawer').classList.toggle('open')}
 function setBn(n){document.querySelectorAll('.bn').forEach(function(b){b.classList.remove('active')});var el=document.getElementById('bn-'+n);if(el)el.classList.add('active')}
@@ -661,12 +740,13 @@ function rProfiles(){
   if(MLAT&&MLNG){users.sort(function(a,b){var da=a.lat&&a.lng?cDist(MLAT,MLNG,a.lat,a.lng):9999;var db=b.lat&&b.lng?cDist(MLAT,MLNG,b.lat,b.lng):9999;return da-db})}
   if(!users.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.7rem">🌿</div><p>Todavía no hay perfiles.</p></div>';return}
   users.forEach(function(u,i){
-    var mF=CU?g(kF(CU.id),[]):[];var forti=mF.some(function(f){return f.t===u.id});
+    var sends=CU?g(kF(CU.id),[]):[], normal=sends.some(function(f){return f.t===u.id&&(!f.type||f.type==='normal')});
+    var superSent=sends.some(function(f){return f.t===u.id&&f.type==='super'});
     var mFv=CU?g(kFv(CU.id),[]):[];var fav=mFv.indexOf(u.id)!==-1;
-    grid.appendChild(bCard(u,forti,fav,i));
+    grid.appendChild(bCard(u,normal,fav,i,superSent));
   });
 }
-function bCard(u,forti,fav,idx){
+function bCard(u,forti,fav,idx,superSent){
   var c=document.createElement('div');c.className='pcard';c.id='card-'+u.id;c.style.animationDelay=(idx*.06)+'s';
   var ph=document.createElement('div');ph.className='pcard-ph';
   if(u.photo){var img=document.createElement('img');img.src=u.photo;img.alt=u.name;img.onerror=function(){ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'};ph.appendChild(img)}
@@ -677,9 +757,11 @@ function bCard(u,forti,fav,idx){
   if(MLAT&&MLNG&&u.lat&&u.lng){var d=cDist(MLAT,MLNG,u.lat,u.lng);db='<span class="dist-b">📍 '+(d<1?'Menos de 1 km':'Aprox. '+Math.round(d)+' km de vos')+'</span>'}
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
-  bd.innerHTML='<div class="pcard-name">'+e(u.name)+', '+u.age+'</div><div class="pcard-meta">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+db+'<div class="ptags" style="margin-top:.38rem">'+lt+'</div><p class="pcard-desc">'+e(u.desc||u.description||'')+'</p>'+((u.int||u.interests)?'<p class="pcard-int"><strong>Intereses:</strong> '+e(u.int||u.interests)+'</p>':'')+'<div class="ptags" style="margin-top:.32rem">'+pt+'</div>';
+  bd.innerHTML='<div class="pcard-name">'+e(u.name)+', '+u.age+(superSent?'<span class="super-pill">💎✨ Súper enviado</span>':'')+'</div><div class="pcard-meta">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+db+'<div class="ptags" style="margin-top:.38rem">'+lt+'</div><p class="pcard-desc">'+e(u.desc||u.description||'')+'</p>'+((u.int||u.interests)?'<p class="pcard-int"><strong>Intereses:</strong> '+e(u.int||u.interests)+'</p>':'')+'<div class="ptags" style="margin-top:.32rem">'+pt+'</div>';
   var ac=document.createElement('div');ac.className='pcard-acts';
-  ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'💎 Enviado':'💎 Super')+'</button>'
+  var noSuper=CU && ((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
+  ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'💛 Forti enviado':'💛 Mandar Forti')+'</button>'
+    +'<button class="pa-super'+((superSent||noSuper)?' used':'')+'" id="sp-'+u.id+'" onclick="sendSuperDiamond(\''+u.id+'\')" title="Súper Diamante: 1 gratis">'+(superSent?'✓':'💎')+'</button>'
     +'<button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver más</button>'
     +'<button class="pa-fav'+(fav?' saved':'')+'" id="fv-'+u.id+'" onclick="cuTogFav(\''+u.id+'\')">'+(fav?'⭐':'☆')+'</button>'
     +'<button class="pa-chat" onclick="cuChat(\''+u.id+'\',\''+e(u.name)+'\')">💬</button>'
@@ -689,15 +771,25 @@ function bCard(u,forti,fav,idx){
 function sendForti(id){
   if(!CU){openAuth('login');return}
   var key=kF(CU.id),fs=g(key,[]);
-  if(fs.some(function(f){return f.t===id})){toast('Ya enviaste tu super diamante a esta persona.','w');return}
+  if(fs.some(function(f){return f.t===id&&(!f.type||f.type==='normal')})){toast('Ya le mandaste un Forti a esta persona 💛','gd');return}
+  fs.push({t:id,at:new Date().toISOString(),type:'normal'});sv(key,fs);
+  var btn=document.getElementById('ft-'+id);if(btn){btn.classList.add('sent');btn.innerHTML='💛 Forti enviado';btn.disabled=true}
+  toast('💛 Forti enviado','gd');
+  if(document.getElementById('myPC')&&document.getElementById('page-myprofile').classList.contains('active'))rMyP();
+}
+function sendSuperDiamond(id){
+  if(!CU){openAuth('login');return}
+  var key=kF(CU.id),fs=g(key,[]);
+  if(fs.some(function(f){return f.t===id&&f.type==='super'})){toast('Ya le mandaste tu Súper Diamante a esta persona 💎✨','gd');return}
   var available=(typeof CU.superDiamonds==='number'?CU.superDiamonds:1);
-  if(available<=0){toast('Ya usaste tu super diamante gratis. Comprar más: próximamente 💎','w');return}
+  if(available<=0){toast('Ya usaste tu Súper Diamante gratis. Comprar más: próximamente 💎','w');return}
   fs.push({t:id,at:new Date().toISOString(),type:'super'});sv(key,fs);
   CU.superDiamonds=available-1;
   var users=g(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{superDiamonds:CU.superDiamonds}):u});
   sv(K.U,users);sv(K.S,{id:CU.id});
-  var btn=document.getElementById('ft-'+id);if(btn){btn.classList.add('sent');btn.innerHTML='💎 Super diamante enviado';btn.disabled=true}
-  toast('💎 ¡Super diamante enviado!','gd');
+  var btn=document.getElementById('sp-'+id);if(btn){btn.classList.add('used');btn.innerHTML='✓'}
+  toast('💎✨ Súper Diamante enviado. Ahora sí llamaste la atención 😉','gd');
+  rProfiles();
   if(document.getElementById('myPC')&&document.getElementById('page-myprofile').classList.contains('active'))rMyP();
 }
 function togFav(id){
@@ -716,27 +808,43 @@ function rFavs(){
 }
 function rMyP(){
   if(!CU){goTo('home');return}
-  var fR=g(K.U,[]).filter(function(u){return g(kF(u.id),[]).some(function(f){return f.t===CU.id})}).length;
-  var fS=g(kF(CU.id),[]).length;var fvC=g(kFv(CU.id),[]).length;var chC=g(kCh(CU.id),[]).length;
+  var allUsers=g(K.U,[]);
+  var received=allUsers.filter(function(u){return g(kF(u.id),[]).some(function(f){return f.t===CU.id})});
+  var fR=received.length;
+  var sentAll=g(kF(CU.id),[]);
+  var fS=sentAll.filter(function(f){return !f.type||f.type==='normal'}).length;
+  var superLeft=(typeof CU.superDiamonds==='number'?CU.superDiamonds:1);
+  var fvC=g(kFv(CU.id),[]).length;var chC=g(kCh(CU.id),[]).length;
   var nm=CU.name||CU.email.split('@')[0];
-  document.getElementById('myPC').innerHTML='<div class="myp-hdr">'
+  document.getElementById('myPC').innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><div><h2 class="pg-tit">FortyUp</h2><p class="pg-sub">Nuevas etapas. Conexiones <strong style="color:var(--g1)">reales</strong>.</p></div><div style="font-weight:900;color:var(--g1);font-size:1.05rem">💎 '+superLeft+'</div></div>'
+    +'<div class="myp-hdr">'
     +'<div class="myp-av">'+(CU.photo?'<img src="'+e(CU.photo)+'" onerror="this.style.display=\'none\'">':nm[0].toUpperCase())+'</div>'
     +'<div class="myp-info"><div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')
-    +'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div></div>'
-    +'<button class="myp-edit" onclick="goTo(\'register\')">✏ Editar</button></div>'
+    +'<div class="myp-bdgs"><span class="myp-bdg">● Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email verificado</span>':'')+'</div></div>'
+    +'<button class="myp-edit" onclick="goTo(\'register\')">✏ Editar perfil</button></div>'
     +'<div class="myp-cards">'
-    +'<div class="myp-card myp-card-g" onclick="goTo(\'profiles\')"><div class="myp-ico">💎</div><div class="myp-ct">Super diamante</div><div class="myp-cd">Disponibles <strong style="color:#7c5500">'+(typeof CU.superDiamonds==='number'?CU.superDiamonds:1)+'</strong><br><span onclick="event.stopPropagation();toast(\'Compra de diamantes: próximamente 💎\',\'gd\')" style="text-decoration:underline">Comprar más</span></div><div class="myp-arr">→</div></div>'
+    +'<div class="myp-card" onclick="goTo(\'profiles\')"><div class="myp-ico">💚</div><div class="myp-ct">Mis Fortis</div><div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card" onclick="needLogin(function(){goTo(\'chats\');rChatList()})"><div class="myp-ico">💬</div><div class="myp-ct">Mensajes</div><div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card myp-card-g" onclick="needLogin(function(){goTo(\'favorites\');rFavs()})"><div class="myp-ico">⭐</div><div class="myp-ct">Favoritos</div><div class="myp-cd">Personas guardadas <strong style="color:#7c5500">'+fvC+'</strong></div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card" onclick="goTo(\'register\')"><div class="myp-ico">✏️</div><div class="myp-ct">Editar perfil</div><div class="myp-cd">Actualizá tu info, fotos e intereses</div><div class="myp-arr">→</div></div>'
+    +'<div class="myp-card myp-card-g" onclick="toast(\'Comprar Súper Diamantes: próximamente 💎\',\'gd\')"><div class="myp-ico">💎</div><div class="myp-ct">Súper Diamante</div><div class="myp-cd">Disponibles <strong style="color:#7c5500">'+superLeft+'</strong><br>Comprar más: próximamente</div><div class="myp-arr">→</div></div>'
     +'</div>'
-    +'<div style="font-weight:900;color:var(--txt);font-size:.88rem;margin-bottom:.72rem;display:flex;align-items:center;gap:.38rem">⚙ Configuración</div>'
+    +'<div style="font-weight:900;color:var(--txt);font-size:.95rem;margin-bottom:.72rem;display:flex;align-items:center;gap:.38rem">⚙ Configuración</div>'
     +'<div class="myp-cfg">'
-    +'<div class="cfg-item" onclick="toast(\'Próximamente 🔒\',\'ok\')"><div class="cfg-ico">🔒</div><div class="cfg-nm">Privacidad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="toast(\'Privacidad: próximamente 🔒\',\'ok\')"><div class="cfg-ico">🔒</div><div class="cfg-nm">Privacidad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="toast(\'Seguridad: próximamente 🛡️\',\'ok\')"><div class="cfg-ico">🛡️</div><div class="cfg-nm">Seguridad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="rBlocked()"><div class="cfg-ico">🚫</div><div class="cfg-nm">Bloqueados</div><span class="cfg-arr">›</span></div>'
     +'<div class="cfg-item" onclick="logout()"><div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
     +'<div class="cfg-item" onclick="delAccount()"><div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
     +'</div>';
 }
+function rBlocked(){
+  var bl=g(K.BL,[]),users=g(K.U,[]).filter(function(u){return bl.indexOf(u.id)!==-1});
+  var html='<div class="m-body"><div class="m-nm">🚫 Bloqueados</div><p class="m-desc" style="margin:.5rem 0 1rem">Acá aparecen las personas que bloqueaste.</p>';
+  if(!users.length){html+='<p style="color:var(--txt3);font-size:.9rem">No bloqueaste a nadie todavía.</p>'}
+  else{html+=users.map(function(u){return '<div class="cfg-item"><div class="cfg-ico">🚫</div><div class="cfg-nm">'+e(u.name||u.email)+'</div><button class="btn btn-o btn-sm" onclick="unblockU(\''+u.id+'\')">Desbloquear</button></div>'}).join('')}
+  html+='</div>';document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
+}
+function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
 function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);logout();toast('Cuenta eliminada.','w')}}
 function startChat(uid,unm){
   if(!CU){openAuth('login');return}
@@ -769,18 +877,29 @@ function rChatMsgs(){
 function sendPhoto(input){
   if(!CU||!CW)return;
   var file=input.files[0];if(!file)return;
+  if(!file.type.match(/^image\//)){toast('Elegí una imagen válida','w');input.value='';return}
   var reader=new FileReader();
   reader.onload=function(ev){
-    var key=kMs(CU.id,CW.id),msgs=g(key,[]);
-    msgs.push({from:CU.id,to:CW.id,text:'',photo:ev.target.result,at:new Date().toISOString()});
-    sv(key,msgs);input.value='';rChatMsgs();checkUnread();checkUnread();
+    var img=new Image();
+    img.onload=function(){
+      var max=900, w=img.width, h=img.height;
+      if(w>h&&w>max){h=Math.round(h*max/w);w=max}else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}
+      var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      var ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
+      var data=canvas.toDataURL('image/jpeg',0.72);
+      var key=kMs(CU.id,CW.id),msgs=g(key,[]);
+      msgs.push({from:CU.id,to:CW.id,text:'',photo:data,at:new Date().toISOString()});
+      sv(key,msgs);input.value='';rChatMsgs();checkUnread();
+    };
+    img.onerror=function(){toast('No pude leer esa imagen','w');input.value=''}
+    img.src=ev.target.result;
   };reader.readAsDataURL(file);
 }
 function sendMsg(){
   if(!CU||!CW)return;var input=document.getElementById('chatIn'),text=input.value.trim();if(!text)return;
   var key=kMs(CU.id,CW.id),msgs=g(key,[]);
   msgs.push({from:CU.id,to:CW.id,text:text,at:new Date().toISOString()});
-  sv(key,msgs);input.value='';rChatMsgs();
+  sv(key,msgs);input.value='';rChatMsgs();checkUnread();
 }
 function rChatList(){
   if(!CU){goTo('home');return}
@@ -931,6 +1050,18 @@ function cuSendForti(id){if(CU)sendForti(id);else openAuth('login')}
 function cuTogFav(id){if(CU)togFav(id);else openAuth('login')}
 function cuBlkU(id){if(CU)blkU(id);else openAuth('login')}
 function bnMe(){if(CU){goTo('myprofile');rMyP();setBn('me')}else openAuth('login')}
+
+
+function enhanceRegisterUI(){
+  var page=document.getElementById('page-register');
+  if(!page||page.querySelector('.reg-steps'))return;
+  var inner=page.querySelector('.inner');
+  var header=inner.querySelector('div[style*="margin-bottom"]');
+  var steps=document.createElement('div');
+  steps.className='reg-steps';
+  steps.innerHTML='<div class="reg-step done"><div class="reg-dot">✓</div><span>Cuenta</span></div><div class="reg-step active"><div class="reg-dot">2</div><span>Gustos</span></div><div class="reg-step"><div class="reg-dot">3</div><span>Sobre vos</span></div><div class="reg-step"><div class="reg-dot">4</div><span>Fotos</span></div>';
+  if(header&&header.parentNode)header.parentNode.insertBefore(steps,header.nextSibling);
+}
 
 function closeAgePop(){
   localStorage.setItem('fu_age_ok','1');
