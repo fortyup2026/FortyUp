@@ -1605,10 +1605,24 @@ init();startFirebaseSync();goTo('home');enhanceHomePlus();setInterval(function()
     <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
     <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
     <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
-    <button onclick="closeAgePop()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
-    <button onclick="window.history.back()" style="width:100%;background:none;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
+    <button onclick="localStorage.setItem(\'fu_age_ok\',\'1\');var p=document.getElementById(\'agePop\');if(p){p.remove();}" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
+    <button onclick="alert('FortyUp es una comunidad para mayores de 40 años.')" style="width:100%;background:none;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
   </div>
 </div>
+
+<script>
+(function(){
+  window.closeAgePop = function(){
+    try{ localStorage.setItem('fu_age_ok','1'); }catch(e){}
+    var el=document.getElementById('agePop');
+    if(el){ el.remove(); }
+  };
+  if(localStorage.getItem('fu_age_ok')==='1'){
+    var el=document.getElementById('agePop');
+    if(el){ el.remove(); }
+  }
+})();
+</script>
 
 </body>
 </html>
