@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>FortyUp v13</title>
+<title>FortyUp v15</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--border2:#D1E8DF;--g1:#064E3B;--g2:#10B981;--g3:#059669;--gold:#F2B705;--bg:#F0FDF8;--bg2:#FFFDF7;--bg3:#ECFDF5;--txt:#10231D;--txt2:#2D4A40;--txt3:#6B7C76;--border:#D1E8DF;--card:rgba(255,255,255,.97);--r:16px;--r2:24px;--r3:50px;--sh:0 4px 20px rgba(6,78,59,.09);--sh2:0 12px 36px rgba(6,78,59,.14)}
@@ -516,65 +516,94 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .self-badge{position:absolute;top:.58rem;left:.58rem;z-index:3;background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;font-size:.62rem;font-weight:900;padding:.18rem .55rem;border-radius:999px;box-shadow:0 3px 10px rgba(242,183,5,.35)}
 .pref-note{background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:16px;padding:.62rem .82rem;font-size:.78rem;font-weight:800;line-height:1.45;margin:.55rem 0 .9rem}
 .av-c img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+/* ===== FORTYUP V15 - BASE V9 + CAMBIOS SEGUROS ===== */
 
-/* ===== FORTYUP V12 AJUSTES SEBAS ===== */
+/* Home: separar diamante y botón + para que no se tapen */
+@media(max-width:750px){
+  .h-btns{padding-top:8.4rem!important;margin-top:1.7rem!important}
+  .h-btns:before{
+    top:-4.25rem!important;
+    font-size:6.25rem!important;
+    z-index:1!important;
+    pointer-events:none!important;
+  }
+  .h-btns:after{
+    top:8.72rem!important;
+    width:78px!important;
+    height:78px!important;
+    z-index:2!important;
+    cursor:pointer!important;
+  }
+  .h-btns .btn-p{margin-top:8.25rem!important}
+}
+
+/* Forti = diamantito amarillo simple */
 .forti-gem{
   display:inline-block!important;
-  width:.72rem!important;height:.72rem!important;
-  background:linear-gradient(135deg,#FFE98A 0%,#F2B705 58%,#B87900 100%)!important;
-  border:1.5px solid #FFF5B8!important;
+  width:.72em!important;
+  height:.72em!important;
+  background:#F2B705!important;
   border-radius:2px!important;
   transform:rotate(45deg)!important;
-  box-shadow:0 2px 6px rgba(242,183,5,.38)!important;
-  font-size:0!important;line-height:0!important;
-  margin:0 .28rem 0 .08rem!important;vertical-align:middle!important;
+  margin-right:.35rem!important;
+  box-shadow:0 1px 4px rgba(242,183,5,.38)!important;
+  vertical-align:-.02em!important;
 }
-.forti-gem.forti-big{width:2rem!important;height:2rem!important;border-radius:6px!important;margin:.2rem 0 .65rem .15rem!important}
-.pa-forti{background:#fff!important;color:#064E3B!important;border:1.8px solid #F2B705!important;box-shadow:0 4px 12px rgba(242,183,5,.14)!important}
-.pa-forti.sent{background:#fff!important;color:#7c5500!important;border-color:#F2B705!important}
-.pa-super{background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important}
-@media(max-width:750px){
-  .h-btns{cursor:pointer!important}
-  .h-btns:before{top:-3.7rem!important;font-size:6.6rem!important;z-index:1!important}
-  .h-btns:after{top:7.25rem!important;width:80px!important;height:80px!important;z-index:2!important}
-  .h-btns .btn-p{margin-top:7.1rem!important}
+.pa-forti{
+  background:#fff!important;
+  color:#064E3B!important;
+  border:1.6px solid #F2B705!important;
+  box-shadow:0 4px 12px rgba(242,183,5,.14)!important;
 }
-.chat-av img,.chat-hav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.super-rain{position:fixed;inset:0;pointer-events:none;z-index:1400;overflow:hidden}
-.super-rain span{position:absolute;top:-60px;font-family:'Playfair Display',serif;font-weight:900;color:#F2B705;text-shadow:0 2px 10px rgba(6,78,59,.25);animation:rainFall 2.8s linear forwards;opacity:.9}
-@keyframes rainFall{to{transform:translateY(110vh) rotate(20deg);opacity:0}}
-.welcome-v12{position:fixed;inset:0;z-index:1300;background:rgba(6,20,16,.62);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.2rem}
-.welcome-v12-card{background:linear-gradient(160deg,#FFFDF7,#F0FDF8);border:2px solid #FDE68A;border-radius:30px;padding:1.7rem;text-align:center;max-width:340px;width:100%;box-shadow:0 28px 80px rgba(0,0,0,.25)}
-.welcome-v12-logo{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:#064E3B}.welcome-v12-logo span{color:#10B981;font-style:italic}
-.media-grid-v12{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:.7rem}
-.media-box-v12{border:1.5px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:.9rem;text-align:center;color:#064E3B;font-weight:900}
+.pa-forti.sent{
+  background:#FFF8DB!important;
+  color:#7c5500!important;
+  border-color:#F2B705!important;
+}
 
-/* ===== FORTYUP V13 AJUSTES SEBAS ===== */
-@media(max-width:750px){
-  .h-btns{padding-top:8.2rem!important;margin-top:1.6rem!important}
-  .h-btns:before{top:-4.15rem!important;font-size:6.25rem!important;z-index:1!important;pointer-events:none!important}
-  .h-btns:after{top:8.65rem!important;width:78px!important;height:78px!important;z-index:2!important}
-  .h-btns .btn-p{margin-top:8.2rem!important}
+/* Mis Fortis: icono correcto */
+.myp-ico.forti-ico,
+.myp-card .myp-ico:first-child{
+  width:54px!important;
+  height:54px!important;
+  border-radius:16px!important;
+  background:#FFF8DB!important;
+  border:1.7px solid #F2B705!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:0!important;
+  position:relative!important;
 }
-.album-swipe-v13{display:flex;gap:.7rem;overflow-x:auto;padding:.35rem .1rem .8rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.album-swipe-v13::-webkit-scrollbar{height:5px}
-.album-swipe-v13::-webkit-scrollbar-thumb{background:#CDE9DD;border-radius:20px}
-.album-item-v13{flex:0 0 145px;height:145px;border-radius:20px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 18px rgba(6,78,59,.08)}
-.album-item-v13 img,.album-item-v13 video{width:100%;height:100%;object-fit:cover}
-.album-lock-v13{position:absolute;top:.45rem;right:.45rem;background:rgba(6,78,59,.85);color:#fff;border-radius:999px;padding:.16rem .42rem;font-size:.64rem;font-weight:900}
-.album-add-grid-v13{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.8rem 0}
-.album-add-v13{border:1.8px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:1rem;text-align:center;color:#064E3B;font-weight:900;cursor:pointer}
-.album-add-v13:hover{background:#E6F8EF}
-.album-empty-v13{padding:1rem;border-radius:18px;background:#F8FFFB;border:1.5px dashed #D1E8DF;color:#6B7C76;font-size:.84rem;text-align:center}
-.super-sender-v13{display:flex;align-items:center;gap:.7rem;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:18px;padding:.75rem;margin:.8rem 0}
-.super-sender-v13 img{width:46px;height:46px;border-radius:50%;object-fit:cover}
-.super-sender-v13 .ss-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
+.myp-ico.forti-ico:after,
+.myp-card .myp-ico:first-child:after{
+  content:''!important;
+  width:24px!important;
+  height:24px!important;
+  background:#F2B705!important;
+  border-radius:4px!important;
+  transform:rotate(45deg)!important;
+  box-shadow:0 3px 10px rgba(242,183,5,.35)!important;
+}
+
+/* Álbum público/privado */
+.album-swipe-v15{display:flex;gap:.7rem;overflow-x:auto;padding:.35rem .1rem .8rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.album-item-v15{flex:0 0 145px;height:145px;border-radius:20px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 18px rgba(6,78,59,.08)}
+.album-item-v15 img,.album-item-v15 video{width:100%;height:100%;object-fit:cover}
+.album-lock-v15{position:absolute;top:.45rem;right:.45rem;background:rgba(6,78,59,.85);color:#fff;border-radius:999px;padding:.16rem .42rem;font-size:.64rem;font-weight:900}
+.album-add-grid-v15{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.8rem 0}
+.album-add-v15{border:1.8px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:1rem;text-align:center;color:#064E3B;font-weight:900;cursor:pointer}
+.album-empty-v15{padding:1rem;border-radius:18px;background:#F8FFFB;border:1.5px dashed #D1E8DF;color:#6B7C76;font-size:.84rem;text-align:center}
+
+/* Súper diamante recibido */
+.super-sender-v15{display:flex;align-items:center;gap:.7rem;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:18px;padding:.75rem;margin:.8rem 0}
+.super-sender-v15 img{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.super-sender-v15 .ss-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
+
+/* Header/chat: fotos redondas */
+.av-c img,.chat-av img,.chat-hav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 
 </style>
-
-<!-- FortyUp v12: Firebase sync entre celulares -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <header class="nav" id="nav">
@@ -795,69 +824,7 @@ var CU=null,MLAT=null,MLNG=null,CW=null,AM='login',AE='fortyup2026@gmail.com';
 function normEmail(x){return String(x||'').trim().toLowerCase()}
 function newId(){return 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)}
 function g(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v)); if(typeof cloudSet==='function')cloudSet(k,v)}catch(e){}}
-/* ===== FORTYUP V12: sincronización Firebase opcional ===== */
-var FB_DB=null,FB_SYNCING=false,FB_READY=false,FB_TIMER=null;
-var firebaseConfig={
-  apiKey:"AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",
-  authDomain:"fortyup-9dfe7.firebaseapp.com",
-  projectId:"fortyup-9dfe7",
-  storageBucket:"fortyup-9dfe7.firebasestorage.app",
-  messagingSenderId:"649626072035",
-  appId:"1:649626072035:web:694a3d054e4dc79a4ee6d6",
-  measurementId:"G-DTZ2B67BSY"
-};
-function cloudDocId(k){
-  try{return btoa(unescape(encodeURIComponent(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-  catch(e){return String(k).replace(/[^a-zA-Z0-9_-]/g,'_')}
-}
-function cloudSet(k,v){
-  if(!FB_DB||FB_SYNCING)return;
-  if(k===K.S)return; // la sesión sigue siendo solo de este celular
-  try{
-    FB_DB.collection('fortyup_v12_kv').doc(cloudDocId(k)).set({
-      key:k,value:v,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-    },{merge:true});
-  }catch(e){}
-}
-function refreshAfterCloud(){
-  clearTimeout(FB_TIMER);
-  FB_TIMER=setTimeout(function(){
-    refreshCU();upNav();upCount();checkUnread();checkSuperReceived();
-    var active=document.querySelector('.page.active');
-    if(active){
-      if(active.id==='page-profiles')rProfiles();
-      if(active.id==='page-myprofile')rMyP();
-      if(active.id==='page-chats')rChatList();
-      if(active.id==='page-chatwindow')rChatMsgs();
-    }
-  },450);
-}
-function startFirebaseSync(){
-  if(FB_READY)return;
-  try{
-    if(!window.firebase||!firebase.firestore){toast('Firebase no cargó. Revisá internet.','w');return}
-    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-    FB_DB=firebase.firestore();FB_READY=true;
-    FB_DB.collection('fortyup_v12_kv').onSnapshot(function(snap){
-      FB_SYNCING=true;
-      snap.docChanges().forEach(function(ch){
-        var d=ch.doc.data(); if(!d||!d.key||d.key===K.S)return;
-        localStorage.setItem(d.key,JSON.stringify(d.value));
-      });
-      FB_SYNCING=false;
-      refreshAfterCloud();
-    },function(err){console.warn('Firebase sync error',err);toast('No pude sincronizar Firebase. Revisá reglas/Firestore.','w')});
-    // sube lo local existente una vez para no perder tus pruebas
-    Object.keys(localStorage).forEach(function(k){
-      if(k.indexOf('fu_')===0&&k!==K.S){
-        try{cloudSet(k,JSON.parse(localStorage.getItem(k)))}catch(e){}
-      }
-    });
-    toast('FortyUp online: sincronizando perfiles 🔄','ok');
-  }catch(e){console.warn(e);toast('Firebase no está listo todavía.','w')}
-}
-
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function e(t){if(!t)return'';return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function fv(id){var el=document.getElementById(id);return el?(el.value||'').trim():''}
 function cv(n){var r=[];document.querySelectorAll('input[name="'+n+'"]:checked').forEach(function(c){r.push(c.value)});return r}
@@ -992,7 +959,7 @@ function doAuth(){
     var found=users.filter(function(u){return !u.is&&normEmail(u.email)===email&&u.pass===pass})[0];
     if(!found){ee.textContent='Email o contraseña incorrectos.';ee.style.display='block';return}
     CU=found;sv(K.S,{id:found.id});upNav();closeAuth();checkUnread();clearReg();
-    showWelcome(found.name||found.email.split('@')[0]);
+    toast('¡Bienvenido/a '+e(found.name||found.email.split('@')[0])+'! 💚','ok');
     if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);
   }
 }
@@ -1014,7 +981,7 @@ function addChatBoth(id){
 function showMatch(id){
   var u=g(K.U,[]).filter(function(x){return x.id===id})[0];
   var ov=document.getElementById('matchOv'),txt=document.getElementById('matchTxt'),btn=document.getElementById('matchChatBtn');
-  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron Forti mutuamente.';
+  if(txt)txt.textContent='Vos y '+(u?(u.name||'esta persona'):'esta persona')+' se mandaron un Forti. Ahora pueden empezar a hablar.';
   if(btn)btn.onclick=function(){closeMatch();startChat(id,u?(u.name||'Chat'):'Chat')};
   if(ov)ov.classList.add('open');
 }
@@ -1136,13 +1103,12 @@ function rMyP(){
     +'<div class="myp-card" onclick="needLogin(function(){goTo(\'chats\');rChatList()})"><div class="myp-ico">💬</div><div class="myp-ct">Mensajes</div><div class="myp-cd">Chats activos <strong style="color:var(--g1)">'+chC+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card myp-card-g" onclick="needLogin(function(){goTo(\'favorites\');rFavs()})"><div class="myp-ico">⭐</div><div class="myp-ct">Favoritos</div><div class="myp-cd">Personas guardadas <strong style="color:#7c5500">'+fvC+'</strong></div><div class="myp-arr">→</div></div>'
     +'<div class="myp-card myp-card-g" onclick="toast(\'Comprar Súper Diamantes: próximamente 💎\',\'gd\')"><div class="myp-ico">💎</div><div class="myp-ct">Súper Diamante</div><div class="myp-cd">Disponibles <strong style="color:#7c5500">'+superLeft+'</strong><br>Comprar más: próximamente</div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card" onclick="rMediaManager()"><div class="myp-ico">📸</div><div class="myp-ct">Fotos y videos</div><div class="myp-cd">Foto principal, videos y álbumes</div><div class="myp-arr">→</div></div>'
-    +'<div class="myp-card" onclick="rSocialManager()"><div class="myp-ico">🌐</div><div class="myp-ct">Redes sociales</div><div class="myp-cd">Instagram, TikTok, Facebook y más</div><div class="myp-arr">→</div></div>'
     +'</div>'
     +'<div style="font-weight:900;color:var(--txt);font-size:.95rem;margin-bottom:.72rem;display:flex;align-items:center;gap:.38rem">⚙ Configuración</div>'
     +'<div class="myp-cfg">'
-    +'<div class="cfg-item" onclick="rPrivacy()"><div class="cfg-ico">🔒</div><div class="cfg-nm">Privacidad</div><span class="cfg-arr">›</span></div>'
-    +'<div class="cfg-item" onclick="rSecurity()"><div class="cfg-ico">🛡️</div><div class="cfg-nm">Seguridad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="toast(\'Privacidad: próximamente 🔒\',\'ok\')"><div class="cfg-ico">🔒</div><div class="cfg-nm">Privacidad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="toast(\'Seguridad: próximamente 🛡️\',\'ok\')"><div class="cfg-ico">🛡️</div><div class="cfg-nm">Seguridad</div><span class="cfg-arr">›</span></div>'
+    +'<div class="cfg-item" onclick="rBlocked()"><div class="cfg-ico">🚫</div><div class="cfg-nm">Bloqueados</div><span class="cfg-arr">›</span></div>'
     +'<div class="cfg-item" onclick="logout()"><div class="cfg-ico">🚪</div><div class="cfg-nm">Cerrar sesión</div><span class="cfg-arr">›</span></div>'
     +'<div class="cfg-item" onclick="delAccount()"><div class="cfg-ico red">🗑</div><div class="cfg-nm red">Eliminar cuenta</div><span class="cfg-arr">›</span></div>'
     +'</div>';
@@ -1177,9 +1143,7 @@ function startChat(uid,unm){
   // Mark as read
   localStorage.setItem('fu_read_'+CU.id+'_'+uid,new Date().toISOString());
   var badge=document.getElementById('chatBadge');if(badge)badge.style.display='none';
-  var ou=normalizeUsers().filter(function(x){return x.id===uid})[0]||{};
-  var hav=document.getElementById('cHAv');
-  if(ou.photo){hav.innerHTML='<img src="'+e(ou.photo)+'" onerror="this.parentElement.textContent=\''+(unm?unm[0]:'?')+'\'">'}else{hav.textContent=unm?unm[0]:'?'}
+  document.getElementById('cHAv').textContent=unm?unm[0]:'?';
   document.getElementById('cHNm').textContent=e(unm||'Usuario');
   rChatMsgs();goTo('chatwindow');
 }
@@ -1238,7 +1202,7 @@ function rChatList(){
     var prev='Sin mensajes aún';
     if(last){prev=last.photo?'📷 Foto':(last.audio?'🎤 Audio':e(last.text||''))}
     return '<div class="chat-item" onclick="startChat(\''+uid+'\',\''+e(other.name||other.email)+'\')" '+holdDeleteAttrs(uid)+'>'
-      +'<div class="chat-av">'+(other.photo?'<img src="'+e(other.photo)+'" onerror="this.parentElement.textContent=\''+(other.name?other.name[0]:'?')+'\'">':(other.name?other.name[0]:'?'))+'</div>'
+      +'<div class="chat-av">'+(other.name?other.name[0]:'?')+'</div>'
       +'<div class="chat-info"><div class="chat-nm">'+e(other.name||other.email)+(unread?'<span class="chat-unread-sm"></span>':'')+'</div><div class="chat-pv">'+prev+'</div></div>'
       +(last?'<div class="chat-tm">'+fmtT(last.at)+'</div>':'')+(unread?'<div class="chat-unread"></div>':'')+'</div>'
   }).join('')+'</div>';
@@ -1313,7 +1277,7 @@ function openMod(id){
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
   var desc=u.desc||u.description||'';var int=u.int||u.interests||'';
-  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div>'+profileAlbumHtml(u,false)+'<div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
+  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
   document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeMod(){document.getElementById('mOv').classList.remove('open');document.body.style.overflow=''}
@@ -1441,162 +1405,7 @@ function closeAgePop(){
 if(localStorage.getItem('fu_age_ok')==='1'){
   var el=document.getElementById('agePop');if(el)el.style.display='none';
 }
-
-/* ===== FORTYUP V12 FUNCIONES NUEVAS ===== */
-function showWelcome(name){
-  var ov=document.createElement('div');ov.className='welcome-v12';
-  ov.innerHTML='<div class="welcome-v12-card"><div style="font-size:3rem;margin-bottom:.4rem"><span class="forti-gem forti-big"></span></div><div class="welcome-v12-logo">Forty<span>Up</span></div><p style="color:#2D4A40;margin:.65rem 0 1.1rem;font-weight:800">Bienvenido/a, '+e(name||'')+'</p><button class="btn btn-p btn-fw" onclick="this.closest(\'.welcome-v12\').remove()">Entrar</button></div>';
-  document.body.appendChild(ov);
-}
-function showSuperReceived(fromUser){
-  var ov=document.createElement('div');ov.className='forti-match-ov open';
-  var rain=document.createElement('div');rain.className='super-rain';
-  for(var i=0;i<34;i++){
-    var s=document.createElement('span');s.textContent=(i%3===0?'FortyUp':'💎 FortyUp');
-    s.style.left=(Math.random()*100)+'%';s.style.fontSize=(.8+Math.random()*1.1)+'rem';s.style.animationDelay=(Math.random()*1.4)+'s';
-    rain.appendChild(s);
-  }
-  var av=fromUser.photo?'<img src="'+e(fromUser.photo)+'" onerror="this.outerHTML=\\'<div class=ss-av>'+(fromUser.name?fromUser.name[0]:'?')+'</div>\\'">':'<div class="ss-av">'+(fromUser.name?fromUser.name[0]:'?')+'</div>';
-  ov.innerHTML='<div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💎</div><h3>Te enviaron un Súper Diamante</h3><p>Alguien quiso llamar tu atención.</p><div class="super-sender-v13">'+av+'<div style="text-align:left"><strong>'+e(fromUser.name||'Alguien')+'</strong><br><span style="font-size:.78rem;color:#6B7C76">'+e(fromUser.city||'')+'</span></div></div><div class="forti-match-actions"><button class="fm-primary" onclick="this.closest(\\'.forti-match-ov\\').remove();openMod(\\''+fromUser.id+'\\')">Mirá quién fue</button><button class="fm-secondary" onclick="this.closest(\\'.forti-match-ov\\').remove()">Después</button></div></div>';
-  document.body.appendChild(ov);document.body.appendChild(rain);
-  setTimeout(function(){rain.remove()},3600);
-}
-function checkSuperReceived(){
-  if(!CU)return;
-  var seenKey='fu_super_seen_'+CU.id,seen=g(seenKey,[]);
-  var users=g(K.U,[]);
-  for(var i=0;i<users.length;i++){
-    var u=users[i]; if(!u||u.id===CU.id)continue;
-    var fs=g(kF(u.id),[]);
-    for(var j=0;j<fs.length;j++){
-      var f=fs[j], sid=u.id+'_'+(f.at||'');
-      if(f&&f.type==='super'&&f.t===CU.id&&seen.indexOf(sid)===-1){
-        seen.push(sid);sv(seenKey,seen);showSuperReceived(u);return;
-      }
-    }
-  }
-}
-function rPrivacy(){
-  var html='<div class="m-body"><div class="m-nm">🔒 Privacidad</div><p class="m-desc" style="margin:.5rem 0 1rem">Controlá quién ve tu información y gestioná usuarios bloqueados.</p>'
-  +'<div class="cfg-item" onclick="rBlocked()"><div class="cfg-ico">🚫</div><div class="cfg-nm">Usuarios bloqueados</div><span class="cfg-arr">›</span></div>'
-  +'<div class="cfg-item" onclick="toast(\'Álbum privado y permisos: próximamente 🔒\',\'ok\')"><div class="cfg-ico">📁</div><div class="cfg-nm">Álbum privado / quién puede ver</div><span class="cfg-arr">›</span></div>'
-  +'<div class="cfg-item" onclick="toast(\'Visibilidad de redes: próximamente 🌐\',\'ok\')"><div class="cfg-ico">🌐</div><div class="cfg-nm">Visibilidad de redes sociales</div><span class="cfg-arr">›</span></div></div>';
-  document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
-}
-function rSecurity(){
-  var html='<div class="m-body"><div class="m-nm">🛡 Seguridad</div><p class="m-desc" style="margin:.5rem 0 1rem">Opciones básicas de seguridad de la cuenta.</p>'
-  +'<div class="afld"><label>Nueva contraseña</label><input type="password" id="secPass" placeholder="Mínimo 6 caracteres"></div>'
-  +'<button class="btn btn-p btn-fw" onclick="changeLocalPass()">Cambiar contraseña</button>'
-  +'<div class="cfg-item" style="margin-top:1rem" onclick="toast(\'Verificación de cuenta: próximamente ✓\',\'ok\')"><div class="cfg-ico">✓</div><div class="cfg-nm">Verificación de cuenta</div><span class="cfg-arr">›</span></div></div>';
-  document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
-}
-function changeLocalPass(){
-  if(!CU)return;var p=fv('secPass');if(p.length<6){toast('La contraseña debe tener al menos 6 caracteres.','w');return}
-  var users=normalizeUsers().map(function(u){return u.id===CU.id?Object.assign({},u,{pass:p}):u});
-  sv(K.U,users);toast('Contraseña actualizada.','ok');closeMod();
-}
-function rMediaManager(){
-  var albums=(CU&&CU.albums)?CU.albums:{public:[],private:[]};
-  var pub=(albums.public||[]).length, pri=(albums.private||[]).length;
-  var html='<div class="m-body"><div class="m-nm">📸 Fotos, videos y álbumes</div><p class="m-desc" style="margin:.5rem 0 1rem">Agregá fotos o videos a tu álbum público o privado. El público se ve en tu perfil con swipe.</p>'
-  +'<div class="album-add-grid-v13">'
-  +'<label class="album-add-v13">＋ Foto pública<input type="file" accept="image/*" style="display:none" onchange="handleAlbumFile(\\'public\\',this)"></label>'
-  +'<label class="album-add-v13">＋ Video público<input type="file" accept="video/*" style="display:none" onchange="handleAlbumFile(\\'public\\',this)"></label>'
-  +'<label class="album-add-v13">🔒 Foto privada<input type="file" accept="image/*" style="display:none" onchange="handleAlbumFile(\\'private\\',this)"></label>'
-  +'<label class="album-add-v13">🔒 Video privado<input type="file" accept="video/*" style="display:none" onchange="handleAlbumFile(\\'private\\',this)"></label>'
-  +'</div>'
-  +'<div class="afld"><label>Agregar por URL al álbum público</label><input id="albUrlPublic" placeholder="URL de foto o video"><button class="btn btn-o btn-fw" onclick="addAlbumUrl(\\'public\\')">Agregar URL pública</button></div>'
-  +'<div class="afld"><label>Agregar por URL al álbum privado</label><input id="albUrlPrivate" placeholder="URL de foto o video"><button class="btn btn-o btn-fw" onclick="addAlbumUrl(\\'private\\')">Agregar URL privada</button></div>'
-  +'<div class="m-sec"><div class="m-sl">Álbum público ('+pub+')</div>'+albumSwipeHtml(albums.public||[],true)+'</div>'
-  +'<div class="m-sec"><div class="m-sl">Álbum privado ('+pri+')</div>'+albumSwipeHtml(albums.private||[],true)+'</div>'
-  +'<button class="btn btn-p btn-fw" onclick="closeMod();goTo(\\'register\\')">Cambiar foto principal / video principal</button>'
-  +'</div>';
-  document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
-}
-function rSocialManager(){
-  var html='<div class="m-body"><div class="m-nm">🌐 Redes sociales</div><p class="m-desc" style="margin:.5rem 0 1rem">Agregalas después si querés. Todo es opcional.</p><div class="afld"><label>Instagram</label><input placeholder="@usuario o link"></div><div class="afld"><label>Facebook</label><input placeholder="link del perfil"></div><div class="afld"><label>TikTok</label><input placeholder="@usuario o link"></div><div class="afld"><label>LinkedIn</label><input placeholder="link del perfil"></div><button class="btn btn-p btn-fw" onclick="toast(\'Redes guardadas para esta versión de prueba\',\'ok\');closeMod()">Guardar</button></div>';
-  document.getElementById('mCont').innerHTML=html;document.getElementById('mOv').classList.add('open');
-}
-function enhanceHomePlus(){
-  var hb=document.querySelector('.h-btns');
-  if(hb&&!hb.dataset.plusReady){
-    hb.dataset.plusReady='1';
-    hb.addEventListener('click',function(ev){
-      if(ev.target.closest('button'))return;
-      if(CU){goTo('myprofile');rMyP();setBn('me')}else openAuth('register');
-    });
-  }
-}
-
-/* ===== FORTYUP V13 ALBUMES / SWIPE ===== */
-function ensureAlbums(u){
-  if(!u.albums)u.albums={public:[],private:[]};
-  if(!Array.isArray(u.albums.public))u.albums.public=[];
-  if(!Array.isArray(u.albums.private))u.albums.private=[];
-  return u.albums;
-}
-function mediaTypeFromSrc(src,fileType){
-  if(fileType&&/^video\//.test(fileType))return 'video';
-  return /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(src||'')?'video':'image';
-}
-function albumSwipeHtml(items,editable){
-  items=items||[];
-  if(!items.length)return '<div class="album-empty-v13">Todavía no hay contenido cargado.</div>';
-  return '<div class="album-swipe-v13">'+items.map(function(it,idx){
-    var body=it.type==='video'?'<video src="'+e(it.src)+'" controls playsinline></video>':'<img src="'+e(it.src)+'" onclick="window.open(this.src,\\'_blank\\')">';
-    return '<div class="album-item-v13">'+body+(it.kind==='private'?'<span class="album-lock-v13">Privado</span>':'')+(editable?'<button onclick="removeAlbumItem(\\''+it.kind+'\\','+idx+')" style="position:absolute;left:.45rem;top:.45rem;background:#fff;color:#dc2626;border:1px solid #fca5a5;border-radius:50%;width:26px;height:26px;font-weight:900">×</button>':'')+'</div>';
-  }).join('')+'</div>';
-}
-function profileAlbumHtml(u,editable){
-  var albums=ensureAlbums(u), html='';
-  if((albums.public||[]).length){
-    html+='<div class="m-sec"><div class="m-sl">Álbum público</div>'+albumSwipeHtml(albums.public,false)+'</div>';
-  }
-  if(CU&&u.id===CU.id&&(albums.private||[]).length){
-    html+='<div class="m-sec"><div class="m-sl">Álbum privado</div>'+albumSwipeHtml(albums.private,false)+'</div>';
-  }
-  return html;
-}
-function saveCurrentUserPatch(patch){
-  if(!CU)return;
-  var users=normalizeUsers().map(function(u){
-    if(u.id===CU.id){return Object.assign({},u,patch)}
-    return u;
-  });
-  sv(K.U,users);refreshCU();upNav();
-}
-function addAlbumItem(kind,src,type){
-  if(!CU||!src)return;
-  kind=kind==='private'?'private':'public';
-  var albums=ensureAlbums(CU);
-  albums[kind].push({src:src,type:type||mediaTypeFromSrc(src),kind:kind,at:new Date().toISOString()});
-  saveCurrentUserPatch({albums:albums});
-  toast(kind==='private'?'Contenido privado agregado 🔒':'Contenido público agregado 📸','ok');
-  rMediaManager();
-}
-function addAlbumUrl(kind){
-  var id=kind==='private'?'albUrlPrivate':'albUrlPublic';
-  var src=fv(id);
-  if(!src){toast('Pegá una URL primero.','w');return}
-  addAlbumItem(kind,src,mediaTypeFromSrc(src));
-}
-function handleAlbumFile(kind,input){
-  var file=input.files&&input.files[0];if(!file)return;
-  if(file.size>4*1024*1024){toast('Archivo muy pesado para esta prueba. Usá uno corto o una URL.','w');input.value='';return}
-  var reader=new FileReader();
-  reader.onload=function(ev){addAlbumItem(kind,ev.target.result,mediaTypeFromSrc(ev.target.result,file.type));input.value=''};
-  reader.readAsDataURL(file);
-}
-function removeAlbumItem(kind,idx){
-  if(!CU)return;
-  var albums=ensureAlbums(CU);kind=kind==='private'?'private':'public';
-  albums[kind].splice(idx,1);
-  saveCurrentUserPatch({albums:albums});
-  toast('Contenido eliminado.','ok');
-  rMediaManager();
-}
-
-init();startFirebaseSync();goTo('home');enhanceHomePlus();setInterval(function(){checkUnread();checkSuperReceived();},5000);
+init();goTo('home');setInterval(checkUnread,5000);
 </script>
 
 <!-- AGE POPUP -->
@@ -1605,22 +1414,213 @@ init();startFirebaseSync();goTo('home');enhanceHomePlus();setInterval(function()
     <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
     <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
     <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
-    <button onclick="localStorage.setItem(\'fu_age_ok\',\'1\');var p=document.getElementById(\'agePop\');if(p){p.remove();}" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
-    <button onclick="alert('FortyUp es una comunidad para mayores de 40 años.')" style="width:100%;background:none;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
+    <button onclick="closeAgePop()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:none;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
+    <button onclick="window.history.back()" style="width:100%;background:none;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
   </div>
 </div>
 
 <script>
+/* ===== FORTYUP V15 - PATCH SEGURO SOBRE V9 ===== */
 (function(){
+  // +40: si aparece agePop, que el botón funcione sin bloquear la app
   window.closeAgePop = function(){
     try{ localStorage.setItem('fu_age_ok','1'); }catch(e){}
     var el=document.getElementById('agePop');
     if(el){ el.remove(); }
   };
-  if(localStorage.getItem('fu_age_ok')==='1'){
-    var el=document.getElementById('agePop');
-    if(el){ el.remove(); }
+  document.addEventListener('click',function(ev){
+    var t=ev.target;
+    if(t && typeof t.textContent==='string' && t.textContent.indexOf('Tengo más de 40')>-1){
+      window.closeAgePop();
+    }
+  },true);
+
+  // Home: el círculo grande + del hero también acciona igual que crear perfil
+  document.addEventListener('click',function(ev){
+    var target=ev.target;
+    if(!target)return;
+    var heroBtns=target.closest && target.closest('.h-btns');
+    if(heroBtns){
+      var r=heroBtns.getBoundingClientRect();
+      var x=ev.clientX-r.left, y=ev.clientY-r.top;
+      // zona aproximada del + generado por CSS
+      if(window.innerWidth<=750 && x>r.width/2-70 && x<r.width/2+70 && y>120 && y<260){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(typeof needLogin==='function'){
+          needLogin(function(){ if(typeof goTo==='function'){goTo('register')} });
+        }else if(typeof openAuth==='function'){
+          openAuth('register');
+        }
+      }
+    }
+  },true);
+
+  // Helpers de usuario
+  window.fuV15Users=function(){
+    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
+  };
+  window.fuV15Current=function(){
+    if(typeof CU!=='undefined' && CU)return CU;
+    try{
+      var s=JSON.parse(localStorage.getItem('fu_s')||'null');
+      var users=fuV15Users();
+      return users.find(function(u){return u.id===s||u.email===s||u.id===(s&&s.id)})||null;
+    }catch(e){return null}
+  };
+  window.fuV15SaveUser=function(patch){
+    var cu=fuV15Current(); if(!cu)return;
+    var users=fuV15Users().map(function(u){return u.id===cu.id?Object.assign({},u,patch):u});
+    try{ localStorage.setItem('fu_u',JSON.stringify(users)); }catch(e){}
+    if(typeof refreshCU==='function')refreshCU();
+    if(typeof upNav==='function')upNav();
+  };
+
+  // Álbumes
+  window.fuV15EnsureAlbums=function(u){
+    if(!u.albums)u.albums={public:[],private:[]};
+    if(!Array.isArray(u.albums.public))u.albums.public=[];
+    if(!Array.isArray(u.albums.private))u.albums.private=[];
+    return u.albums;
+  };
+  window.fuV15MediaType=function(src,type){
+    if(type && /^video\//.test(type))return 'video';
+    return /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(src||'')?'video':'image';
+  };
+  window.fuV15AlbumSwipe=function(items,editable){
+    items=items||[];
+    if(!items.length)return '<div class="album-empty-v15">Todavía no hay contenido cargado.</div>';
+    return '<div class="album-swipe-v15">'+items.map(function(it,idx){
+      var body=it.type==='video'?'<video src="'+(it.src||'')+'" controls playsinline></video>':'<img src="'+(it.src||'')+'" onclick="window.open(this.src,\\'_blank\\')">';
+      return '<div class="album-item-v15">'+body+(it.kind==='private'?'<span class="album-lock-v15">Privado</span>':'')+(editable?'<button onclick="fuV15RemoveAlbum(\\''+it.kind+'\\','+idx+')" style="position:absolute;left:.45rem;top:.45rem;background:#fff;color:#dc2626;border:1px solid #fca5a5;border-radius:50%;width:26px;height:26px;font-weight:900">×</button>':'')+'</div>';
+    }).join('')+'</div>';
+  };
+  window.fuV15ProfileAlbumHtml=function(u){
+    var albums=fuV15EnsureAlbums(u), html='';
+    if((albums.public||[]).length){
+      html+='<div class="m-sec"><div class="m-sl">Álbum público</div>'+fuV15AlbumSwipe(albums.public,false)+'</div>';
+    }
+    var cu=fuV15Current();
+    if(cu && u.id===cu.id && (albums.private||[]).length){
+      html+='<div class="m-sec"><div class="m-sl">Álbum privado</div>'+fuV15AlbumSwipe(albums.private,false)+'</div>';
+    }
+    return html;
+  };
+  window.fuV15AddAlbum=function(kind,src,type){
+    var cu=fuV15Current(); if(!cu||!src)return;
+    kind=kind==='private'?'private':'public';
+    var albums=fuV15EnsureAlbums(cu);
+    albums[kind].push({src:src,type:type||fuV15MediaType(src),kind:kind,at:new Date().toISOString()});
+    fuV15SaveUser({albums:albums});
+    if(typeof toast==='function')toast(kind==='private'?'Contenido privado agregado 🔒':'Contenido público agregado 📸','ok');
+    if(typeof rMediaManager==='function')rMediaManager();
+  };
+  window.fuV15AddAlbumUrl=function(kind){
+    var id=kind==='private'?'albUrlPrivate':'albUrlPublic';
+    var el=document.getElementById(id);
+    var src=el?el.value.trim():'';
+    if(!src){ if(typeof toast==='function')toast('Pegá una URL primero.','w'); return; }
+    fuV15AddAlbum(kind,src,fuV15MediaType(src));
+  };
+  window.fuV15HandleAlbumFile=function(kind,input){
+    var file=input.files&&input.files[0]; if(!file)return;
+    if(file.size>4*1024*1024){ if(typeof toast==='function')toast('Archivo pesado. Probá con una foto más chica o URL.','w'); input.value=''; return; }
+    var reader=new FileReader();
+    reader.onload=function(e){fuV15AddAlbum(kind,e.target.result,fuV15MediaType(e.target.result,file.type)); input.value='';};
+    reader.readAsDataURL(file);
+  };
+  window.fuV15RemoveAlbum=function(kind,idx){
+    var cu=fuV15Current(); if(!cu)return;
+    var albums=fuV15EnsureAlbums(cu);
+    kind=kind==='private'?'private':'public';
+    albums[kind].splice(idx,1);
+    fuV15SaveUser({albums:albums});
+    if(typeof toast==='function')toast('Contenido eliminado.','ok');
+    if(typeof rMediaManager==='function')rMediaManager();
+  };
+
+  // Sobrescribir rMediaManager sin tocar navegación
+  window.rMediaManager=function(){
+    var cu=fuV15Current(); if(!cu)return;
+    var albums=fuV15EnsureAlbums(cu);
+    var html='<div class="m-body"><div class="m-nm">📸 Fotos, videos y álbumes</div><p class="m-desc" style="margin:.5rem 0 1rem">Agregá fotos o videos. El álbum público se ve en tu perfil con swipe; el privado queda solo para vos.</p>'
+      +'<div class="album-add-grid-v15">'
+      +'<label class="album-add-v15">＋ Foto pública<input type="file" accept="image/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'public\\',this)"></label>'
+      +'<label class="album-add-v15">＋ Video público<input type="file" accept="video/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'public\\',this)"></label>'
+      +'<label class="album-add-v15">🔒 Foto privada<input type="file" accept="image/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'private\\',this)"></label>'
+      +'<label class="album-add-v15">🔒 Video privado<input type="file" accept="video/*" style="display:none" onchange="fuV15HandleAlbumFile(\\'private\\',this)"></label>'
+      +'</div>'
+      +'<div class="afld"><label>URL pública</label><input id="albUrlPublic" placeholder="URL de foto/video"><button class="btn btn-o btn-fw" onclick="fuV15AddAlbumUrl(\\'public\\')">Agregar al público</button></div>'
+      +'<div class="afld"><label>URL privada</label><input id="albUrlPrivate" placeholder="URL de foto/video"><button class="btn btn-o btn-fw" onclick="fuV15AddAlbumUrl(\\'private\\')">Agregar al privado</button></div>'
+      +'<div class="m-sec"><div class="m-sl">Álbum público</div>'+fuV15AlbumSwipe(albums.public,true)+'</div>'
+      +'<div class="m-sec"><div class="m-sl">Álbum privado</div>'+fuV15AlbumSwipe(albums.private,true)+'</div>'
+      +'<button class="btn btn-p btn-fw" onclick="closeMod();goTo(\\'register\\')">Cambiar foto principal / video principal</button>'
+      +'</div>';
+    document.getElementById('mCont').innerHTML=html;
+    document.getElementById('mOv').classList.add('open');
+  };
+
+  // Meter álbum público en modal de perfil sin romper openMod original
+  var oldOpenMod=window.openMod;
+  if(typeof oldOpenMod==='function'){
+    window.openMod=function(id){
+      oldOpenMod(id);
+      setTimeout(function(){
+        try{
+          var users=fuV15Users();
+          var u=users.find(function(x){return x.id===id});
+          if(!u)return;
+          var html=fuV15ProfileAlbumHtml(u);
+          if(!html)return;
+          var body=document.querySelector('#mCont .m-body');
+          if(body && body.innerHTML.indexOf('Álbum público')<0){
+            var acts=body.querySelector('.m-acts');
+            var wrap=document.createElement('div');
+            wrap.innerHTML=html;
+            if(acts)body.insertBefore(wrap,acts);else body.appendChild(wrap);
+          }
+        }catch(e){}
+      },60);
+    };
   }
+
+  // Súper diamante: mostrar remitente y botón "Mirá quién fue"
+  window.showSuperReceived=function(fromUser){
+    fromUser=fromUser||{};
+    var ov=document.createElement('div');ov.className='forti-match-ov open';
+    var rain=document.createElement('div');rain.className='super-rain';
+    for(var i=0;i<34;i++){
+      var s=document.createElement('span');s.textContent=(i%3===0?'FortyUp':'💎 FortyUp');
+      s.style.left=(Math.random()*100)+'%';s.style.fontSize=(.8+Math.random()*1.1)+'rem';s.style.animationDelay=(Math.random()*1.4)+'s';
+      rain.appendChild(s);
+    }
+    var av=fromUser.photo?'<img src="'+fromUser.photo+'">':'<div class="ss-av">'+((fromUser.name||'?')[0])+'</div>';
+    ov.innerHTML='<div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom">💎</div><h3>Te enviaron un Súper Diamante</h3><p>Alguien quiso llamar tu atención.</p><div class="super-sender-v15">'+av+'<div style="text-align:left"><strong>'+(fromUser.name||'Alguien')+'</strong><br><span style="font-size:.78rem;color:#6B7C76">'+(fromUser.city||'')+'</span></div></div><div class="forti-match-actions"><button class="fm-primary" onclick="this.closest(\\'.forti-match-ov\\').remove(); if(window.openMod)openMod(\\''+(fromUser.id||'')+'\\')">Mirá quién fue</button><button class="fm-secondary" onclick="this.closest(\\'.forti-match-ov\\').remove()">Después</button></div></div>';
+    document.body.appendChild(ov);document.body.appendChild(rain);
+    setTimeout(function(){rain.remove()},3600);
+  };
+
+  // Fotos en círculos de chats/header cuando existan
+  var oldUpNav=window.upNav;
+  if(typeof oldUpNav==='function'){
+    window.upNav=function(){ oldUpNav(); setTimeout(fuV15PaintAvatars,30); };
+  }
+  var oldRChatList=window.rChatList;
+  if(typeof oldRChatList==='function'){
+    window.rChatList=function(){ oldRChatList(); setTimeout(fuV15PaintAvatars,30); };
+  }
+  var oldOpenChat=window.openChat||window.rChat;
+  window.fuV15PaintAvatars=function(){
+    var users=fuV15Users();
+    document.querySelectorAll('.chat-item').forEach(function(item){
+      var nameEl=item.querySelector('.chat-nm'); if(!nameEl)return;
+      var nm=nameEl.textContent.trim();
+      var u=users.find(function(x){return (x.name||'').trim()===nm});
+      var av=item.querySelector('.chat-av');
+      if(u&&u.photo&&av)av.innerHTML='<img src="'+u.photo+'">';
+    });
+  };
+
 })();
 </script>
 
