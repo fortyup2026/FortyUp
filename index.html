@@ -510,6 +510,12 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .near-note{display:inline-flex;align-items:center;gap:.25rem;background:#FFFDF7;border:1px solid #FDE68A;color:#7c5500;border-radius:999px;padding:.14rem .52rem;font-size:.68rem;font-weight:900;margin-top:.28rem}
 @media(max-width:480px){.pa-forti{min-width:78px!important;height:40px!important;font-size:.76rem!important}.pa-forti.sent{min-width:88px!important;font-size:.66rem!important}.forti-gem{width:.54rem!important;height:.54rem!important}.forti-gem.forti-big{width:1.72rem!important;height:1.72rem!important}}
 
+
+/* V9 extras: perfil propio + preferencias */
+.pcard.self-profile{border:2px solid var(--gold)!important;box-shadow:0 10px 34px rgba(242,183,5,.22)!important;position:relative}
+.self-badge{position:absolute;top:.58rem;left:.58rem;z-index:3;background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;font-size:.62rem;font-weight:900;padding:.18rem .55rem;border-radius:999px;box-shadow:0 3px 10px rgba(242,183,5,.35)}
+.pref-note{background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:16px;padding:.62rem .82rem;font-size:.78rem;font-weight:800;line-height:1.45;margin:.55rem 0 .9rem}
+.av-c img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 </style>
 </head>
 <body>
@@ -642,6 +648,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
         <div class="fld"><label>Ciudad <span class="req">*</span></label><input type="text" id="rC" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div>
         <div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div>
       </div>
+      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Explorar perfiles te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
       <input type="hidden" id="rLat"><input type="hidden" id="rLng">
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto de perfil</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rPF').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>
@@ -736,6 +743,19 @@ function fv(id){var el=document.getElementById(id);return el?(el.value||'').trim
 function cv(n){var r=[];document.querySelectorAll('input[name="'+n+'"]:checked').forEach(function(c){r.push(c.value)});return r}
 function isCompleteProfile(u){return !!(u&&(u.is||(u.email&&u.name&&u.age&&Number(u.age)>=40&&u.city)))}
 function visibleProfiles(){return normalizeUsers().filter(function(u){return u.is||isCompleteProfile(u)})}
+function prefAllowsProfile(u){
+  if(!CU||!u||u.id===CU.id)return true;
+  var pref=CU.interestedIn||CU.pref||'todos';
+  var g=String(u.gender||'').toLowerCase();
+  if(pref==='todos')return true;
+  if(pref==='ambos')return g==='mujer'||g==='hombre';
+  if(pref==='mujeres')return g==='mujer';
+  if(pref==='hombres')return g==='hombre';
+  return true;
+}
+function prefLabel(v){
+  return ({todos:'Todos / sin preferencia',mujeres:'Mujeres',hombres:'Hombres',ambos:'Hombres y mujeres'})[v||'todos']||'Todos / sin preferencia';
+}
 function normalizeUsers(){
   var users=g(K.U,[]), map={}, out=[];
   if(!users.some(function(x){return x.is})){users=SP.concat(users)}
@@ -796,7 +816,7 @@ function upNav(){
   var badge=document.getElementById('chatBadge');if(badge&&!CU)badge.style.display='none';
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];
-    nr.innerHTML='<div class="nav-av"><div class="av-c">'+nm[0].toUpperCase()+'</div><span class="av-nm">'+e(nm)+'</span><button class="btn-out" onclick="logout()">Salir</button></div>';
+    nr.innerHTML='<div class="nav-av"><div class="av-c">'+(CU.photo?'<img src="'+e(CU.photo)+'" onerror="this.parentElement.textContent=\''+nm[0].toUpperCase()+'\'">':nm[0].toUpperCase())+'</div><span class="av-nm">'+e(nm)+'</span><button class="btn-out" onclick="logout()">Salir</button></div>';
   }else{
     nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';
   }
@@ -845,7 +865,7 @@ function doAuth(){
     var pc=document.getElementById('aPassC').value;
     if(pass!==pc){ee.textContent='Las contraseñas no coinciden.';ee.style.display='block';return}
     if(users.some(function(u){return !u.is&&normEmail(u.email)===email})){ee.textContent='Ya existe una cuenta con ese email. Iniciá sesión o recuperá la contraseña.';ee.style.display='block';return}
-    var nu={id:newId(),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass,photo:'',desc:'',int:'',looking:[],plans:[],lat:null,lng:null,createdAt:new Date().toISOString(),superDiamonds:1};
+    var nu={id:newId(),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass,photo:'',desc:'',int:'',looking:[],plans:[],interestedIn:'todos',lat:null,lng:null,createdAt:new Date().toISOString(),superDiamonds:1};
     users.push(nu);sv(K.U,users);CU=nu;sv(K.S,{id:nu.id});upNav();upCount();closeAuth();checkUnread();clearReg();
     toast('¡Cuenta creada! Completá tu perfil 🌿','ok');goTo('register');loadProfileForm();
   }else{
@@ -891,11 +911,11 @@ function profileDistanceBadge(u){
 function rProfiles(){
   var grid=document.getElementById('pgrid');grid.innerHTML='';
   var bl=g(K.BL,[]);
-  var users=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&(!CU||u.id!==CU.id)});
+  var users=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&prefAllowsProfile(u)});
   var baseLat=MLAT||(CU&&CU.lat?CU.lat:null), baseLng=MLNG||(CU&&CU.lng?CU.lng:null);
   if(baseLat&&baseLng){users.sort(function(a,b){var da=a.lat&&a.lng?cDist(baseLat,baseLng,a.lat,a.lng):9999;var db=b.lat&&b.lng?cDist(baseLat,baseLng,b.lat,b.lng):9999;return da-db})}
   else if(CU&&CU.city){users.sort(function(a,b){var cc=String(CU.city).split(',')[0].trim().toLowerCase();var aa=String(a.city||'').toLowerCase().indexOf(cc)!==-1?0:1;var bb=String(b.city||'').toLowerCase().indexOf(cc)!==-1?0:1;return aa-bb})}
-  if(!users.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.7rem">🌿</div><p>Todavía no hay perfiles cercanos o visibles.</p></div>';return}
+  if(!users.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.7rem">🌿</div><p>Todavía no hay perfiles según tu búsqueda cerca tuyo.</p></div>';return}
   users.forEach(function(u,i){
     var sends=CU?g(kF(CU.id),[]):[], normal=sends.some(function(f){return f.t===u.id&&isNormalFortiActive(f)});
     var superSent=sends.some(function(f){return f.t===u.id&&f.type==='super'});
@@ -904,10 +924,11 @@ function rProfiles(){
   });
 }
 function bCard(u,forti,fav,idx,superSent){
-  var c=document.createElement('div');c.className='pcard';c.id='card-'+u.id;c.style.animationDelay=(idx*.06)+'s';
+  var c=document.createElement('div');c.className='pcard'+((CU&&u.id===CU.id)?' self-profile':'');c.id='card-'+u.id;c.style.animationDelay=(idx*.06)+'s';
   var ph=document.createElement('div');ph.className='pcard-ph';ph.onclick=function(){openMedia(u.id,'photo')};
   if(u.photo){var img=document.createElement('img');img.src=u.photo;img.alt=u.name;img.onerror=function(){ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'};ph.appendChild(img)}
   else{ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'}
+  if(CU&&u.id===CU.id){var sb=document.createElement('div');sb.className='self-badge';sb.textContent='Este sos vos';ph.appendChild(sb)}
   if(u.video){var vb=document.createElement('div');vb.className='pcard-video-bdg';vb.textContent='▶ Video';vb.onclick=function(ev){ev.stopPropagation();openMedia(u.id,'video')};ph.appendChild(vb)}
   if(u.is){var b=document.createElement('div');b.className='pcard-bdg';b.textContent='✦ Destacado';ph.appendChild(b)}
   var bd=document.createElement('div');bd.className='pcard-body';
@@ -917,12 +938,16 @@ function bCard(u,forti,fav,idx,superSent){
   bd.innerHTML='<div class="pcard-name">'+e(u.name)+', '+u.age+(superSent?'<span class="super-pill">💎✨ Súper enviado</span>':'')+'</div><div class="pcard-meta">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+db+'<div class="ptags" style="margin-top:.38rem">'+lt+'</div><p class="pcard-desc">'+e(u.desc||u.description||'')+'</p>'+((u.int||u.interests)?'<p class="pcard-int"><strong>Intereses:</strong> '+e(u.int||u.interests)+'</p>':'')+'<div class="ptags" style="margin-top:.32rem">'+pt+'</div>';
   var ac=document.createElement('div');ac.className='pcard-acts';
   var noSuper=CU && ((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
-  ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'
-    +'<button class="pa-super'+((superSent||noSuper)?' used':'')+'" id="sp-'+u.id+'" onclick="sendSuperDiamond(\''+u.id+'\')" title="Súper Diamante: 1 gratis">'+(superSent?'✓':'💎')+'</button>'
-    +'<button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver más</button>'
-    +'<button class="pa-fav'+(fav?' saved':'')+'" id="fv-'+u.id+'" onclick="cuTogFav(\''+u.id+'\')">'+(fav?'⭐':'☆')+'</button>'
-    +'<button class="pa-chat" onclick="cuChat(\''+u.id+'\',\''+e(u.name)+'\')">💬</button>'
-    +'<button class="pa-blk" onclick="cuBlkU(\''+u.id+'\')">🚫</button>';
+  if(CU&&u.id===CU.id){
+    ac.innerHTML='<button class="pa-more" style="flex:1" onclick="goTo(\'register\')">✏ Editar mi perfil</button><button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver</button>';
+  }else{
+    ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'
+      +'<button class="pa-super'+((superSent||noSuper)?' used':'')+'" id="sp-'+u.id+'" onclick="sendSuperDiamond(\''+u.id+'\')" title="Súper Diamante: 1 gratis">'+(superSent?'✓':'💎')+'</button>'
+      +'<button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver más</button>'
+      +'<button class="pa-fav'+(fav?' saved':'')+'" id="fv-'+u.id+'" onclick="cuTogFav(\''+u.id+'\')">'+(fav?'⭐':'☆')+'</button>'
+      +'<button class="pa-chat" onclick="cuChat(\''+u.id+'\',\''+e(u.name)+'\')">💬</button>'
+      +'<button class="pa-blk" onclick="cuBlkU(\''+u.id+'\')">🚫</button>';
+  }
   c.appendChild(ph);c.appendChild(bd);c.appendChild(ac);return c;
 }
 function sendForti(id){
@@ -984,7 +1009,7 @@ function rMyP(){
     +'<div class="myp-hdr">'
     +'<div class="myp-av">'+(CU.photo?'<img src="'+e(CU.photo)+'" onerror="this.style.display=\'none\'">':nm[0].toUpperCase())+'</div>'
     +'<div class="myp-info"><div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')
-    +'<div class="myp-bdgs"><span class="myp-bdg">● Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email verificado</span>':'')+'</div></div>'
+    +'<div class="myp-bdgs"><span class="myp-bdg">● Perfil activo</span><span class="myp-bdg">Busca: '+e(prefLabel(CU.interestedIn||CU.pref||'todos'))+'</span>'+(CU.email?'<span class="myp-bdg v">✓ Email verificado</span>':'')+'</div></div>'
     +'<button class="myp-edit" onclick="goTo(\'register\')">✏ Editar perfil</button></div>'
     +'<div class="myp-cards">'
     +'<div class="myp-card" onclick="goTo(\'profiles\')"><div class="myp-ico forti-ico"><span class="forti-gem forti-big"></span></div><div class="myp-ct">Mis Fortis</div><div class="myp-cd">Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong></div><div class="myp-arr">→</div></div>'
@@ -1105,7 +1130,7 @@ function loadProfileForm(){
   if(!CU){return}
   refreshCU();
   var set=function(id,val){var el=document.getElementById(id);if(el)el.value=(val||'')};
-  set('rN',CU.name||'');set('rA',CU.age||'');set('rC',CU.city||'');set('rG',CU.gender||'');set('rE',CU.email||'');set('rD',CU.desc||CU.description||'');set('rI',CU.int||CU.interests||'');set('rV',CU.video||'');
+  set('rN',CU.name||'');set('rA',CU.age||'');set('rC',CU.city||'');set('rG',CU.gender||'');set('rPref',CU.interestedIn||CU.pref||'todos');set('rE',CU.email||'');set('rD',CU.desc||CU.description||'');set('rI',CU.int||CU.interests||'');set('rV',CU.video||'');
   if(CU.lat)set('rLat',CU.lat);if(CU.lng)set('rLng',CU.lng);
   document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){
     var arr=c.name==='lk'?(CU.looking||[]):(CU.plans||[]);c.checked=arr.indexOf(c.value)!==-1;
@@ -1124,17 +1149,17 @@ function resetTestData(){
 }
 function saveProfile(){
   var ee=document.getElementById('rErr'),oe=document.getElementById('rOk');ee.style.display='none';oe.style.display='none';
-  var name=fv('rN'),age=parseInt(fv('rA'),10),city=fv('rC'),gender=fv('rG'),photo=window._photo||fv('rP'),video=window._video||fv('rV'),desc=fv('rD'),int=fv('rI');
+  var name=fv('rN'),age=parseInt(fv('rA'),10),city=fv('rC'),gender=fv('rG'),pref=fv('rPref')||'todos',photo=window._photo||fv('rP'),video=window._video||fv('rV'),desc=fv('rD'),int=fv('rI');
   var looking=cv('lk'),plans=cv('pl'),lat=fv('rLat'),lng=fv('rLng');
   function showE(msg){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'})}
-  if(!name||!city||!gender||!desc){showE('Completá nombre, ciudad, género y descripción.');return}
+  if(!name||!city||!gender){showE('Completá nombre, ciudad y género. La descripción es opcional.');return}
   if(!age||isNaN(age)||age<40){showE('FortyUp es solo para mayores de 40 años.');return}
   var users=normalizeUsers();
   if(CU){
     refreshCU();users=normalizeUsers();
     users=users.map(function(u){
       if(u.id!==CU.id)return u;
-      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,photo:photo||u.photo,video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo,video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
     oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');
@@ -1142,7 +1167,7 @@ function saveProfile(){
     var email=normEmail(fv('rE'));
     if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showE('Ingresá un email válido.');return}
     if(users.some(function(u){return!u.is&&normEmail(u.email)===email})){showE('Ya existe un perfil con ese email. Iniciá sesión con esa cuenta.');return}
-    var nu={id:newId(),is:0,name:name,age:age,city:city,gender:gender,email:email,pass:'',photo:photo||'',video:video||'',desc:desc,int:int,looking:looking,plans:plans,lat:lat?parseFloat(lat):null,lng:lng?parseFloat(lng):null,createdAt:new Date().toISOString(),superDiamonds:1};
+    var nu={id:newId(),is:0,name:name,age:age,city:city,gender:gender,interestedIn:pref,email:email,pass:'',photo:photo||'',video:video||'',desc:desc,int:int,looking:looking,plans:plans,lat:lat?parseFloat(lat):null,lng:lng?parseFloat(lng):null,createdAt:new Date().toISOString(),superDiamonds:1};
     users.push(nu);sv(K.U,users);upCount();oe.textContent='✦ ¡Perfil creado! Redirigiendo...';oe.style.display='block';
     clearReg();setTimeout(function(){goTo('profiles')},1800);
   }
@@ -1150,7 +1175,7 @@ function saveProfile(){
 function clearReg(){
   window._photo=null;
   ['rN','rA','rC','rE','rP','rV','rD','rI'].forEach(function(id){var el=document.getElementById(id);if(el){el.value='';if(id==='rE'){el.readOnly=false;el.style.opacity='1';el.style.background=''}}});
-  var rg=document.getElementById('rG');if(rg)rg.value='';
+  var rg=document.getElementById('rG');if(rg)rg.value='';var rp=document.getElementById('rPref');if(rp)rp.value='todos';
   document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){c.checked=false});
   var pp=document.getElementById('phprev');if(pp)pp.style.display='none';
   var pf=document.getElementById('rPF');if(pf)pf.value='';var vf=document.getElementById('rVF');if(vf)vf.value='';
@@ -1165,7 +1190,7 @@ function openMod(id){
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
   var desc=u.desc||u.description||'';var int=u.int||u.interests||'';
-  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div><div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
+  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
   document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeMod(){document.getElementById('mOv').classList.remove('open');document.body.style.overflow=''}
