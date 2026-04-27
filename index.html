@@ -755,15 +755,15 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
   <button class="bn" id="bn-profiles" onclick="goTo('profiles');setBn('profiles')"><span class="bn-ico">👥</span><span class="bn-l">Perfiles</span></button>
-  <button class="bn" id="bn-plus" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
-  <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative">
+  <button class="bn" id="bn-plus" onclick="bnPlusClick()"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
+  <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative;display:none">
   <span style="position:relative;display:inline-block">
     <span class="bn-ico">💬</span>
     <span id="chatBadge" style="display:none;position:absolute;top:-4px;right:-6px;background:#F2B705;width:12px;height:12px;border-radius:3px;transform:rotate(45deg);border:2px solid #fff;box-shadow:0 1px 6px rgba(242,183,5,.55)"></span>
   </span>
   <span class="bn-l">Mensajes</span>
 </button>
-  <button class="bn" id="bn-me" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><span class="bn-ico" id="bn-me-ico">👤</span><span class="bn-l" id="bn-me-lbl">Ingresar</span></button>
+  <button class="bn" id="bn-me" onclick="bnPlusClick()"><span class="bn-ico" id="bn-me-ico">👤</span><span class="bn-l" id="bn-me-lbl">Ingresar</span></button>
 </div>
 <div class="tw" id="tw"></div>
 <div class="forti-match-ov" id="matchOv"><div class="forti-match-card"><div class="forti-match-logo">Forty<span>Up</span></div><div class="forti-match-boom"><span style="display:inline-block;width:32px;height:32px;background:var(--gold);transform:rotate(45deg);border-radius:4px;box-shadow:0 4px 16px rgba(242,183,5,.5)"></span></div><h3>Conexión FortyUp</h3><p id="matchTxt">Se mandaron Forti mutuamente.</p><div class="forti-match-actions"><button class="fm-primary" id="matchChatBtn" onclick="closeMatch()">¡Genial!</button><button class="fm-secondary" onclick="closeMatch()">Seguir viendo</button></div></div></div>
@@ -859,6 +859,12 @@ function findUserById(id){return g(K.U,[]).filter(function(x){return x.id===id})
 function refreshCU(){if(!CU)return null;CU=findUserById(CU.id);if(CU)sv(K.S,{id:CU.id});return CU}
 
 // ── HELPERS ──
+
+function bnPlusClick(){
+  if(CU){goTo('myprofile');rMyP();setBn('me')}
+  else{openAuth('register')}
+}
+
 function goBack(){if(window.history&&window.history.length>1)window.history.back();else goTo('home')}
 function triggerPhotoInput(){var el=document.getElementById('rPF');if(el)el.click()}
 function triggerVideoInput(){var el=document.getElementById('rVF');if(el)el.click()}
@@ -1164,7 +1170,12 @@ function upNav(){
   }else{
     nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';
   }
-}
+
+  // Show/hide bottom nav items based on login state
+  var bnChats = document.getElementById('bn-chats');
+  if(bnChats) bnChats.style.display = CU ? 'flex' : 'none';
+  // Update hero
+  if(typeof updateHeroLoggedIn === 'function') updateHeroLoggedIn();}
 function openAuth(mode){
   AM=mode;switchTab(mode);
   document.getElementById('authOv').classList.add('open');
