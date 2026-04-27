@@ -2334,27 +2334,105 @@ function rProfiles(){
   });
 }
 function bCard(u,forti,fav,idx,superSent){
-  var c=document.createElement('div');c.className='pcard'+((CU&&u.id===CU.id)?' self-profile':'');c.id='card-'+u.id;c.style.animationDelay=(idx*.06)+'s';
-  var ph=document.createElement('div');ph.className='pcard-ph';ph.onclick=function(){openMedia(u.id,'photo')};
-  if(u.photo){var img=document.createElement('img');img.src=u.photo;img.alt=u.name;img.onerror=function(){ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'};ph.appendChild(img)}
-  else{ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'}
-  if(CU&&u.id===CU.id){var sb=document.createElement('div');sb.className='self-badge';sb.textContent='Este sos vos';ph.appendChild(sb)}
-  if(u.video){var vb=document.createElement('div');vb.className='pcard-video-bdg';vb.textContent='▶ Video';vb.onclick=function(ev){ev.stopPropagation();openMedia(u.id,'video')};ph.appendChild(vb)}
-  if(u.is){var b=document.createElement('div');b.className='pcard-bdg';b.textContent='✦ Destacado';ph.appendChild(b)}
-  var bd=document.createElement('div');bd.className='pcard-body';
-  var db=profileDistanceBadge(u);
-  var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
-  var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
-  bd.innerHTML='<div class="pcard-name">'+e(u.name)+', '+u.age+(superSent?'<span class="super-pill">💎✨ Súper enviado</span>':'')+'</div><div class="pcard-meta">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+db+'<div class="ptags" style="margin-top:.38rem">'+lt+'</div><p class="pcard-desc">'+e(u.desc||u.description||'')+'</p>'+((u.int||u.interests)?'<p class="pcard-int"><strong>Intereses:</strong> '+e(u.int||u.interests)+'</p>':'')+'<div class="ptags" style="margin-top:.32rem">'+pt+'</div>';
-  var ac=document.createElement('div');ac.className='pcard-acts';
-  var noSuper=CU && ((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
-  if(CU&&u.id===CU.id){
-    ac.innerHTML='<button class="pa-more" style="flex:1" onclick="fuGoReg()">✏ Editar mi perfil</button><button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver</button>';
-  }else if(!CU){
-    ac.innerHTML='<button onclick="openAuth(\'register\')" style="width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.5rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">Registrate para interactuar →</button>';
+  var c=document.createElement('div');
+  c.className='pcard'+((CU&&u.id===CU.id)?' self-profile':'');
+  c.id='ca-'+u.id;
+
+  // Photo
+  var ph=document.createElement('div');ph.className='pcard-ph';
+  ph.onclick=function(){
+    if(!CU){openAuth('register');return}
+    openMod(u.id)
+  };
+  if(u.photo){
+    var img=document.createElement('img');
+    img.src=u.photo;img.alt=u.name;
+    img.onerror=function(){ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>'};
+    ph.appendChild(img);
+  }else{
+    ph.innerHTML='<div class="pcard-av">'+(u.name?u.name[0]:'?')+'</div>';
   }
-  c.appendChild(ac);return c;
+
+  // Info
+  var inf=document.createElement('div');inf.className='pcard-info';
+  var meta='';
+  var dLat=_searchLat||MLAT,dLng=_searchLng||MLNG;
+  var dLabel=_searchCity?'de '+_searchCity:'de vos';
+  if(dLat&&dLng&&u.lat&&u.lng){
+    var d=cDist(dLat,dLng,u.lat,u.lng);
+    meta='<span class="dist-b">📍 '+(d<1?'Menos de 1 km':'~'+Math.round(d)+' km '+dLabel)+'</span>';
+  }
+  inf.innerHTML='<div class="pcard-nm">'+e(u.name||'')+(u.age?', '+u.age:'')+'</div>'
+    +(u.zodiac?'<div class="pcard-zod">'+e(u.zodiac)+'</div>':'')
+    +(u.city?'<div class="pcard-meta">📍 '+e(u.city)+'</div>':'')
+    +meta;
+
+  // Actions
+  var ac=document.createElement('div');ac.className='pcard-acts';
+
+  if(!CU){
+    // GUEST: just a tap-to-register CTA
+    ac.style.cssText='padding:.5rem';
+    var cta=document.createElement('button');
+    cta.style.cssText='width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.55rem;font-size:.82rem;font-weight:800;cursor:pointer';
+    cta.textContent='Registrate para interactuar';
+    cta.onclick=function(){openAuth('register')};
+    ac.appendChild(cta);
+  } else if(CU&&u.id===CU.id){
+    // OWN PROFILE
+    var editBtn=document.createElement('button');
+    editBtn.className='pa-more';editBtn.style.flex='1';
+    editBtn.textContent='✏ Editar mi perfil';
+    editBtn.onclick=function(){goTo('register');loadProfileForm()};
+    var viewBtn=document.createElement('button');
+    viewBtn.className='pa-more';
+    viewBtn.textContent='Ver';
+    viewBtn.onclick=function(){openMod(u.id)};
+    ac.appendChild(editBtn);ac.appendChild(viewBtn);
+  } else {
+    // LOGGED IN: full actions
+    var noSuper=CU&&((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
+
+    var bF=document.createElement('button');
+    bF.className='pa-forti'+(forti?' sent':'');
+    bF.id='ft-'+u.id;
+    if(forti)bF.disabled=true;
+    bF.innerHTML=forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti';
+    bF.onclick=function(){cuSendForti(u.id)};
+    ac.appendChild(bF);
+
+    var bSD=document.createElement('button');
+    bSD.className='pa-super'+((superSent||noSuper)?' used':'');
+    bSD.id='sp-'+u.id;
+    if(superSent||noSuper)bSD.disabled=true;
+    bSD.title='Súper Diamante';
+    bSD.innerHTML=superSent?'💎 Enviado':noSuper?'💎':'💎';
+    bSD.onclick=function(){sendSuperDiamond(u.id)};
+    ac.appendChild(bSD);
+
+    var bC=document.createElement('button');
+    bC.className='pa-more';
+    bC.textContent='💬';
+    bC.onclick=function(){startChat(u.id,u.name);setBn('chats')};
+    ac.appendChild(bC);
+
+    var bFv=document.createElement('button');
+    bFv.className='pa-more'+(fav?' fav-on':'');
+    bFv.textContent=fav?'⭐':'☆';
+    bFv.onclick=function(){cuTogFav(u.id);bFv.classList.toggle('fav-on');bFv.textContent=bFv.classList.contains('fav-on')?'⭐':'☆'};
+    ac.appendChild(bFv);
+
+    var bBl=document.createElement('button');
+    bBl.className='pa-more';bBl.style.color='#dc2626';
+    bBl.textContent='🚫';
+    bBl.onclick=function(){cuBlkU(u.id)};
+    ac.appendChild(bBl);
+  }
+
+  c.appendChild(ph);c.appendChild(inf);c.appendChild(ac);
+  return c;
 }
+
 function sendForti(id){
   if(!CU){openAuth('login');return}
   var key=kF(CU.id),fs=g(key,[]);
@@ -2451,7 +2529,6 @@ function rMyP(){
   var cfgHtml='<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;margin-top:1rem">📸 Fotos y videos</div>'
     +'<div class="myp-cfg" style="margin-bottom:1rem">'
     +'<div class="cfg-item" onclick="showAllAlbums()"><div class="cfg-ico">📸</div><div class="cfg-nm">Mis álbumes</div><div style="font-size:.72rem;color:var(--txt3)">Públicos y privados</div><span class="cfg-arr">›</span></div>'
-    +
     +'</div>'
     +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">🔗 Redes sociales</div>'
     +'<div class="myp-cfg" style="margin-bottom:1rem">'
@@ -2620,7 +2697,7 @@ function saveProfile(){
     refreshCU();users=normalizeUsers();
     users=users.map(function(u){
       if(u.id!==CU.id)return u;
-      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||CU.photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
     oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);refreshAllUI();
@@ -3086,7 +3163,7 @@ function saveProfile(){
     refreshCU();users=normalizeUsers();
     users=users.map(function(u){
       if(u.id!==CU.id)return u;
-      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||CU.photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
     oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);
