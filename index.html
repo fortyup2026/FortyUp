@@ -2295,5 +2295,151 @@ init();goTo('home');setInterval(checkUnread,5000);
 })();
 </script>
 
+<script>
+/* ===== FIX SEBAS: REGISTRO 5 PASOS - PASO 3 Y 4 AVANZAN ===== */
+(function(){
+  function getStep(){
+    var active = document.querySelector('.reg-panel.active, .reg-panel-s.active, .fu-reg5-panel.active');
+    if(active){
+      return parseInt(active.getAttribute('data-reg-step') || active.getAttribute('data-step') || '1', 10);
+    }
+    var activeStep = document.querySelector('#regSteps .reg-step.active, #regStepsS .reg-step.active, #fuRegSteps .reg-step.active');
+    if(activeStep){
+      var all = Array.from(activeStep.parentElement.children);
+      return all.indexOf(activeStep) + 1;
+    }
+    return window.REG_STEP || window.REG_STEP_S || window.FU_REG_STEP || 1;
+  }
+
+  function setStepFixed(n){
+    n = Math.max(1, Math.min(5, n));
+
+    document.querySelectorAll('.reg-panel, .reg-panel-s, .fu-reg5-panel').forEach(function(p){
+      var step = parseInt(p.getAttribute('data-reg-step') || p.getAttribute('data-step') || '1', 10);
+      p.classList.toggle('active', step === n);
+      p.style.display = step === n ? 'block' : 'none';
+    });
+
+    document.querySelectorAll('#regSteps .reg-step, #regStepsS .reg-step, #fuRegSteps .reg-step').forEach(function(s, i){
+      var step = i + 1;
+      s.classList.toggle('active', step === n);
+      s.classList.toggle('done', step < n);
+      var dot = s.querySelector('.reg-dot');
+      if(dot) dot.textContent = step < n ? '✓' : step;
+    });
+
+    var back = document.getElementById('regBackBtn') || document.getElementById('regBackS') || document.getElementById('fuBackReg');
+    var next = document.getElementById('regNextBtn') || document.getElementById('regNextS') || document.getElementById('fuNextReg');
+
+    if(back) back.style.visibility = n === 1 ? 'hidden' : 'visible';
+    if(next) next.textContent = n === 5 ? 'Guardar perfil ✦' : 'Continuar →';
+
+    window.REG_STEP = n;
+    window.REG_STEP_S = n;
+    window.FU_REG_STEP = n;
+
+    var err = document.getElementById('rErr');
+    if(err) err.style.display = 'none';
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function validStepFixed(step){
+    var err = document.getElementById('rErr');
+    function show(msg){
+      if(err){
+        err.textContent = msg;
+        err.style.display = 'block';
+        err.scrollIntoView({behavior:'smooth', block:'center'});
+      }else{
+        alert(msg);
+      }
+      return false;
+    }
+
+    if(step === 1){
+      var name = (document.getElementById('rN') || {}).value || '';
+      var age = parseInt((document.getElementById('rA') || {}).value || '', 10);
+      var city = (document.getElementById('rC') || {}).value || '';
+      var gender = (document.getElementById('rG') || {}).value || '';
+      var email = (document.getElementById('rE') || {}).value || '';
+
+      if(!name.trim() || !city.trim() || !gender.trim()){
+        return show('Completá nombre, ciudad y género.');
+      }
+      if(!age || age < 40){
+        return show('FortyUp es solo para mayores de 40 años.');
+      }
+      if(!window.CU && (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))){
+        return show('Ingresá un email válido.');
+      }
+    }
+
+    // Paso 2, 3 y 4 quedan opcionales para poder avanzar.
+    // Paso 3: descripción/intereses opcionales.
+    // Paso 4: foto/video opcionales.
+    return true;
+  }
+
+  function continueFixed(){
+    var step = getStep();
+    if(!validStepFixed(step)) return;
+
+    if(step < 5){
+      setStepFixed(step + 1);
+      return;
+    }
+
+    if(typeof window.__fuOldSaveProfile === 'function'){
+      window.__fuOldSaveProfile();
+    }else if(typeof window.saveProfile === 'function' && window.saveProfile !== saveProfileFixed){
+      window.saveProfile();
+    }else{
+      var ok = document.getElementById('rOk');
+      if(ok){
+        ok.textContent = 'Perfil guardado.';
+        ok.style.display = 'block';
+      }else{
+        alert('Perfil guardado.');
+      }
+    }
+  }
+
+  function saveProfileFixed(){
+    continueFixed();
+  }
+
+  window.regNext = continueFixed;
+  window.regNextS = continueFixed;
+  window.fuRegNext = continueFixed;
+
+  window.regPrev = function(){ setStepFixed(getStep() - 1); };
+  window.regPrevS = window.regPrev;
+  window.fuRegPrev = window.regPrev;
+
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('#regNextBtn, #regNextS, #fuNextReg');
+    if(btn){
+      e.preventDefault();
+      e.stopPropagation();
+      continueFixed();
+    }
+
+    var back = e.target.closest('#regBackBtn, #regBackS, #fuBackReg');
+    if(back){
+      e.preventDefault();
+      e.stopPropagation();
+      setStepFixed(getStep() - 1);
+    }
+  }, true);
+
+  setTimeout(function(){
+    if(document.querySelector('.reg-panel, .reg-panel-s, .fu-reg5-panel')){
+      setStepFixed(getStep());
+    }
+  }, 400);
+})();
+</script>
+
 </body>
 </html>
