@@ -935,6 +935,13 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   border:1.5px solid #D1E8DF!important;
 }
 
+
+/* Guest mode - hide location search */
+body:not(.has-session) #locationSearchBar { display: none !important; }
+
+/* Guest profile cards - cleaner typography */
+.guest-card .pcard-nm { font-size: 1.05rem; font-weight: 700; color: var(--txt); }
+.guest-card .pcard-meta { font-size: .82rem; color: var(--txt3); }
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1380,7 +1387,7 @@ function syncFromFirestore(){
       // Update existing local profiles with Firebase data
       var merged = localReal.map(function(u){
         var fb = fbProfiles.filter(function(f){return f.id===u.id})[0];
-        return fb ? Object.assign({},u,fb,{pass:u.pass}) : u; // keep local pass
+        return fb ? Object.assign({},u,fb,{pass:u.pass,photo:u.photo&&u.photo.indexOf('data:')===0?u.photo:(fb.photo||u.photo||'')}) : u; // keep local pass + base64 photo
       });
       
       // Add new profiles from Firebase not in local
@@ -2037,7 +2044,7 @@ function showMatch(otherId){
 function goBack(){if(window.history&&window.history.length>1)window.history.back();else goTo('home')}
 function triggerPhotoInput(){var el=document.getElementById('rPF');if(el)el.click()}
 function triggerVideoInput(){var el=document.getElementById('rVF');if(el)el.click()}
-function bnPlusClick(){if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('register')}}
+function bnPlusClick(){if(CU){goTo('myprofile');setTimeout(rMyP,50);setBn('me')}else{openAuth('register')}}
 function cuSendFortiBtn(btn,id){if(!CU){openAuth('login');return}sendForti(id);if(btn){btn.innerHTML='<span class="forti-gem"></span> Enviado';btn.disabled=true;btn.style.opacity='0.7'}}
 function getZodiac(day,month){
   var s=[{n:'Capricornio',e:[1,19]},{n:'Acuario',e:[2,18]},{n:'Piscis',e:[3,20]},{n:'Aries',e:[4,19]},{n:'Tauro',e:[5,20]},{n:'Géminis',e:[6,20]},{n:'Cáncer',e:[7,22]},{n:'Leo',e:[8,22]},{n:'Virgo',e:[9,22]},{n:'Libra',e:[10,22]},{n:'Escorpio',e:[11,21]},{n:'Sagitario',e:[12,21]},{n:'Capricornio',e:[12,31]}];
@@ -2222,6 +2229,9 @@ function upNav(){
   if(typeof updateHeroLoggedIn==='function')updateHeroLoggedIn();
   var lb=document.getElementById('locationSearchBar');
   if(lb)lb.style.display=CU?'flex':'none';
+  // Mark body with session state
+  if(CU){document.body.classList.add('has-session')}
+  else{document.body.classList.remove('has-session')}
 }
 function openAuth(mode){
   AM=mode;switchTab(mode);
