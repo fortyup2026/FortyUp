@@ -694,6 +694,19 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   color: #10B981;
 }
 
+
+/* ===== SEBAS FIX BUSCADOR SIN PIN DUPLICADO ===== */
+@media(max-width:750px){
+  .pfilters input,
+  .filters input,
+  .profile-filters input,
+  .search-row input,
+  .map-search input,
+  .radar-controls input{
+    padding-left:1rem!important;
+  }
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3577,6 +3590,39 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},300);
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1000);
   setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1200);
+})();
+</script>
+
+
+<script>
+/* ===== SEBAS FIX BUSCADOR: SACAR PIN DUPLICADO ===== */
+(function(){
+  function cleanSearchPlaceholderSebas(){
+    document.querySelectorAll('input').forEach(function(inp){
+      var ph=(inp.getAttribute('placeholder')||'').toLowerCase();
+      if(ph.includes('buscar') || ph.includes('ciudad')){
+        inp.setAttribute('placeholder','Buscar');
+        if(inp.value === '📍 Buscar' || inp.value === '📍  Buscar'){
+          inp.value = '';
+        }
+      }
+    });
+
+    document.querySelectorAll('button').forEach(function(btn){
+      var t=(btn.textContent||'').trim().toLowerCase();
+      if(t.includes('mi ubicación')){
+        btn.innerHTML='📍 Mi ubicación';
+      }
+      if(t.includes('mapa')){
+        btn.innerHTML='🗺️ Mapa';
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',cleanSearchPlaceholderSebas);
+  setTimeout(cleanSearchPlaceholderSebas,300);
+  setTimeout(cleanSearchPlaceholderSebas,1000);
+  setInterval(cleanSearchPlaceholderSebas,1500);
 })();
 </script>
 
