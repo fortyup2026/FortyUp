@@ -691,7 +691,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
-<div style="display:flex;gap:.5rem;margin-bottom:1.25rem;align-items:center">
+<div id="locationSearchBar" style="display:none;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center">
   <div class="autocomplete-wrap">
     <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none">📍</span>
     <input type="text" id="locationFilter" placeholder="Buscar por ciudad..." 
@@ -1495,6 +1495,9 @@ function profileDistanceBadge(u){
 }
 function rProfiles(){
   var grid=document.getElementById('pgrid');grid.innerHTML='';
+  // Show location bar only when logged in
+  var locBar=document.getElementById('locationSearchBar');
+  if(locBar)locBar.style.display=CU?'flex':'none';
   var bl=g(K.BL,[]);
   var users=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&prefAllowsProfile(u)});
   var baseLat=MLAT||(CU&&CU.lat?CU.lat:null), baseLng=MLNG||(CU&&CU.lng?CU.lng:null);
