@@ -1079,29 +1079,17 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
-<div id="locationSearchBar" style="display:none;margin-bottom:1.25rem">
-  <div style="display:flex;gap:.4rem;margin-bottom:.6rem">
-    <button onclick="useMyLocation()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.35rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.55rem .75rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">
+<div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
+  <div style="display:flex;gap:.5rem;align-items:center">
+    <button onclick="useMyLocation()" id="btnMyLoc" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem .75rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer">
       📍 Mi ubicación
     </button>
-    <button onclick="openMapSearch()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.35rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.55rem .75rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">
-      🗺 Elegir en mapa
+    <button onclick="openMapSearch()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem .75rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer">
+      🗺 Buscar en mapa
     </button>
   </div>
-  <div style="display:flex;gap:.4rem;align-items:center">
-  <div class="autocomplete-wrap">
-    <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none">📍</span>
-    <input type="text" id="locationFilter" placeholder="Buscar por ciudad..." 
-      autocomplete="off"
-      style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:50px;padding:.6rem .9rem .6rem 2.2rem;font-size:.88rem;font-family:Nunito,sans-serif;color:var(--txt)"
-      oninput="onLocationInput(this.value)"
-      onkeydown="onLocationKey(event)"
-      onfocus="this.style.borderColor='var(--g2)';showCityDropdown(this.value)"
-      onblur="this.style.borderColor='var(--border)';setTimeout(hideCityDropdown,200)">
-    <div class="autocomplete-list" id="cityDropdown" style="display:none"></div>
-  </div>
-  <button onclick="clearLocationFilter()" id="clearLocBtn" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:#dc2626;cursor:pointer;white-space:nowrap">✕ Limpiar</button>
-  <button onclick="clearLocationFilter()" id="clearLocBtn2" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.58rem .85rem;font-size:.8rem;font-weight:800;color:#dc2626;cursor:pointer">✕</button>
+  <div id="locActiveLabel" style="display:none;margin-top:.5rem;font-size:.78rem;color:var(--g1);font-weight:700;text-align:center;padding:.3rem .75rem;background:var(--bg3);border-radius:50px;width:fit-content;margin-left:auto;margin-right:auto">
+    📍 <span id="locActiveName"></span> · <button onclick="clearLocationFilter()" style="background:none;border:none;color:#dc2626;font-size:.75rem;font-weight:800;cursor:pointer">✕ Limpiar</button>
   </div>
 </div><div class="pgrid" id="pgrid"></div></div>
 </div>
@@ -1689,24 +1677,25 @@ function filterByLocation(val){
   rProfiles();
 }
 
+function showLocLabel(name){
+  var lbl=document.getElementById('locActiveLabel');
+  var nm=document.getElementById('locActiveName');
+  if(lbl&&nm){nm.textContent=name;lbl.style.display='block'}
+}
 function clearLocationFilter(){
   _locFilter = '';
   _searchLat = null; _searchLng = null; _searchCity = '';
-  var inp = document.getElementById('locationFilter');
-  if(inp) inp.value = '';
-  var btn = document.getElementById('clearLocBtn');
-  if(btn) btn.style.display = 'none';
+  var lbl = document.getElementById('locActiveLabel');
+  if(lbl) lbl.style.display = 'none';
   rProfiles();
-  toast('Volviendo a tu ubicación 📍','ok');
+  toast('Mostrando perfiles por tu ubicación 📍','ok');
 }
 
 function useMyLocation(){
   _searchLat = null; _searchLng = null; _searchCity = '';
   _locFilter = '';
-  var inp = document.getElementById('locationFilter');
-  if(inp) inp.value = '';
-  var btn = document.getElementById('clearLocBtn');
-  if(btn) btn.style.display = 'none';
+  var lbl = document.getElementById('locActiveLabel');
+  if(lbl) lbl.style.display = 'none';
   if(MLAT&&MLNG){
     rProfiles();
     toast('Mostrando perfiles cercanos a vos 📍','ok');
@@ -1800,20 +1789,11 @@ function applyMapSearch(){
   if(!_mapLat||!_mapLng)return;
   var btn = document.getElementById('mapSearchBtn');
   var place = btn ? btn.dataset.place||'zona seleccionada' : 'zona seleccionada';
-
   _searchLat = _mapLat;
   _searchLng = _mapLng;
   _searchCity = place;
   _locFilter = '';
-
-  // Update input
-  var inp = document.getElementById('locationFilter');
-  if(inp) inp.value = place;
-  var clrBtn = document.getElementById('clearLocBtn');
-  if(clrBtn) clrBtn.style.display = 'block';
-  var clrBtn2 = document.getElementById('clearLocBtn2');
-  if(clrBtn2) clrBtn2.style.display = 'block';
-
+  showLocLabel(place);
   closeMapSearch();
   rProfiles();
   toast('Mostrando perfiles cerca de '+place+' 📍','ok');
@@ -4387,10 +4367,24 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
 
   // Reemplaza/crea controles múltiples en el panel de álbum
   window.sebasMultiAlbumControls=function(ownerId,type){
-    return '<div class="album-add-sebas">'
-      +'<label>＋ Fotos '+(type==='public'?'públicas':'privadas')+'<input multiple type="file" accept="image/*" onchange="sebasAddAlbumFiles(\\''+ownerId+'\\',\\''+type+'\\',this,\\'image\\')"></label>'
-      +'<label>＋ Videos '+(type==='public'?'públicos':'privados')+'<input multiple type="file" accept="video/*" onchange="sebasAddAlbumFiles(\\''+ownerId+'\\',\\''+type+'\\',this,\\'video\\')"></label>'
-      +'</div>';
+    var fotosLabel = type==='public'?'públicas':'privadas';
+    var videosLabel = type==='public'?'públicos':'privados';
+    var div = document.createElement('div');
+    div.className = 'album-add-sebas';
+    var lbF = document.createElement('label');
+    lbF.textContent = '＋ Fotos '+fotosLabel;
+    var inpF = document.createElement('input');
+    inpF.type='file';inpF.accept='image/*';inpF.multiple=true;
+    inpF.onchange=function(){sebasAddAlbumFiles(ownerId,type,this,'image')};
+    lbF.appendChild(inpF);
+    var lbV = document.createElement('label');
+    lbV.textContent = '＋ Videos '+videosLabel;
+    var inpV = document.createElement('input');
+    inpV.type='file';inpV.accept='video/*';inpV.multiple=true;
+    inpV.onchange=function(){sebasAddAlbumFiles(ownerId,type,this,'video')};
+    lbV.appendChild(inpV);
+    div.appendChild(lbF);div.appendChild(lbV);
+    return div.outerHTML;
   };
 
   window.sebasAddAlbumFiles=function(ownerId,type,input,kind){
@@ -4603,7 +4597,7 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
     var el=document.getElementById('ageFortyPopupSebasV2');
     if(!el)return;
     try{
-      
+      if(localStorage.getItem('fortyup_age_ok_v2')==='1')return;
     }catch(e){}
     el.classList.add('open');
   }
