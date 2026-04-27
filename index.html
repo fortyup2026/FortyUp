@@ -1050,7 +1050,9 @@ function selectCity(city){
   var inp = document.getElementById('locationFilter');
   if(inp) inp.value = city;
   hideCityDropdown();
+  // Filter text AND search by coords
   filterByLocation(city);
+  searchByCity(city);
   var btn = document.getElementById('clearLocBtn');
   if(btn) btn.style.display = city ? 'block' : 'none';
 }
@@ -1078,6 +1080,96 @@ function onLocationKey(event){
   }
 }
 
+
+// ── CITY COORDINATES ──
+var CITY_COORDS = {
+  'Buenos Aires':[-34.6037,-58.3816],'Córdoba':[-31.4201,-64.1888],
+  'Rosario':[-32.9442,-60.6505],'Mendoza':[-32.8908,-68.8272],
+  'La Plata':[-34.9215,-57.9545],'San Miguel de Tucumán':[-26.8241,-65.2226],
+  'Mar del Plata':[-38.0023,-57.5575],'Salta':[-24.7859,-65.4117],
+  'Santa Fe':[-31.6333,-60.7000],'San Juan':[-31.5375,-68.5364],
+  'Resistencia':[-27.4606,-58.9867],'Santiago del Estero':[-27.7951,-64.2615],
+  'Corrientes':[-27.4806,-58.8341],'Posadas':[-27.3621,-55.8969],
+  'Neuquén':[-38.9516,-68.0591],'San Salvador de Jujuy':[-24.1858,-65.2995],
+  'Bahía Blanca':[-38.7183,-62.2663],'Paraná':[-31.7333,-60.5333],
+  'Formosa':[-26.1775,-58.1781],'San Luis':[-33.2950,-66.3356],
+  'La Rioja':[-29.4130,-66.8560],'Catamarca':[-28.4696,-65.7852],
+  'Río Cuarto':[-33.1232,-64.3493],'Comodoro Rivadavia':[-45.8667,-67.5000],
+  'Concordia':[-31.3932,-58.0217],'Tandil':[-37.3217,-59.1332],
+  'San Carlos de Bariloche':[-41.1335,-71.3103],'Ushuaia':[-54.8019,-68.3030],
+  'San Rafael':[-34.6178,-68.3303],'General Roca':[-39.0333,-67.5833],
+  'Neuquén':[-38.9516,-68.0591],'Río Gallegos':[-51.6230,-69.2168],
+  'Viedma':[-40.8135,-62.9967],'Rawson':[-43.3002,-65.1023],
+  'Santa Rosa':[-36.6167,-64.2833],'Trelew':[-43.2489,-65.3082],
+  'Puerto Madryn':[-42.7682,-65.0385],'Villa Bosch':[-34.5833,-58.5500],
+  'Palermo':[-34.5795,-58.4299],'Belgrano':[-34.5604,-58.4570],
+  'San Isidro':[-34.4726,-58.5262],'Tigre':[-34.4260,-58.5796],
+  'Morón':[-34.6534,-58.6198],'Quilmes':[-34.7197,-58.2536],
+  'Pilar':[-34.4588,-58.9142],'Lanús':[-34.7078,-58.3928],
+  'Avellaneda':[-34.6614,-58.3658],'Lomas de Zamora':[-34.7606,-58.4003],
+  'Junín':[-34.5877,-60.9569],'Azul':[-36.7768,-59.8580],
+  'Olavarría':[-36.8929,-60.3223],'Luján':[-34.5705,-59.1070],
+  'Bahía Blanca':[-38.7183,-62.2663],'Necochea':[-38.5548,-58.7393],
+  'Tres Arroyos':[-38.3759,-60.2759],'Chivilcoy':[-34.8981,-60.0167],
+  'Pergamino':[-33.8893,-60.5614],'Campana':[-34.1650,-58.9567],
+  'Zárate':[-34.0981,-59.0286],'Escobar':[-34.3490,-58.7920]
+};
+
+// ── Search by city with geocoding ──
+var _searchLat = null, _searchLng = null, _searchCity = '';
+
+function searchByCity(cityName){
+  if(!cityName||!cityName.trim()){
+    // Reset to user's location
+    _searchLat = null; _searchLng = null; _searchCity = '';
+    rProfiles();
+    return;
+  }
+  
+  var name = cityName.trim();
+  _searchCity = name;
+  
+  // Check predefined coords first
+  var found = null;
+  for(var key in CITY_COORDS){
+    if(key.toLowerCase() === name.toLowerCase() || 
+       key.toLowerCase().indexOf(name.toLowerCase()) !== -1){
+      found = {name: key, coords: CITY_COORDS[key]};
+      break;
+    }
+  }
+  
+  if(found){
+    _searchLat = found.coords[0];
+    _searchLng = found.coords[1];
+    rProfiles();
+    toast('Mostrando perfiles cerca de ' + found.name + ' 📍', 'ok');
+    return;
+  }
+  
+  // Fallback: use Nominatim to geocode
+  var url = 'https://nominatim.openstreetmap.org/search?q=' + 
+    encodeURIComponent(name + ', Argentina') + 
+    '&format=json&limit=1&accept-language=es';
+  
+  toast('Buscando ' + name + '...', 'ok');
+  fetch(url)
+    .then(function(r){return r.json()})
+    .then(function(data){
+      if(data&&data.length){
+        _searchLat = parseFloat(data[0].lat);
+        _searchLng = parseFloat(data[0].lon);
+        rProfiles();
+        toast('Mostrando perfiles cerca de ' + name + ' 📍', 'ok');
+      }else{
+        toast('Ciudad no encontrada. Probá con otro nombre.', 'w');
+      }
+    })
+    .catch(function(){
+      toast('No se pudo conectar. Verificá tu conexión.', 'w');
+    });
+}
+
 // ── LOCATION FILTER ──
 var _locFilter = '';
 
@@ -1090,20 +1182,23 @@ function filterByLocation(val){
 
 function clearLocationFilter(){
   _locFilter = '';
+  _searchLat = null; _searchLng = null; _searchCity = '';
   var inp = document.getElementById('locationFilter');
   if(inp) inp.value = '';
   var btn = document.getElementById('clearLocBtn');
   if(btn) btn.style.display = 'none';
   rProfiles();
+  toast('Volviendo a tu ubicación 📍','ok');
 }
 
 function useMyLocation(){
+  _searchLat = null; _searchLng = null; _searchCity = '';
+  _locFilter = '';
+  var inp = document.getElementById('locationFilter');
+  if(inp) inp.value = '';
+  var btn = document.getElementById('clearLocBtn');
+  if(btn) btn.style.display = 'none';
   if(MLAT&&MLNG){
-    _locFilter = '';
-    var inp = document.getElementById('locationFilter');
-    if(inp) inp.value = '';
-    var btn = document.getElementById('clearLocBtn');
-    if(btn) btn.style.display = 'none';
     rProfiles();
     toast('Mostrando perfiles cercanos a vos 📍','ok');
     return;
