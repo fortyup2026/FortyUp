@@ -680,7 +680,22 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 </div>
 
 <div class="page" id="page-profiles">
-  <div class="inner"><div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem"><div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div><button onclick="syncFromFirestore();toast('Actualizando perfiles...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄 Actualizar</button></div><div class="pgrid" id="pgrid"></div></div>
+  <div class="inner"><div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+  <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
+  <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
+</div>
+<div style="display:flex;gap:.5rem;margin-bottom:1.25rem;align-items:center">
+  <div style="flex:1;position:relative">
+    <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none">📍</span>
+    <input type="text" id="locationFilter" placeholder="Buscar por ciudad o país..." 
+      style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:50px;padding:.6rem .9rem .6rem 2.2rem;font-size:.88rem;font-family:Nunito,sans-serif;color:var(--txt)"
+      oninput="filterByLocation(this.value)"
+      onfocus="this.style.borderColor='var(--g2)'"
+      onblur="this.style.borderColor='var(--border)'">
+  </div>
+  <button onclick="clearLocationFilter()" id="clearLocBtn" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:#dc2626;cursor:pointer;white-space:nowrap">✕ Limpiar</button>
+  <button onclick="useMyLocation()" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer;white-space:nowrap">📍 Mi ubicación</button>
+</div><div class="pgrid" id="pgrid"></div></div>
 </div>
 
 <div class="page" id="page-register">
@@ -970,6 +985,54 @@ function normalizeUsers(){
 function findUserById(id){return g(K.U,[]).filter(function(x){return x.id===id})[0]||null}
 function refreshCU(){if(!CU)return null;CU=findUserById(CU.id);if(CU)sv(K.S,{id:CU.id});return CU}
 
+
+// ── LOCATION FILTER ──
+var _locFilter = '';
+
+function filterByLocation(val){
+  _locFilter = (val||'').trim().toLowerCase();
+  var btn = document.getElementById('clearLocBtn');
+  if(btn) btn.style.display = _locFilter ? 'block' : 'none';
+  rProfiles();
+}
+
+function clearLocationFilter(){
+  _locFilter = '';
+  var inp = document.getElementById('locationFilter');
+  if(inp) inp.value = '';
+  var btn = document.getElementById('clearLocBtn');
+  if(btn) btn.style.display = 'none';
+  rProfiles();
+}
+
+function useMyLocation(){
+  if(MLAT&&MLNG){
+    _locFilter = '';
+    var inp = document.getElementById('locationFilter');
+    if(inp) inp.value = '';
+    var btn = document.getElementById('clearLocBtn');
+    if(btn) btn.style.display = 'none';
+    rProfiles();
+    toast('Mostrando perfiles cercanos a vos 📍','ok');
+    return;
+  }
+  // Try to get location
+  if(navigator.geolocation){
+    toast('Obteniendo tu ubicación...','ok');
+    navigator.geolocation.getCurrentPosition(function(pos){
+      MLAT = pos.coords.latitude;
+      MLNG = pos.coords.longitude;
+      _locFilter = '';
+      var inp = document.getElementById('locationFilter');
+      if(inp) inp.value = '';
+      rProfiles();
+      toast('Mostrando perfiles cercanos 📍','ok');
+    }, function(){
+      toast('No se pudo obtener tu ubicación.','w');
+    });
+  }
+}
+
 function goBack(){if(window.history&&window.history.length>1)window.history.back();else goTo('home')}
 function triggerPhotoInput(){var el=document.getElementById('rPF');if(el)el.click()}
 function triggerVideoInput(){var el=document.getElementById('rVF');if(el)el.click()}
@@ -1207,7 +1270,7 @@ function doAuth(){
     var found=users.filter(function(u){return !u.is&&normEmail(u.email)===email&&u.pass===pass})[0];
     if(!found){ee.textContent='Email o contraseña incorrectos.';ee.style.display='block';return}
     CU=found;sv(K.S,{id:found.id});upNav();closeAuth();checkUnread();clearReg();
-    toast('¡Bienvenido/a '+e(found.name||found.email.split('@')[0])+'! 💚','ok');checkSuperDiamNotif();
+    // toast removed - hero shows welcomecheckSuperDiamNotif();
     if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);
   }
 }
