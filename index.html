@@ -588,9 +588,57 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   body:not(.fu-logged-in) .bn{max-width:33.33%!important}
 }
 
+/* ===== FIX SEBAS ESTABLE: +40 / NAV SIN SESIÓN / REGISTRO 5 PASOS ===== */
+#fuAgeGate2{
+  position:fixed;inset:0;z-index:99999;background:rgba(6,20,16,.84);
+  backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:1.25rem;
+}
+#fuAgeGate2.open{display:flex!important}
+#fuAgeGate2 .agebox{
+  background:#fff;border-radius:28px;max-width:360px;width:100%;padding:2rem 1.35rem;
+  text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.28);
+}
+#fuAgeGate2 .gem{font-size:3.1rem;margin-bottom:.65rem}
+#fuAgeGate2 h2{font-family:'Playfair Display',serif;color:#064E3B;font-size:1.55rem;margin-bottom:.5rem}
+#fuAgeGate2 p{color:#6B7C76;line-height:1.55;font-size:.92rem;margin-bottom:1.2rem}
+#fuAgeGate2 button{width:100%;border-radius:999px;padding:.78rem 1rem;font-weight:900;font-family:'Nunito',sans-serif}
+#fuAgeGate2 .yes{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;margin-bottom:.65rem}
+#fuAgeGate2 .no{background:#fff;border:1.5px solid #D1E8DF;color:#6B7C76}
+
+/* sin sesión: abajo solo Inicio / Perfiles / Unirme */
+body.fu-no-session #bn-chats,
+body.fu-no-session #bn-me{display:none!important}
+body.fu-no-session #bnav{justify-content:space-around!important}
+body.fu-no-session #bn-home,
+body.fu-no-session #bn-profiles,
+body.fu-no-session #bn-plus{flex:1 1 33.33%!important;max-width:33.33%!important}
+
+/* registro estable por paneles */
+.reg-panel-s{display:none}
+.reg-panel-s.active{display:block;animation:regFadeStable .18s ease both}
+@keyframes regFadeStable{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.reg-actions-s{display:flex;gap:.75rem;margin-top:1.25rem}
+.reg-actions-s .btn{flex:1;justify-content:center}
+.reg-steps.reg-steps-5-s{gap:.22rem}
+.reg-steps.reg-steps-5-s .reg-step{font-size:.6rem}
+.reg-steps.reg-steps-5-s .reg-step:not(:last-child):after{left:56%;right:-44%}
+.social-grid-s{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:520px){.social-grid-s{grid-template-columns:1fr}.reg-steps.reg-steps-5-s .reg-step{font-size:.55rem}}
+
 </style>
 </head>
 <body>
+
+<div id="fuAgeGate2">
+  <div class="agebox">
+    <div class="gem">💎</div>
+    <h2>Bienvenido/a a FortyUp</h2>
+    <p>Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
+    <button class="yes" onclick="fuAgeYes()">Tengo más de 40 años ✓</button>
+    <button class="no" onclick="alert('FortyUp es una comunidad para mayores de 40 años.')">No tengo más de 40 años</button>
+  </div>
+</div>
+
 
 <div id="age40Ov" class="age40-ov">
   <div class="age40-box">
@@ -2462,6 +2510,267 @@ init();goTo('home');setInterval(checkUnread,5000);
   });
   setTimeout(function(){fuShowAge40();patchBottomNav()},300);
   setTimeout(patchBottomNav,1000);
+})();
+</script>
+
+<script>
+/* ===== FIX SEBAS ESTABLE FINAL ===== */
+(function(){
+  var REG_STEP_S = 1;
+  var oldGoToS = window.goTo;
+  var oldLoadProfileFormS = window.loadProfileForm;
+  var oldSaveProfileS = window.saveProfile;
+  var oldDoAuthS = window.doAuth;
+
+  function currentUserExists(){
+    try{
+      return !!(window.CU && CU.id);
+    }catch(e){return false}
+  }
+
+  function updateSessionUI(){
+    document.body.classList.toggle('fu-no-session', !currentUserExists());
+    document.body.classList.toggle('fu-logged-in', currentUserExists());
+    var plus=document.getElementById('bn-plus');
+    if(plus){
+      plus.onclick=function(ev){
+        ev.preventDefault();
+        if(currentUserExists()){
+          if(typeof goTo==='function'){goTo('myprofile')}
+          if(typeof rMyP==='function'){rMyP()}
+          if(typeof setBn==='function'){setBn('me')}
+        }else{
+          if(typeof openAuth==='function'){openAuth('register')}
+        }
+      };
+    }
+    var chats=document.getElementById('bn-chats');
+    if(chats){
+      chats.onclick=function(ev){
+        ev.preventDefault();
+        if(!currentUserExists()){
+          if(typeof openAuth==='function'){openAuth('login')}
+          return;
+        }
+        if(typeof goTo==='function'){goTo('chats')}
+        if(typeof rChatList==='function'){rChatList()}
+        if(typeof setBn==='function'){setBn('chats')}
+      };
+    }
+  }
+
+  window.fuAgeYes=function(){
+    try{localStorage.setItem('fu_age_gate_ok_v3','1')}catch(e){}
+    var el=document.getElementById('fuAgeGate2');
+    if(el)el.classList.remove('open');
+  };
+
+  function showAgeIfNeeded(){
+    var el=document.getElementById('fuAgeGate2');
+    if(!el)return;
+    try{
+      if(localStorage.getItem('fu_age_gate_ok_v3')==='1')return;
+    }catch(e){}
+    el.classList.add('open');
+  }
+
+  function buildWizard(){
+    var page=document.getElementById('page-register');
+    if(!page)return;
+    var inner=page.querySelector('.inner');
+    if(!inner)return;
+
+    inner.innerHTML = ''
+      +'<button class="back-b" onclick="goTo(\\'home\\')">← Volver</button>'
+      +'<div style="margin-bottom:1.15rem"><h2 class="pg-tit">Creá tu perfil</h2><p class="pg-sub">Solo para mayores de 40.</p></div>'
+      +'<div class="reg-steps reg-steps-5-s" id="regStepsS">'
+        +'<div class="reg-step active"><div class="reg-dot">1</div><span>Datos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">2</div><span>Gustos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">3</div><span>Sobre vos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">4</div><span>Fotos</span></div>'
+        +'<div class="reg-step"><div class="reg-dot">5</div><span>Social</span></div>'
+      +'</div>'
+      +'<div class="fcard">'
+        +'<div id="rErr" class="alert alert-e" style="display:none"></div>'
+        +'<div id="rOk" class="alert alert-ok" style="display:none"></div>'
+
+        +'<div class="reg-panel-s active" data-step="1">'
+          +'<p class="fsec">Datos personales</p>'
+          +'<div class="frow"><div class="fld"><label>Nombre <span class="req">*</span></label><input id="rN" type="text" placeholder="Tu nombre"></div><div class="fld"><label>Edad <span class="req">*</span></label><input id="rA" type="number" min="40" placeholder="Tu edad"></div></div>'
+          +'<div class="frow"><div class="fld"><label>Ciudad <span class="req">*</span></label><input id="rC" type="text" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div><div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div></div>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input id="rE" type="email" placeholder="tu@email.com"></div></div>'
+          +'<input type="hidden" id="rLat"><input type="hidden" id="rLng">'
+        +'</div>'
+
+        +'<div class="reg-panel-s" data-step="2">'
+          +'<p class="fsec">Gustos</p>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select></div></div>'
+          +'<p class="fsec">¿Qué buscás?</p><div class="chips">'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Amistad">Amistad</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Compañía">Compañía</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Relación seria">Relación seria</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Salir a tomar algo">Salir a tomar algo</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Viajar">Viajar</label>'
+            +'<label class="chip"><input type="checkbox" name="lk" value="Charlar">Charlar</label>'
+          +'</div>'
+          +'<p class="fsec">Plan ideal</p><div class="chips">'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="☕ Café">☕ Café</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍷 Vino">🍷 Vino</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🚶 Caminata">🚶 Caminata</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍽️ Cena">🍽️ Cena</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎬 Cine">🎬 Cine</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎵 Música en vivo">🎵 Música en vivo</label>'
+            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="✈️ Viaje corto">✈️ Viaje corto</label>'
+          +'</div>'
+        +'</div>'
+
+        +'<div class="reg-panel-s" data-step="3">'
+          +'<p class="fsec">Sobre vos</p>'
+          +'<div class="fld"><label>Descripción <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><textarea id="rD" rows="5" placeholder="Contá algo sobre vos..."></textarea></div>'
+          +'<div class="fld" style="margin-top:.85rem"><label>Intereses</label><input type="text" id="rI" placeholder="viajes, música, cocina..."></div>'
+        +'</div>'
+
+        +'<div class="reg-panel-s" data-step="4">'
+          +'<p class="fsec">Fotos y videos</p>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto principal</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById(\\'rPF\\').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>'
+          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Video de perfil <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById(\\'rVF\\').click()">🎥 Cargar video corto</button><span class="photo-or">o pegá una URL de video</span><input type="url" id="rV" placeholder="https://... video" oninput="prevVideo(this.value)"><input type="file" id="rVF" accept="video/*" style="display:none" onchange="handleVideoFile(this)"></div><span class="gps-st" id="vidSt">Tip: usá videos cortos o URL.</span></div></div>'
+        +'</div>'
+
+        +'<div class="reg-panel-s" data-step="5">'
+          +'<p class="fsec">Social</p>'
+          +'<div class="social-grid-s">'
+            +'<div class="fld"><label>Instagram</label><input id="rSocInstagram" placeholder="@usuario o link"></div>'
+            +'<div class="fld"><label>Facebook</label><input id="rSocFacebook" placeholder="perfil o link"></div>'
+            +'<div class="fld"><label>TikTok</label><input id="rSocTiktok" placeholder="@usuario o link"></div>'
+            +'<div class="fld"><label>LinkedIn</label><input id="rSocLinkedin" placeholder="perfil o link"></div>'
+            +'<div class="fld" style="grid-column:1/-1"><label>Otra red</label><input id="rSocOtra" placeholder="otra red o link"></div>'
+          +'</div>'
+        +'</div>'
+
+        +'<div class="reg-actions-s">'
+          +'<button type="button" class="btn btn-o btn-lg" id="regBackS" onclick="regPrevS()">← Volver</button>'
+          +'<button type="button" class="btn btn-p btn-lg" id="regNextS" onclick="regNextS()">Continuar →</button>'
+        +'</div>'
+      +'</div>';
+  }
+
+  function setStep(n){
+    REG_STEP_S=Math.max(1,Math.min(5,n));
+    document.querySelectorAll('.reg-panel-s').forEach(function(p){
+      p.classList.toggle('active',parseInt(p.getAttribute('data-step'),10)===REG_STEP_S);
+    });
+    document.querySelectorAll('#regStepsS .reg-step').forEach(function(s,i){
+      var st=i+1;
+      s.classList.toggle('active',st===REG_STEP_S);
+      s.classList.toggle('done',st<REG_STEP_S);
+      var d=s.querySelector('.reg-dot'); if(d)d.textContent=st<REG_STEP_S?'✓':st;
+    });
+    var back=document.getElementById('regBackS'), next=document.getElementById('regNextS');
+    if(back)back.style.visibility=REG_STEP_S===1?'hidden':'visible';
+    if(next)next.textContent=REG_STEP_S===5?'Guardar perfil ✦':'Continuar →';
+    var er=document.getElementById('rErr'); if(er)er.style.display='none';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function fillProfile(){
+    if(!window.CU)return;
+    var set=function(id,v){var el=document.getElementById(id); if(el)el.value=v||''};
+    set('rN',CU.name); set('rA',CU.age); set('rC',CU.city); set('rG',CU.gender); set('rPref',CU.interestedIn||CU.pref||'todos'); set('rE',CU.email); set('rD',CU.desc); set('rI',CU.int); set('rP',CU.photo); set('rV',CU.video);
+    set('rLat',CU.lat); set('rLng',CU.lng);
+    var soc=CU.social||{};
+    set('rSocInstagram',soc.instagram); set('rSocFacebook',soc.facebook); set('rSocTiktok',soc.tiktok); set('rSocLinkedin',soc.linkedin); set('rSocOtra',soc.otra);
+    document.querySelectorAll('input[name=lk]').forEach(function(cb){cb.checked=(CU.looking||[]).indexOf(cb.value)>-1});
+    document.querySelectorAll('input[name=pl]').forEach(function(cb){cb.checked=(CU.plans||[]).indexOf(cb.value)>-1});
+    if(typeof prevPhoto==='function')prevPhoto(CU.photo||'');
+  }
+
+  function validStep(){
+    var er=document.getElementById('rErr');
+    function show(msg){if(er){er.textContent=msg;er.style.display='block';er.scrollIntoView({behavior:'smooth',block:'center'});}return false}
+    if(REG_STEP_S===1){
+      var name=(document.getElementById('rN')||{}).value||'';
+      var age=parseInt((document.getElementById('rA')||{}).value||'',10);
+      var city=(document.getElementById('rC')||{}).value||'';
+      var gender=(document.getElementById('rG')||{}).value||'';
+      var email=(document.getElementById('rE')||{}).value||'';
+      if(!name.trim()||!city.trim()||!gender.trim())return show('Completá nombre, ciudad y género.');
+      if(!age||age<40)return show('FortyUp es solo para mayores de 40 años.');
+      if(!CU && (!email.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())))return show('Ingresá un email válido.');
+    }
+    return true;
+  }
+
+  window.regNextS=function(){
+    if(!validStep())return;
+    if(REG_STEP_S<5){setStep(REG_STEP_S+1);return;}
+    if(typeof oldSaveProfileS==='function')oldSaveProfileS();
+    saveSocial();
+  };
+  window.regPrevS=function(){setStep(REG_STEP_S-1)};
+
+  function saveSocial(){
+    try{
+      if(!CU || typeof normalizeUsers!=='function')return;
+      var soc={
+        instagram:(document.getElementById('rSocInstagram')||{}).value||'',
+        facebook:(document.getElementById('rSocFacebook')||{}).value||'',
+        tiktok:(document.getElementById('rSocTiktok')||{}).value||'',
+        linkedin:(document.getElementById('rSocLinkedin')||{}).value||'',
+        otra:(document.getElementById('rSocOtra')||{}).value||''
+      };
+      var users=normalizeUsers().map(function(u){return u.id===CU.id?Object.assign({},u,{social:soc}):u});
+      if(window.K && typeof sv==='function'){sv(K.U,users)}
+      CU.social=soc;
+      if(typeof refreshCU==='function')refreshCU();
+    }catch(e){}
+  }
+
+  window.loadProfileForm=function(){
+    buildWizard();
+    if(typeof oldLoadProfileFormS==='function'){
+      try{oldLoadProfileFormS()}catch(e){}
+    }
+    fillProfile();
+    setStep(1);
+  };
+
+  window.goTo=function(pg){
+    if((pg==='chats'||pg==='myprofile')&&!currentUserExists()){
+      if(typeof openAuth==='function')openAuth('login');
+      updateSessionUI();
+      return;
+    }
+    if(typeof oldGoToS==='function')oldGoToS(pg);
+    if(pg==='register'){
+      setTimeout(function(){buildWizard();fillProfile();setStep(1)},40);
+    }
+    setTimeout(updateSessionUI,40);
+  };
+
+  window.doAuth=function(){
+    var emailEl=document.getElementById('aEmail'), passEl=document.getElementById('aPass');
+    if(emailEl)emailEl.value=(emailEl.value||'').trim().toLowerCase();
+    if(passEl)passEl.value=(passEl.value||'').trim();
+    if(typeof oldDoAuthS==='function')oldDoAuthS();
+    setTimeout(updateSessionUI,80);
+  };
+
+  // Por si había cuentas viejas sin password guardado: permite setear clave desde recuperar.
+  var oldForgot=window.forgotPass;
+  window.forgotPass=function(){
+    if(typeof oldForgot==='function')oldForgot();
+    setTimeout(updateSessionUI,80);
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){
+    showAgeIfNeeded();
+    updateSessionUI();
+    if(document.getElementById('page-register') && document.getElementById('page-register').classList.contains('active')){
+      buildWizard();fillProfile();setStep(1);
+    }
+  });
+  setTimeout(function(){showAgeIfNeeded();updateSessionUI()},300);
+  setInterval(updateSessionUI,1000);
 })();
 </script>
 
