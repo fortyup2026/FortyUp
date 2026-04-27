@@ -564,6 +564,13 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .social-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 @media(max-width:520px){.social-grid{grid-template-columns:1fr}.reg-steps.reg-steps-5 .reg-step{font-size:.56rem}.reg-dot{width:29px!important;height:29px!important}}
 
+
+.autocomplete-wrap{position:relative;flex:1}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--border2);border-radius:16px;box-shadow:0 8px 24px rgba(6,78,59,.12);z-index:100;max-height:220px;overflow-y:auto;margin-top:.25rem}
+.autocomplete-item{padding:.65rem 1rem;font-size:.88rem;cursor:pointer;color:var(--txt);display:flex;align-items:center;gap:.5rem;transition:.15s}
+.autocomplete-item:hover,.autocomplete-item.active{background:var(--bg3);color:var(--g1)}
+.autocomplete-item:first-child{border-radius:14px 14px 0 0}
+.autocomplete-item:last-child{border-radius:0 0 14px 14px}
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -685,13 +692,16 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
 <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;align-items:center">
-  <div style="flex:1;position:relative">
+  <div class="autocomplete-wrap">
     <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none">📍</span>
-    <input type="text" id="locationFilter" placeholder="Buscar por ciudad o país..." 
+    <input type="text" id="locationFilter" placeholder="Buscar por ciudad..." 
+      autocomplete="off"
       style="width:100%;background:#fff;border:1.5px solid var(--border);border-radius:50px;padding:.6rem .9rem .6rem 2.2rem;font-size:.88rem;font-family:Nunito,sans-serif;color:var(--txt)"
-      oninput="filterByLocation(this.value)"
-      onfocus="this.style.borderColor='var(--g2)'"
-      onblur="this.style.borderColor='var(--border)'">
+      oninput="onLocationInput(this.value)"
+      onkeydown="onLocationKey(event)"
+      onfocus="this.style.borderColor='var(--g2)';showCityDropdown(this.value)"
+      onblur="this.style.borderColor='var(--border)';setTimeout(hideCityDropdown,200)">
+    <div class="autocomplete-list" id="cityDropdown" style="display:none"></div>
   </div>
   <button onclick="clearLocationFilter()" id="clearLocBtn" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:#dc2626;cursor:pointer;white-space:nowrap">✕ Limpiar</button>
   <button onclick="useMyLocation()" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer;white-space:nowrap">📍 Mi ubicación</button>
@@ -985,6 +995,88 @@ function normalizeUsers(){
 function findUserById(id){return g(K.U,[]).filter(function(x){return x.id===id})[0]||null}
 function refreshCU(){if(!CU)return null;CU=findUserById(CU.id);if(CU)sv(K.S,{id:CU.id});return CU}
 
+
+
+// ── CITIES AUTOCOMPLETE ──
+var AR_CITIES = [
+  'Buenos Aires','Córdoba','Rosario','Mendoza','La Plata','San Miguel de Tucumán',
+  'Mar del Plata','Salta','Santa Fe','San Juan','Resistencia','Santiago del Estero',
+  'Corrientes','Posadas','Neuquén','San Salvador de Jujuy','Bahía Blanca','Paraná',
+  'Formosa','San Luis','La Rioja','Catamarca','Río Cuarto','Comodoro Rivadavia',
+  'Concordia','Tandil','San Nicolás','Pergamino','Quilmes','Lanús','Lomas de Zamora',
+  'General Roca','San Rafael','Cipolletti','Villa María','Rafaela','Oberá',
+  'Presidencia Roque Sáenz Peña','San Francisco','Villa Mercedes','Río Gallegos',
+  'Ushuaia','Viedma','Rawson','Santa Rosa','San Carlos de Bariloche','Trelew',
+  'Puerto Madryn','Junín','Azul','Olavarría','Luján','Pilar','Morón','Quilmes',
+  'Palermo','Belgrano','Flores','San Telmo','Almagro','Caballito','Recoleta',
+  'Villa Bosch','Ituzaingó','Moreno','José C. Paz','Malvinas Argentinas','Tigre',
+  'San Isidro','Vicente López','Avellaneda','Berazategui','Florencio Varela',
+  'Merlo','Marcos Paz','General Rodríguez','Escobar','Zárate','Campana',
+  'Villa Gesell','Pinamar','Necochea','Monte Hermoso','Balcarce','Lobería',
+  'Tres Arroyos','Coronel Suárez','Punta Alta','Chivilcoy','Bragado','25 de Mayo'
+];
+
+var _acIndex = -1;
+
+function onLocationInput(val){
+  _acIndex = -1;
+  filterByLocation(val);
+  showCityDropdown(val);
+}
+
+function showCityDropdown(val){
+  var dd = document.getElementById('cityDropdown');
+  if(!dd)return;
+  var q = (val||'').trim().toLowerCase();
+  if(q.length < 1){dd.style.display='none';return}
+  var matches = AR_CITIES.filter(function(c){
+    return c.toLowerCase().indexOf(q) !== -1;
+  }).slice(0,8);
+  if(!matches.length){dd.style.display='none';return}
+  dd.innerHTML = matches.map(function(c,i){
+    var bold = c.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<strong>$1</strong>');
+    return '<div class="autocomplete-item" onmousedown="selectCity(\'' + c + '\')" data-idx="'+i+'">📍 '+bold+'</div>';
+  }).join('');
+  dd.style.display='block';
+}
+
+function hideCityDropdown(){
+  var dd = document.getElementById('cityDropdown');
+  if(dd)dd.style.display='none';
+  _acIndex = -1;
+}
+
+function selectCity(city){
+  var inp = document.getElementById('locationFilter');
+  if(inp) inp.value = city;
+  hideCityDropdown();
+  filterByLocation(city);
+  var btn = document.getElementById('clearLocBtn');
+  if(btn) btn.style.display = city ? 'block' : 'none';
+}
+
+function onLocationKey(event){
+  var dd = document.getElementById('cityDropdown');
+  if(!dd||dd.style.display==='none')return;
+  var items = dd.querySelectorAll('.autocomplete-item');
+  if(event.key==='ArrowDown'){
+    event.preventDefault();
+    _acIndex = Math.min(_acIndex+1, items.length-1);
+    items.forEach(function(el,i){el.classList.toggle('active',i===_acIndex)});
+  }else if(event.key==='ArrowUp'){
+    event.preventDefault();
+    _acIndex = Math.max(_acIndex-1, -1);
+    items.forEach(function(el,i){el.classList.toggle('active',i===_acIndex)});
+  }else if(event.key==='Enter'){
+    event.preventDefault();
+    if(_acIndex>=0&&items[_acIndex]){
+      var city = items[_acIndex].textContent.replace('📍 ','').trim();
+      selectCity(city);
+    }
+  }else if(event.key==='Escape'){
+    hideCityDropdown();
+  }
+}
 
 // ── LOCATION FILTER ──
 var _locFilter = '';
