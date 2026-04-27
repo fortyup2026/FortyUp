@@ -935,153 +935,6 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   border:1.5px solid #D1E8DF!important;
 }
 
-
-/* =========================================================
-   SEBAS FINAL INTEGRADO SOBRE BASE CLAUDE v39
-   ========================================================= */
-
-/* Popup edad */
-#ageGateSebasFinal{
-  position:fixed!important;inset:0!important;z-index:2147483647!important;
-  background:rgba(6,20,16,.80)!important;backdrop-filter:blur(10px)!important;
-  display:none!important;align-items:center!important;justify-content:center!important;padding:1.2rem!important;
-}
-#ageGateSebasFinal.open{display:flex!important}
-#ageGateSebasFinal .age-card{
-  width:min(90vw,390px)!important;background:#fff!important;border-radius:30px!important;
-  padding:2rem 1.45rem!important;text-align:center!important;box-shadow:0 35px 90px rgba(0,0,0,.32)!important;
-}
-#ageGateSebasFinal .age-gem{font-size:3.25rem!important;margin-bottom:.65rem!important}
-#ageGateSebasFinal h2{font-family:'Playfair Display',serif!important;color:#064E3B!important;font-size:1.65rem!important;margin:0 0 .65rem!important}
-#ageGateSebasFinal p{color:#6B7C76!important;font-size:.95rem!important;line-height:1.55!important;margin:0 0 1.2rem!important}
-#ageGateSebasFinal button{width:100%!important;border-radius:999px!important;padding:.82rem 1rem!important;font-family:'Nunito',sans-serif!important;font-weight:900!important}
-#ageGateSebasFinal .age-yes{background:linear-gradient(135deg,#064E3B,#059669)!important;color:#fff!important;margin-bottom:.7rem!important;box-shadow:0 8px 20px rgba(6,78,59,.25)!important}
-#ageGateSebasFinal .age-no{background:#fff!important;color:#6B7C76!important;border:1.5px solid #D1E8DF!important}
-
-/* Invitados: perfiles básicos, sin herramientas de búsqueda avanzada */
-body.sebas-guest #locationSearchBar,
-body.sebas-guest .location-search,
-body.sebas-guest .pfilters,
-body.sebas-guest .filters,
-body.sebas-guest .profile-filters,
-body.sebas-guest .search-row,
-body.sebas-guest .map-search,
-body.sebas-guest .radar-controls{
-  display:none!important;
-}
-body.sebas-guest .pcard{
-  max-width:220px!important;
-  border-radius:22px!important;
-}
-body.sebas-guest .pgrid{
-  grid-template-columns:repeat(auto-fill,minmax(165px,1fr))!important;
-  gap:.75rem!important;
-}
-body.sebas-guest .pcard-ph{
-  height:145px!important;
-}
-body.sebas-guest .pcard-desc,
-body.sebas-guest .pcard-int,
-body.sebas-guest .pcard-acts .pa-forti,
-body.sebas-guest .pcard-acts .pa-super,
-body.sebas-guest .pcard-acts .pa-chat,
-body.sebas-guest .pcard-acts .pa-fav,
-body.sebas-guest .pcard-acts .pa-blk{
-  display:none!important;
-}
-body.sebas-guest .pcard-acts{
-  display:flex!important;
-  padding:.55rem .75rem .8rem!important;
-}
-body.sebas-guest .pa-more{
-  width:100%!important;
-  height:38px!important;
-  font-size:.74rem!important;
-}
-
-/* Usuarios registrados: búsqueda sin input roto */
-body:not(.sebas-guest) #locationSearchBar,
-body:not(.sebas-guest) .pfilters,
-body:not(.sebas-guest) .filters,
-body:not(.sebas-guest) .profile-filters,
-body:not(.sebas-guest) .search-row,
-body:not(.sebas-guest) .map-search,
-body:not(.sebas-guest) .radar-controls{
-  display:flex!important;
-  align-items:center!important;
-  gap:.55rem!important;
-  flex-wrap:nowrap!important;
-  overflow:visible!important;
-}
-body:not(.sebas-guest) #locationSearchBar input,
-body:not(.sebas-guest) .pfilters input,
-body:not(.sebas-guest) .filters input,
-body:not(.sebas-guest) .profile-filters input,
-body:not(.sebas-guest) .search-row input,
-body:not(.sebas-guest) .map-search input,
-body:not(.sebas-guest) .radar-controls input{
-  display:none!important;visibility:hidden!important;width:0!important;min-width:0!important;max-width:0!important;
-  padding:0!important;margin:0!important;border:0!important;opacity:0!important;pointer-events:none!important;
-}
-.sebas-search-btn{
-  background:linear-gradient(135deg,#064E3B,#059669)!important;
-  color:#fff!important;border:none!important;border-radius:999px!important;
-  padding:.72rem 1.1rem!important;font-weight:900!important;min-width:105px!important;
-  box-shadow:0 8px 18px rgba(6,78,59,.24)!important;
-}
-.sebas-loc-btn,.sebas-map-btn{
-  background:#F0FDF8!important;color:#064E3B!important;border:1.5px solid #A7F3D0!important;
-  border-radius:999px!important;padding:.62rem .85rem!important;font-weight:900!important;white-space:nowrap!important;
-}
-
-/* Perfil/álbumes */
-.album-modal-sebas{position:fixed;inset:0;z-index:900;background:rgba(6,20,16,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem}
-.album-box-sebas{background:#fff;border-radius:24px;width:min(94vw,470px);max-height:88vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28)}
-.album-head-sebas{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:1rem 1.15rem;border-bottom:1px solid #ECFDF5;position:sticky;top:0;background:#fff;z-index:2}
-.album-title-sebas{font-family:'Playfair Display',serif;color:#064E3B;font-size:1.35rem;font-weight:800}
-.album-close-sebas{width:32px;height:32px;border-radius:50%;background:#F0FDF8;color:#064E3B;font-weight:900}
-.album-body-sebas{padding:1rem 1.15rem 1.25rem}
-.album-row-sebas{display:flex;align-items:center;gap:.75rem;border:1.5px solid #D1E8DF;background:#F8FFFB;border-radius:18px;padding:.75rem;margin-bottom:.65rem}
-.album-thumb-sebas{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#064E3B,#10B981);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;overflow:hidden;flex-shrink:0}
-.album-thumb-sebas img,.album-thumb-sebas video{width:100%;height:100%;object-fit:cover}
-.album-info-sebas{flex:1;min-width:0}
-.album-name-sebas{font-weight:900;color:#10231D}
-.album-count-sebas{font-size:.75rem;color:#6B7C76}
-.album-actions-sebas{display:flex;align-items:center;gap:.45rem}
-.album-toggle-sebas{position:relative;width:46px;height:26px;display:inline-block}
-.album-toggle-sebas input{opacity:0;width:0;height:0}
-.album-slider-sebas{position:absolute;cursor:pointer;inset:0;background:#10B981;border-radius:999px;transition:.2s}
-.album-slider-sebas:before{content:'';position:absolute;height:20px;width:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.album-toggle-sebas input:checked + .album-slider-sebas{background:#F2B705}
-.album-toggle-sebas input:checked + .album-slider-sebas:before{transform:translateX(20px)}
-.album-add-sebas{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.8rem 0}
-.album-add-sebas label,.album-add-sebas button{border:1.7px dashed #A7F3D0;background:#F0FDF8;border-radius:18px;padding:.78rem;text-align:center;color:#064E3B;font-weight:900;cursor:pointer}
-.album-add-sebas input{display:none}
-.album-grid-sebas{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem}
-.album-item-sebas{height:145px;border-radius:18px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;position:relative}
-.album-item-sebas img,.album-item-sebas video{width:100%;height:100%;object-fit:cover}
-.album-lock-sebas{padding:1.1rem;border-radius:18px;border:1.5px dashed #D1E8DF;background:#F8FFFB;color:#6B7C76;text-align:center;line-height:1.5}
-.album-primary-sebas{background:linear-gradient(135deg,#064E3B,#059669)!important;color:#fff!important;border:0!important;border-radius:999px!important;padding:.65rem .9rem!important;font-weight:900!important}
-
-/* Popup Super Diamante + lluvia */
-.super-popup-sebas{position:fixed;inset:0;z-index:1300;background:rgba(6,20,16,.82);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.2rem}
-.super-card-sebas{width:min(92vw,390px);background:linear-gradient(160deg,#FFFDF7,#F0FDF8);border:2px solid #BDEFFF;border-radius:32px;padding:2rem 1.4rem;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.28)}
-.super-diamond-sebas{font-size:5rem;margin:.75rem 0;filter:drop-shadow(0 12px 22px rgba(8,119,183,.25))}
-.super-card-sebas h3{font-family:'Playfair Display',serif;color:#064E3B;font-size:1.65rem;margin:.2rem 0}
-.super-card-sebas p{color:#2D4A40;font-size:.95rem;line-height:1.55;margin:.6rem 0 1rem}
-.super-card-sebas button{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:999px;padding:.72rem 1.2rem;font-weight:900}
-.fu-rain-word{position:fixed;top:-8vh;z-index:1299;pointer-events:none;font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;animation:fuRainFall 3.2s linear forwards;text-shadow:0 4px 13px rgba(0,0,0,.16)}
-.fu-rain-word .forty{color:#10B981}
-.fu-rain-word .up{color:#F2B705;font-style:italic}
-@keyframes fuRainFall{0%{transform:translateY(-10vh) rotate(-8deg);opacity:0}12%{opacity:.85}100%{transform:translateY(112vh) rotate(8deg);opacity:0}}
-
-/* Forti match popup */
-.match-popup-sebas{position:fixed;inset:0;z-index:1300;background:rgba(6,20,16,.82);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.2rem}
-.match-card-sebas{width:min(92vw,390px);background:linear-gradient(160deg,#FFFDF7,#F0FDF8);border:2px solid #FDE68A;border-radius:32px;padding:2rem 1.4rem;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.28)}
-.match-card-sebas h3{font-family:'Playfair Display',serif;color:#064E3B;font-size:1.65rem;margin:.2rem 0}
-.match-card-sebas p{color:#2D4A40;font-size:.95rem;line-height:1.55;margin:.6rem 0 1rem}
-.match-card-sebas button{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:999px;padding:.72rem 1.2rem;font-weight:900}
-
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1090,17 +943,6 @@ body:not(.sebas-guest) .radar-controls input{
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-
-<div id="ageGateSebasFinal">
-  <div class="age-card">
-    <div class="age-gem">💎</div>
-    <h2>Bienvenido/a a FortyUp</h2>
-    <p>Esta comunidad es para personas de <strong style="color:#064E3B">más de 40 años</strong>. Al continuar confirmás que cumplís con ese requisito.</p>
-    <button class="age-yes" onclick="acceptAgeGateSebasFinal()">Tengo más de 40 años ✓</button>
-    <button class="age-no" onclick="alert('FortyUp es una comunidad exclusiva para mayores de 40 años.')">No tengo más de 40 años</button>
-  </div>
-</div>
-
 
 <div id="ageFortyPopupSebasV2">
   <div class="age-card">
@@ -1347,7 +1189,7 @@ body:not(.sebas-guest) .radar-controls input{
     <div style="font-size:2.8rem;margin-bottom:.75rem">💎</div>
     <h2 style="font-family:'Playfair Display',serif;color:#064E3B;font-size:1.5rem;margin-bottom:.5rem">Bienvenido/a a FortyUp</h2>
     <p style="font-size:.85rem;color:#6B7C76;line-height:1.65;margin-bottom:1.5rem">Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
-    <button onclick="localStorage.setItem('fu_age_ok','1');var p=document.getElementById('agePop');if(p)p.remove()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
+    <button onclick="localStorage.setItem('fu_age_ok','1');sessionStorage.setItem('fu_age_shown','1');var p=document.getElementById('agePop');if(p)p.remove()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.82rem;font-size:.95rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:.75rem">Tengo más de 40 años ✓</button>
     <button onclick="window.history.back()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
   </div>
 </div>
@@ -2007,7 +1849,8 @@ function showAllAlbums(){
         }})(ai,type);
         var info=document.createElement('div');info.style.flex='1';
         info.innerHTML='<div style="font-weight:800;font-size:.88rem">'+e(album.name)+'</div>'
-          +'<div style="font-size:.72rem;color:var(--txt3)">'+(album.items?album.items.length:0)+' elementos</div>';
+          +'<div style="font-size:.72rem;color:'+(album.visible!==false?'var(--g1)':'var(--txt3)')+';font-weight:700">'
+          +(album.visible!==false?'👁 Visible':'🔒 Oculto')+' · '+(album.items?album.items.length:0)+' elementos</div>';
         var openBtn=document.createElement('button');
         openBtn.style.cssText='background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.25rem .65rem;font-size:.72rem;font-weight:800;color:var(--g1);cursor:pointer';
         openBtn.textContent='Ver';
@@ -2023,8 +1866,8 @@ function showAllAlbums(){
     }
     // Add new album button
     var newBtn=document.createElement('button');
-    newBtn.style.cssText='width:100%;margin-top:.5rem;background:var(--bg3);border:1.5px dashed var(--g2);border-radius:12px;padding:.55rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer';
-    newBtn.textContent='+ Nuevo álbum '+(type==='pub'?'público':'privado');
+    newBtn.style.cssText='width:100%;margin-top:.75rem;background:linear-gradient(135deg,#064E3B,#059669);border:0;border-radius:12px;padding:.65rem;font-size:.88rem;font-weight:900;color:#fff;cursor:pointer';
+    newBtn.textContent='＋ Crear álbum '+(type==='pub'?'público':'privado');
     newBtn.onclick=(function(t){return function(){
       var name=prompt('Nombre del álbum:');
       if(!name||!name.trim())return;
@@ -2376,7 +2219,10 @@ function upNav(){
   }
 
   var bnChats=document.getElementById('bn-chats');if(bnChats)bnChats.style.display=CU?'flex':'none';
-  if(typeof updateHeroLoggedIn==='function')updateHeroLoggedIn();}
+  if(typeof updateHeroLoggedIn==='function')updateHeroLoggedIn();
+  var lb=document.getElementById('locationSearchBar');
+  if(lb)lb.style.display=CU?'flex':'none';
+}
 function openAuth(mode){
   AM=mode;switchTab(mode);
   document.getElementById('authOv').classList.add('open');
@@ -2504,15 +2350,10 @@ function bCard(u,forti,fav,idx,superSent){
   var noSuper=CU && ((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
   if(CU&&u.id===CU.id){
     ac.innerHTML='<button class="pa-more" style="flex:1" onclick="fuGoReg()">✏ Editar mi perfil</button><button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver</button>';
-  }else{
-    ac.innerHTML='<button class="pa-forti'+(forti?' sent':'')+'" id="ft-'+u.id+'" onclick="cuSendForti(\''+u.id+'\')" '+(forti?'disabled':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'
-      +'<button class="pa-super'+((superSent||noSuper)?' used':'')+'" id="sp-'+u.id+'" onclick="sendSuperDiamond(\''+u.id+'\')" title="Súper Diamante: 1 gratis">'+(superSent?'✓':'💎')+'</button>'
-      +'<button class="pa-more" onclick="openMod(\''+u.id+'\')">Ver más</button>'
-      +'<button class="pa-fav'+(fav?' saved':'')+'" id="fv-'+u.id+'" onclick="cuTogFav(\''+u.id+'\')">'+(fav?'⭐':'☆')+'</button>'
-      +'<button class="pa-chat" onclick="cuChat(\''+u.id+'\',\''+e(u.name)+'\')">💬</button>'
-      +'<button class="pa-blk" onclick="cuBlkU(\''+u.id+'\')">🚫</button>';
+  }else if(!CU){
+    ac.innerHTML='<button onclick="openAuth(\'register\')" style="width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.5rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">Registrate para interactuar →</button>';
   }
-  c.appendChild(ph);c.appendChild(bd);c.appendChild(ac);return c;
+  c.appendChild(ac);return c;
 }
 function sendForti(id){
   if(!CU){openAuth('login');return}
@@ -2588,7 +2429,7 @@ function rMyP(){
   // Build header
   var hdr=document.createElement('div');hdr.className='myp-hdr';
   var infoDiv=document.createElement('div');infoDiv.className='myp-info';
-  infoDiv.innerHTML='<div class="myp-name">'+e(nm)+(CU.age?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')+'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>';
+  infoDiv.innerHTML='<div class="myp-name">'+e(nm)+(CU.age&&!isNaN(CU.age)?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')+'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>';
   var editBtn=document.createElement('button');editBtn.className='myp-edit';editBtn.textContent='✏ Editar';editBtn.onclick=function(){goTo('register')};
   hdr.appendChild(avDiv);hdr.appendChild(infoDiv);hdr.appendChild(editBtn);
 
@@ -2736,6 +2577,8 @@ function loadProfileForm(){
   var emailEl=document.getElementById('rE');
   if(emailEl){emailEl.readOnly=!!CU;emailEl.style.opacity=CU?'.72':'1';emailEl.style.background=CU?'#EEF7F3':'';}
   if(!CU){return}
+  // Pre-load current photo
+  if(CU.photo) window._photo = CU.photo;
   refreshCU();
   var set=function(id,val){var el=document.getElementById(id);if(el)el.value=(val||'')};
   set('rN',CU.name||'');set('rA',CU.age||'');set('rC',CU.city||'');
@@ -2777,10 +2620,10 @@ function saveProfile(){
     refreshCU();users=normalizeUsers();
     users=users.map(function(u){
       if(u.id!==CU.id)return u;
-      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo,video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
-    oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);
+    oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);refreshAllUI();
   }else{
     var email=normEmail(fv('rE'));
     if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showE('Ingresá un email válido.');return}
@@ -3243,7 +3086,7 @@ function saveProfile(){
     refreshCU();users=normalizeUsers();
     users=users.map(function(u){
       if(u.id!==CU.id)return u;
-      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo,video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
+      return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
     oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);
@@ -3651,14 +3494,24 @@ function closeAgePop(){
 }
 // Age popup check runs after page loads
 // Age popup - show if not verified
+
+function refreshAllUI(){
+  // Refresh nav avatar
+  upNav();
+  // Refresh profile page if open
+  var myPg = document.getElementById('page-myprofile');
+  if(myPg&&myPg.classList.contains('active')) rMyP();
+  // Refresh chat list avatars
+  var chPg = document.getElementById('page-chats');
+  if(chPg&&chPg.classList.contains('active')) rChatList();
+}
+
 function checkAgePopup(){
   if(localStorage.getItem('fu_age_ok')!=='1'){
     var el=document.getElementById('agePop');
     if(el){el.style.display='flex';el.style.opacity='1'}
   }
 }
-window.addEventListener('load', checkAgePopup);
-setTimeout(checkAgePopup, 500);
 // Check super diamond notifications for current user
 function checkSuperDiamNotif(){
   if(!CU)return;
@@ -3669,7 +3522,7 @@ function checkSuperDiamNotif(){
     setTimeout(function(){showSuperDiamPop(n.from)},1000);
   }
 }
-init();goTo('home');initFirebase();setInterval(checkUnread,5000);
+init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(checkUnread,5000);
 </script>
 
 <script>
@@ -5022,491 +4875,6 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
   document.addEventListener('DOMContentLoaded',showAgeFortySebasV2);
   setTimeout(showAgeFortySebasV2,250);
   setTimeout(showAgeFortySebasV2,900);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FINAL INTEGRADO SOBRE CLAUDE v39
-   ========================================================= */
-(function(){
-  function escS(s){return String(s||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]})}
-  function safeG(k,d){try{return typeof g==='function'?g(k,d):JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
-  function safeSv(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-  function current(){try{return window.CU||null}catch(e){return null}}
-  function users(){try{return typeof normalizeUsers==='function'?normalizeUsers():safeG('fu_u',[])}catch(e){return safeG('fu_u',[])}}
-  function mediaKey(id){return 'fu_profile_media_'+id}
-  function albumKey(id){return 'fu_albums_v3_'+id}
-  function seenSuperKey(id){return 'fu_sdnotif_seen_'+id}
-
-  /* Edad: aparece al entrar, no queda silenciado por localStorage */
-  window.acceptAgeGateSebasFinal=function(){
-    var el=document.getElementById('ageGateSebasFinal');if(el)el.classList.remove('open');
-  };
-  function showAgeGate(){var el=document.getElementById('ageGateSebasFinal');if(el)el.classList.add('open')}
-
-  /* MEDIA PERSISTENTE */
-  function getMedia(id){try{return JSON.parse(localStorage.getItem(mediaKey(id))||'{}')}catch(e){return{}}}
-  function setMedia(id,m){try{localStorage.setItem(mediaKey(id),JSON.stringify(m||{}))}catch(e){if(typeof toast==='function')toast('La foto/video pesa mucho para guardar en esta versión.','w')}}
-  function mergeMedia(u){
-    if(!u||!u.id)return u;
-    var m=getMedia(u.id);
-    if(m.photo)u.photo=m.photo;
-    if(m.video)u.video=m.video;
-    return u;
-  }
-  function updateUserMedia(id,photo,video){
-    if(!id)return;
-    var m=getMedia(id);
-    if(photo)m.photo=photo;
-    if(video)m.video=video;
-    setMedia(id,m);
-    var arr=safeG(K.U,[]).map(function(u){
-      if(u.id!==id)return u;
-      var nu=Object.assign({},u);
-      if(m.photo)nu.photo=m.photo;
-      if(m.video)nu.video=m.video;
-      return nu;
-    });
-    safeSv(K.U,arr);
-    if(window.CU&&CU.id===id){
-      if(m.photo)CU.photo=m.photo;
-      if(m.video)CU.video=m.video;
-      safeSv(K.S,{id:CU.id});
-    }
-  }
-
-  function resizeImageFile(file,cb){
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      var img=new Image();
-      img.onload=function(){
-        var max=900,w=img.width,h=img.height;
-        if(w>h&&w>max){h=Math.round(h*max/w);w=max}
-        else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}
-        var c=document.createElement('canvas');c.width=w;c.height=h;
-        var ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
-        cb(c.toDataURL('image/jpeg',.82));
-      };
-      img.src=ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  window.handleFile=function(input){
-    var file=input.files&&input.files[0];if(!file)return;
-    resizeImageFile(file,function(data){
-      window._photo=data;
-      var w=document.getElementById('phprev'),img=document.getElementById('phimg');
-      if(img)img.src=data;
-      if(w)w.style.display='block';
-      if(window.CU&&CU.id)updateUserMedia(CU.id,data,null);
-      if(typeof toast==='function')toast('Foto cargada ✓','ok');
-    });
-  };
-
-  var oldHandleVideo=window.handleVideoFile;
-  window.handleVideoFile=function(input){
-    var file=input.files&&input.files[0];if(!file)return;
-    if(file.size>4*1024*1024){if(typeof toast==='function')toast('Video muy pesado para guardar acá.','w');input.value='';return}
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      window._video=ev.target.result;
-      if(window.CU&&CU.id)updateUserMedia(CU.id,null,ev.target.result);
-      var st=document.getElementById('vidSt');if(st)st.textContent='✓ Video cargado';
-      if(typeof toast==='function')toast('Video cargado ✓','ok');
-    };
-    reader.readAsDataURL(file);
-  };
-
-  var oldNorm=window.normalizeUsers;
-  if(typeof oldNorm==='function'){
-    window.normalizeUsers=function(){
-      return oldNorm().map(function(u){return mergeMedia(Object.assign({},u))});
-    };
-  }
-  var oldFind=window.findUserById;
-  if(typeof oldFind==='function'){
-    window.findUserById=function(id){
-      var u=oldFind(id);
-      return u?mergeMedia(Object.assign({},u)):u;
-    };
-  }
-  var oldRefresh=window.refreshCU;
-  if(typeof oldRefresh==='function'){
-    window.refreshCU=function(){
-      var r=oldRefresh();
-      if(window.CU)window.CU=mergeMedia(Object.assign({},CU));
-      return window.CU||r;
-    };
-  }
-  var oldSave=window.saveProfile;
-  if(typeof oldSave==='function'){
-    window.saveProfile=function(){
-      oldSave();
-      setTimeout(function(){
-        if(!window.CU)return;
-        var photo=window._photo||((document.getElementById('rP')||{}).value||'')||CU.photo||'';
-        var video=window._video||((document.getElementById('rV')||{}).value||'')||CU.video||'';
-        updateUserMedia(CU.id,photo,video);
-        if(typeof upNav==='function')upNav();
-        if(typeof rMyP==='function'&&document.getElementById('page-myprofile')&&document.getElementById('page-myprofile').classList.contains('active'))rMyP();
-        if(typeof rProfiles==='function'&&document.getElementById('page-profiles')&&document.getElementById('page-profiles').classList.contains('active'))rProfiles();
-        if(typeof rChatList==='function'&&document.getElementById('page-chats')&&document.getElementById('page-chats').classList.contains('active'))rChatList();
-      },150);
-    };
-  }
-
-  /* SOCIAL NAN FIX */
-  window.showSocial=function(){
-    if(!CU)return;
-    var soc=(CU.social&&typeof CU.social==='object')?CU.social:{};
-    ['instagram','facebook','tiktok','linkedin','otra'].forEach(function(k){
-      if(soc[k]===undefined||soc[k]===null||String(soc[k])==='NaN')soc[k]='';
-    });
-    var html='<div style="position:fixed;inset:0;z-index:700;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem" id="socPop">'
-      +'<div style="background:#fff;border-radius:20px;max-width:360px;width:100%;padding:1.65rem">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
-      +'<strong style="font-family:Playfair Display,serif;font-size:1.05rem;color:#064E3B">🔗 Redes sociales</strong>'
-      +'<button onclick="closePop(this)" style="background:var(--bg3);border:0;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>'
-      +'</div>'
-      +['instagram','facebook','tiktok','linkedin','otra'].map(function(red){
-        var label={instagram:'📸 Instagram',facebook:'📘 Facebook',tiktok:'🎵 TikTok',linkedin:'💼 LinkedIn',otra:'🌐 Otra red'}[red];
-        return '<div style="margin-bottom:.65rem"><label style="font-size:.72rem;font-weight:800;color:var(--txt2);display:block;margin-bottom:.22rem">'+label+'</label>'
-          +'<input id="soc_'+red+'" type="text" value="'+escS(soc[red]||'')+'" placeholder="@usuario o URL" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.58rem .85rem;font-size:.85rem;font-family:Nunito,sans-serif"></div>';
-      }).join('')
-      +'<button onclick="saveSocial()" style="width:100%;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.75rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Guardar</button>'
-      +'</div></div>';
-    document.body.insertAdjacentHTML('beforeend',html);
-  };
-
-  window.saveSocial=function(){
-    if(!CU)return;
-    var soc={};
-    ['instagram','facebook','tiktok','linkedin','otra'].forEach(function(red){
-      var el=document.getElementById('soc_'+red);
-      var v=el?(el.value||'').trim():'';
-      if(v&&v!=='NaN')soc[red]=v;
-    });
-    var arr=safeG(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{social:soc}):u});
-    safeSv(K.U,arr);CU=mergeMedia(Object.assign({},CU,{social:soc}));
-    var pop=document.getElementById('socPop');if(pop)pop.remove();
-    if(typeof toast==='function')toast('✓ Redes sociales guardadas','ok');
-  };
-
-  /* GUEST / SEARCH UI */
-  function updateGuestMode(){
-    var guest=!window.CU;
-    document.body.classList.toggle('sebas-guest',guest);
-    var locBar=document.getElementById('locationSearchBar');
-    if(locBar)locBar.style.display=guest?'none':'flex';
-    var bc=document.getElementById('bn-chats'),bm=document.getElementById('bn-me');
-    if(bc)bc.style.display=guest?'none':'flex';
-    if(bm)bm.style.display=guest?'none':'flex';
-  }
-
-  function fixSearch(){
-    updateGuestMode();
-    if(!window.CU)return;
-    var bars=[];
-    var lb=document.getElementById('locationSearchBar');if(lb)bars.push(lb);
-    ['.pfilters','.filters','.profile-filters','.search-row','.map-search','.radar-controls'].forEach(function(sel){
-      document.querySelectorAll(sel).forEach(function(b){if(bars.indexOf(b)===-1)bars.push(b)});
-    });
-    bars.forEach(function(bar){
-      Array.from(bar.querySelectorAll('input')).forEach(function(inp){inp.value='';inp.placeholder='';inp.style.display='none'});
-      var btns=Array.from(bar.querySelectorAll('button'));
-      btns.forEach(function(b){var t=(b.textContent||'').trim().toLowerCase();if(t==='x'||t==='×'||t==='✕')b.style.display='none'});
-      var loc=btns.find(function(b){return (b.textContent||'').toLowerCase().includes('ubicación')});
-      var map=btns.find(function(b){return (b.textContent||'').toLowerCase().includes('mapa')});
-      var search=bar.querySelector('.sebas-search-btn')||btns.find(function(b){return (b.textContent||'').trim().toLowerCase()==='buscar'});
-      if(loc){loc.classList.add('sebas-loc-btn');loc.innerHTML='📍 Mi ubicación'}
-      if(map){map.classList.add('sebas-map-btn');map.innerHTML='🗺️ Elegir en mapa'}
-      if(loc&&map&&!search){
-        search=document.createElement('button');
-        search.type='button';search.className='sebas-search-btn';search.textContent='Buscar';
-        bar.appendChild(search);
-      }
-      if(search){
-        search.classList.add('sebas-search-btn');search.textContent='Buscar';
-        search.onclick=function(ev){
-          ev.preventDefault();ev.stopPropagation();
-          if(typeof rProfiles==='function')rProfiles();
-          if(typeof toast==='function')toast('Buscando perfiles cercanos','ok');
-          return false;
-        };
-      }
-      if(loc){
-        loc.onclick=function(ev){
-          ev.preventDefault();ev.stopPropagation();
-          if(typeof getMyLoc==='function')getMyLoc();
-          setTimeout(function(){if(typeof rProfiles==='function')rProfiles()},500);
-          return false;
-        };
-      }
-      if(map){
-        map.onclick=function(ev){
-          ev.preventDefault();ev.stopPropagation();
-          var zona=prompt('Escribí ciudad o zona para buscar:');
-          if(zona!==null){
-            window._locFilter=zona.trim().toLowerCase();
-            window._searchLat=null;window._searchLng=null;
-            if(typeof rProfiles==='function')rProfiles();
-            if(typeof toast==='function')toast(zona?'Buscando cerca de '+zona:'Buscando perfiles','ok');
-          }
-          return false;
-        };
-      }
-    });
-  }
-
-  var oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==='function'){
-    window.rProfiles=function(){
-      updateGuestMode();
-      oldRProfiles();
-      setTimeout(function(){
-        updateGuestMode();
-        fixSearch();
-      },80);
-    };
-  }
-
-  /* ÁLBUMES */
-  function defaultAlbums(){
-    return [
-      {id:'viajes',name:'Viajes',private:false,items:[]},
-      {id:'familia',name:'Familia',private:true,items:[]}
-    ];
-  }
-  function getAlbums(id){
-    var arr=safeG(albumKey(id),null);
-    if(Array.isArray(arr))return arr;
-    var out=defaultAlbums();
-    // Migrar algo viejo si existía
-    ['pub','priv'].forEach(function(type){
-      var old=safeG('fu_albums_'+type+'_'+id,[]);
-      old.forEach(function(a,i){
-        out.push({id:type+'_'+i+'_'+Date.now(),name:a.name||a.title||(type==='pub'?'Álbum público':'Álbum privado'),private:type==='priv',items:a.items||a.photos||[]});
-      });
-    });
-    safeSv(albumKey(id),out);
-    return out;
-  }
-  function saveAlbums(id,arr){safeSv(albumKey(id),arr)}
-  function isOwner(id){return window.CU&&CU.id===id}
-  function canViewAlbum(ownerId,album){
-    if(!album.private)return true;
-    if(isOwner(ownerId))return true;
-    return Array.isArray(album.allowed)&&window.CU&&album.allowed.indexOf(CU.id)!==-1;
-  }
-  function albumCover(album){
-    var it=(album.items||[])[0];
-    if(!it)return '<div class="album-thumb-sebas">📸</div>';
-    if(it.type==='video')return '<div class="album-thumb-sebas"><video src="'+escS(it.src)+'"></video></div>';
-    return '<div class="album-thumb-sebas"><img src="'+escS(it.src)+'"></div>';
-  }
-
-  window.showAllAlbums=function(){openAlbumsSebas(CU&&CU.id,true)};
-  window.openAlbumsSebas=function(ownerId,editable){
-    if(!ownerId)return;
-    var owner=users().find(function(u){return u.id===ownerId})||{};
-    var arr=getAlbums(ownerId);
-    var html='<div class="album-modal-sebas"><div class="album-box-sebas">'
-      +'<div class="album-head-sebas"><div class="album-title-sebas">📸 '+(editable?'Mis álbumes':'Álbumes de '+escS(owner.name||'perfil'))+'</div><button class="album-close-sebas" onclick="this.closest(\\'.album-modal-sebas\\').remove()">✕</button></div>'
-      +'<div class="album-body-sebas">';
-    if(editable){
-      html+='<div class="album-add-sebas"><button onclick="createAlbumSebas(\\''+ownerId+'\\')">＋ Nuevo álbum</button><button onclick="openAlbumSebas(\\''+ownerId+'\\',\\''+(arr[0]?arr[0].id:'viajes')+'\\')">Gestionar contenido</button></div>';
-    }
-    arr.forEach(function(al){
-      html+='<div class="album-row-sebas">'+albumCover(al)
-        +'<div class="album-info-sebas"><div class="album-name-sebas">'+escS(al.name)+'</div><div class="album-count-sebas">'+((al.items||[]).length)+' archivo(s) · '+(al.private?'Privado':'Público')+'</div></div>'
-        +'<div class="album-actions-sebas">';
-      if(editable){
-        html+='<label class="album-toggle-sebas" title="Privado"><input type="checkbox" '+(al.private?'checked':'')+' onchange="toggleAlbumPrivateSebas(\\''+ownerId+'\\',\\''+al.id+'\\',this.checked)"><span class="album-slider-sebas"></span></label>';
-      }
-      html+='<button class="album-primary-sebas" onclick="openAlbumSebas(\\''+ownerId+'\\',\\''+al.id+'\\')">'+(canViewAlbum(ownerId,al)?'Ver':'🔒')+'</button>'
-        +'</div></div>';
-    });
-    html+='</div></div></div>';
-    document.body.insertAdjacentHTML('beforeend',html);
-  };
-
-  window.createAlbumSebas=function(ownerId){
-    var name=prompt('Nombre del álbum:', 'Nuevo álbum');
-    if(!name)return;
-    var arr=getAlbums(ownerId);
-    arr.push({id:'alb_'+Date.now(),name:name.trim(),private:false,items:[]});
-    saveAlbums(ownerId,arr);
-    document.querySelectorAll('.album-modal-sebas').forEach(function(x){x.remove()});
-    openAlbumsSebas(ownerId,true);
-  };
-
-  window.toggleAlbumPrivateSebas=function(ownerId,albumId,priv){
-    var arr=getAlbums(ownerId).map(function(a){return a.id===albumId?Object.assign({},a,{private:!!priv}):a});
-    saveAlbums(ownerId,arr);
-    if(typeof toast==='function')toast(priv?'Álbum privado':'Álbum público','ok');
-  };
-
-  window.openAlbumSebas=function(ownerId,albumId){
-    var arr=getAlbums(ownerId),al=arr.find(function(a){return a.id===albumId})||arr[0];
-    if(!al)return;
-    var editable=isOwner(ownerId);
-    var allowed=canViewAlbum(ownerId,al);
-    var html='<div class="album-modal-sebas"><div class="album-box-sebas">'
-      +'<div class="album-head-sebas"><button class="album-close-sebas" onclick="this.closest(\\'.album-modal-sebas\\').remove();openAlbumsSebas(\\''+ownerId+'\\','+editable+')">←</button><div class="album-title-sebas">'+escS(al.name)+'</div><button class="album-close-sebas" onclick="this.closest(\\'.album-modal-sebas\\').remove()">✕</button></div>'
-      +'<div class="album-body-sebas">';
-    if(!allowed){
-      html+='<div class="album-lock-sebas"><strong>🔒 Álbum privado</strong><br>Este usuario todavía no te autorizó a ver este álbum.</div>';
-    }else{
-      if(editable){
-        html+='<div class="album-add-sebas">'
-          +'<label>＋ Fotos<input multiple type="file" accept="image/*" onchange="addAlbumFilesSebas(\\''+ownerId+'\\',\\''+al.id+'\\',this,\\'image\\')"></label>'
-          +'<label>＋ Videos<input multiple type="file" accept="video/*" onchange="addAlbumFilesSebas(\\''+ownerId+'\\',\\''+al.id+'\\',this,\\'video\\')"></label>'
-          +'</div>';
-      }
-      if(!(al.items||[]).length){
-        html+='<div class="album-lock-sebas">Todavía no hay fotos o videos en este álbum.</div>';
-      }else{
-        html+='<div class="album-grid-sebas">';
-        (al.items||[]).forEach(function(it){
-          html+='<div class="album-item-sebas">'+(it.type==='video'?'<video src="'+escS(it.src)+'" controls playsinline></video>':'<img src="'+escS(it.src)+'">')+'</div>';
-        });
-        html+='</div>';
-      }
-    }
-    html+='</div></div></div>';
-    document.querySelectorAll('.album-modal-sebas').forEach(function(x){x.remove()});
-    document.body.insertAdjacentHTML('beforeend',html);
-  };
-
-  window.addAlbumFilesSebas=function(ownerId,albumId,input,kind){
-    var files=Array.from(input.files||[]);if(!files.length)return;
-    var arr=getAlbums(ownerId);
-    var al=arr.find(function(a){return a.id===albumId});if(!al)return;
-    var pending=files.length,added=0;
-    files.forEach(function(file){
-      if(file.size>4*1024*1024){pending--;if(typeof toast==='function')toast('Algunos archivos son pesados.','w');return}
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        al.items=al.items||[];
-        al.items.push({src:ev.target.result,type:(kind==='video'||file.type.indexOf('video/')===0)?'video':'image',name:file.name,at:new Date().toISOString()});
-        added++;pending--;
-        if(pending===0){
-          saveAlbums(ownerId,arr);
-          input.value='';
-          if(typeof toast==='function')toast(added+' archivo(s) agregado(s).','ok');
-          openAlbumSebas(ownerId,albumId);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  var oldRMyP=window.rMyP;
-  if(typeof oldRMyP==='function'){
-    window.rMyP=function(){
-      oldRMyP();
-      setTimeout(function(){
-        var cont=document.getElementById('myPC');
-        if(!cont||!CU)return;
-        if(!cont.querySelector('.sebas-album-card')){
-          var cards=cont.querySelector('.myp-cards');
-          if(cards){
-            var card=document.createElement('div');
-            card.className='myp-card sebas-album-card';
-            card.onclick=function(){showAllAlbums()};
-            card.innerHTML='<div class="myp-ico">📸</div><div class="myp-ct">Álbumes</div><div class="myp-cd">Viajes, familia y más</div><div class="myp-arr">→</div>';
-            cards.appendChild(card);
-          }
-        }
-      },100);
-    };
-  }
-
-  var oldOpenMod=window.openMod;
-  if(typeof oldOpenMod==='function'){
-    window.openMod=function(id){
-      oldOpenMod(id);
-      setTimeout(function(){
-        var body=document.querySelector('#mCont .m-body');
-        if(!body||body.querySelector('.sebas-open-albums'))return;
-        var acts=body.querySelector('.m-acts');
-        var btn=document.createElement('button');
-        btn.className='btn btn-o sebas-open-albums';
-        btn.textContent='📸 Álbumes';
-        btn.onclick=function(){openAlbumsSebas(id,false)};
-        if(acts)body.insertBefore(btn,acts);else body.appendChild(btn);
-      },80);
-    };
-  }
-
-  /* POPUPS FORTI / SUPER DIAMANTE */
-  function rainFortyUp(){
-    for(var i=0;i<30;i++){
-      var w=document.createElement('div');
-      w.className='fu-rain-word';
-      w.innerHTML='<span class="forty">Forty</span><span class="up">Up</span>';
-      w.style.left=(Math.random()*92+2)+'vw';
-      w.style.animationDelay=(Math.random()*1.1)+'s';
-      w.style.fontSize=(1.05+Math.random()*1.05)+'rem';
-      document.body.appendChild(w);
-      setTimeout((function(el){return function(){el.remove()}})(w),4300);
-    }
-  }
-  window.showSuperPopupSebas=function(fromId){
-    var from=users().find(function(u){return u.id===fromId})||{};
-    rainFortyUp();
-    var ov=document.createElement('div');
-    ov.className='super-popup-sebas';
-    ov.innerHTML='<div class="super-card-sebas"><div class="super-diamond-sebas">💎</div><h3>¡Te enviaron un Súper Diamante!</h3><p><strong>'+escS(from.name||'Alguien')+'</strong> te dio su Súper Diamante en FortyUp.</p><button onclick="this.closest(\\'.super-popup-sebas\\').remove()">Genial</button></div>';
-    document.body.appendChild(ov);
-  };
-  function checkSuperNotifs(){
-    if(!CU)return;
-    var key='fu_sdnotif_'+CU.id;
-    var list=safeG(key,[]);
-    if(!list.length)return;
-    var seen=safeG(seenSuperKey(CU.id),[]);
-    var n=list.find(function(x){return seen.indexOf(x.at+'_'+x.from)===-1});
-    if(n){
-      seen.push(n.at+'_'+n.from);
-      safeSv(seenSuperKey(CU.id),seen);
-      showSuperPopupSebas(n.from);
-    }
-  }
-  var oldSendSuper=window.sendSuperDiamond;
-  if(typeof oldSendSuper==='function'){
-    window.sendSuperDiamond=function(id){
-      oldSendSuper(id);
-      rainFortyUp();
-    };
-  }
-
-  window.showMatch=function(otherId){
-    var other=users().find(function(u){return u.id===otherId})||{};
-    var ov=document.createElement('div');
-    ov.className='match-popup-sebas';
-    ov.innerHTML='<div class="match-card-sebas"><div style="font-size:3rem">💛</div><h3>¡Se gustaron mutuamente!</h3><p>Vos y <strong>'+escS(other.name||'esa persona')+'</strong> se mandaron Forti. La conexión quedó marcada.</p><button onclick="this.closest(\\'.match-popup-sebas\\').remove();'+(other.id?'startChat(\\''+other.id+'\\',\\''+escS(other.name||'')+'\\')':'')+'">Aceptar</button></div>';
-    document.body.appendChild(ov);
-  };
-
-  function cleanupNaN(){
-    document.querySelectorAll('input,textarea').forEach(function(el){if(String(el.value)==='NaN')el.value=''});
-    var walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null);
-    var n;while(n=walker.nextNode()){if(n.nodeValue&&n.nodeValue.indexOf('NaN')>-1)n.nodeValue=n.nodeValue.replace(/NaN/g,'');}
-  }
-
-  document.addEventListener('DOMContentLoaded',function(){
-    showAgeGate();
-    updateGuestMode();
-    fixSearch();
-    checkSuperNotifs();
-    cleanupNaN();
-  });
-  setTimeout(function(){showAgeGate();updateGuestMode();fixSearch();checkSuperNotifs();cleanupNaN()},400);
-  setInterval(function(){updateGuestMode();fixSearch();checkSuperNotifs();cleanupNaN()},1800);
 })();
 </script>
 
