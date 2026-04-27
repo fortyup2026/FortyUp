@@ -575,6 +575,8 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 <header class="nav" id="nav">
@@ -691,7 +693,16 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
-<div id="locationSearchBar" style="display:none;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center">
+<div id="locationSearchBar" style="display:none;margin-bottom:1.25rem">
+  <div style="display:flex;gap:.4rem;margin-bottom:.6rem">
+    <button onclick="useMyLocation()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.35rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.55rem .75rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">
+      📍 Mi ubicación
+    </button>
+    <button onclick="openMapSearch()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.35rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.55rem .75rem;font-size:.8rem;font-weight:800;color:var(--g1);cursor:pointer">
+      🗺 Elegir en mapa
+    </button>
+  </div>
+  <div style="display:flex;gap:.4rem;align-items:center">
   <div class="autocomplete-wrap">
     <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none">📍</span>
     <input type="text" id="locationFilter" placeholder="Buscar por ciudad..." 
@@ -704,7 +715,8 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
     <div class="autocomplete-list" id="cityDropdown" style="display:none"></div>
   </div>
   <button onclick="clearLocationFilter()" id="clearLocBtn" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:#dc2626;cursor:pointer;white-space:nowrap">✕ Limpiar</button>
-  <button onclick="useMyLocation()" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.6rem .9rem;font-size:.82rem;font-weight:800;color:var(--g1);cursor:pointer;white-space:nowrap">📍 Mi ubicación</button>
+  <button onclick="clearLocationFilter()" id="clearLocBtn2" style="display:none;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:50px;padding:.58rem .85rem;font-size:.8rem;font-weight:800;color:#dc2626;cursor:pointer">✕</button>
+  </div>
 </div><div class="pgrid" id="pgrid"></div></div>
 </div>
 
@@ -1218,6 +1230,96 @@ function useMyLocation(){
       toast('No se pudo obtener tu ubicación.','w');
     });
   }
+}
+
+
+// ── MAP SEARCH ──
+var _mapInstance = null, _mapMarker = null, _mapLat = null, _mapLng = null;
+
+function openMapSearch(){
+  var modal = document.getElementById('mapSearchModal');
+  if(!modal)return;
+  modal.style.display = 'flex';
+
+  // Init map after modal is visible
+  setTimeout(function(){
+    if(_mapInstance){
+      _mapInstance.invalidateSize();
+      return;
+    }
+
+    // Center on user location or Buenos Aires
+    var lat = _searchLat||MLAT||-34.6037;
+    var lng = _searchLng||MLNG||-58.3816;
+
+    _mapInstance = L.map('mapSearchContainer').setView([lat,lng], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap'
+    }).addTo(_mapInstance);
+
+    // Click handler
+    _mapInstance.on('click', function(e){
+      _mapLat = e.latlng.lat;
+      _mapLng = e.latlng.lng;
+
+      // Remove old marker
+      if(_mapMarker) _mapInstance.removeLayer(_mapMarker);
+
+      // Add new marker
+      _mapMarker = L.marker([_mapLat,_mapLng]).addTo(_mapInstance);
+
+      // Reverse geocode
+      var info = document.getElementById('mapSearchInfo');
+      var btn = document.getElementById('mapSearchBtn');
+      if(info) info.textContent = 'Buscando lugar...';
+      if(btn) btn.style.display = 'none';
+
+      fetch('https://nominatim.openstreetmap.org/reverse?lat='+_mapLat+'&lon='+_mapLng+'&format=json&accept-language=es')
+        .then(function(r){return r.json()})
+        .then(function(d){
+          var place = d.address.city||d.address.town||d.address.village||d.address.suburb||'esta zona';
+          if(info) info.innerHTML = '📍 <strong>'+place+'</strong>';
+          if(btn){ btn.textContent='Ver perfiles cerca de '+place+' →'; btn.style.display='block'; btn.dataset.place=place; }
+        })
+        .catch(function(){
+          if(info) info.textContent = '📍 Zona seleccionada';
+          if(btn){ btn.textContent='Ver perfiles en esta zona →'; btn.style.display='block'; }
+        });
+    });
+
+    // If user location known, add marker
+    if(MLAT&&MLNG){
+      L.circle([MLAT,MLNG],{color:'var(--g2)',fillColor:'var(--g2)',fillOpacity:.2,radius:500}).addTo(_mapInstance);
+    }
+  }, 300);
+}
+
+function closeMapSearch(){
+  var modal = document.getElementById('mapSearchModal');
+  if(modal) modal.style.display = 'none';
+}
+
+function applyMapSearch(){
+  if(!_mapLat||!_mapLng)return;
+  var btn = document.getElementById('mapSearchBtn');
+  var place = btn ? btn.dataset.place||'zona seleccionada' : 'zona seleccionada';
+
+  _searchLat = _mapLat;
+  _searchLng = _mapLng;
+  _searchCity = place;
+  _locFilter = '';
+
+  // Update input
+  var inp = document.getElementById('locationFilter');
+  if(inp) inp.value = place;
+  var clrBtn = document.getElementById('clearLocBtn');
+  if(clrBtn) clrBtn.style.display = 'block';
+  var clrBtn2 = document.getElementById('clearLocBtn2');
+  if(clrBtn2) clrBtn2.style.display = 'block';
+
+  closeMapSearch();
+  rProfiles();
+  toast('Mostrando perfiles cerca de '+place+' 📍','ok');
 }
 
 function goBack(){if(window.history&&window.history.length>1)window.history.back();else goTo('home')}
@@ -2953,6 +3055,21 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
   }, 400);
 })();
 </script>
+
+
+<!-- MAP SEARCH MODAL -->
+<div id="mapSearchModal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(6,20,16,.85);display:none;align-items:flex-end;justify-content:center">
+  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:600px;padding:1.25rem 1.25rem 2rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <strong style="font-family:Playfair Display,serif;font-size:1.1rem;color:#064E3B">🗺 Elegí una zona</strong>
+      <button onclick="closeMapSearch()" style="background:var(--bg3);border:0;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem">✕</button>
+    </div>
+    <p style="font-size:.82rem;color:var(--txt3);margin-bottom:.85rem">Tocá el mapa para buscar perfiles en esa zona</p>
+    <div id="mapSearchContainer" style="height:280px;border-radius:16px;overflow:hidden;border:1.5px solid var(--border)"></div>
+    <div id="mapSearchInfo" style="margin-top:.75rem;font-size:.84rem;color:var(--txt3);text-align:center;min-height:1.5rem"></div>
+    <button id="mapSearchBtn" onclick="applyMapSearch()" style="display:none;width:100%;margin-top:.85rem;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.78rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Ver perfiles en esta zona →</button>
+  </div>
+</div>
 
 </body>
 </html>
