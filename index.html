@@ -1954,23 +1954,56 @@ function showMyFortis(){
   ov.appendChild(box);document.body.appendChild(ov);
 }
 
-// ── FIX SUPER DIAMOND POPUP - blue diamond emoji ──
+// ── SUPER DIAMOND POPUP with FortyUp rain ──
 function showSuperDiamPop(fromId){
   var fromUser=g(K.U,[]).filter(function(u){return u.id===fromId})[0];
   var fromName=fromUser?(fromUser.name||fromUser.email.split('@')[0]):'alguien';
   var ov=document.createElement('div');
-  ov.style.cssText='position:fixed;inset:0;z-index:900;background:rgba(6,20,16,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.5rem';
+  ov.style.cssText='position:fixed;inset:0;z-index:900;background:rgba(6,20,16,.95);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow:hidden';
+
+  // Rain container
+  var rain=document.createElement('div');
+  rain.style.cssText='position:absolute;inset:0;pointer-events:none;overflow:hidden';
+  // Create falling FortyUp words
+  for(var r=0;r<20;r++){
+    var word=document.createElement('div');
+    var isForty=Math.random()>0.5;
+    word.style.cssText='position:absolute;top:-60px;font-family:Playfair Display,serif;font-size:'+(1+Math.random()*.8)+'rem;font-weight:900;opacity:0;color:'+(isForty?'#10B981':'#F97316');
+    word.textContent=isForty?'Forty':'Up';
+    word.style.left=Math.random()*100+'%';
+    var delay=Math.random()*3;
+    var dur=2+Math.random()*2;
+    word.style.animation='rainFall '+dur+'s '+delay+'s infinite linear';
+    rain.appendChild(word);
+  }
+  // Add keyframe if not already there
+  if(!document.getElementById('rainStyle')){
+    var st=document.createElement('style');st.id='rainStyle';
+    st.textContent='@keyframes rainFall{0%{transform:translateY(-60px) rotate(-10deg);opacity:0}10%{opacity:.8}90%{opacity:.8}100%{transform:translateY(110vh) rotate(10deg);opacity:0}}';
+    document.head.appendChild(st);
+  }
+
   var box=document.createElement('div');
-  box.style.cssText='background:linear-gradient(135deg,#1e3a8a,#2563eb,#3b82f6);border-radius:24px;max-width:320px;width:100%;padding:2.5rem 1.75rem;text-align:center;box-shadow:0 32px 80px rgba(37,99,235,.5)';
-  box.innerHTML='<div style="font-size:4rem;margin-bottom:1rem">💎</div>'
+  box.style.cssText='background:linear-gradient(135deg,#1e3a8a,#2563eb,#3b82f6);border-radius:24px;max-width:320px;width:100%;padding:2.5rem 1.75rem;text-align:center;box-shadow:0 32px 80px rgba(37,99,235,.5);position:relative;z-index:2';
+
+  // Avatar of sender
+  var avHtml='';
+  if(fromUser&&fromUser.photo){avHtml='<img src="'+e(fromUser.photo)+'" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.5);margin-bottom:1rem">'}
+  else if(fromUser){avHtml='<div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 1rem;border:3px solid rgba(255,255,255,.3)">'+(fromUser.name?fromUser.name[0]:'?')+'</div>'}
+
+  box.innerHTML=avHtml
+    +'<div style="font-size:3.5rem;margin-bottom:.5rem">💎</div>'
     +'<h2 style="font-family:Playfair Display,serif;color:#fff;font-size:1.4rem;margin-bottom:.5rem">¡Súper Diamante!</h2>'
-    +'<p style="color:rgba(255,255,255,.85);font-size:.9rem;margin-bottom:1.5rem"><strong>'+e(fromName)+'</strong> te envió un Súper Diamante.<br>¡Es algo especial! 💙</p>'
-    +'<button style="width:100%;background:#fff;color:#1d4ed8;border:0;border-radius:50px;padding:.85rem;font-size:.95rem;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">Ver perfil</button>';
-  box.querySelector('button').onclick=function(){ov.remove();if(fromUser)openMod(fromId)};
-  ov.onclick=function(e){if(e.target===ov)ov.remove()};
-  ov.appendChild(box);document.body.appendChild(ov);
-  // Auto close after 8s
-  setTimeout(function(){if(ov.parentNode)ov.remove()},8000);
+    +'<p style="color:rgba(255,255,255,.85);font-size:.9rem;line-height:1.5;margin-bottom:1.5rem"><strong>'+e(fromName)+'</strong> te envió su Súper Diamante.<br><span style="font-size:.8rem;opacity:.8">¡Es algo muy especial! 💙</span></p>'
+    +'<button id="sdViewBtn" style="width:100%;background:#fff;color:#1d4ed8;border:0;border-radius:50px;padding:.85rem;font-size:.95rem;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif;margin-bottom:.5rem">Ver perfil de '+e(fromName)+'</button>'
+    +'<button id="sdCloseBtn" style="width:100%;background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:.65rem;font-size:.85rem;cursor:pointer;font-family:Nunito,sans-serif">Cerrar</button>';
+
+  box.querySelector('#sdViewBtn').onclick=function(){ov.remove();if(fromUser)openMod(fromId)};
+  box.querySelector('#sdCloseBtn').onclick=function(){ov.remove()};
+  ov.onclick=function(ev){if(ev.target===ov)ov.remove()};
+  ov.appendChild(rain);ov.appendChild(box);
+  document.body.appendChild(ov);
+  setTimeout(function(){if(ov.parentNode)ov.remove()},12000);
 }
 
 // ── FIX MATCH POPUP - mutual forti ──
@@ -2022,7 +2055,7 @@ function calcAgeAndZodiac(){
   var rBD=document.getElementById('rBD');if(rBD)rBD.value=year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
   var z=getZodiac(day,month);
   var zEl=document.getElementById('zodiacResult');
-  if(zEl)zEl.textContent=z+(age>0?' · '+age+' años':'');
+  if(zEl)zEl.textContent=z+(age&&!isNaN(age)&&age>0?' · '+age+' años':'');
   window._zodiacStr=z;
 }
 function updateHeroLoggedIn(){
@@ -2278,6 +2311,7 @@ function rProfiles(){
   // Show location bar only when logged in
   var locBar=document.getElementById('locationSearchBar');
   if(locBar)locBar.style.display=CU?'flex':'none';
+  // Guest mode - show profiles but simplified
   var bl=g(K.BL,[]);
   var users=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&prefAllowsProfile(u)});
   var baseLat=_searchLat||MLAT||(CU&&CU.lat?CU.lat:null), baseLng=_searchLng||MLNG||(CU&&CU.lng?CU.lng:null);
@@ -2579,7 +2613,7 @@ function saveProfile(){
   var looking=cv('lk'),plans=cv('pl'),lat=fv('rLat'),lng=fv('rLng');
   function showE(msg){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'})}
   if(!name||!city||!gender){showE('Completá nombre, ciudad y género. La descripción es opcional.');return}
-  if(!age||isNaN(age)||age<40){showE('FortyUp es solo para mayores de 40 años.');return}
+  if(age&&!isNaN(age)&&age<40){showE('FortyUp es solo para mayores de 40 años.');return}
   var users=normalizeUsers();
   if(CU){
     refreshCU();users=normalizeUsers();
@@ -3045,7 +3079,7 @@ function saveProfile(){
   var looking=cv('lk'),plans=cv('pl'),lat=fv('rLat'),lng=fv('rLng');
   function showE(msg){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'})}
   if(!name||!city||!gender){showE('Completá nombre, ciudad y género. La descripción es opcional.');return}
-  if(!age||isNaN(age)||age<40){showE('FortyUp es solo para mayores de 40 años.');return}
+  if(age&&!isNaN(age)&&age<40){showE('FortyUp es solo para mayores de 40 años.');return}
   var users=normalizeUsers();
   if(CU){
     refreshCU();users=normalizeUsers();
@@ -3458,25 +3492,15 @@ function closeAgePop(){
   if(el){el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(function(){el.style.display='none'},300)}
 }
 // Age popup check runs after page loads
-window.addEventListener('load', function(){
-  // Show popup if never verified OR not verified in this session
+// Age popup - show if not verified
+function checkAgePopup(){
   if(localStorage.getItem('fu_age_ok')!=='1'){
     var el=document.getElementById('agePop');
-    if(el)el.style.display='flex';
+    if(el){el.style.display='flex';el.style.opacity='1'}
   }
-});
-// Also show when navigating to home
-var _origGoTo = null;
-document.addEventListener('DOMContentLoaded', function(){
-  _origGoTo = window.goTo;
-  window.goTo = function(page){
-    if(typeof _origGoTo === 'function') _origGoTo(page);
-    if(page === 'home' && localStorage.getItem('fu_age_ok') !== '1'){
-      var el = document.getElementById('agePop');
-      if(el) el.style.display = 'flex';
-    }
-  };
-});
+}
+window.addEventListener('load', checkAgePopup);
+setTimeout(checkAgePopup, 500);
 // Check super diamond notifications for current user
 function checkSuperDiamNotif(){
   if(!CU)return;
@@ -4270,7 +4294,7 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
             current=users.find(function(u){return u.id===s.id});
           }
           if(!current)return;
-          var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || current.photo || '';
+          var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || current.photo || CU.photo || '';
           var video=window._video || (document.getElementById('rV')&&document.getElementById('rV').value) || current.video || '';
           users=users.map(function(u){
             if(u.id!==current.id)return u;
@@ -4394,7 +4418,7 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
     try{
       var cu=curSebas();
       if(!cu||!cu.id)return;
-      var photo=(window._photo||'') || ((document.getElementById('rP')||{}).value||'') || cu.photo || '';
+      var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || cu.photo || CU.photo || '';
       var video=(window._video||'') || ((document.getElementById('rV')||{}).value||'') || cu.video || '';
       var media=getPersistMedia(cu.id);
       if(photo)media.photo=photo;
