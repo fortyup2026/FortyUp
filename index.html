@@ -942,113 +942,6 @@ body:not(.has-session) #locationSearchBar { display: none !important; }
 /* Guest profile cards - cleaner typography */
 .guest-card .pcard-nm { font-size: 1.05rem; font-weight: 700; color: var(--txt); }
 .guest-card .pcard-meta { font-size: .82rem; color: var(--txt3); }
-
-/* =========================================================
-   FORTYUP - SEBAS FIX PERFILES + FOTO PERSISTENTE
-   Base: fortyup-v10-final-36.html
-   ========================================================= */
-
-/* INVITADO: solo foto + lugar/distancia. Nada de acciones. */
-body.sebas-guest #locationSearchBar,
-body.sebas-guest .location-search,
-body.sebas-guest .pfilters,
-body.sebas-guest .filters,
-body.sebas-guest .profile-filters,
-body.sebas-guest .search-row,
-body.sebas-guest .map-search,
-body.sebas-guest .radar-controls,
-body.sebas-guest .gps-btn,
-body.sebas-guest button[onclick*="Loc"],
-body.sebas-guest button[onclick*="Mapa"],
-body.sebas-guest button[onclick*="mapa"],
-body.sebas-guest button[onclick*="GPS"],
-body.sebas-guest button[onclick*="gps"]{
-  display:none!important;
-}
-
-body.sebas-guest .pgrid{
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important;
-  gap:.75rem!important;
-}
-
-body.sebas-guest .pcard{
-  border-radius:22px!important;
-  overflow:hidden!important;
-  box-shadow:0 8px 22px rgba(6,78,59,.10)!important;
-}
-
-body.sebas-guest .pcard-ph{
-  height:160px!important;
-}
-
-body.sebas-guest .pcard-body{
-  padding:.72rem .82rem!important;
-}
-
-body.sebas-guest .pcard-name,
-body.sebas-guest .ptags,
-body.sebas-guest .pcard-desc,
-body.sebas-guest .pcard-int,
-body.sebas-guest .pcard-bdg,
-body.sebas-guest .pcard-acts,
-body.sebas-guest .pa-forti,
-body.sebas-guest .pa-super,
-body.sebas-guest .pa-chat,
-body.sebas-guest .pa-fav,
-body.sebas-guest .pa-blk,
-body.sebas-guest .pa-more{
-  display:none!important;
-}
-
-body.sebas-guest .pcard-meta{
-  display:block!important;
-  margin:0!important;
-  color:#064E3B!important;
-  font-size:.78rem!important;
-  font-weight:900!important;
-  line-height:1.25!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-
-body.sebas-guest .pcard-meta::before{
-  content:"📍 ";
-}
-
-/* Logueado: mostrar todo como app completa */
-body:not(.sebas-guest) .pcard-name,
-body:not(.sebas-guest) .ptags,
-body:not(.sebas-guest) .pcard-desc,
-body:not(.sebas-guest) .pcard-int,
-body:not(.sebas-guest) .pcard-acts{
-  display:revert;
-}
-
-/* Avatar / foto consistente en todos lados */
-.sebas-img-cover{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  border-radius:inherit!important;
-}
-
-.nav-av .av-c,
-.chat-av,
-.chat-hav,
-.myp-av,
-.pcard-ph,
-.fav-ph{
-  overflow:hidden!important;
-}
-
-/* Botones ocultos sin sesión */
-body.sebas-guest #bn-chats,
-body.sebas-guest #bn-me{
-  display:none!important;
-}
-
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1307,6 +1200,15 @@ body.sebas-guest #bn-me{
     <button onclick="window.history.back()" style="width:100%;background:transparent;border:1.5px solid #D1E8DF;border-radius:50px;padding:.65rem;font-size:.85rem;font-weight:700;cursor:pointer;color:#6B7C76;font-family:'Nunito',sans-serif">No tengo más de 40 años</button>
   </div>
 </div>
+<script>
+// Show age popup immediately if not accepted
+(function(){
+  if(localStorage.getItem('fu_age_ok')!=='1'){
+    var el=document.getElementById('agePop');
+    if(el) el.style.display='flex';
+  }
+})();
+</script>
 
 
 <!-- SUPER DIAMANTE POPUP -->
@@ -2313,7 +2215,25 @@ function goTo(pg){
   if(pg==='admin')rAdmin();
   if(pg==='favorites')rFavs();
   if(pg==='chats')rChatList();
-  if(pg==='register'){enhanceRegisterUI();loadProfileForm();}
+  if(pg==='register'){
+    enhanceRegisterUI();
+    loadProfileForm();
+    // Extra: ensure fields are filled after wizard builds
+    setTimeout(function(){
+      if(!CU)return;
+      var set=function(id,val){var el=document.getElementById(id);if(el&&!el.value)el.value=val||''};
+      set('rN',CU.name||'');
+      set('rC',CU.city||'');
+      set('rG',CU.gender||'');
+      set('rD',CU.desc||CU.description||'');
+      set('rI',CU.int||CU.interests||'');
+      if(CU.photo&&!window._photo){
+        window._photo=CU.photo;
+        var pp=document.getElementById('phprev'),im=document.getElementById('phimg');
+        if(pp&&im){im.src=CU.photo;pp.style.display='block'}
+      }
+    },300);
+  }
 }
 function toggleNav(){document.getElementById('hbg').classList.toggle('open');document.getElementById('drawer').classList.toggle('open')}
 function setBn(n){document.querySelectorAll('.bn').forEach(function(b){b.classList.remove('active')});var el=document.getElementById('bn-'+n);if(el)el.classList.add('active')}
@@ -3715,13 +3635,9 @@ function refreshAllUI(){
 }
 
 function checkAgePopup(){
-  // Show once per session regardless of previous acceptance
-  if(sessionStorage.getItem('age_checked')==='1')return;
-  sessionStorage.setItem('age_checked','1');
-  if(localStorage.getItem('fu_age_ok')!=='1'){
-    var el=document.getElementById('agePop');
-    if(el){el.style.display='flex';el.style.opacity='1'}
-  }
+  if(localStorage.getItem('fu_age_ok')==='1')return;
+  var el=document.getElementById('agePop');
+  if(el){el.style.display='flex';el.style.opacity='1'}
 }
 // Check super diamond notifications for current user
 function checkSuperDiamNotif(){
@@ -5086,344 +5002,6 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener('DOMContentLoaded',showAgeFortySebasV2);
   setTimeout(showAgeFortySebasV2,250);
   setTimeout(showAgeFortySebasV2,900);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX: PERFILES SEGÚN SESIÓN + FOTO GUARDA E IMPACTA
-   ========================================================= */
-(function(){
-  function getStore(k,d){
-    try{
-      if(typeof g === "function") return g(k,d);
-      const raw = localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){ return d; }
-  }
-
-  function setStore(k,v){
-    try{
-      if(typeof sv === "function") sv(k,v);
-      else localStorage.setItem(k,JSON.stringify(v));
-    }catch(e){}
-  }
-
-  function getUsersRaw(){
-    try{
-      if(window.K && K.U) return getStore(K.U,[]);
-      return getStore("fu_u",[]);
-    }catch(e){ return getStore("fu_u",[]); }
-  }
-
-  function setUsersRaw(users){
-    try{
-      if(window.K && K.U) setStore(K.U,users);
-      else setStore("fu_u",users);
-    }catch(e){}
-  }
-
-  function isLogged(){
-    return !!(window.CU && CU.id);
-  }
-
-  function mediaKey(id){
-    return "fortyup_profile_media_final_" + id;
-  }
-
-  function getMedia(id){
-    try{ return JSON.parse(localStorage.getItem(mediaKey(id)) || "{}"); }
-    catch(e){ return {}; }
-  }
-
-  function setMedia(id,media){
-    try{ localStorage.setItem(mediaKey(id), JSON.stringify(media || {})); }
-    catch(e){
-      if(typeof toast === "function") toast("La foto es pesada. Probá con una imagen más chica.","w");
-    }
-  }
-
-  function mergeMedia(user){
-    if(!user || !user.id) return user;
-    const media = getMedia(user.id);
-    const u = Object.assign({}, user);
-    if(media.photo) u.photo = media.photo;
-    if(media.video) u.video = media.video;
-    return u;
-  }
-
-  function allUsersMerged(){
-    let users = [];
-    try{
-      users = typeof normalizeUsers === "function" ? normalizeUsers() : getUsersRaw();
-    }catch(e){
-      users = getUsersRaw();
-    }
-    return (users || []).map(u => mergeMedia(Object.assign({},u)));
-  }
-
-  function persistProfileMedia(id, photo, video){
-    if(!id) return;
-
-    const media = getMedia(id);
-    if(photo) media.photo = photo;
-    if(video) media.video = video;
-    setMedia(id, media);
-
-    const users = getUsersRaw().map(u => {
-      if(String(u.id) !== String(id)) return u;
-      const nu = Object.assign({}, u);
-      if(media.photo) nu.photo = media.photo;
-      if(media.video) nu.video = media.video;
-      return nu;
-    });
-    setUsersRaw(users);
-
-    if(window.CU && String(CU.id) === String(id)){
-      if(media.photo) CU.photo = media.photo;
-      if(media.video) CU.video = media.video;
-    }
-  }
-
-  function resizeImage(file, cb){
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
-        const max = 900;
-        if(w > h && w > max){ h = Math.round(h * max / w); w = max; }
-        else if(h >= w && h > max){ w = Math.round(w * max / h); h = max; }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext("2d").drawImage(img,0,0,w,h);
-        cb(canvas.toDataURL("image/jpeg",0.82));
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  /* Reemplaza handler de foto: guarda comprimido y lo propaga */
-  const originalHandleFile = window.handleFile;
-  window.handleFile = function(input){
-    const file = input.files && input.files[0];
-    if(!file) return;
-
-    resizeImage(file, data => {
-      window._photo = data;
-
-      const prevWrap = document.getElementById("phprev");
-      const prevImg = document.getElementById("phimg");
-      if(prevImg) prevImg.src = data;
-      if(prevWrap) prevWrap.style.display = "block";
-
-      if(isLogged()) persistProfileMedia(CU.id, data, null);
-
-      forcePhotoEverywhere();
-      if(typeof toast === "function") toast("Foto cargada y guardada ✓","ok");
-    });
-  };
-
-  /* Video: lo conserva si es liviano */
-  const originalHandleVideo = window.handleVideoFile;
-  window.handleVideoFile = function(input){
-    const file = input.files && input.files[0];
-    if(!file) return;
-
-    if(file.size > 4 * 1024 * 1024){
-      if(typeof toast === "function") toast("Video muy pesado para guardar en esta versión.","w");
-      input.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = ev => {
-      window._video = ev.target.result;
-      if(isLogged()) persistProfileMedia(CU.id, null, ev.target.result);
-      const st = document.getElementById("vidSt");
-      if(st) st.textContent = "✓ Video cargado";
-      if(typeof toast === "function") toast("Video cargado y guardado ✓","ok");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  /* normalizeUsers y findUserById devuelven usuarios con foto persistida */
-  const originalNormalizeUsers = window.normalizeUsers;
-  if(typeof originalNormalizeUsers === "function"){
-    window.normalizeUsers = function(){
-      return originalNormalizeUsers().map(u => mergeMedia(Object.assign({},u)));
-    };
-  }
-
-  const originalFindUserById = window.findUserById;
-  if(typeof originalFindUserById === "function"){
-    window.findUserById = function(id){
-      const u = originalFindUserById(id);
-      return u ? mergeMedia(Object.assign({},u)) : u;
-    };
-  }
-
-  const originalRefreshCU = window.refreshCU;
-  if(typeof originalRefreshCU === "function"){
-    window.refreshCU = function(){
-      const r = originalRefreshCU();
-      if(window.CU) window.CU = mergeMedia(Object.assign({},CU));
-      return window.CU || r;
-    };
-  }
-
-  /* Al guardar perfil, reinyecta la foto/video en usuario y sesión */
-  const originalSaveProfile = window.saveProfile;
-  if(typeof originalSaveProfile === "function"){
-    window.saveProfile = function(){
-      originalSaveProfile();
-
-      setTimeout(() => {
-        if(!isLogged()) return;
-
-        const photo = window._photo || ((document.getElementById("rP") || {}).value || "") || CU.photo || "";
-        const video = window._video || ((document.getElementById("rV") || {}).value || "") || CU.video || "";
-
-        persistProfileMedia(CU.id, photo, video);
-        forcePhotoEverywhere();
-
-        if(typeof upNav === "function") upNav();
-        if(typeof rMyP === "function" && document.getElementById("page-myprofile")?.classList.contains("active")) rMyP();
-        if(typeof rProfiles === "function" && document.getElementById("page-profiles")?.classList.contains("active")) rProfiles();
-        if(typeof rChatList === "function" && document.getElementById("page-chats")?.classList.contains("active")) rChatList();
-      },160);
-    };
-  }
-
-  function setAvatar(el, photo){
-    if(!el || !photo) return;
-    el.innerHTML = '<img class="sebas-img-cover" src="' + photo + '">';
-  }
-
-  function forcePhotoEverywhere(){
-    const users = allUsersMerged();
-
-    users.forEach(u => {
-      if(!u.photo) return;
-      const name = String(u.name || "").toLowerCase();
-
-      document.querySelectorAll(".pcard").forEach(card => {
-        const txt = String(card.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          const ph = card.querySelector(".pcard-ph");
-          setAvatar(ph, u.photo);
-        }
-      });
-
-      document.querySelectorAll(".chat-item").forEach(item => {
-        const txt = String(item.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(item.querySelector(".chat-av"), u.photo);
-        }
-      });
-
-      document.querySelectorAll(".chat-hdr").forEach(item => {
-        const txt = String(item.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(item.querySelector(".chat-hav"), u.photo);
-        }
-      });
-
-      document.querySelectorAll(".fav-card").forEach(card => {
-        const txt = String(card.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(card.querySelector(".fav-ph"), u.photo);
-        }
-      });
-    });
-
-    if(isLogged() && CU.photo){
-      setAvatar(document.querySelector(".myp-av"), CU.photo);
-      setAvatar(document.querySelector(".nav-av .av-c"), CU.photo);
-    }
-  }
-
-  function updateProfileViewMode(){
-    const guest = !isLogged();
-    document.body.classList.toggle("sebas-guest", guest);
-
-    const chats = document.getElementById("bn-chats");
-    const me = document.getElementById("bn-me");
-    if(chats) chats.style.display = guest ? "none" : "flex";
-    if(me) me.style.display = guest ? "none" : "flex";
-  }
-
-  function simplifyGuestCards(){
-    if(isLogged()) return;
-
-    document.querySelectorAll(".pcard").forEach(card => {
-      const meta = card.querySelector(".pcard-meta");
-      if(meta){
-        const text = meta.textContent || "";
-        const dist = (text.match(/[\\d,.]+\\s?km/i) || text.match(/[^·]+$/) || ["Cerca de vos"])[0];
-        meta.textContent = dist.trim();
-      }
-    });
-  }
-
-  /* Mantiene todo completo logueado, y mini tarjetas invitado */
-  const originalRProfiles = window.rProfiles;
-  if(typeof originalRProfiles === "function"){
-    window.rProfiles = function(){
-      originalRProfiles();
-      setTimeout(() => {
-        updateProfileViewMode();
-        simplifyGuestCards();
-        forcePhotoEverywhere();
-      },90);
-    };
-  }
-
-  const originalRMyP = window.rMyP;
-  if(typeof originalRMyP === "function"){
-    window.rMyP = function(){
-      originalRMyP();
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  const originalRChatList = window.rChatList;
-  if(typeof originalRChatList === "function"){
-    window.rChatList = function(){
-      originalRChatList();
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  const originalOpenChat = window.openChat;
-  if(typeof originalOpenChat === "function"){
-    window.openChat = function(){
-      originalOpenChat.apply(this, arguments);
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  });
-
-  setTimeout(() => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  },350);
-
-  setInterval(() => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  },1500);
 })();
 </script>
 
