@@ -571,6 +571,69 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .autocomplete-item:hover,.autocomplete-item.active{background:var(--bg3);color:var(--g1)}
 .autocomplete-item:first-child{border-radius:14px 14px 0 0}
 .autocomplete-item:last-child{border-radius:0 0 14px 14px}
+/* ===== SEBAS FIX FINAL: POPUP +40 Y BOTÓN + FUNCIONAL ===== */
+#ageFortySebas{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483647!important;
+  background:rgba(6,20,16,.78)!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:1.25rem!important;
+}
+#ageFortySebas.open{display:flex!important}
+#ageFortySebas .age-card{
+  width:min(90vw,380px)!important;
+  background:#fff!important;
+  border-radius:30px!important;
+  padding:2rem 1.45rem!important;
+  text-align:center!important;
+  box-shadow:0 35px 90px rgba(0,0,0,.30)!important;
+}
+#ageFortySebas .age-gem{
+  font-size:3.3rem!important;
+  margin-bottom:.7rem!important;
+  filter:drop-shadow(0 8px 16px rgba(242,183,5,.25))!important;
+}
+#ageFortySebas h2{
+  font-family:'Playfair Display',serif!important;
+  color:#064E3B!important;
+  font-size:1.65rem!important;
+  margin:0 0 .6rem!important;
+}
+#ageFortySebas p{
+  color:#6B7C76!important;
+  font-size:.95rem!important;
+  line-height:1.55!important;
+  margin:0 0 1.2rem!important;
+}
+#ageFortySebas button{
+  width:100%!important;
+  border-radius:999px!important;
+  padding:.82rem 1rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-weight:900!important;
+}
+#ageFortySebas .age-yes{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  margin-bottom:.7rem!important;
+  box-shadow:0 8px 20px rgba(6,78,59,.25)!important;
+}
+#ageFortySebas .age-no{
+  background:#fff!important;
+  color:#6B7C76!important;
+  border:1.5px solid #D1E8DF!important;
+}
+@media(max-width:750px){
+  .h-btns{position:relative!important}
+  .h-btns::after{pointer-events:none!important}
+  .h-btns .btn-p{position:relative!important;z-index:6!important}
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -579,6 +642,17 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+
+<div id="ageFortySebas">
+  <div class="age-card">
+    <div class="age-gem">💎</div>
+    <h2>Bienvenido/a a FortyUp</h2>
+    <p>Al continuar declarás que tenés <strong style="color:#064E3B">más de 40 años</strong> y aceptás nuestros términos de uso y política de privacidad.</p>
+    <button class="age-yes" onclick="acceptAgeFortySebas()">Tengo más de 40 años ✓</button>
+    <button class="age-no" onclick="alert('FortyUp es una comunidad exclusiva para mayores de 40 años.')">No tengo más de 40 años</button>
+  </div>
+</div>
+
 <header class="nav" id="nav">
   <div class="nav-in">
     <button class="nav-logo" onclick="goTo('home')">Forty<span>Up</span></button>
@@ -3256,6 +3330,102 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
     <button id="mapSearchBtn" onclick="applyMapSearch()" style="display:none;width:100%;margin-top:.85rem;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.78rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Ver perfiles en esta zona →</button>
   </div>
 </div>
+
+<script>
+/* ===== SEBAS FIX FINAL: +40 + BOTÓN + ===== */
+(function(){
+  function hasSessionSebas(){
+    try{
+      if(window.CU && CU.id) return true;
+      var keys=['fu_session','fu_s','fortyup_session','session'];
+      for(var i=0;i<keys.length;i++){
+        var v=localStorage.getItem(keys[i]);
+        if(v && v !== 'null' && v !== 'undefined') return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  window.acceptAgeFortySebas=function(){
+    try{localStorage.setItem('fortyup_age_ok_sebas','1')}catch(e){}
+    var el=document.getElementById('ageFortySebas');
+    if(el)el.classList.remove('open');
+  };
+
+  function showAgeSebas(){
+    var el=document.getElementById('ageFortySebas');
+    if(!el)return;
+    try{
+      if(localStorage.getItem('fortyup_age_ok_sebas')==='1')return;
+    }catch(e){}
+    el.classList.add('open');
+  }
+
+  function goJoinSebas(){
+    if(hasSessionSebas()){
+      if(typeof goTo==='function')goTo('myprofile');
+      else if(typeof rMyP==='function')rMyP();
+    }else{
+      if(typeof openAuth==='function')openAuth('register');
+      else if(typeof goTo==='function')goTo('register');
+    }
+  }
+
+  function bindPlusSebas(){
+    var bnPlus=document.getElementById('bn-plus');
+    if(bnPlus){
+      bnPlus.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        goJoinSebas();
+      };
+      var lbl=bnPlus.querySelector('.bn-l');
+      if(lbl)lbl.textContent=hasSessionSebas()?'Perfil':'Unirme';
+    }
+
+    document.querySelectorAll('.btn-join').forEach(function(btn){
+      btn.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        goJoinSebas();
+      };
+    });
+
+    document.querySelectorAll('.h-btns .btn-p').forEach(function(btn){
+      btn.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        goJoinSebas();
+      };
+    });
+
+    document.querySelectorAll('.h-btns').forEach(function(area){
+      if(area.__sebasPlusBound)return;
+      area.__sebasPlusBound=true;
+      area.addEventListener('click',function(ev){
+        if(ev.target.closest('.btn'))return;
+        var r=area.getBoundingClientRect();
+        var x=ev.clientX-r.left;
+        var y=ev.clientY-r.top;
+        var cx=r.width/2;
+        if(Math.abs(x-cx)<95 && y>40 && y<270){
+          ev.preventDefault();
+          ev.stopPropagation();
+          goJoinSebas();
+        }
+      },true);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    showAgeSebas();
+    bindPlusSebas();
+  });
+  setTimeout(function(){showAgeSebas();bindPlusSebas();},300);
+  setTimeout(function(){showAgeSebas();bindPlusSebas();},1000);
+  setInterval(bindPlusSebas,1200);
+})();
+</script>
 
 </body>
 </html>
