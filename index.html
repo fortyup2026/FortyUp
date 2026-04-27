@@ -3,71 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FortyUp Popup +40</title>
+<title>FortyUp Final</title>
 
 <style>
-body{margin:0;font-family:Arial}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#F5F7F6;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  background:#E6F2EE;
+  font-weight:bold;
+}
+
+/* BUSCADOR */
+.buscador{
+  display:flex;
+  gap:10px;
+  padding:15px;
+}
+
+.buscador button{
+  flex:1;
+  border:none;
+  border-radius:20px;
+  padding:10px;
+  background:#E6F2EE;
+  color:#064E3B;
+  font-weight:bold;
+}
+
+.buscar{
+  background:#064E3B !important;
+  color:white !important;
+}
+
+/* BOTON + */
+.plus{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  width:60px;
+  height:60px;
+  background:#064E3B;
+  border-radius:50%;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:30px;
+}
 
 /* POPUP */
-.popup-edad{
+.popup{
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.85);
+  background:rgba(0,0,0,0.8);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:9999;
 }
 
-.popup-contenido{
+.popup-content{
   background:white;
   padding:30px;
   border-radius:20px;
   text-align:center;
 }
 
-.popup-contenido h2{
-  margin-bottom:20px;
-  font-family: 'Playfair Display', serif;
-  color:#064E3B;
-}
-
-.popup-contenido button{
-  background:#064E3B;
-  color:white;
-  border:none;
-  padding:10px 20px;
-  border-radius:10px;
-  font-weight:bold;
+button{
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center;margin-top:40px">FortyUp App</h2>
+<div class="header">
+  <div>FortyUp</div>
+  <div>Unirme gratis</div>
+</div>
 
-<!-- POPUP -->
-<div id="popupEdad" class="popup-edad">
-  <div class="popup-contenido">
+<div class="buscador">
+  <button>📍 Mi ubicación</button>
+  <button>🗺️ Elegir en mapa</button>
+  <button class="buscar">Buscar</button>
+</div>
+
+<div style="padding:20px">
+  <h2>Explorar perfiles</h2>
+  <p>Personas reales buscando conexiones reales.</p>
+</div>
+
+<!-- BOTON + -->
+<div class="plus" onclick="irRegistro()">+</div>
+
+<!-- POPUP +40 -->
+<div id="popupEdad" class="popup">
+  <div class="popup-content">
     <h2>+40 Only</h2>
-    <button onclick="aceptarEdad()">Aceptar</button>
+    <button onclick="cerrarPopup()">Aceptar</button>
+  </div>
+</div>
+
+<!-- SUPER DIAMANTE -->
+<div id="diamantePopup" class="popup">
+  <div class="popup-content">
+    <h2>Te enviaron un Súper Diamante 💎</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" width="80">
+    <br><br>
+    <button onclick="cerrarDiamante()">Cerrar</button>
   </div>
 </div>
 
 <script>
-function aceptarEdad(){
+function cerrarPopup(){
   document.getElementById("popupEdad").style.display = "none";
 }
 
-window.addEventListener("load", function(){
+function cerrarDiamante(){
+  document.getElementById("diamantePopup").style.display = "none";
+}
+
+function irRegistro(){
+  alert("Ir a registro");
+}
+
+/* POPUP SIEMPRE */
+window.onload = function(){
   setTimeout(()=>{
     document.getElementById("popupEdad").style.display = "flex";
-  }, 300);
-});
+  },300);
+};
+
+/* DEMO DIAMANTE */
+setTimeout(()=>{
+  document.getElementById("diamantePopup").style.display = "flex";
+},4000);
 </script>
 
 </body>
