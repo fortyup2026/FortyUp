@@ -1087,12 +1087,12 @@ body:not(.has-session) #locationSearchBar { display: none !important; }
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
 <div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
-  <div style="display:flex;flex-direction:column;gap:.5rem">
-    <button onclick="useMyLocation()" id="btnMyLoc" style="width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.7rem 1rem;font-size:.88rem;font-weight:800;color:var(--g1);cursor:pointer">
-      📍 Usar mi ubicación actual
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+    <button onclick="useMyLocation()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;background:#fff;border:1.5px solid var(--g2);border-radius:50px;padding:.65rem .75rem;font-size:.84rem;font-weight:800;color:var(--g1);cursor:pointer;box-shadow:0 2px 8px rgba(6,78,59,.08)">
+      📍 Mi ubicación
     </button>
-    <button onclick="openMapSearch()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.7rem 1rem;font-size:.88rem;font-weight:800;color:var(--g1);cursor:pointer">
-      🗺 Buscar en mapa
+    <button onclick="openMapSearch()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;background:#fff;border:1.5px solid var(--g2);border-radius:50px;padding:.65rem .75rem;font-size:.84rem;font-weight:800;color:var(--g1);cursor:pointer;box-shadow:0 2px 8px rgba(6,78,59,.08)">
+      🗺 Ver mapa
     </button>
   </div>
   <div id="locActiveLabel" style="display:none;margin-top:.5rem;font-size:.78rem;color:var(--g1);font-weight:700;text-align:center;padding:.3rem .75rem;background:var(--bg3);border-radius:50px;width:fit-content;margin-left:auto;margin-right:auto">
@@ -1458,7 +1458,19 @@ var CU=null,MLAT=null,MLNG=null,CW=null,AM='login',AE='fortyup2026@gmail.com';
 function normEmail(x){return String(x||'').trim().toLowerCase()}
 function newId(){return 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)}
 function g(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function sv(k,v){
+  try{localStorage.setItem(k,JSON.stringify(v))}
+  catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22){
+      // localStorage full - try clearing old data
+      try{
+        localStorage.removeItem('fu_albums_pub_'+(CU?CU.id:''));
+        localStorage.removeItem('fu_albums_priv_'+(CU?CU.id:''));
+        localStorage.setItem(k,JSON.stringify(v));
+      }catch(e2){console.warn('Storage full:',k)}
+    }
+  }
+}
 function e(t){if(!t)return'';return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function fv(id){var el=document.getElementById(id);return el?(el.value||'').trim():''}
 function cv(n){var r=[];document.querySelectorAll('input[name="'+n+'"]:checked').forEach(function(c){r.push(c.value)});return r}
@@ -2372,9 +2384,10 @@ function bCard(u,forti,fav,idx,superSent){
     var d=cDist(dLat,dLng,u.lat,u.lng);
     meta='<span class="dist-b">📍 '+(d<1?'Menos de 1 km':'~'+Math.round(d)+' km '+dLabel)+'</span>';
   }
-  inf.innerHTML='<div class="pcard-nm">'+e(u.name||'')+(u.age?', '+u.age:'')+'</div>'
-    +(u.zodiac?'<div class="pcard-zod">'+e(u.zodiac)+'</div>':'')
-    +(u.city?'<div class="pcard-meta">📍 '+e(u.city)+'</div>':'')
+  inf.innerHTML=
+    '<div style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:var(--txt);margin-bottom:.15rem">'+e(u.name||'')+(u.age?'<span style="font-weight:400;font-size:.95rem;color:var(--txt3)">, '+u.age+'</span>':'')+'</div>'
+    +(u.zodiac?'<div style="font-size:.75rem;color:var(--g2);font-weight:700;margin-bottom:.1rem">'+e(u.zodiac)+'</div>':'')
+    +(u.city?'<div style="font-size:.8rem;color:var(--txt3)">📍 '+e(u.city)+'</div>':'')
     +meta;
 
   // Actions
@@ -2683,6 +2696,7 @@ function loadProfileForm(){
   document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){
     var arr=c.name==='lk'?(CU.looking||[]):(CU.plans||[]);c.checked=arr.indexOf(c.value)!==-1;
   });
+  window._photo=CU.photo||null; // always restore
   if(CU.photo){
     window._photo=CU.photo;
     var pp=document.getElementById('phprev'),im=document.getElementById('phimg');
@@ -2721,7 +2735,7 @@ function saveProfile(){
   }
 }
 function clearReg(){
-  window._photo=null;
+  if(!CU||!CU.photo)window._photo=null; // keep photo if user has one
   ['rN','rA','rC','rE','rP','rV','rD','rI'].forEach(function(id){var el=document.getElementById(id);if(el){el.value='';if(id==='rE'){el.readOnly=false;el.style.opacity='1';el.style.background=''}}});
   var rg=document.getElementById('rG');if(rg)rg.value='';var rp=document.getElementById('rPref');if(rp)rp.value='todos';
   document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){c.checked=false});
@@ -3187,7 +3201,7 @@ function saveProfile(){
   }
 }
 function clearReg(){
-  window._photo=null;
+  if(!CU||!CU.photo)window._photo=null; // keep photo if user has one
   ['rN','rA','rC','rE','rP','rV','rD','rI'].forEach(function(id){var el=document.getElementById(id);if(el){el.value='';if(id==='rE'){el.readOnly=false;el.style.opacity='1';el.style.background=''}}});
   var rg=document.getElementById('rG');if(rg)rg.value='';var rp=document.getElementById('rPref');if(rp)rp.value='todos';
   document.querySelectorAll('input[name="lk"],input[name="pl"]').forEach(function(c){c.checked=false});
@@ -3594,6 +3608,9 @@ function refreshAllUI(){
 }
 
 function checkAgePopup(){
+  // Show once per session regardless of previous acceptance
+  if(sessionStorage.getItem('age_checked')==='1')return;
+  sessionStorage.setItem('age_checked','1');
   if(localStorage.getItem('fu_age_ok')!=='1'){
     var el=document.getElementById('agePop');
     if(el){el.style.display='flex';el.style.opacity='1'}
