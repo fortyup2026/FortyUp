@@ -713,6 +713,83 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   min-width: 140px !important;
 }
 
+
+/* ===== SEBAS FIX FINAL 2: BUSCADOR + TITULO HERO ===== */
+
+/* Unificar logo del header con el FortyUp central */
+.nav-logo{
+  font-family:'Playfair Display',serif!important;
+  font-weight:800!important;
+  letter-spacing:-.045em!important;
+  line-height:1!important;
+}
+.nav-logo span{
+  color:#10B981!important;
+  font-style:italic!important;
+}
+
+/* Separar FortyUp central de "Conocé personas..." */
+@media(max-width:750px){
+  .h-title{
+    margin-bottom:1.35rem!important;
+    line-height:.92!important;
+  }
+  .h-sub{
+    margin-top:.45rem!important;
+    line-height:1.22!important;
+  }
+}
+
+/* Buscador limpio: sin pin duplicado y con 3 piezas */
+@media(max-width:750px){
+  .pfilters,
+  .filters,
+  .profile-filters,
+  .search-row,
+  .map-search,
+  .radar-controls{
+    display:grid!important;
+    grid-template-columns:auto auto 1fr!important;
+    gap:.55rem!important;
+    align-items:center!important;
+    overflow:visible!important;
+    padding:.55rem 1rem .85rem!important;
+  }
+
+  .pfilters button,
+  .filters button,
+  .profile-filters button,
+  .search-row button,
+  .map-search button,
+  .radar-controls button{
+    white-space:normal!important;
+    min-width:auto!important;
+    height:58px!important;
+  }
+
+  .pfilters input,
+  .filters input,
+  .profile-filters input,
+  .search-row input,
+  .map-search input,
+  .radar-controls input{
+    min-width:0!important;
+    width:100%!important;
+    height:58px!important;
+    padding-left:1rem!important;
+    font-size:1rem!important;
+  }
+}
+
+
+/* ===== SEBAS FIX: FOTOS / VIDEOS PÚBLICOS EN PERFIL ===== */
+.public-media-sebas{margin-top:1rem}
+.public-media-sebas .pm-grid{display:flex;gap:.65rem;overflow-x:auto;padding:.35rem .05rem .8rem;-webkit-overflow-scrolling:touch}
+.public-media-sebas .pm-item{flex:0 0 112px;height:112px;border-radius:18px;overflow:hidden;background:#F0FDF8;border:1.5px solid #D1E8DF;box-shadow:0 5px 16px rgba(6,78,59,.08);position:relative;display:flex;align-items:center;justify-content:center}
+.public-media-sebas .pm-item img,.public-media-sebas .pm-item video{width:100%;height:100%;object-fit:cover}
+.public-media-sebas .pm-badge{position:absolute;right:.35rem;top:.35rem;background:rgba(6,78,59,.88);color:#fff;border-radius:999px;padding:.12rem .42rem;font-size:.62rem;font-weight:900}
+.public-media-sebas .pm-empty{font-size:.82rem;color:#6B7C76;background:#F8FFFB;border:1.5px dashed #D1E8DF;border-radius:16px;padding:.85rem;text-align:center}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3660,6 +3737,240 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
   setTimeout(()=>{fixBuscador();fixPlus();},1000);
   setInterval(()=>{fixBuscador();fixPlus();},2000);
 
+})();
+</script>
+
+
+<script>
+/* ===== SEBAS FIX FINAL 2: BUSCADOR SIN PIN DUPLICADO ===== */
+(function(){
+  function cleanSearchSebasFinal(){
+    var containers = [
+      '.pfilters',
+      '.filters',
+      '.profile-filters',
+      '.search-row',
+      '.map-search',
+      '.radar-controls'
+    ];
+
+    containers.forEach(function(sel){
+      document.querySelectorAll(sel).forEach(function(container){
+        var btnUbicacion=null, btnMapa=null, inputBuscar=null, btnBuscar=null;
+
+        Array.from(container.querySelectorAll('button,input')).forEach(function(el){
+          var txt=(el.textContent||'').trim().toLowerCase();
+          var ph=(el.getAttribute('placeholder')||'').trim().toLowerCase();
+
+          if(txt.includes('ubicación')) btnUbicacion=el;
+          if(txt.includes('mapa')) btnMapa=el;
+          if(ph.includes('buscar') || ph.includes('ciudad')) inputBuscar=el;
+          if(txt === 'buscar' || txt.includes('buscar')) btnBuscar=el;
+        });
+
+        if(btnUbicacion) btnUbicacion.innerHTML='📍<br>Mi ubicación';
+        if(btnMapa) btnMapa.innerHTML='🗺️<br>Elegir en mapa';
+
+        if(inputBuscar){
+          inputBuscar.setAttribute('placeholder','Buscar');
+          inputBuscar.value = (inputBuscar.value || '').replace(/📍/g,'').trim();
+          inputBuscar.style.backgroundImage='none';
+        }
+
+        // Si existe un botón X rojo, lo dejo oculto visualmente porque pediste botón Buscar.
+        Array.from(container.querySelectorAll('button')).forEach(function(btn){
+          var t=(btn.textContent||'').trim();
+          if(t === '×' || t === '✕' || t === 'X'){
+            btn.style.display='none';
+          }
+        });
+
+        // Si no hay botón Buscar, lo creamos sin romper funciones: dispara Enter/cambio en el input.
+        if(inputBuscar && !btnBuscar && !container.querySelector('.sebas-search-btn')){
+          var b=document.createElement('button');
+          b.type='button';
+          b.className='sebas-search-btn';
+          b.textContent='Buscar';
+          b.style.cssText='background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:50px;padding:.72rem 1rem;font-weight:900;height:58px;white-space:nowrap;';
+          b.onclick=function(){
+            inputBuscar.dispatchEvent(new Event('input',{bubbles:true}));
+            inputBuscar.dispatchEvent(new Event('change',{bubbles:true}));
+            inputBuscar.blur();
+          };
+          container.appendChild(b);
+          container.style.gridTemplateColumns='auto auto 1fr auto';
+        }else if(btnBuscar){
+          btnBuscar.textContent='Buscar';
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', cleanSearchSebasFinal);
+  setTimeout(cleanSearchSebasFinal,300);
+  setTimeout(cleanSearchSebasFinal,1000);
+  setInterval(cleanSearchSebasFinal,1500);
+})();
+</script>
+
+
+<script>
+/* ===== SEBAS FIX: GUARDAR Y MOSTRAR FOTO/VIDEO EDITADOS ===== */
+(function(){
+  function getUsersSebas(){
+    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_users')||localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
+  }
+  function saveUsersSebas(users){
+    try{
+      if(typeof sv==='function' && window.K && K.U) sv(K.U,users);
+      else localStorage.setItem('fu_users',JSON.stringify(users));
+    }catch(e){}
+  }
+  function localMediaKey(id){return 'fu_local_media_'+id}
+
+  function saveLocalMediaSebas(u){
+    if(!u||!u.id)return;
+    var media={};
+    if(u.photo)media.photo=u.photo;
+    if(u.video)media.video=u.video;
+    try{localStorage.setItem(localMediaKey(u.id),JSON.stringify(media))}catch(e){}
+  }
+
+  function mergeLocalMediaSebas(u){
+    if(!u||!u.id)return u;
+    try{
+      var media=JSON.parse(localStorage.getItem(localMediaKey(u.id))||'{}');
+      if(media.photo && (!u.photo || String(u.photo).indexOf('data:')!==0)) u.photo=media.photo;
+      if(media.video && (!u.video || String(u.video).indexOf('data:')!==0)) u.video=media.video;
+    }catch(e){}
+    return u;
+  }
+
+  function publicAlbumsSebas(id){
+    var out=[];
+    try{
+      var a1=JSON.parse(localStorage.getItem('fu_albums_pub_'+id)||'[]');
+      a1.forEach(function(al){
+        if(al.visible===false)return;
+        (al.items||[]).forEach(function(it){if(it&&it.src)out.push(it)});
+      });
+      var a2=JSON.parse(localStorage.getItem('fu_album_pub_'+id)||'[]');
+      a2.forEach(function(it){if(it&&it.src)out.push(it)});
+    }catch(e){}
+    return out;
+  }
+
+  function publicMediaHtmlSebas(u){
+    u=mergeLocalMediaSebas(Object.assign({},u));
+    var items=[];
+    if(u.photo)items.push({type:'image',src:u.photo,label:'Foto'});
+    if(u.video)items.push({type:'video',src:u.video,label:'Video'});
+    publicAlbumsSebas(u.id).forEach(function(it){items.push(it)});
+
+    var html='<div class="m-sec public-media-sebas"><div class="m-sl">Fotos y videos públicos</div>';
+    if(!items.length){
+      html+='<div class="pm-empty">Este perfil todavía no tiene fotos o videos públicos.</div></div>';
+      return html;
+    }
+    html+='<div class="pm-grid">';
+    items.forEach(function(it){
+      var type=it.type==='video'?'video':'image';
+      if(type==='video'){
+        html+='<div class="pm-item" onclick="window.open(\''+String(it.src).replace(/'/g,"\\'")+'\',\'_blank\')"><video src="'+e(it.src)+'" muted playsinline></video><span class="pm-badge">▶</span></div>';
+      }else{
+        html+='<div class="pm-item" onclick="window.open(\''+String(it.src).replace(/'/g,"\\'")+'\',\'_blank\')"><img src="'+e(it.src)+'"><span class="pm-badge">Foto</span></div>';
+      }
+    });
+    html+='</div></div>';
+    return html;
+  }
+
+  // Mejorar guardado: si la foto/video son data URL, guardarlos localmente y reinyectarlos aunque Firebase no los guarde.
+  var oldSaveProfile=window.saveProfile;
+  if(typeof oldSaveProfile==='function'){
+    window.saveProfile=function(){
+      oldSaveProfile();
+      setTimeout(function(){
+        try{
+          var users=getUsersSebas();
+          var current=window.CU;
+          if(!current&&window.K&&K.S){
+            var s=JSON.parse(localStorage.getItem(K.S)||'{}');
+            current=users.find(function(u){return u.id===s.id});
+          }
+          if(!current)return;
+          var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || current.photo || '';
+          var video=window._video || (document.getElementById('rV')&&document.getElementById('rV').value) || current.video || '';
+          users=users.map(function(u){
+            if(u.id!==current.id)return u;
+            var nu=Object.assign({},u);
+            if(photo)nu.photo=photo;
+            if(video)nu.video=video;
+            saveLocalMediaSebas(nu);
+            window.CU=nu;
+            return nu;
+          });
+          saveUsersSebas(users);
+          if(typeof upNav==='function')upNav();
+          if(typeof rProfiles==='function')rProfiles();
+        }catch(e){console.warn('save media sebas',e)}
+      },120);
+    };
+  }
+
+  // Corregir rProfiles para que use media local si Firebase pisó la foto.
+  var oldRProfiles=window.rProfiles;
+  if(typeof oldRProfiles==='function'){
+    window.rProfiles=function(){
+      try{
+        var users=getUsersSebas().map(function(u){return mergeLocalMediaSebas(Object.assign({},u))});
+        saveUsersSebas(users);
+        if(window.CU){
+          var me=users.find(function(u){return u.id===CU.id});
+          if(me)window.CU=me;
+        }
+      }catch(e){}
+      oldRProfiles();
+    };
+  }
+
+  // Agregar sección pública en Ver más, sin reemplazar el modal original.
+  var oldOpenMod=window.openMod;
+  if(typeof oldOpenMod==='function'){
+    window.openMod=function(id){
+      oldOpenMod(id);
+      setTimeout(function(){
+        try{
+          var u=getUsersSebas().find(function(x){return x.id===id});
+          if(!u)return;
+          var body=document.querySelector('#mCont .m-body');
+          if(!body || body.querySelector('.public-media-sebas'))return;
+          var acts=body.querySelector('.m-acts');
+          var wrap=document.createElement('div');
+          wrap.innerHTML=publicMediaHtmlSebas(u);
+          if(acts)body.insertBefore(wrap,acts); else body.appendChild(wrap);
+        }catch(e){console.warn('public media sebas',e)}
+      },80);
+    };
+  }
+
+  // Si vuelve de Firebase sin media, reinyectar.
+  setInterval(function(){
+    try{
+      var changed=false;
+      var users=getUsersSebas().map(function(u){
+        var before=(u.photo||'')+'|'+(u.video||'');
+        var nu=mergeLocalMediaSebas(Object.assign({},u));
+        var after=(nu.photo||'')+'|'+(nu.video||'');
+        if(before!==after)changed=true;
+        return nu;
+      });
+      if(changed){
+        saveUsersSebas(users);
+        if(typeof rProfiles==='function' && document.getElementById('page-profiles') && document.getElementById('page-profiles').classList.contains('active')) rProfiles();
+      }
+    }catch(e){}
+  },2500);
 })();
 </script>
 
