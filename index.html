@@ -795,7 +795,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
   <button class="bn" id="bn-profiles" onclick="goTo('profiles');setBn('profiles')"><span class="bn-ico">👥</span><span class="bn-l">Perfiles</span></button>
-  <button class="bn" id="bn-plus" onclick="if(CU){goTo('myprofile');rMyP();setBn('me')}else{openAuth('login')}"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
+  <button class="bn" id="bn-plus" onclick="bnPlusClick()"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
   <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative;display:none">
   <span style="position:relative;display:inline-block">
     <span class="bn-ico">💬</span>
@@ -845,6 +845,116 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 
 <script>
 
+
+// ══════════════════════════════════════
+// FIREBASE SOCIAL - Fortis, Messages, Notifications
+// ══════════════════════════════════════
+
+// ── Write a notification to Firestore for another user ──
+function writeNotifToFirestore(toUserId, type, data){
+  if(!DB||!toUserId)return;
+  var notif = Object.assign({}, data, {
+    type: type,
+    to: toUserId,
+    from: CU ? CU.id : '',
+    fromName: CU ? (CU.name||CU.email.split('@')[0]) : '',
+    fromPhoto: CU ? (CU.photo&&CU.photo.indexOf('data:')===-1?CU.photo:'') : '',
+    at: new Date().toISOString(),
+    read: false
+  });
+  DB.collection('notifications').add(notif)
+    .then(function(){console.log('Notification sent to Firebase:', type)})
+    .catch(function(err){console.warn('Notification error:',err)});
+}
+
+// ── Check Firebase notifications for current user ──
+function checkFirebaseNotifs(){
+  if(!DB||!CU)return;
+  DB.collection('notifications')
+    .where('to','==',CU.id)
+    .where('read','==',false)
+    .get()
+    .then(function(snap){
+      snap.forEach(function(doc){
+        var n = doc.data();
+        // Mark as read
+        doc.ref.update({read:true});
+        // Process
+        if(n.type==='forti'){
+          // Store forti in localStorage
+          var key=kF(n.from);
+          var fs=g(key,[]);
+          if(!fs.some(function(f){return f.t===CU.id})){
+            fs.push({t:CU.id,at:n.at});sv(key,fs);
+          }
+          // Check mutual forti
+          var myF=g(kF(CU.id),[]);
+          if(myF.some(function(f){return f.t===n.from&&isNormalFortiActive(f)})){
+            showMatch(n.from);
+          }
+          toast((n.fromName||'Alguien')+' te mandó un Forti 💛','ok');
+        }
+        else if(n.type==='superDiamond'){
+          // Show super diamond popup
+          setTimeout(function(){showSuperDiamPop(n.from)},500);
+        }
+        else if(n.type==='message'){
+          // Store message in localStorage
+          var key=kMs(n.from,CU.id);
+          var msgs=g(key,[]);
+          var exists=msgs.some(function(m){return m.at===n.at&&m.from===n.from});
+          if(!exists){
+            msgs.push({from:n.from,to:CU.id,text:n.text||'',photo:n.photo||'',audio:n.audio||'',at:n.at});
+            sv(key,msgs);
+            // Add to chat list
+            var chats=g(kCh(CU.id),[]);
+            if(chats.indexOf(n.from)===-1){chats.push(n.from);sv(kCh(CU.id),chats)}
+          }
+          checkUnread();
+          // Refresh chat if open
+          if(CW&&CW.id===n.from) rChatMsgs();
+          toast((n.fromName||'Alguien')+' te envió un mensaje 💬','ok');
+        }
+      });
+    })
+    .catch(function(err){console.warn('Notif check error:',err)});
+}
+
+// ── Override sendForti to also notify via Firebase ──
+var _origSendForti = null;
+function initFirebaseSocial(){
+  if(_origSendForti)return;
+  _origSendForti = window.sendForti;
+  window.sendForti = function(id){
+    _origSendForti(id);
+    // Also write to Firebase
+    writeNotifToFirestore(id,'forti',{});
+  };
+  // Override sendSuperDiamond
+  var _origSSD = window.sendSuperDiamond;
+  if(_origSSD){
+    window.sendSuperDiamond = function(id){
+      _origSSD(id);
+      writeNotifToFirestore(id,'superDiamond',{});
+    };
+  }
+  // Override sendMsg to also send via Firebase
+  var _origSendMsg = window.sendMsg;
+  if(_origSendMsg){
+    window.sendMsg = function(){
+      var input=document.getElementById('chatIn');
+      var text=input?input.value.trim():'';
+      if(!text||!CU||!CW)return;
+      _origSendMsg();
+      writeNotifToFirestore(CW.id,'message',{text:text});
+    };
+  }
+  // Check Firebase notifications every 15 seconds
+  checkFirebaseNotifs();
+  setInterval(checkFirebaseNotifs, 15000);
+  console.log('Firebase social initialized');
+}
+
 // ══════════════════════════════════════
 // FIREBASE
 // ══════════════════════════════════════
@@ -868,6 +978,7 @@ function initFirebase(){
     console.log('Firebase ready');
     syncFromFirestore();
     setInterval(function(){if(FB_READY&&!FB_SYNCING)syncFromFirestore()}, 45000);
+    initFirebaseSocial();
   }catch(err){console.warn('Firebase init error:',err)}
 }
 
@@ -2378,15 +2489,88 @@ function clearReg(){
   window._photo=null;window._video=null;
 }
 function openMod(id){
-  var u=g(K.U,[]).filter(function(x){return x.id===id})[0];if(!u)return;
-  var forti=CU?g(kF(CU.id),[]).some(function(f){return f.t===id&&isNormalFortiActive(f)}):false;
+  var u=g(K.U,[]).filter(function(x){return x.id===id})[0];
+  if(!u)return;
+  var myF=CU?g(kF(CU.id),[]):[];
+  var forti=myF.some(function(f){return f.t===id&&f.type!=='super'&&isNormalFortiActive(f)});
+  var superSent=CU?myF.some(function(f){return f.t===id&&f.type==='super'}):false;
+  var noSuper=CU&&((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
   var fav=CU?g(kFv(CU.id),[]).indexOf(id)!==-1:false;
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
-  var desc=u.desc||u.description||'';var int=u.int||u.interests||'';
-  document.getElementById('mCont').innerHTML='<div class="m-ph" onclick="openMedia(\''+id+'\',\'photo\')">'+(u.photo?'<img src="'+e(u.photo)+'" onerror="this.parentElement.innerHTML=\'<div class=m-ph-av>'+(u.name?u.name[0]:'?')+'</div>\'">':'<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>')+'</div><div class="m-body"><div class="m-nm">'+e(u.name)+', '+u.age+'</div><div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'+(!u.is?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(prefLabel(u.interestedIn||u.pref||'todos'))+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div><div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'+(int?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(int)+'</p></div>':'')+'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div><div class="m-acts"><button class="btn btn-gd" onclick="sendForti(\''+id+'\');this.innerHTML=\'<span class=\"forti-gem\">◆</span> Enviado\';this.disabled=true" '+(forti?'disabled style="opacity:.7"':'')+'>'+(forti?'<span class="forti-gem"></span> Enviado':'<span class="forti-gem"></span> Forti')+'</button>'+(u.video?'<button class="btn btn-o btn-sm" onclick="openMedia(\''+id+'\',\'video\')">▶ Video</button>':'')+(CU?'<button class="btn btn-o btn-sm" onclick="startChat(\''+id+'\',\''+e(u.name)+'\');closeMod()">💬 Chat</button>':'')+'<button class="btn btn-o btn-sm" onclick="togFav(\''+id+'\');closeMod()">'+(fav?'⭐ En favoritos':'☆ Favorito')+'</button><button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1.5px solid #fca5a5" onclick="blkU(\''+id+'\');closeMod()">🚫</button></div></div>';
-  document.getElementById('mOv').classList.add('open');document.body.style.overflow='hidden';
+  var desc=u.desc||u.description||'';
+  var mc=document.getElementById('mCont');
+  if(!mc)return;
+
+  // Build photo
+  var phDiv=document.createElement('div');phDiv.className='m-ph';
+  phDiv.onclick=function(){if(u.photo)openMedia(id,'photo')};
+  if(u.photo){var img=document.createElement('img');img.src=u.photo;img.onerror=function(){phDiv.innerHTML='<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>'};phDiv.appendChild(img)}
+  else{phDiv.innerHTML='<div class="m-ph-av">'+(u.name?u.name[0]:'?')+'</div>'}
+
+  // Build body
+  var body=document.createElement('div');body.className='m-body';
+  body.innerHTML='<div class="m-nm">'+e(u.name)+', '+u.age+(u.zodiac?' <span style="font-size:.8rem;color:var(--txt3)">'+e(u.zodiac)+'</span>':'')+'</div>'
+    +'<div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'
+    +(u.interestedIn?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(u.interestedIn)+'</p></div>':'')
+    +'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div>'
+    +'<div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'
+    +((u.int||u.interests)?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(u.int||u.interests)+'</p></div>':'')
+    +'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div>';
+
+  // Build action buttons
+  var acts=document.createElement('div');acts.className='m-acts';
+
+  // Forti button
+  var bForti=document.createElement('button');
+  bForti.className='btn btn-gd';
+  if(forti){bForti.disabled=true;bForti.style.opacity='.7';bForti.innerHTML='<span class="forti-gem"></span> Forti enviado'}
+  else{bForti.innerHTML='<span class="forti-gem"></span> Forti'}
+  bForti.onclick=function(){if(!CU){openAuth('login');return}sendForti(id);bForti.innerHTML='<span class="forti-gem"></span> Forti enviado';bForti.disabled=true;bForti.style.opacity='.7'};
+  acts.appendChild(bForti);
+
+  // Super Diamond button
+  var bSuper=document.createElement('button');
+  bSuper.className='btn btn-sm';
+  bSuper.style.cssText='background:'+(superSent?'#e0f2fe':'linear-gradient(135deg,#1d4ed8,#3b82f6)')+';color:#fff;border:0';
+  if(superSent||noSuper){bSuper.disabled=true;bSuper.style.opacity='.7'}
+  bSuper.innerHTML='💎 '+(superSent?'Super enviado':noSuper?'Sin súper':'Súper Diamante');
+  bSuper.onclick=function(){if(!CU){openAuth('login');return}sendSuperDiamond(id)};
+  acts.appendChild(bSuper);
+
+  // Chat button
+  if(CU){
+    var bChat=document.createElement('button');
+    bChat.className='btn btn-o btn-sm';
+    bChat.textContent='💬 Chat';
+    bChat.onclick=function(){startChat(id,u.name);closeMod()};
+    acts.appendChild(bChat);
+  }
+
+  // Fav button
+  var bFav=document.createElement('button');
+  bFav.className='btn btn-o btn-sm';
+  bFav.textContent=fav?'⭐ En favoritos':'☆ Favorito';
+  bFav.onclick=function(){if(!CU){openAuth('login');return}togFav(id);bFav.textContent=g(kFv(CU.id),[]).indexOf(id)!==-1?'⭐ En favoritos':'☆ Favorito';};
+  acts.appendChild(bFav);
+
+  // Video button
+  if(u.video){
+    var bVid=document.createElement('button');
+    bVid.className='btn btn-o btn-sm';
+    bVid.textContent='▶ Video';
+    bVid.onclick=function(){openMedia(id,'video')};
+    acts.appendChild(bVid);
+  }
+
+  body.appendChild(acts);
+  mc.innerHTML='';
+  mc.appendChild(phDiv);
+  mc.appendChild(body);
+  document.getElementById('mOv').classList.add('open');
+  document.body.style.overflow='hidden';
 }
+
 function closeMod(){document.getElementById('mOv').classList.remove('open');document.body.style.overflow=''}
 function hMov(e){if(e.target===document.getElementById('mOv'))closeMod()}
 document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeMod()});
@@ -2685,11 +2869,13 @@ function closeAgePop(){
   var el=document.getElementById('agePop');
   if(el){el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(function(){el.style.display='none'},300)}
 }
-// Show age popup if not yet verified
-if(localStorage.getItem('fu_age_ok')!=='1'){
-  var el=document.getElementById('agePop');
-  if(el)el.style.display='flex';
-}
+// Age popup check runs after page loads
+window.addEventListener('load', function(){
+  if(localStorage.getItem('fu_age_ok')!=='1'){
+    var el=document.getElementById('agePop');
+    if(el)el.style.display='flex';
+  }
+});
 // Check super diamond notifications for current user
 function checkSuperDiamNotif(){
   if(!CU)return;
