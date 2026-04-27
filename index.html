@@ -634,6 +634,44 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   .h-btns .btn-p{position:relative!important;z-index:6!important}
 }
 
+/* ===== SEBAS FIX: + A REGISTRO Y BUSCADOR MAPA PROLIJO ===== */
+@media(max-width:750px){
+  .pfilters,
+  .filters,
+  .profile-filters,
+  .search-row,
+  .map-search,
+  .radar-controls{
+    display:flex!important;
+    align-items:center!important;
+    gap:.45rem!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    padding:.55rem 1rem .7rem!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+
+  .pfilters button,
+  .filters button,
+  .profile-filters button,
+  .search-row button,
+  .map-search button,
+  .radar-controls button{
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+  }
+
+  .pfilters input,
+  .filters input,
+  .profile-filters input,
+  .search-row input,
+  .map-search input,
+  .radar-controls input{
+    min-width:150px!important;
+    flex:1 0 150px!important;
+  }
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3424,6 +3462,99 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
   setTimeout(function(){showAgeSebas();bindPlusSebas();},300);
   setTimeout(function(){showAgeSebas();bindPlusSebas();},1000);
   setInterval(bindPlusSebas,1200);
+})();
+</script>
+
+<script>
+/* ===== SEBAS FIX: BOTÓN + SIEMPRE VA A REGISTRO / PERFIL ===== */
+(function(){
+  function hasUserSebas(){
+    try{
+      return !!(window.CU && CU.id);
+    }catch(e){return false}
+  }
+
+  function openRegisterSebas(){
+    try{
+      if(hasUserSebas()){
+        if(typeof goTo === 'function'){
+          goTo('register'); // editar/completar perfil con sesión
+        }
+        if(typeof loadProfileForm === 'function'){
+          setTimeout(loadProfileForm,80);
+        }
+      }else{
+        if(typeof openAuth === 'function'){
+          openAuth('register');
+        }else if(typeof goTo === 'function'){
+          goTo('register');
+        }
+      }
+    }catch(e){
+      console.warn('plus register fix', e);
+      if(typeof goTo === 'function')goTo('register');
+    }
+  }
+
+  function bindPlusToRegisterSebas(){
+    var bnPlus=document.getElementById('bn-plus');
+    if(bnPlus){
+      bnPlus.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        openRegisterSebas();
+        return false;
+      };
+      var lbl=bnPlus.querySelector('.bn-l');
+      if(lbl)lbl.textContent=hasUserSebas()?'Perfil':'Unirme';
+    }
+
+    document.querySelectorAll('.bn-plus').forEach(function(el){
+      el.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        openRegisterSebas();
+        return false;
+      };
+    });
+
+    document.querySelectorAll('.btn-join, .h-btns .btn-p').forEach(function(btn){
+      btn.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        openRegisterSebas();
+        return false;
+      };
+    });
+  }
+
+  function fixMapSearchTextSebas(){
+    var allBtns=[].slice.call(document.querySelectorAll('button'));
+    allBtns.forEach(function(btn){
+      var t=(btn.textContent||'').trim().toLowerCase();
+      if(t.includes('elegir en mapa')){
+        btn.innerHTML='🗺️ Mapa';
+      }
+      if(t.includes('mi ubicación')){
+        btn.innerHTML='📍 Mi ubicación';
+      }
+    });
+
+    document.querySelectorAll('input').forEach(function(inp){
+      var ph=(inp.getAttribute('placeholder')||'').toLowerCase();
+      if(ph.includes('buscar por c') || ph.includes('ciudad')){
+        inp.setAttribute('placeholder','📍 Buscar');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    bindPlusToRegisterSebas();
+    fixMapSearchTextSebas();
+  });
+  setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},300);
+  setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1000);
+  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1200);
 })();
 </script>
 
