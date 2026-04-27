@@ -673,38 +673,44 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 }
 
 
-/* ===== SEBAS FIX TIPOGRAFÍA Y ESPACIADO ===== */
-.logo, .nav-logo, .header-logo {
-  font-family: 'Playfair Display', serif !important;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+/* ===== FINAL FIX SEBAS ===== */
+
+/* DIAMANTE MÁS ABAJO */
+.hero img,
+.hero-diamond,
+.h-diamond {
+  margin-bottom: 60px !important;
 }
 
+.h-btns::after {
+  top: 150px !important;
+}
+
+/* ESPACIADO TÍTULO */
 .hero-title {
-  font-family: 'Playfair Display', serif !important;
-  margin-bottom: 18px !important;
+  margin-bottom: 32px !important;
 }
 
 .hero-subtitle {
-  margin-top: 10px !important;
+  margin-top: 14px !important;
 }
 
-/* opcional estilo "Up" */
-.logo span, .hero-title span {
-  color: #10B981;
+/* BUSCADOR ORDEN */
+.pfilters,
+.filters,
+.search-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
 }
 
-
-/* ===== SEBAS FIX BUSCADOR SIN PIN DUPLICADO ===== */
-@media(max-width:750px){
-  .pfilters input,
-  .filters input,
-  .profile-filters input,
-  .search-row input,
-  .map-search input,
-  .radar-controls input{
-    padding-left:1rem!important;
-  }
+.pfilters input,
+.filters input,
+.search-row input {
+  flex: 1 !important;
+  min-width: 140px !important;
 }
 
 </style>
@@ -3595,34 +3601,65 @@ init();goTo('home');initFirebase();setInterval(checkUnread,5000);
 
 
 <script>
-/* ===== SEBAS FIX BUSCADOR: SACAR PIN DUPLICADO ===== */
 (function(){
-  function cleanSearchPlaceholderSebas(){
-    document.querySelectorAll('input').forEach(function(inp){
-      var ph=(inp.getAttribute('placeholder')||'').toLowerCase();
-      if(ph.includes('buscar') || ph.includes('ciudad')){
-        inp.setAttribute('placeholder','Buscar');
-        if(inp.value === '📍 Buscar' || inp.value === '📍  Buscar'){
-          inp.value = '';
-        }
-      }
+
+  function fixBuscador(){
+    const container =
+      document.querySelector('.pfilters') ||
+      document.querySelector('.filters') ||
+      document.querySelector('.search-row');
+
+    if(!container) return;
+
+    let btnUbicacion=null, btnMapa=null, inputBuscar=null;
+
+    container.querySelectorAll('button, input').forEach(el=>{
+      const txt=(el.textContent||'').toLowerCase();
+      const ph=(el.placeholder||'').toLowerCase();
+
+      if(txt.includes('ubicación')) btnUbicacion=el;
+      if(txt.includes('mapa')) btnMapa=el;
+      if(ph.includes('buscar')||ph.includes('ciudad')) inputBuscar=el;
     });
 
-    document.querySelectorAll('button').forEach(function(btn){
-      var t=(btn.textContent||'').trim().toLowerCase();
-      if(t.includes('mi ubicación')){
-        btn.innerHTML='📍 Mi ubicación';
-      }
-      if(t.includes('mapa')){
-        btn.innerHTML='🗺️ Mapa';
-      }
-    });
+    if(btnUbicacion && btnMapa && inputBuscar){
+      container.innerHTML='';
+      btnUbicacion.innerHTML="📍 Mi ubicación";
+      btnMapa.innerHTML="🗺️ Elegir en mapa";
+      inputBuscar.placeholder="Buscar";
+
+      container.appendChild(btnUbicacion);
+      container.appendChild(btnMapa);
+      container.appendChild(inputBuscar);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded',cleanSearchPlaceholderSebas);
-  setTimeout(cleanSearchPlaceholderSebas,300);
-  setTimeout(cleanSearchPlaceholderSebas,1000);
-  setInterval(cleanSearchPlaceholderSebas,1500);
+  function fixPlus(){
+    const plus=document.getElementById('bn-plus');
+    if(!plus) return;
+
+    plus.onclick=function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      if(window.CU && CU.id){
+        if(typeof goTo==='function') goTo('register');
+      }else{
+        if(typeof openAuth==='function') openAuth('register');
+        else if(typeof goTo==='function') goTo('register');
+      }
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    fixBuscador();
+    fixPlus();
+  });
+
+  setTimeout(()=>{fixBuscador();fixPlus();},300);
+  setTimeout(()=>{fixBuscador();fixPlus();},1000);
+  setInterval(()=>{fixBuscador();fixPlus();},2000);
+
 })();
 </script>
 
