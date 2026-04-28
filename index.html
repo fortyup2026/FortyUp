@@ -1990,6 +1990,91 @@ body:not(.sebas-guest){
   filter:saturate(1.35);
 }
 
+
+/* ===== FIX LIMPIO SEBAS: MENU / PERFIL / TARJETAS ===== */
+.bnav{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  z-index:99999!important;
+  transform:translateZ(0)!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+  will-change:auto!important;
+}
+body:not(.sebas-guest){padding-bottom:94px!important}
+.page{padding-bottom:98px!important}
+
+/* centro: FortyUp+ fijo */
+#bn-plus .bn-l,#bnPlusLbl{
+  font-size:.62rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
+#bn-plus .bn-l,#bn-plus .bn-l *,#bnPlusLbl,#bnPlusLbl *{visibility:hidden!important}
+#bn-plus .bn-l:before,#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  visibility:visible!important;
+  display:block!important;
+  color:#6B7C76!important;
+}
+#bn-plus .bn-plus,#bnPlusIco{
+  background:radial-gradient(circle at 28% 22%,#fff 0 10%,#fff1a8 11% 25%,#8be9ff 26% 44%,#4aa3ff 45% 63%,#9b5cff 64% 82%,#0ea5e9 83% 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 24px rgba(80,120,255,.30), inset 0 0 16px rgba(255,255,255,.45)!important;
+  font-size:0!important;
+  overflow:hidden!important;
+}
+#bn-plus .bn-plus:before,#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+  line-height:1!important;
+}
+
+/* derecha: siempre perfil */
+#bn-me .bn-ico,#bn-me-ico{
+  width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+  border-radius:50%!important;overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:1rem!important;font-weight:900!important;margin-bottom:.14rem!important;
+}
+#bn-me .bn-ico img,#bn-me-ico img{
+  width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;display:block!important;
+}
+#bn-me .bn-l,#bn-me-lbl{font-size:.57rem!important;line-height:1.1!important;text-align:center!important}
+
+/* tarjetas */
+.pcard{overflow:hidden!important}
+.pcard-body{padding:1.08rem 1.22rem .82rem!important}
+.pcard-name{
+  font-family:'Playfair Display',serif!important;font-size:1.28rem!important;line-height:1.08!important;
+  letter-spacing:-.015em!important;margin:0 0 .28rem!important;padding-left:.18rem!important;padding-right:.35rem!important;color:#10231D!important;
+}
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;font-size:.82rem!important;line-height:1.28!important;color:#6B7C76!important;
+  margin:0 0 .5rem!important;padding-left:.2rem!important;padding-right:.4rem!important;max-width:100%!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.dist-b{margin-left:.18rem!important;margin-top:.2rem!important;font-size:.74rem!important;padding:.2rem .64rem!important}
+.pcard-ph{overflow:hidden!important}
+.pcard-ph img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;display:block!important}
+.pcard-ph.has-photo .pcard-av{display:none!important}
+.pa-super{
+  flex:0 0 46px!important;width:46px!important;height:46px!important;border-radius:50%!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;font-size:0!important;color:transparent!important;overflow:hidden!important;
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  border:3px solid #fff!important;box-shadow:0 6px 18px rgba(8,119,183,.26)!important;position:relative!important;
+}
+.pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
+.pa-super:after{content:none!important}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -7781,79 +7866,95 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 </script>
 
 
+
+
+
 <script>
+/* ===== FIX LIMPIO SEBAS: NO CLONA BOTONES ===== */
 (function(){
-function killOldBehavior(){
-  const plus = document.getElementById("bn-plus");
-  const me = document.getElementById("bn-me");
-  if(plus){ plus.onclick=null; plus.replaceWith(plus.cloneNode(true)); }
-  if(me){ me.onclick=null; me.replaceWith(me.cloneNode(true)); }
-}
-function fixMenu(){
-  const nav=document.querySelector(".bnav");
-  if(!nav) return;
-  nav.style.position="fixed";
-  nav.style.bottom="0";
-  nav.style.left="0";
-  nav.style.width="100%";
-  nav.style.zIndex="9999";
-  nav.style.transform="none";
-}
-function fixDiamond(){
-  const plus=document.getElementById("bn-plus");
-  if(!plus) return;
-  const label=plus.querySelector(".bn-l");
-  const icon=plus.querySelector(".bn-plus");
-  if(label){ label.innerHTML="FortyUp+"; }
-  if(icon){
-    icon.style.background="radial-gradient(circle,#fff,#ffe082,#7dd3fc,#60a5fa,#a78bfa)";
-  }
-  plus.onclick=(e)=>{ e.preventDefault(); openFortyPlus && openFortyPlus(); };
-}
-function fixProfile(){
-  const me=document.getElementById("bn-me");
-  if(!me) return;
-  const ico=me.querySelector(".bn-ico");
-  const photo=localStorage.getItem("profile_photo");
-  if(photo && ico){
-    ico.innerHTML='<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-  }
-  me.onclick=()=>{
-    if(!window.CU || !CU.name){ go && go("register"); }
-    else{ go && go("myprofile"); }
-  };
-}
-function fixPhotos(){
-  document.querySelectorAll(".pcard").forEach(card=>{
-    const id=card.getAttribute("data-id");
-    if(!id) return;
-    const photo=localStorage.getItem("profile_photo_"+id);
-    const ph=card.querySelector(".pcard-ph");
-    if(photo && ph){
-      ph.innerHTML='<img src="'+photo+'">';
+  function isLogged(){return !!(window.CU&&CU.id)}
+  function getStore(k,d){try{if(typeof g==="function")return g(k,d);const raw=localStorage.getItem(k);return raw?JSON.parse(raw):d}catch(e){return d}}
+  function usersKey(){try{return (window.K&&K.U)?K.U:"fu_u"}catch(e){return"fu_u"}}
+  function mediaKeys(id){return["fortyup_profile_media_FINAL_HOME_"+id,"fortyup_profile_media_final_FIX_"+id,"fortyup_profile_media_final_"+id,"fu_profile_media_final_"+id,"fu_profile_media_"+id,"profile_photo_"+id]}
+  function getUserPhoto(id){
+    if(!id)return"";
+    for(const k of mediaKeys(id)){
+      try{const data=JSON.parse(localStorage.getItem(k)||"{}");if(data&&data.photo)return data.photo}catch(e){
+        try{const raw=localStorage.getItem(k);if(raw&&raw.startsWith("data:image"))return raw}catch(_){}
+      }
     }
-  });
-}
-function fixLocation(){
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(pos=>{
-    localStorage.setItem("user_location",JSON.stringify({
-      lat:pos.coords.latitude,
-      lon:pos.coords.longitude
-    }));
-  });
-}
-function init(){
-  killOldBehavior();
-  fixMenu();
-  fixDiamond();
-  fixProfile();
-  fixPhotos();
-  fixLocation();
-}
-document.addEventListener("DOMContentLoaded",init);
-setTimeout(init,300);
-setInterval(init,2000);
+    return"";
+  }
+  function allUsers(){
+    let arr=[];try{arr=typeof normalizeUsers==="function"?normalizeUsers():getStore(usersKey(),[])}catch(e){arr=getStore(usersKey(),[])}
+    return(arr||[]).map(u=>{const nu=Object.assign({},u);const p=getUserPhoto(nu.id);if(p)nu.photo=p;return nu})
+  }
+  function currentPhoto(){if(!isLogged())return"";return CU.photo||getUserPhoto(CU.id)}
+  function ensureFortyPlusPage(){
+    if(document.getElementById("page-fortyplus"))return;
+    const page=document.createElement("section");
+    page.id="page-fortyplus";page.className="page";
+    page.innerHTML=`<div class="fup-wrap"><button class="back-b" onclick="go('home')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div><h2 class="fup-section-title">¿Qué va a incluir?</h2><div class="fup-grid"><div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div><div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div><div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div><div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div></div></div>`;
+    const bnav=document.querySelector(".bnav");if(bnav&&bnav.parentNode)bnav.parentNode.insertBefore(page,bnav);else document.body.appendChild(page);
+  }
+  function openFortyPlus(){
+    ensureFortyPlusPage();document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    const fp=document.getElementById("page-fortyplus");if(fp)fp.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function userHasProfile(){return !!(isLogged()&&CU.name&&CU.age&&CU.city)}
+  function openMyProfileOrCreate(){
+    if(!isLogged()){if(typeof openAuth==="function")openAuth("login");return}
+    if(userHasProfile()){if(typeof go==="function")go("myprofile");if(typeof rMyP==="function")setTimeout(rMyP,80)}
+    else{if(typeof go==="function")go("register")}
+  }
+  function fixMenu(){
+    const nav=document.querySelector(".bnav");if(!nav)return;
+    nav.style.position="fixed";nav.style.left="0";nav.style.right="0";nav.style.bottom="0";nav.style.width="100%";nav.style.zIndex="99999";nav.style.transform="translateZ(0)";nav.style.transition="none";
+    if(!document.body.classList.contains("sebas-guest"))document.body.style.paddingBottom="94px";
+  }
+  function applyNav(){
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const lab=plus.querySelector(".bn-l")||document.getElementById("bnPlusLbl");
+      const ico=plus.querySelector(".bn-plus")||document.getElementById("bnPlusIco");
+      if(lab){lab.innerHTML="";lab.textContent="";lab.setAttribute("data-label","FortyUp+")}
+      if(ico){ico.innerHTML="";ico.textContent=""}
+      plus.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openFortyPlus();return false}
+    }
+    const me=document.getElementById("bn-me");
+    if(me){
+      const ico=me.querySelector(".bn-ico")||document.getElementById("bn-me-ico");
+      const lab=me.querySelector(".bn-l")||document.getElementById("bn-me-lbl");
+      const photo=currentPhoto();
+      if(ico){
+        if(photo){const img=ico.querySelector("img");if(!img||img.getAttribute("src")!==photo)ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">'}
+        else if(isLogged()){const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();if(ico.textContent!==initial)ico.textContent=initial}
+        else ico.textContent="👤";
+      }
+      if(lab)lab.textContent="Mi perfil";
+      me.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openMyProfileOrCreate();return false}
+    }
+  }
+  function fixCards(){
+    const users=allUsers();
+    document.querySelectorAll(".pcard").forEach(card=>{
+      const text=(card.textContent||"").toLowerCase();
+      let found=users.find(u=>{const n=(u.name||"").toLowerCase();return n&&text.includes(n)});
+      if(!found){const init=(card.querySelector(".pcard-av")?.textContent||"").trim().toLowerCase();found=users.find(u=>(u.photo||getUserPhoto(u.id))&&(u.name||"").trim().charAt(0).toLowerCase()===init)}
+      const ph=card.querySelector(".pcard-ph");
+      if(found&&ph){const photo=found.photo||getUserPhoto(found.id);if(photo){ph.classList.add("has-photo");const img=ph.querySelector("img");if(!img||img.getAttribute("src")!==photo)ph.innerHTML='<img src="'+photo+'" alt="'+(found.name||"perfil")+'">'}}
+      card.querySelectorAll(".pa-super").forEach(btn=>{btn.textContent="";btn.innerHTML=""});
+    });
+  }
+  function updateLocationSoft(){
+    if(!navigator.geolocation||!isLogged())return;
+    navigator.geolocation.getCurrentPosition(pos=>{try{const loc={lat:pos.coords.latitude,lng:pos.coords.longitude,at:Date.now()};localStorage.setItem("fortyup_current_location",JSON.stringify(loc));localStorage.setItem("user_location",JSON.stringify(loc));if(window.CU){CU.lat=loc.lat;CU.lng=loc.lng;CU.locAt=loc.at}}catch(e){}},function(){},{enableHighAccuracy:true,maximumAge:60000,timeout:8000});
+  }
+  function run(){fixMenu();ensureFortyPlusPage();applyNav();fixCards()}
+  const oldRProfiles=window.rProfiles;if(typeof oldRProfiles==="function"&&!oldRProfiles.__sebasNoJump){window.rProfiles=function(){const r=oldRProfiles.apply(this,arguments);setTimeout(fixCards,120);setTimeout(fixCards,450);return r};window.rProfiles.__sebasNoJump=true}
+  const oldGo=window.go;if(typeof oldGo==="function"&&!oldGo.__sebasNoJump){window.go=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(run,80);return}const r=oldGo.apply(this,arguments);setTimeout(run,120);return r};window.go.__sebasNoJump=true}
+  document.addEventListener("DOMContentLoaded",()=>{updateLocationSoft();run()});
+  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,1500);
 })();
 </script>
 
