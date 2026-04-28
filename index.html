@@ -8474,5 +8474,263 @@ Base: CODIGOREAL-FIX-MENU-PERFIL-FINAL
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX FINAL LABEL FORTYUP+ + PERFIL SIN TITILAR
+========================================================= -->
+<style id="sebas-final-label-profile-css">
+/* Darle más lugar vertical al menú para que FortyUp+ se lea completo */
+.bnav{
+  height:92px!important;
+  min-height:92px!important;
+  padding:6px 0 12px!important;
+  overflow:visible!important;
+}
+
+body{
+  padding-bottom:104px!important;
+}
+
+.bnav .bn{
+  height:82px!important;
+  min-height:82px!important;
+  overflow:visible!important;
+  justify-content:center!important;
+}
+
+/* FortyUp+ legible bajo el diamante */
+#bn-plus{
+  overflow:visible!important;
+}
+
+#bn-plus .bn-plus,
+#bnPlusIco{
+  width:50px!important;
+  height:50px!important;
+  min-width:50px!important;
+  min-height:50px!important;
+  margin:0 auto 5px!important;
+  flex-shrink:0!important;
+}
+
+#bn-plus .bn-l,
+#bnPlusLbl{
+  display:block!important;
+  height:20px!important;
+  min-height:20px!important;
+  max-height:20px!important;
+  line-height:20px!important;
+  overflow:visible!important;
+  text-align:center!important;
+  margin:0!important;
+  padding:0!important;
+  white-space:nowrap!important;
+  font-size:0!important;
+  color:transparent!important;
+}
+
+#bn-plus .bn-l:before,
+#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  display:block!important;
+  font-size:.68rem!important;
+  line-height:20px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+  visibility:visible!important;
+}
+
+/* Mi perfil: blindaje visual para que jamás aparezca diamante */
+#bn-me{
+  overflow:visible!important;
+}
+
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  margin:0 auto 5px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  flex-shrink:0!important;
+  font-size:0!important;
+  color:transparent!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before,
+#bn-me .bn-ico:after,
+#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+#bn-me .bn-l,
+#bn-me-lbl{
+  display:block!important;
+  height:20px!important;
+  min-height:20px!important;
+  max-height:20px!important;
+  line-height:20px!important;
+  overflow:visible!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-size:.68rem!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin:0!important;
+  padding:0!important;
+}
+</style>
+
+<script id="sebas-final-label-profile-js">
+(function(){
+  let locked=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function lockFortyPlus(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const icon=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+    const label=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+
+    if(icon){
+      icon.innerHTML="";
+      icon.textContent="";
+    }
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","FortyUp+");
+    }
+  }
+
+  function lockMyProfile(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label){
+      label.textContent="Mi perfil";
+      label.innerHTML="Mi perfil";
+    }
+
+    if(icon){
+      const photo=currentPhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+initial+'</span>';
+      }else{
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
+      }
+    }
+  }
+
+  function run(){
+    if(locked) return;
+    locked=true;
+    try{
+      lockFortyPlus();
+      lockMyProfile();
+    }catch(e){}
+    locked=false;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasFinalLabelFix){
+    const wrapped=function(){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(run,20);
+      setTimeout(run,120);
+      setTimeout(run,320);
+      return r;
+    };
+    wrapped.__sebasFinalLabelFix=true;
+    window.go=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,100);
+  setTimeout(run,500);
+
+  /* Observer puntual del menú: si algo viejo intenta cambiar el icono, vuelve a foto al instante */
+  function observeMenu(){
+    const nav=document.querySelector(".bnav");
+    if(!nav || !window.MutationObserver) return;
+
+    const obs=new MutationObserver(function(){
+      setTimeout(run,10);
+    });
+
+    obs.observe(nav,{childList:true,subtree:true,characterData:true,attributes:true});
+  }
+
+  document.addEventListener("DOMContentLoaded",observeMenu);
+  setTimeout(observeMenu,300);
+  setInterval(run,700);
+})();
+</script>
+
 </body>
 </html>
