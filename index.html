@@ -1709,6 +1709,128 @@ body.sebas-guest .pcard-meta{
   display:none!important;
 }
 
+
+/* =========================================================
+   SEBAS FIX: FORTYUP+ FIJO + TARJETAS + STEPPER CLICKEABLE
+   ========================================================= */
+
+/* Botón central fijo: siempre FortyUp+ */
+#bn-plus .bn-l,
+#bnPlusLbl{
+  font-size:.62rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+}
+
+#bn-plus .bn-l,
+#bn-plus .bn-l *,
+#bnPlusLbl,
+#bnPlusLbl *{
+  visibility:hidden!important;
+}
+
+#bn-plus .bn-l:before,
+#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  visibility:visible!important;
+  display:block!important;
+  color:#6B7C76!important;
+}
+
+/* Diamante multicolor central */
+#bn-plus .bn-plus,
+#bnPlusIco{
+  background:
+    radial-gradient(circle at 28% 22%,#ffffff 0 12%,#ffec99 13% 24%,#8be9ff 25% 44%,#5b9dff 45% 63%,#9b5cff 64% 82%,#0ea5e9 83% 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 24px rgba(80,120,255,.30), inset 0 0 16px rgba(255,255,255,.45)!important;
+  font-size:0!important;
+  overflow:hidden!important;
+}
+
+#bn-plus .bn-plus:before,
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+  line-height:1!important;
+  filter:saturate(1.35);
+}
+
+/* Tarjetas: nombre y ciudad con margen, tipografía coherente */
+.pcard-body{
+  padding:1.05rem 1.2rem .78rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.28rem!important;
+  line-height:1.08!important;
+  letter-spacing:-.015em!important;
+  margin:0 0 .24rem!important;
+  padding-left:.08rem!important;
+  color:#10231D!important;
+}
+
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1.28!important;
+  color:#6B7C76!important;
+  margin:0 0 .48rem!important;
+  padding-left:.12rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.dist-b{
+  margin-left:.1rem!important;
+  margin-top:.18rem!important;
+  font-size:.74rem!important;
+  padding:.18rem .62rem!important;
+}
+
+/* Stepper de registro: pasos clickeables y completados */
+.reg-step,
+.reg-step .reg-dot{
+  cursor:pointer!important;
+  user-select:none!important;
+}
+
+.reg-step.done .reg-dot,
+.reg-step.completed .reg-dot{
+  background:linear-gradient(135deg,#10B981,#064E3B)!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+
+.reg-step.done .reg-dot:before,
+.reg-step.completed .reg-dot:before{
+  content:"✓"!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+.reg-step.done,
+.reg-step.completed{
+  color:#064E3B!important;
+}
+
+.reg-step.active .reg-dot{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(6,78,59,.22)!important;
+}
+
+.reg-step.done:not(:last-child):after,
+.reg-step.completed:not(:last-child):after{
+  background:#10B981!important;
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -6994,6 +7116,191 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(function(){ensureFortyPlusPage();applyNavHard();fixCardPhotosAndFormat();},350);
   setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},500);
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   SEBAS FIX JS: FORTYUP+ FIJO + STEPPER LIBRE
+   ========================================================= */
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function forceFortyPlusLabel(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const lab=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+    if(lab){
+      lab.innerHTML="";
+      lab.textContent="";
+      lab.setAttribute("data-label","FortyUp+");
+    }
+
+    const ico=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+    if(ico){
+      ico.innerHTML="";
+      ico.textContent="";
+    }
+
+    plus.removeAttribute("onclick");
+    plus.onclick=null;
+
+    plus.addEventListener("click",function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.stopImmediatePropagation();
+      if(typeof go==="function") go("fortyplus");
+      else if(typeof goTo==="function") goTo("fortyplus");
+      return false;
+    },true);
+  }
+
+  function getStepNumber(el){
+    const direct=el.getAttribute("data-step") || el.dataset.step;
+    if(direct) return parseInt(direct,10);
+
+    const dot=el.querySelector(".reg-dot");
+    const txt=(dot ? dot.textContent : el.textContent || "").trim();
+    const n=parseInt(txt,10);
+    if(!isNaN(n)) return n;
+
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    return steps.indexOf(el)+1;
+  }
+
+  function currentStepNumber(){
+    const active=document.querySelector(".reg-step.active");
+    return active ? getStepNumber(active) : 1;
+  }
+
+  function markCompletedSteps(){
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    if(!steps.length) return;
+
+    const activeN=currentStepNumber();
+
+    steps.forEach(function(step){
+      const n=getStepNumber(step);
+      if(n < activeN){
+        step.classList.add("done","completed");
+      }
+    });
+
+    if(isLogged() && CU.name && CU.age && CU.city){
+      steps[0]?.classList.add("done","completed");
+    }
+  }
+
+  function goRegisterStep(n){
+    if(!n || n<1) return;
+
+    /* Intentar usar funciones existentes */
+    const possible=[
+      "goRegStep",
+      "setRegStep",
+      "showRegStep",
+      "renderRegStep",
+      "renderStep",
+      "goToStep"
+    ];
+
+    for(const fn of possible){
+      if(typeof window[fn]==="function"){
+        try{
+          window[fn](n);
+          setTimeout(function(){markCompletedSteps();bindStepper();},80);
+          return;
+        }catch(e){}
+      }
+    }
+
+    /* Fallback visual si el archivo usa clases */
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    steps.forEach(function(step){
+      const sn=getStepNumber(step);
+      step.classList.toggle("active",sn===n);
+      if(sn<n) step.classList.add("done","completed");
+    });
+
+    window.regStep=n;
+    window.currentStep=n;
+
+    document.querySelectorAll("[data-reg-step],[data-step-panel],.reg-panel,.step-panel").forEach(function(panel){
+      const pn=parseInt(panel.getAttribute("data-reg-step") || panel.getAttribute("data-step-panel") || panel.getAttribute("data-step") || "0",10);
+      if(pn){
+        panel.style.display = pn===n ? "" : "none";
+      }
+    });
+  }
+
+  function bindStepper(){
+    document.querySelectorAll(".reg-step").forEach(function(step){
+      if(step.__sebasStepBound) return;
+      step.__sebasStepBound=true;
+      step.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        const n=getStepNumber(step);
+        goRegisterStep(n);
+      },true);
+    });
+    markCompletedSteps();
+  }
+
+  const oldUpNav=window.upNav;
+  if(typeof oldUpNav==="function" && !oldUpNav.__sebasPlusFixedAgain){
+    const wrapped=function(){
+      oldUpNav.apply(this,arguments);
+      setTimeout(forceFortyPlusLabel,80);
+    };
+    wrapped.__sebasPlusFixedAgain=true;
+    window.upNav=wrapped;
+  }
+
+  const oldSaveProfile=window.saveProfile;
+  if(typeof oldSaveProfile==="function" && !oldSaveProfile.__sebasStepperWrapped){
+    const wrapped=function(){
+      oldSaveProfile.apply(this,arguments);
+      setTimeout(function(){
+        markCompletedSteps();
+        bindStepper();
+        forceFortyPlusLabel();
+      },160);
+    };
+    wrapped.__sebasStepperWrapped=true;
+    window.saveProfile=wrapped;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasStepperGoWrapped){
+    const wrapped=function(){
+      const res=oldGo.apply(this,arguments);
+      setTimeout(function(){
+        bindStepper();
+        forceFortyPlusLabel();
+      },120);
+      return res;
+    };
+    wrapped.__sebasStepperGoWrapped=true;
+    window.go=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    forceFortyPlusLabel();
+    bindStepper();
+  });
+
+  setTimeout(function(){
+    forceFortyPlusLabel();
+    bindStepper();
+  },350);
+
+  setInterval(function(){
+    forceFortyPlusLabel();
+    bindStepper();
+  },500);
 })();
 </script>
 
