@@ -1050,83 +1050,65 @@ body.sebas-guest #bn-me{
 }
 
 
-/* ===== SEBAS HOME + NAV + FOTO FINAL - REGENERADO ===== */
+/* ===== SEBAS FINAL HOME/NAV/FOTO ===== */
 .hbg,.drawer{display:none!important}
 body.sebas-guest .bnav,
 body.sebas-guest #bn-home,
 body.sebas-guest #bn-profiles,
 body.sebas-guest #bn-plus,
 body.sebas-guest #bn-chats,
-body.sebas-guest #bn-me{display:none!important}
+body.sebas-guest #bn-me,
 body.sebas-guest .btn-join{display:none!important}
 body.sebas-guest{padding-bottom:0!important}
-
 body.sebas-guest .h-btns{
-  display:flex!important;
-  flex-direction:column!important;
-  gap:1rem!important;
-  align-items:center!important;
-  justify-content:center!important;
-  width:100%!important;
-  margin:2.2rem auto 0!important;
-  padding-top:6rem!important;
-  position:relative!important;
+  display:flex!important;flex-direction:column!important;gap:1rem!important;
+  align-items:center!important;justify-content:center!important;width:100%!important;
+  margin:2.2rem auto 0!important;padding-top:6rem!important;position:relative!important
 }
 body.sebas-guest .h-btns:before{
-  content:"💎"!important;
-  position:absolute!important;
-  top:-2.55rem!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  font-size:6.2rem!important;
-  filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))!important;
-  z-index:1!important;
+  content:"💎"!important;position:absolute!important;top:-2.55rem!important;left:50%!important;
+  transform:translateX(-50%)!important;font-size:6.2rem!important;
+  filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))!important
 }
 body.sebas-guest .h-btns:after{content:none!important;display:none!important}
 body.sebas-guest .h-btns .btn{
-  width:min(82vw,340px)!important;
-  height:62px!important;
-  border-radius:999px!important;
-  justify-content:center!important;
-  font-size:1.05rem!important;
-  font-weight:900!important;
-  margin:0!important;
-  padding:0 1.2rem!important;
+  width:min(82vw,340px)!important;height:62px!important;border-radius:999px!important;
+  justify-content:center!important;font-weight:900!important;margin:0!important;padding:0 1.2rem!important
 }
 body.sebas-guest .h-btns .btn-p{
-  background:linear-gradient(135deg,#0A7C5D,#059669)!important;
-  color:#fff!important;
-  border:2px solid rgba(167,243,208,.72)!important;
-  box-shadow:0 12px 26px rgba(6,78,59,.32)!important;
-  font-size:0!important;
+  background:linear-gradient(135deg,#0A7C5D,#059669)!important;color:#fff!important;
+  border:2px solid rgba(167,243,208,.72)!important;box-shadow:0 12px 26px rgba(6,78,59,.32)!important;
+  font-size:0!important
 }
-body.sebas-guest .h-btns .btn-p:before{
-  content:"👤  Registrate"!important;
-  font-size:1.08rem!important;
-  color:#fff!important;
-}
+body.sebas-guest .h-btns .btn-p:before{content:"👤  Registrate"!important;font-size:1.08rem!important;color:#fff!important}
 body.sebas-guest .h-btns .btn-o{
-  background:rgba(6,78,59,.18)!important;
-  color:#A7F3D0!important;
-  border:2px solid #7ADFB1!important;
-  box-shadow:none!important;
-  font-size:0!important;
+  background:rgba(6,78,59,.18)!important;border:2px solid #7ADFB1!important;
+  box-shadow:none!important;font-size:0!important
 }
-body.sebas-guest .h-btns .btn-o:before{
-  content:"↪  Iniciar sesión"!important;
-  font-size:1.05rem!important;
-  color:#A7F3D0!important;
-}
+body.sebas-guest .h-btns .btn-o:before{content:"↪  Iniciar sesión"!important;font-size:1.05rem!important;color:#A7F3D0!important}
 body:not(.sebas-guest) .h-btns{display:none!important}
-
-body:not(.sebas-guest) #bn-me .bn-ico{font-size:1.55rem!important}
-body:not(.sebas-guest) #bn-me .bn-l{font-size:.56rem!important;line-height:1.1!important}
-
-.sebas-profile-img{
-  width:100%!important;height:100%!important;object-fit:cover!important;
-  object-position:center!important;border-radius:inherit!important;display:block!important;
-}
+.sebas-profile-img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:inherit!important;display:block!important}
 .av-c,.myp-av,.chat-av,.chat-hav,.pcard-ph,.fav-ph{overflow:hidden!important}
+body.sebas-guest #locationSearchBar,
+body.sebas-guest .location-search,
+body.sebas-guest .pfilters,
+body.sebas-guest .filters,
+body.sebas-guest .profile-filters,
+body.sebas-guest .search-row,
+body.sebas-guest .map-search,
+body.sebas-guest .radar-controls,
+body.sebas-guest .gps-btn{display:none!important}
+body.sebas-guest .pcard-name,
+body.sebas-guest .ptags,
+body.sebas-guest .pcard-desc,
+body.sebas-guest .pcard-int,
+body.sebas-guest .pcard-bdg,
+body.sebas-guest .pcard-acts{display:none!important}
+body.sebas-guest .pcard-meta{
+  display:block!important;margin:0!important;color:#064E3B!important;font-size:.78rem!important;
+  font-weight:900!important;line-height:1.25!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:ellipsis!important
+}
 
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -5508,322 +5490,66 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
 
 <script>
-/* ===== SEBAS FINAL JS: HOME / NAV / FOTO PERSISTENTE - REGENERADO ===== */
+/* ===== SEBAS FINAL HOME/NAV/FOTO ===== */
 (function(){
-  function safeGet(k,d){
-    try{
-      if(typeof g==="function") return g(k,d);
-      const raw=localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){return d}
-  }
-  function safeSet(k,v){
-    try{
-      if(typeof sv==="function") sv(k,v);
-      else localStorage.setItem(k,JSON.stringify(v));
-    }catch(e){}
-  }
-  function usersKey(){
-    try{ if(window.K && K.U) return K.U; }catch(e){}
-    return "fu_u";
-  }
-  function getUsers(){ return safeGet(usersKey(),[]); }
-  function setUsers(arr){ safeSet(usersKey(),arr||[]); }
-  function isLogged(){ return !!(window.CU && CU.id); }
-  function mediaKey(id){ return "fortyup_profile_media_FINAL_HOME_" + id; }
-
-  function legacyMedia(id){
-    const keys=[
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id
-    ];
-    for(const k of keys){
-      try{
-        const m=JSON.parse(localStorage.getItem(k)||"{}");
-        if(m && (m.photo || m.video)) return m;
-      }catch(e){}
-    }
+  const get=(k,d)=>{try{if(typeof g==="function")return g(k,d);const r=localStorage.getItem(k);return r?JSON.parse(r):d}catch(e){return d}};
+  const set=(k,v)=>{try{if(typeof sv==="function")sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const uKey=()=>{try{return (window.K&&K.U)?K.U:"fu_u"}catch(e){return"fu_u"}};
+  const logged=()=>!!(window.CU&&CU.id);
+  const mKey=id=>"fortyup_profile_media_FINAL_HOME_"+id;
+  function getMedia(id){
+    const keys=[mKey(id),"fortyup_profile_media_final_FIX_"+id,"fortyup_profile_media_final_"+id,"fu_profile_media_final_"+id,"fu_profile_media_"+id];
+    for(const k of keys){try{const m=JSON.parse(localStorage.getItem(k)||"{}");if(m&&(m.photo||m.video))return m}catch(e){}}
     return {};
   }
-
-  function getMedia(id){
-    try{
-      const main=JSON.parse(localStorage.getItem(mediaKey(id))||"{}");
-      if(main && (main.photo || main.video)) return main;
-    }catch(e){}
-    return legacyMedia(id);
+  function setMedia(id,m){try{localStorage.setItem(mKey(id),JSON.stringify(m||{}))}catch(e){if(typeof toast==="function")toast("La foto es muy pesada. Probá con una más chica.","w")}}
+  function merge(u){if(!u||!u.id)return u;const m=getMedia(u.id),nu=Object.assign({},u);if(m.photo)nu.photo=m.photo;if(m.video)nu.video=m.video;return nu}
+  function persist(id,photo,video){
+    if(!id)return;const m=getMedia(id);if(photo)m.photo=photo;if(video)m.video=video;setMedia(id,m);
+    set(uKey(),get(uKey(),[]).map(u=>String(u.id)!==String(id)?u:Object.assign({},u,{photo:m.photo||u.photo,video:m.video||u.video})));
+    if(window.CU&&String(CU.id)===String(id)){if(m.photo)CU.photo=m.photo;if(m.video)CU.video=m.video}
   }
-  function setMedia(id,m){
-    try{ localStorage.setItem(mediaKey(id),JSON.stringify(m||{})); }
-    catch(e){ if(typeof toast==="function") toast("La foto es muy pesada. Probá con una más chica.","w"); }
+  function resize(file,cb){
+    const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height,max=900;if(w>h&&w>max){h=Math.round(h*max/w);w=max}else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);cb(c.toDataURL("image/jpeg",.82))};img.src=e.target.result};r.readAsDataURL(file)
   }
-  function mergeMedia(user){
-    if(!user || !user.id) return user;
-    const media=getMedia(user.id);
-    const u=Object.assign({},user);
-    if(media.photo) u.photo=media.photo;
-    if(media.video) u.video=media.video;
-    return u;
-  }
-  function persistMedia(id,photo,video){
-    if(!id) return;
-    const media=getMedia(id);
-    if(photo) media.photo=photo;
-    if(video) media.video=video;
-    setMedia(id,media);
-    const arr=getUsers().map(function(u){
-      if(String(u.id)!==String(id)) return u;
-      const nu=Object.assign({},u);
-      if(media.photo) nu.photo=media.photo;
-      if(media.video) nu.video=media.video;
-      return nu;
-    });
-    setUsers(arr);
-    if(window.CU && String(CU.id)===String(id)){
-      if(media.photo) CU.photo=media.photo;
-      if(media.video) CU.video=media.video;
-    }
-  }
-  function resizeImage(file,cb){
-    const reader=new FileReader();
-    reader.onload=function(ev){
-      const img=new Image();
-      img.onload=function(){
-        let w=img.width,h=img.height;
-        const max=900;
-        if(w>h && w>max){h=Math.round(h*max/w);w=max}
-        else if(h>=w && h>max){w=Math.round(w*max/h);h=max}
-        const c=document.createElement("canvas");
-        c.width=w;c.height=h;
-        c.getContext("2d").drawImage(img,0,0,w,h);
-        cb(c.toDataURL("image/jpeg",0.82));
-      };
-      img.src=ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
   window.handleFile=function(input){
-    const file=input.files && input.files[0];
-    if(!file) return;
-    resizeImage(file,function(data){
-      window._photo=data;
-      const prevWrap=document.getElementById("phprev");
-      const prevImg=document.getElementById("phimg");
-      if(prevImg) prevImg.src=data;
-      if(prevWrap) prevWrap.style.display="block";
-      if(isLogged()) persistMedia(CU.id,data,null);
-      forcePhotoEverywhere();
-      if(typeof toast==="function") toast("Foto cargada y guardada ✓","ok");
-    });
+    const file=input.files&&input.files[0];if(!file)return;
+    resize(file,data=>{window._photo=data;const pi=document.getElementById("phimg"),pw=document.getElementById("phprev");if(pi)pi.src=data;if(pw)pw.style.display="block";if(logged())persist(CU.id,data,null);applyPhotos();if(typeof toast==="function")toast("Foto cargada y guardada ✓","ok")})
   };
-
   window.handleVideoFile=function(input){
-    const file=input.files && input.files[0];
-    if(!file) return;
-    if(file.size > 4*1024*1024){
-      if(typeof toast==="function") toast("Video muy pesado para guardar en esta versión.","w");
-      input.value="";
-      return;
-    }
-    const reader=new FileReader();
-    reader.onload=function(ev){
-      window._video=ev.target.result;
-      if(isLogged()) persistMedia(CU.id,null,ev.target.result);
-      const st=document.getElementById("vidSt");
-      if(st) st.textContent="✓ Video cargado";
-      if(typeof toast==="function") toast("Video cargado y guardado ✓","ok");
-    };
-    reader.readAsDataURL(file);
+    const file=input.files&&input.files[0];if(!file)return;
+    if(file.size>4*1024*1024){if(typeof toast==="function")toast("Video muy pesado para guardar en esta versión.","w");input.value="";return}
+    const r=new FileReader();r.onload=e=>{window._video=e.target.result;if(logged())persist(CU.id,null,e.target.result);const st=document.getElementById("vidSt");if(st)st.textContent="✓ Video cargado";if(typeof toast==="function")toast("Video cargado y guardado ✓","ok")};r.readAsDataURL(file)
   };
-
-  const oldNormalize=window.normalizeUsers;
-  if(typeof oldNormalize==="function"){
-    window.normalizeUsers=function(){ return oldNormalize().map(function(u){return mergeMedia(Object.assign({},u))}); };
-  }
-  const oldFind=window.findUserById;
-  if(typeof oldFind==="function"){
-    window.findUserById=function(id){
-      const u=oldFind(id);
-      return u ? mergeMedia(Object.assign({},u)) : u;
-    };
-  }
-  const oldRefresh=window.refreshCU;
-  if(typeof oldRefresh==="function"){
-    window.refreshCU=function(){
-      const r=oldRefresh();
-      if(window.CU) window.CU=mergeMedia(Object.assign({},CU));
-      return window.CU || r;
-    };
-  }
-  const oldSaveProfile=window.saveProfile;
-  if(typeof oldSaveProfile==="function"){
-    window.saveProfile=function(){
-      oldSaveProfile();
-      setTimeout(function(){
-        if(!isLogged()) return;
-        const photo=window._photo || ((document.getElementById("rP")||{}).value||"") || CU.photo || "";
-        const video=window._video || ((document.getElementById("rV")||{}).value||"") || CU.video || "";
-        persistMedia(CU.id,photo,video);
-        forcePhotoEverywhere();
-        if(typeof upNav==="function") upNav();
-        if(typeof rMyP==="function" && document.getElementById("page-myprofile")?.classList.contains("active")) rMyP();
-        if(typeof rProfiles==="function" && document.getElementById("page-profiles")?.classList.contains("active")) rProfiles();
-        if(typeof rChatList==="function" && document.getElementById("page-chats")?.classList.contains("active")) rChatList();
-      },180);
-    };
-  }
-
-  function setImg(el,src){
-    if(!el || !src) return;
-    el.innerHTML='<img class="sebas-profile-img" src="'+src+'">';
-  }
-  function mergedUsers(){
-    let arr=[];
-    try{ arr=typeof normalizeUsers==="function" ? normalizeUsers() : getUsers(); }
-    catch(e){ arr=getUsers(); }
-    return (arr||[]).map(function(u){return mergeMedia(Object.assign({},u))});
-  }
-  function forcePhotoEverywhere(){
-    const all=mergedUsers();
-    all.forEach(function(u){
-      if(!u.photo) return;
-      const name=String(u.name||"").toLowerCase();
-      document.querySelectorAll(".pcard").forEach(function(card){
-        const txt=String(card.textContent||"").toLowerCase();
-        if(name && txt.includes(name)) setImg(card.querySelector(".pcard-ph"),u.photo);
-      });
-      document.querySelectorAll(".chat-item").forEach(function(card){
-        const txt=String(card.textContent||"").toLowerCase();
-        if(name && txt.includes(name)) setImg(card.querySelector(".chat-av"),u.photo);
-      });
-      document.querySelectorAll(".chat-hdr").forEach(function(card){
-        const txt=String(card.textContent||"").toLowerCase();
-        if(name && txt.includes(name)) setImg(card.querySelector(".chat-hav"),u.photo);
-      });
-      document.querySelectorAll(".fav-card").forEach(function(card){
-        const txt=String(card.textContent||"").toLowerCase();
-        if(name && txt.includes(name)) setImg(card.querySelector(".fav-ph"),u.photo);
-      });
+  const oldNorm=window.normalizeUsers;if(typeof oldNorm==="function")window.normalizeUsers=function(){return oldNorm().map(u=>merge(Object.assign({},u)))};
+  const oldFind=window.findUserById;if(typeof oldFind==="function")window.findUserById=function(id){const u=oldFind(id);return u?merge(Object.assign({},u)):u};
+  const oldRef=window.refreshCU;if(typeof oldRef==="function")window.refreshCU=function(){const r=oldRef();if(window.CU)window.CU=merge(Object.assign({},CU));return window.CU||r};
+  const oldSave=window.saveProfile;if(typeof oldSave==="function")window.saveProfile=function(){oldSave();setTimeout(()=>{if(!logged())return;persist(CU.id,window._photo||((document.getElementById("rP")||{}).value||"")||CU.photo||"",window._video||((document.getElementById("rV")||{}).value||"")||CU.video||"");applyPhotos();if(typeof upNav==="function")upNav();if(typeof rMyP==="function"&&document.getElementById("page-myprofile")?.classList.contains("active"))rMyP();if(typeof rProfiles==="function"&&document.getElementById("page-profiles")?.classList.contains("active"))rProfiles();if(typeof rChatList==="function"&&document.getElementById("page-chats")?.classList.contains("active"))rChatList()},180)};
+  function setImg(el,src){if(el&&src)el.innerHTML='<img class="sebas-profile-img" src="'+src+'">'}
+  function users(){let a=[];try{a=typeof normalizeUsers==="function"?normalizeUsers():get(uKey(),[])}catch(e){a=get(uKey(),[])}return(a||[]).map(u=>merge(Object.assign({},u)))}
+  function applyPhotos(){
+    users().forEach(u=>{if(!u.photo)return;const n=String(u.name||"").toLowerCase();
+      document.querySelectorAll(".pcard,.chat-item,.chat-hdr,.fav-card").forEach(card=>{const t=String(card.textContent||"").toLowerCase();if(n&&t.includes(n))setImg(card.querySelector(".pcard-ph,.chat-av,.chat-hav,.fav-ph"),u.photo)})
     });
-    if(isLogged()){
-      window.CU=mergeMedia(Object.assign({},CU));
-      if(CU.photo){
-        setImg(document.querySelector(".nav-av .av-c"),CU.photo);
-        setImg(document.querySelector(".myp-av"),CU.photo);
-      }
+    if(logged()){window.CU=merge(Object.assign({},CU));if(CU.photo){setImg(document.querySelector(".nav-av .av-c"),CU.photo);setImg(document.querySelector(".myp-av"),CU.photo)}}
+  }
+  function ui(){
+    const guest=!logged();document.body.classList.toggle("sebas-guest",guest);
+    document.querySelectorAll(".hbg,.drawer").forEach(el=>el.style.display="none");
+    const bnav=document.querySelector(".bnav");if(bnav)bnav.style.display=guest?"none":"";
+    if(guest){["bn-home","bn-profiles","bn-plus","bn-chats","bn-me"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none"})}
+    else{
+      ["bn-home","bn-profiles","bn-plus","bn-chats"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=""});
+      const plus=document.getElementById("bn-plus");if(plus){const lab=plus.querySelector(".bn-l");if(lab)lab.textContent="Perfil"}
+      const me=document.getElementById("bn-me");if(me){me.style.display="";const ico=me.querySelector(".bn-ico"),lab=me.querySelector(".bn-l");if(ico)ico.textContent="💎";if(lab)lab.innerHTML="FortyUp+<br><span style='font-size:.48rem;color:#6B7C76'>Próximamente</span>";me.onclick=e=>{e.preventDefault();e.stopPropagation();if(typeof toast==="function")toast("FortyUp+ próximamente 💎","gd");else alert("FortyUp+ próximamente");return false}}
     }
+    const btns=document.querySelector(".h-btns");if(btns){const p=btns.querySelector(".btn-p"),s=btns.querySelector(".btn-o");if(p)p.onclick=e=>{e.preventDefault();if(typeof openAuth==="function")openAuth("register");else if(typeof go==="function")go("register");return false};if(s)s.onclick=e=>{e.preventDefault();if(typeof openAuth==="function")openAuth("login");else if(typeof go==="function")go("login");return false}}
   }
-
-  function updateHomeAndNav(){
-    const guest=!isLogged();
-    document.body.classList.toggle("sebas-guest",guest);
-    document.querySelectorAll(".hbg,.drawer").forEach(function(el){el.style.display="none"});
-    const bnav=document.querySelector(".bnav");
-    if(bnav) bnav.style.display=guest ? "none" : "";
-    if(guest){
-      ["bn-home","bn-profiles","bn-plus","bn-chats","bn-me"].forEach(function(id){
-        const el=document.getElementById(id);
-        if(el) el.style.display="none";
-      });
-    }else{
-      ["bn-home","bn-profiles","bn-plus","bn-chats"].forEach(function(id){
-        const el=document.getElementById(id);
-        if(el) el.style.display="";
-      });
-      const plus=document.getElementById("bn-plus");
-      if(plus){
-        const lab=plus.querySelector(".bn-l");
-        if(lab) lab.textContent="Perfil";
-      }
-      const me=document.getElementById("bn-me");
-      if(me){
-        me.style.display="";
-        const ico=me.querySelector(".bn-ico");
-        const lab=me.querySelector(".bn-l");
-        if(ico) ico.textContent="💎";
-        if(lab) lab.innerHTML="FortyUp+<br><span style='font-size:.48rem;color:#6B7C76'>Próximamente</span>";
-        me.onclick=function(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-          if(typeof toast==="function") toast("FortyUp+ próximamente 💎","gd");
-          else alert("FortyUp+ próximamente");
-          return false;
-        };
-      }
-    }
-    const btns=document.querySelector(".h-btns");
-    if(btns){
-      const primary=btns.querySelector(".btn-p");
-      const secondary=btns.querySelector(".btn-o");
-      if(primary){
-        primary.onclick=function(ev){
-          ev.preventDefault();
-          if(typeof openAuth==="function") openAuth("register");
-          else if(typeof go==="function") go("register");
-          return false;
-        };
-      }
-      if(secondary){
-        secondary.onclick=function(ev){
-          ev.preventDefault();
-          if(typeof openAuth==="function") openAuth("login");
-          else if(typeof go==="function") go("login");
-          return false;
-        };
-      }
-    }
-  }
-
-  const oldUpNav=window.upNav;
-  if(typeof oldUpNav==="function"){
-    window.upNav=function(){
-      oldUpNav();
-      setTimeout(function(){updateHomeAndNav();forcePhotoEverywhere()},60);
-    };
-  }
-  const oldRMyP=window.rMyP;
-  if(typeof oldRMyP==="function"){
-    window.rMyP=function(){
-      oldRMyP();
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-  const oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==="function"){
-    window.rProfiles=function(){
-      oldRProfiles();
-      setTimeout(function(){updateHomeAndNav();forcePhotoEverywhere()},90);
-    };
-  }
-  const oldRChatList=window.rChatList;
-  if(typeof oldRChatList==="function"){
-    window.rChatList=function(){
-      oldRChatList();
-      setTimeout(forcePhotoEverywhere,90);
-    };
-  }
-  const oldOpenChat=window.openChat;
-  if(typeof oldOpenChat==="function"){
-    window.openChat=function(){
-      oldOpenChat.apply(this,arguments);
-      setTimeout(forcePhotoEverywhere,90);
-    };
-  }
-  document.addEventListener("DOMContentLoaded",function(){
-    updateHomeAndNav();
-    forcePhotoEverywhere();
-  });
-  setTimeout(function(){
-    updateHomeAndNav();
-    forcePhotoEverywhere();
-  },350);
-  setInterval(function(){
-    updateHomeAndNav();
-    forcePhotoEverywhere();
-  },1500);
+  [["upNav",60],["rMyP",80],["rProfiles",90],["rChatList",90]].forEach(([name,ms])=>{const old=window[name];if(typeof old==="function")window[name]=function(){old.apply(this,arguments);setTimeout(()=>{ui();applyPhotos()},ms)}});
+  const oldChat=window.openChat;if(typeof oldChat==="function")window.openChat=function(){oldChat.apply(this,arguments);setTimeout(applyPhotos,90)};
+  document.addEventListener("DOMContentLoaded",()=>{ui();applyPhotos()});
+  setTimeout(()=>{ui();applyPhotos()},350);
+  setInterval(()=>{ui();applyPhotos()},1500);
 })();
 </script>
 
