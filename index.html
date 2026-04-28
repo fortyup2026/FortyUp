@@ -8130,5 +8130,349 @@ body{padding-bottom:96px!important}
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX SEBAS PERFIL STEPPER + DIAMANTE MULTICOLOR + PERFIL SIN TITILAR
+Base: CODIGOREAL-FIX-MENU-PERFIL-FINAL
+========================================================= -->
+
+<style id="sebas-stepper-diamond-profile-fix-css">
+/* Diamante central más multicolor, no solo azul/violeta */
+#bn-plus .bn-plus,
+#bnPlusIco{
+  background:
+    conic-gradient(from 210deg,
+      #7dd3fc 0deg,
+      #38bdf8 45deg,
+      #60a5fa 90deg,
+      #a78bfa 135deg,
+      #f0abfc 180deg,
+      #fef3c7 225deg,
+      #86efac 275deg,
+      #22d3ee 320deg,
+      #7dd3fc 360deg
+    )!important;
+  border:4px solid #fff!important;
+  box-shadow:
+    0 8px 24px rgba(80,120,255,.30),
+    0 0 0 5px rgba(255,255,255,.35),
+    inset 0 0 18px rgba(255,255,255,.62)!important;
+  position:relative!important;
+}
+
+#bn-plus .bn-plus:before,
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.85rem!important;
+  filter:saturate(1.55) brightness(1.08)!important;
+}
+
+/* Evita que Mi perfil muestre diamante aunque algún script viejo lo intente */
+#bn-me .bn-ico,
+#bn-me-ico{
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  font-size:1rem!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before{
+  content:none!important;
+}
+
+/* Crea tu perfil: los pasos se pueden tocar y quedan con estilo claro */
+.reg-step{
+  cursor:pointer!important;
+  user-select:none!important;
+  touch-action:manipulation!important;
+}
+
+.reg-step .reg-dot{
+  cursor:pointer!important;
+}
+
+.reg-step.done .reg-dot,
+.reg-step.completed .reg-dot{
+  background:linear-gradient(135deg,#10B981,#064E3B)!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+
+.reg-step.done .reg-dot:before,
+.reg-step.completed .reg-dot:before{
+  content:"✓"!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+.reg-step.active .reg-dot{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(6,78,59,.22)!important;
+}
+</style>
+
+<script id="sebas-stepper-diamond-profile-fix-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentProfilePhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function forceMyProfileIcon(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label) label.textContent="Mi perfil";
+
+    if(icon){
+      const photo=currentProfilePhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        if(icon.textContent!==initial) icon.textContent=initial;
+      }else{
+        icon.textContent="👤";
+      }
+    }
+  }
+
+  function forceFortyPlusIcon(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const label=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+    const icon=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","FortyUp+");
+    }
+
+    if(icon){
+      icon.innerHTML="";
+      icon.textContent="";
+    }
+  }
+
+  function getStepNumber(step){
+    const direct=step.getAttribute("data-step") || step.dataset.step;
+    if(direct) return parseInt(direct,10);
+
+    const dot=step.querySelector(".reg-dot");
+    const txt=(dot ? dot.textContent : step.textContent || "").trim();
+    const n=parseInt(txt,10);
+    if(!isNaN(n)) return n;
+
+    return Array.from(document.querySelectorAll(".reg-step")).indexOf(step)+1;
+  }
+
+  function getCurrentStep(){
+    const active=document.querySelector(".reg-step.active");
+    if(active) return getStepNumber(active);
+
+    if(typeof window.regStep==="number") return window.regStep;
+    if(typeof window.currentStep==="number") return window.currentStep;
+    return 1;
+  }
+
+  function markSteps(){
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    if(!steps.length) return;
+
+    const current=getCurrentStep();
+
+    steps.forEach(function(step){
+      const n=getStepNumber(step);
+      step.classList.toggle("active", n===current);
+
+      if(n<current || step.classList.contains("done") || step.classList.contains("completed")){
+        step.classList.add("done","completed");
+      }
+    });
+
+    /* Si el usuario ya cargó datos base, al menos Cuenta queda completa */
+    if(isLogged() && CU.name && CU.age && CU.city){
+      const first=steps[0];
+      if(first) first.classList.add("done","completed");
+    }
+  }
+
+  function callExistingStepRenderer(n){
+    const names=[
+      "goRegStep",
+      "setRegStep",
+      "showRegStep",
+      "renderRegStep",
+      "renderStep",
+      "goToStep"
+    ];
+
+    for(const name of names){
+      if(typeof window[name]==="function"){
+        try{
+          window[name](n);
+          return true;
+        }catch(e){}
+      }
+    }
+
+    return false;
+  }
+
+  function fallbackShowPanels(n){
+    /* Fallback suave: no destruye nada, solo intenta mostrar panel por data-step */
+    const panels=document.querySelectorAll("[data-reg-step],[data-step-panel],[data-rstep],.reg-panel,.step-panel,.rstep,.form-step");
+    let touched=false;
+
+    panels.forEach(function(panel){
+      const val=panel.getAttribute("data-reg-step") ||
+                panel.getAttribute("data-step-panel") ||
+                panel.getAttribute("data-rstep") ||
+                panel.getAttribute("data-step") ||
+                "";
+
+      const pn=parseInt(val,10);
+
+      if(pn){
+        panel.style.display = pn===n ? "" : "none";
+        touched=true;
+      }
+    });
+
+    return touched;
+  }
+
+  function renderRegisterStep(n){
+    window.regStep=n;
+    window.currentStep=n;
+
+    const usedRenderer=callExistingStepRenderer(n);
+
+    if(!usedRenderer){
+      fallbackShowPanels(n);
+    }
+
+    /* Si el render queda solo con el diamante por un render incompleto,
+       forzamos el render completo del registro si existe */
+    setTimeout(function(){
+      const activePage=document.getElementById("page-register");
+      if(activePage && activePage.classList.contains("active")){
+        const card=activePage.querySelector(".fcard");
+        const onlyDiamond=card && card.textContent.trim().length < 25;
+        if(onlyDiamond && typeof rRegister==="function"){
+          try{ rRegister(); }catch(e){}
+        }
+      }
+
+      bindStepper();
+      markSteps();
+      forceMyProfileIcon();
+      forceFortyPlusIcon();
+    },80);
+  }
+
+  function bindStepper(){
+    document.querySelectorAll(".reg-step").forEach(function(step){
+      if(step.__sebasStepperEditBound) return;
+      step.__sebasStepperEditBound=true;
+
+      step.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const n=getStepNumber(step);
+        renderRegisterStep(n);
+      },true);
+    });
+
+    markSteps();
+  }
+
+  /* Reforzar después de navegación sin cambiar estructura */
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasNoProfileBlink){
+    const wrapped=function(){
+      const res=oldGo.apply(this,arguments);
+      setTimeout(function(){
+        bindStepper();
+        forceMyProfileIcon();
+        forceFortyPlusIcon();
+      },80);
+      setTimeout(function(){
+        forceMyProfileIcon();
+        forceFortyPlusIcon();
+      },260);
+      return res;
+    };
+    wrapped.__sebasNoProfileBlink=true;
+    window.go=wrapped;
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      forceMyProfileIcon();
+      forceFortyPlusIcon();
+      bindStepper();
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,250);
+  setTimeout(run,900);
+
+  /* Más liviano que antes: solo corrige textos/iconos, no reordena menú */
+  setInterval(run,1200);
+})();
+</script>
+
 </body>
 </html>
