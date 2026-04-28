@@ -321,7 +321,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 @keyframes tout{from{opacity:1}to{opacity:0;transform:translateY(8px) scale(.95)}}
 /* RESPONSIVE */
 @media(max-width:1020px){.hero-in{flex-direction:column;text-align:center;gap:2rem;align-items:center}.h-btns,.h-proof{justify-content:center}.h-p{margin-left:auto;margin-right:auto}.h-title{font-size:3.2rem}.h-sub{font-size:1.95rem}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:750px){.nav-links{display:none}.hbg{display:flex}.pg3{grid-template-columns:1fr}.hero{padding:2rem 1.25rem;min-height:auto}.h-title{font-size:2.8rem}.hcard{width:100%;max-width:270px}.st-in{gap:1.2rem}.st-dv{display:none}.cta-box{padding:2.8rem 1.4rem}.fcard{padding:1.3rem .9rem}.inner{padding:1.75rem 1rem 4rem}.toast{white-space:normal;text-align:center;max-width:84vw}.bnav{display:flex}body{padding-bottom:82px}.myp-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:750px){.nav-links{display:none}.hbg{display:flex}.pg3{grid-template-columns:1fr}.hero{padding:2rem 1.25rem;min-height:auto}.h-title{font-size:2.8rem}.hcard{width:100%;max-width:270px}.st-in{gap:1.2rem}.st-dv{display:none}.cta-box{padding:2.8rem 1.4rem}.fcard{padding:1.3rem .9rem}.inner{padding:1.75rem 1rem 4rem}.toast{white-space:normal;text-align:center;max-width:84vw}body.sebas-logged .bnav{display:flex!important}body{padding-bottom:82px}.myp-cards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.pgrid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.m-body{padding:.9rem 1rem 1.3rem}.favs-grid{grid-template-columns:repeat(2,1fr)}}
 
 .chat-photo-btn{background:none;border:1.5px solid var(--border2);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;flex-shrink:0;transition:.2s}
@@ -2088,22 +2088,20 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   justify-content: center !important;
 }
 #bnPlusIco::before {
-  content: '◆';
-  font-size: 2rem !important;
-  background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #c77dff, #ff6b6b);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: diamondShine 3s ease infinite;
+  content: '💎';
+  font-size: 1.9rem !important;
   display: block;
-  filter: drop-shadow(0 0 6px rgba(100,200,255,.4));
+  animation: diamondPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(100,200,255,.6)) hue-rotate(0deg);
 }
-@keyframes diamondShine {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes diamondPulse {
+  0%   { filter: drop-shadow(0 0 8px #ff6b6b) hue-rotate(0deg); transform: scale(1); }
+  25%  { filter: drop-shadow(0 0 8px #ffd93d) hue-rotate(90deg); }
+  50%  { filter: drop-shadow(0 0 10px #4d96ff) hue-rotate(180deg); transform: scale(1.1); }
+  75%  { filter: drop-shadow(0 0 8px #c77dff) hue-rotate(270deg); }
+  100% { filter: drop-shadow(0 0 8px #ff6b6b) hue-rotate(360deg); transform: scale(1); }
 }
+
 /* Tamaño consistente íconos del nav */
 .bn-ico { font-size: 1.35rem !important; }
 #bn-plus .bn-ico, #bnPlusIco { font-size: 0 !important; }
@@ -5430,7 +5428,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
   setTimeout(function(){showAgeSebas();bindPlusSebas();},300);
   setTimeout(function(){showAgeSebas();bindPlusSebas();},1000);
-  setInterval(bindPlusSebas,1200);
+  setInterval(bindPlusSebas,60000);
 })();
 </script>
 
@@ -5523,7 +5521,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},300);
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1000);
-  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1200);
+  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},60000);
 })();
 </script>
 
@@ -5586,7 +5584,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(()=>{fixBuscador();fixPlus();},300);
   setTimeout(()=>{fixBuscador();fixPlus();},1000);
-  setInterval(()=>{fixBuscador();fixPlus();},2000);
+  setInterval(()=>{fixBuscador();fixPlus();},60000);
 
 })();
 </script>
@@ -5660,7 +5658,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener('DOMContentLoaded', cleanSearchSebasFinal);
   setTimeout(cleanSearchSebasFinal,300);
   setTimeout(cleanSearchSebasFinal,1000);
-  setInterval(cleanSearchSebasFinal,1500);
+  setInterval(cleanSearchSebasFinal,60000);
 })();
 </script>
 
@@ -6064,7 +6062,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener('DOMContentLoaded',fixSearchUIFinal);
   setTimeout(fixSearchUIFinal,300);
   setTimeout(fixSearchUIFinal,1000);
-  setInterval(fixSearchUIFinal,1600);
+  setInterval(fixSearchUIFinal,60000);
 })();
 </script>
 
@@ -6172,7 +6170,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   document.addEventListener('DOMContentLoaded',upgradeAlbumInputs);
   setTimeout(upgradeAlbumInputs,400);
-  setInterval(upgradeAlbumInputs,1500);
+  setInterval(upgradeAlbumInputs,60000);
 })();
 </script>
 
@@ -6657,7 +6655,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
     updateProfileViewMode();
     simplifyGuestCards();
     forcePhotoEverywhere();
-  },1500);
+  },60000);
 })();
 </script>
 
@@ -6722,7 +6720,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   const oldChat=window.openChat;if(typeof oldChat==="function")window.openChat=function(){oldChat.apply(this,arguments);setTimeout(applyPhotos,90)};
   document.addEventListener("DOMContentLoaded",()=>{ui();applyPhotos()});
   setTimeout(()=>{ui();applyPhotos()},350);
-  setInterval(()=>{ui();applyPhotos()},1500);
+  setInterval(()=>{ui();applyPhotos()},60000);
 })();
 </script>
 
@@ -6817,7 +6815,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(applyBottomNavSebasFinal,350);
-  setInterval(applyBottomNavSebasFinal,1500);
+  setInterval(applyBottomNavSebasFinal,60000);
 })();
 </script>
 
@@ -6947,7 +6945,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(applyFinalNav,350);
-  setInterval(applyFinalNav,1500);
+  setInterval(applyFinalNav,60000);
 })();
 </script>
 
@@ -7210,7 +7208,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(function(){ensureFortyPlusPage();applyNav();fixProfilePhotos();},350);
-  setInterval(function(){applyNav();fixProfilePhotos();},900);
+  setInterval(function(){applyNav();fixProfilePhotos();},60000);
 })();
 </script>
 
@@ -7497,7 +7495,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(function(){ensureFortyPlusPage();applyNavHard();fixCardPhotosAndFormat();},350);
-  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},500);
+  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},60000);
 })();
 </script>
 
@@ -7682,7 +7680,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   setInterval(function(){
     forceFortyPlusLabel();
     bindStepper();
-  },500);
+  },60000);
 })();
 </script>
 
@@ -7999,7 +7997,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
     forceFortyPlusLabel();
     bindStepper();
     fixNearbyPhotos();
-  },700);
+  },60000);
 })();
 </script>
 
@@ -8092,7 +8090,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   const oldRProfiles=window.rProfiles;if(typeof oldRProfiles==="function"&&!oldRProfiles.__sebasNoJump){window.rProfiles=function(){const r=oldRProfiles.apply(this,arguments);setTimeout(fixCards,120);setTimeout(fixCards,450);return r};window.rProfiles.__sebasNoJump=true}
   const oldGo=window.go;if(typeof oldGo==="function"&&!oldGo.__sebasNoJump){window.go=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(run,80);return}const r=oldGo.apply(this,arguments);setTimeout(run,120);return r};window.go.__sebasNoJump=true}
   document.addEventListener("DOMContentLoaded",()=>{updateLocationSoft();run()});
-  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,1500);
+  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,60000);
 })();
 </script>
 
@@ -8264,7 +8262,7 @@ body{padding-bottom:96px!important}
   setTimeout(runFix,250);setTimeout(runFix,900);
   const target=document.querySelector(".bnav");
   if(target&&window.MutationObserver){const obs=new MutationObserver(function(){setTimeout(runFix,30)});obs.observe(target,{childList:true,subtree:true,characterData:true,attributes:true})}
-  setInterval(runFix,1400);
+  setInterval(runFix,60000);
 })();
 </script>
 
@@ -8608,7 +8606,7 @@ Base: CODIGOREAL-FIX-MENU-PERFIL-FINAL
   setTimeout(run,900);
 
   /* Más liviano que antes: solo corrige textos/iconos, no reordena menú */
-  setInterval(run,1200);
+  setInterval(run,60000);
 })();
 </script>
 
@@ -8866,7 +8864,7 @@ body{
 
   document.addEventListener("DOMContentLoaded",observeMenu);
   setTimeout(observeMenu,300);
-  setInterval(run,700);
+  setInterval(run,60000);
 })();
 </script>
 
@@ -9198,7 +9196,7 @@ FORTYUP - FIX FINAL SEBAS: MI PERFIL + STEPPER EDITABLE + TARJETAS PROLIJAS
   document.addEventListener("DOMContentLoaded",run);
   setTimeout(run,250);
   setTimeout(run,900);
-  setInterval(run,1200);
+  setInterval(run,60000);
 })();
 </script>
 
@@ -9587,7 +9585,7 @@ FORTYUP - FIX FINAL SEBAS: MENU ARMONICO + PERFIL FIJO + TARJETAS PROLIJAS
   document.addEventListener("DOMContentLoaded",observeMenu);
   setTimeout(observeMenu,400);
 
-  setInterval(run,900);
+  setInterval(run,60000);
 })();
 </script>
 
@@ -9833,7 +9831,7 @@ FORTYUP - FIX SEBAS: TARJETAS REALES + MI PERFIL SIN BLANCO
   setInterval(function(){
     polishProfileCards();
     bindMyProfileFast();
-  },1200);
+  },60000);
 })();
 </script>
 
@@ -10293,7 +10291,7 @@ body.fu-logged{
   setTimeout(run,100);
   setTimeout(run,500);
   setTimeout(run,1200);
-  setInterval(run,1200);
+  setInterval(run,60000);
 })();
 pt>
 
