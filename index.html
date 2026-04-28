@@ -1467,6 +1467,70 @@ body.sebas-guest .pcard-meta{
   }
 }
 
+
+/* =========================================================
+   FIX FINAL SEBAS: DIAMANTE CENTRAL + FOTOS PERFILES
+   ========================================================= */
+
+/* Botón central: siempre FortyUp+ y nunca "Mi perfil / próximamente" */
+#bn-plus .bn-l{
+  font-size:.62rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+}
+
+#bn-plus .bn-l span{
+  display:none!important;
+}
+
+#bn-plus .bn-plus{
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 22px rgba(8,119,183,.30)!important;
+  font-size:0!important;
+}
+
+#bn-plus .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.7rem!important;
+}
+
+/* Derecha: Mi perfil con foto real */
+#bn-me .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+}
+
+#bn-me .bn-ico img,
+.pcard-ph img,
+.fav-ph img,
+.chat-av img,
+.chat-hav img,
+.myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:inherit!important;
+  display:block!important;
+}
+
+/* Asegurar que tarjetas con foto no muestren inicial encima */
+.pcard-ph.has-photo .pcard-av{
+  display:none!important;
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -6202,6 +6266,269 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(applyFinalNav,350);
   setInterval(applyFinalNav,1500);
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   FIX FINAL SEBAS: DIAMANTE NO VA A PERFIL + FOTOS CERCANOS
+   ========================================================= */
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function getStore(k,d){
+    try{
+      if(typeof g==="function") return g(k,d);
+      const raw=localStorage.getItem(k);
+      return raw ? JSON.parse(raw) : d;
+    }catch(e){ return d; }
+  }
+
+  function usersKey(){
+    try{ return (window.K && K.U) ? K.U : "fu_u"; }catch(e){ return "fu_u"; }
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fortyup_profile_media_final_" + id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id
+    ];
+  }
+
+  function getMedia(id){
+    for(const k of mediaKeys(id)){
+      try{
+        const m=JSON.parse(localStorage.getItem(k)||"{}");
+        if(m && (m.photo || m.video)) return m;
+      }catch(e){}
+    }
+    return {};
+  }
+
+  function allUsers(){
+    let arr=[];
+    try{
+      arr = typeof normalizeUsers==="function" ? normalizeUsers() : getStore(usersKey(),[]);
+    }catch(e){
+      arr = getStore(usersKey(),[]);
+    }
+    return (arr||[]).map(function(u){
+      const nu=Object.assign({},u);
+      const m=getMedia(nu.id);
+      if(m.photo) nu.photo=m.photo;
+      if(m.video) nu.video=m.video;
+      return nu;
+    });
+  }
+
+  function photoFor(u){
+    if(!u) return "";
+    if(u.photo) return u.photo;
+    const m=getMedia(u.id);
+    return m.photo || "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || photoFor(CU);
+  }
+
+  function ensureFortyPlusPage(){
+    if(document.getElementById("page-fortyplus")) return;
+
+    const page=document.createElement("section");
+    page.id="page-fortyplus";
+    page.className="page";
+    page.innerHTML = `
+      <div class="fup-wrap">
+        <button class="back-b" onclick="go('home')">← Volver</button>
+        <div class="fup-hero">
+          <div class="fup-diamond">💎</div>
+          <div class="fup-title">FortyUp<span>+</span></div>
+          <p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p>
+          <div class="fup-pill">✨ Próximamente disponible</div>
+        </div>
+        <h2 class="fup-section-title">¿Qué va a incluir?</h2>
+        <div class="fup-grid">
+          <div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div>
+        </div>
+        <div class="fup-plan">
+          <div class="fup-plan-head"><div class="fup-plan-name">Plan FortyUp+</div><div class="fup-soon">Próximamente</div></div>
+          <div class="fup-list">
+            <div>✓ Perfil destacado</div>
+            <div>✓ Súper Diamantes extra</div>
+            <div>✓ Álbumes privados mejorados</div>
+            <div>✓ Nuevas funciones sociales</div>
+          </div>
+          <button class="fup-main-btn" onclick="toast ? toast('FortyUp+ próximamente 💎','gd') : alert('FortyUp+ próximamente')">Avisarme cuando esté disponible</button>
+          <p class="fup-note">Todavía no se cobra nada. Esta pantalla queda preparada para activar más adelante.</p>
+        </div>
+      </div>
+    `;
+
+    const bnav=document.querySelector(".bnav");
+    if(bnav && bnav.parentNode) bnav.parentNode.insertBefore(page,bnav);
+    else document.body.appendChild(page);
+  }
+
+  function openFortyPlus(){
+    ensureFortyPlusPage();
+    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+    const page=document.getElementById("page-fortyplus");
+    if(page) page.classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function goProfileOrCreate(){
+    if(!isLogged()){
+      if(typeof openAuth==="function") openAuth("login");
+      return;
+    }
+
+    const hasProfile = !!(CU.name && CU.age && CU.city);
+    if(hasProfile){
+      if(typeof go==="function") go("myprofile");
+      else if(typeof goTo==="function") goTo("myprofile");
+    }else{
+      if(typeof go==="function") go("register");
+      else if(typeof goTo==="function") goTo("register");
+    }
+  }
+
+  function setCardPhoto(card,u){
+    const ph=card.querySelector(".pcard-ph");
+    const photo=photoFor(u);
+    if(ph && photo){
+      ph.classList.add("has-photo");
+      ph.innerHTML='<img src="'+photo+'" alt="'+(u.name||"perfil")+'">';
+    }
+  }
+
+  function fixProfilePhotos(){
+    const users=allUsers();
+
+    document.querySelectorAll(".pcard").forEach(function(card){
+      const txt=(card.textContent||"").toLowerCase();
+
+      let found=users.find(function(u){
+        const name=(u.name||"").toLowerCase();
+        return name && txt.includes(name);
+      });
+
+      if(!found){
+        const initialEl=card.querySelector(".pcard-av");
+        const initial=(initialEl && initialEl.textContent || "").trim().toLowerCase();
+        found=users.find(function(u){
+          return photoFor(u) && (u.name||"").trim().charAt(0).toLowerCase()===initial;
+        });
+      }
+
+      if(found) setCardPhoto(card,found);
+    });
+  }
+
+  function applyNav(){
+    if(!isLogged()) return;
+
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const lab=plus.querySelector(".bn-l");
+      if(lab){
+        lab.textContent="FortyUp+";
+        lab.innerHTML="FortyUp+";
+      }
+
+      plus.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        openFortyPlus();
+        return false;
+      };
+    }
+
+    const me=document.getElementById("bn-me");
+    if(me){
+      const ico=me.querySelector(".bn-ico");
+      const lab=me.querySelector(".bn-l");
+      const photo=currentPhoto();
+
+      if(ico){
+        if(photo) ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        else ico.textContent=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+      }
+
+      if(lab) lab.textContent="Mi perfil";
+
+      me.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        goProfileOrCreate();
+        return false;
+      };
+    }
+  }
+
+  /* Pisar go para que fortyplus no rebote a perfil */
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasFinalPlusHard){
+    const wrapped=function(page){
+      if(page==="fortyplus"){
+        openFortyPlus();
+        setTimeout(function(){applyNav();fixProfilePhotos();},80);
+        return;
+      }
+      const res=oldGo.apply(this,arguments);
+      setTimeout(function(){applyNav();fixProfilePhotos();},100);
+      return res;
+    };
+    wrapped.__sebasFinalPlusHard=true;
+    window.go=wrapped;
+  }
+
+  const oldGoTo=window.goTo;
+  if(typeof oldGoTo==="function" && !oldGoTo.__sebasFinalPlusHard){
+    const wrapped=function(page){
+      if(page==="fortyplus"){
+        openFortyPlus();
+        setTimeout(function(){applyNav();fixProfilePhotos();},80);
+        return;
+      }
+      const res=oldGoTo.apply(this,arguments);
+      setTimeout(function(){applyNav();fixProfilePhotos();},100);
+      return res;
+    };
+    wrapped.__sebasFinalPlusHard=true;
+    window.goTo=wrapped;
+  }
+
+  const oldRProfiles=window.rProfiles;
+  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasPhotoFix){
+    const wrapped=function(){
+      const res=oldRProfiles.apply(this,arguments);
+      setTimeout(fixProfilePhotos,120);
+      setTimeout(fixProfilePhotos,450);
+      return res;
+    };
+    wrapped.__sebasPhotoFix=true;
+    window.rProfiles=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    ensureFortyPlusPage();
+    applyNav();
+    fixProfilePhotos();
+  });
+
+  setTimeout(function(){ensureFortyPlusPage();applyNav();fixProfilePhotos();},350);
+  setInterval(function(){applyNav();fixProfilePhotos();},900);
 })();
 </script>
 
