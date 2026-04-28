@@ -8130,5 +8130,1951 @@ body{padding-bottom:96px!important}
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX SEBAS PERFIL STEPPER + DIAMANTE MULTICOLOR + PERFIL SIN TITILAR
+Base: CODIGOREAL-FIX-MENU-PERFIL-FINAL
+========================================================= -->
+
+<style id="sebas-stepper-diamond-profile-fix-css">
+/* Diamante central más multicolor, no solo azul/violeta */
+#bn-plus .bn-plus,
+#bnPlusIco{
+  background:
+    conic-gradient(from 210deg,
+      #7dd3fc 0deg,
+      #38bdf8 45deg,
+      #60a5fa 90deg,
+      #a78bfa 135deg,
+      #f0abfc 180deg,
+      #fef3c7 225deg,
+      #86efac 275deg,
+      #22d3ee 320deg,
+      #7dd3fc 360deg
+    )!important;
+  border:4px solid #fff!important;
+  box-shadow:
+    0 8px 24px rgba(80,120,255,.30),
+    0 0 0 5px rgba(255,255,255,.35),
+    inset 0 0 18px rgba(255,255,255,.62)!important;
+  position:relative!important;
+}
+
+#bn-plus .bn-plus:before,
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.85rem!important;
+  filter:saturate(1.55) brightness(1.08)!important;
+}
+
+/* Evita que Mi perfil muestre diamante aunque algún script viejo lo intente */
+#bn-me .bn-ico,
+#bn-me-ico{
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  font-size:1rem!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before{
+  content:none!important;
+}
+
+/* Crea tu perfil: los pasos se pueden tocar y quedan con estilo claro */
+.reg-step{
+  cursor:pointer!important;
+  user-select:none!important;
+  touch-action:manipulation!important;
+}
+
+.reg-step .reg-dot{
+  cursor:pointer!important;
+}
+
+.reg-step.done .reg-dot,
+.reg-step.completed .reg-dot{
+  background:linear-gradient(135deg,#10B981,#064E3B)!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+
+.reg-step.done .reg-dot:before,
+.reg-step.completed .reg-dot:before{
+  content:"✓"!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+.reg-step.active .reg-dot{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(6,78,59,.22)!important;
+}
+</style>
+
+<script id="sebas-stepper-diamond-profile-fix-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentProfilePhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function forceMyProfileIcon(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label) label.textContent="Mi perfil";
+
+    if(icon){
+      const photo=currentProfilePhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        if(icon.textContent!==initial) icon.textContent=initial;
+      }else{
+        icon.textContent="👤";
+      }
+    }
+  }
+
+  function forceFortyPlusIcon(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const label=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+    const icon=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","FortyUp+");
+    }
+
+    if(icon){
+      icon.innerHTML="";
+      icon.textContent="";
+    }
+  }
+
+  function getStepNumber(step){
+    const direct=step.getAttribute("data-step") || step.dataset.step;
+    if(direct) return parseInt(direct,10);
+
+    const dot=step.querySelector(".reg-dot");
+    const txt=(dot ? dot.textContent : step.textContent || "").trim();
+    const n=parseInt(txt,10);
+    if(!isNaN(n)) return n;
+
+    return Array.from(document.querySelectorAll(".reg-step")).indexOf(step)+1;
+  }
+
+  function getCurrentStep(){
+    const active=document.querySelector(".reg-step.active");
+    if(active) return getStepNumber(active);
+
+    if(typeof window.regStep==="number") return window.regStep;
+    if(typeof window.currentStep==="number") return window.currentStep;
+    return 1;
+  }
+
+  function markSteps(){
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    if(!steps.length) return;
+
+    const current=getCurrentStep();
+
+    steps.forEach(function(step){
+      const n=getStepNumber(step);
+      step.classList.toggle("active", n===current);
+
+      if(n<current || step.classList.contains("done") || step.classList.contains("completed")){
+        step.classList.add("done","completed");
+      }
+    });
+
+    /* Si el usuario ya cargó datos base, al menos Cuenta queda completa */
+    if(isLogged() && CU.name && CU.age && CU.city){
+      const first=steps[0];
+      if(first) first.classList.add("done","completed");
+    }
+  }
+
+  function callExistingStepRenderer(n){
+    const names=[
+      "goRegStep",
+      "setRegStep",
+      "showRegStep",
+      "renderRegStep",
+      "renderStep",
+      "goToStep"
+    ];
+
+    for(const name of names){
+      if(typeof window[name]==="function"){
+        try{
+          window[name](n);
+          return true;
+        }catch(e){}
+      }
+    }
+
+    return false;
+  }
+
+  function fallbackShowPanels(n){
+    /* Fallback suave: no destruye nada, solo intenta mostrar panel por data-step */
+    const panels=document.querySelectorAll("[data-reg-step],[data-step-panel],[data-rstep],.reg-panel,.step-panel,.rstep,.form-step");
+    let touched=false;
+
+    panels.forEach(function(panel){
+      const val=panel.getAttribute("data-reg-step") ||
+                panel.getAttribute("data-step-panel") ||
+                panel.getAttribute("data-rstep") ||
+                panel.getAttribute("data-step") ||
+                "";
+
+      const pn=parseInt(val,10);
+
+      if(pn){
+        panel.style.display = pn===n ? "" : "none";
+        touched=true;
+      }
+    });
+
+    return touched;
+  }
+
+  function renderRegisterStep(n){
+    window.regStep=n;
+    window.currentStep=n;
+
+    const usedRenderer=callExistingStepRenderer(n);
+
+    if(!usedRenderer){
+      fallbackShowPanels(n);
+    }
+
+    /* Si el render queda solo con el diamante por un render incompleto,
+       forzamos el render completo del registro si existe */
+    setTimeout(function(){
+      const activePage=document.getElementById("page-register");
+      if(activePage && activePage.classList.contains("active")){
+        const card=activePage.querySelector(".fcard");
+        const onlyDiamond=card && card.textContent.trim().length < 25;
+        if(onlyDiamond && typeof rRegister==="function"){
+          try{ rRegister(); }catch(e){}
+        }
+      }
+
+      bindStepper();
+      markSteps();
+      forceMyProfileIcon();
+      forceFortyPlusIcon();
+    },80);
+  }
+
+  function bindStepper(){
+    document.querySelectorAll(".reg-step").forEach(function(step){
+      if(step.__sebasStepperEditBound) return;
+      step.__sebasStepperEditBound=true;
+
+      step.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const n=getStepNumber(step);
+        renderRegisterStep(n);
+      },true);
+    });
+
+    markSteps();
+  }
+
+  /* Reforzar después de navegación sin cambiar estructura */
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasNoProfileBlink){
+    const wrapped=function(){
+      const res=oldGo.apply(this,arguments);
+      setTimeout(function(){
+        bindStepper();
+        forceMyProfileIcon();
+        forceFortyPlusIcon();
+      },80);
+      setTimeout(function(){
+        forceMyProfileIcon();
+        forceFortyPlusIcon();
+      },260);
+      return res;
+    };
+    wrapped.__sebasNoProfileBlink=true;
+    window.go=wrapped;
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      forceMyProfileIcon();
+      forceFortyPlusIcon();
+      bindStepper();
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,250);
+  setTimeout(run,900);
+
+  /* Más liviano que antes: solo corrige textos/iconos, no reordena menú */
+  setInterval(run,1200);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX FINAL LABEL FORTYUP+ + PERFIL SIN TITILAR
+========================================================= -->
+<style id="sebas-final-label-profile-css">
+/* Darle más lugar vertical al menú para que FortyUp+ se lea completo */
+.bnav{
+  height:92px!important;
+  min-height:92px!important;
+  padding:6px 0 12px!important;
+  overflow:visible!important;
+}
+
+body{
+  padding-bottom:104px!important;
+}
+
+.bnav .bn{
+  height:82px!important;
+  min-height:82px!important;
+  overflow:visible!important;
+  justify-content:center!important;
+}
+
+/* FortyUp+ legible bajo el diamante */
+#bn-plus{
+  overflow:visible!important;
+}
+
+#bn-plus .bn-plus,
+#bnPlusIco{
+  width:50px!important;
+  height:50px!important;
+  min-width:50px!important;
+  min-height:50px!important;
+  margin:0 auto 5px!important;
+  flex-shrink:0!important;
+}
+
+#bn-plus .bn-l,
+#bnPlusLbl{
+  display:block!important;
+  height:20px!important;
+  min-height:20px!important;
+  max-height:20px!important;
+  line-height:20px!important;
+  overflow:visible!important;
+  text-align:center!important;
+  margin:0!important;
+  padding:0!important;
+  white-space:nowrap!important;
+  font-size:0!important;
+  color:transparent!important;
+}
+
+#bn-plus .bn-l:before,
+#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  display:block!important;
+  font-size:.68rem!important;
+  line-height:20px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+  visibility:visible!important;
+}
+
+/* Mi perfil: blindaje visual para que jamás aparezca diamante */
+#bn-me{
+  overflow:visible!important;
+}
+
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  margin:0 auto 5px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  flex-shrink:0!important;
+  font-size:0!important;
+  color:transparent!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before,
+#bn-me .bn-ico:after,
+#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+#bn-me .bn-l,
+#bn-me-lbl{
+  display:block!important;
+  height:20px!important;
+  min-height:20px!important;
+  max-height:20px!important;
+  line-height:20px!important;
+  overflow:visible!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-size:.68rem!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin:0!important;
+  padding:0!important;
+}
+</style>
+
+<script id="sebas-final-label-profile-js">
+(function(){
+  let locked=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function lockFortyPlus(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const icon=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+    const label=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+
+    if(icon){
+      icon.innerHTML="";
+      icon.textContent="";
+    }
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","FortyUp+");
+    }
+  }
+
+  function lockMyProfile(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label){
+      label.textContent="Mi perfil";
+      label.innerHTML="Mi perfil";
+    }
+
+    if(icon){
+      const photo=currentPhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+initial+'</span>';
+      }else{
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
+      }
+    }
+  }
+
+  function run(){
+    if(locked) return;
+    locked=true;
+    try{
+      lockFortyPlus();
+      lockMyProfile();
+    }catch(e){}
+    locked=false;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasFinalLabelFix){
+    const wrapped=function(){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(run,20);
+      setTimeout(run,120);
+      setTimeout(run,320);
+      return r;
+    };
+    wrapped.__sebasFinalLabelFix=true;
+    window.go=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,100);
+  setTimeout(run,500);
+
+  /* Observer puntual del menú: si algo viejo intenta cambiar el icono, vuelve a foto al instante */
+  function observeMenu(){
+    const nav=document.querySelector(".bnav");
+    if(!nav || !window.MutationObserver) return;
+
+    const obs=new MutationObserver(function(){
+      setTimeout(run,10);
+    });
+
+    obs.observe(nav,{childList:true,subtree:true,characterData:true,attributes:true});
+  }
+
+  document.addEventListener("DOMContentLoaded",observeMenu);
+  setTimeout(observeMenu,300);
+  setInterval(run,700);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX FINAL SEBAS: MI PERFIL + STEPPER EDITABLE + TARJETAS PROLIJAS
+========================================================= -->
+<style id="sebas-final-profile-stepper-cards-css">
+/* Perfiles: separar texto del borde y unificar tipografía */
+.pcard-body{
+  padding:1.18rem 1.35rem .9rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.32rem!important;
+  line-height:1.08!important;
+  letter-spacing:-.015em!important;
+  margin:0 0 .34rem!important;
+  padding-left:.28rem!important;
+  padding-right:.6rem!important;
+  color:#10231D!important;
+}
+
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.84rem!important;
+  line-height:1.32!important;
+  color:#6B7C76!important;
+  margin:0 0 .55rem!important;
+  padding-left:.3rem!important;
+  padding-right:.65rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.dist-b{
+  margin-left:.28rem!important;
+  margin-top:.24rem!important;
+  font-size:.75rem!important;
+  padding:.22rem .68rem!important;
+}
+
+/* Mi perfil siempre con foto/inicial */
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before,
+#bn-me .bn-ico:after,
+#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+/* Stepper editable */
+.reg-step{
+  cursor:pointer!important;
+  user-select:none!important;
+  touch-action:manipulation!important;
+}
+
+.reg-step.done .reg-dot,
+.reg-step.completed .reg-dot{
+  background:linear-gradient(135deg,#10B981,#064E3B)!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+
+.reg-step.done .reg-dot:before,
+.reg-step.completed .reg-dot:before{
+  content:"✓"!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+.reg-step.active .reg-dot{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(6,78,59,.22)!important;
+}
+</style>
+
+<script id="sebas-final-profile-stepper-cards-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function forceMyProfileIcon(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label){
+      label.textContent="Mi perfil";
+      label.innerHTML="Mi perfil";
+    }
+
+    if(icon){
+      const photo=currentPhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+initial+'</span>';
+      }else{
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
+      }
+    }
+  }
+
+  function openProfileOrCreate(){
+    if(!isLogged()){
+      if(typeof openAuth==="function") openAuth("login");
+      return;
+    }
+
+    /* Si el usuario ya tiene datos, abre Mi perfil real; si no, crear perfil */
+    if(CU.name && CU.age && CU.city){
+      if(typeof go==="function") go("myprofile");
+      setTimeout(function(){
+        if(typeof rMyP==="function") rMyP();
+      },80);
+    }else{
+      if(typeof go==="function") go("register");
+    }
+  }
+
+  function bindMyProfileButton(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    me.onclick=function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      openProfileOrCreate();
+      return false;
+    };
+  }
+
+  function getStepNumber(step){
+    const direct=step.getAttribute("data-step") || step.dataset.step;
+    if(direct) return parseInt(direct,10);
+
+    const dot=step.querySelector(".reg-dot");
+    const txt=(dot ? dot.textContent : step.textContent || "").trim();
+    const n=parseInt(txt,10);
+    if(!isNaN(n)) return n;
+
+    return Array.from(document.querySelectorAll(".reg-step")).indexOf(step)+1;
+  }
+
+  function markSteps(){
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    if(!steps.length) return;
+
+    const active=document.querySelector(".reg-step.active");
+    const current=active ? getStepNumber(active) : (window.regStep || window.currentStep || 1);
+
+    steps.forEach(function(step){
+      const n=getStepNumber(step);
+      step.classList.toggle("active", n===current);
+      if(n<current){
+        step.classList.add("done","completed");
+      }
+    });
+
+    /* Si ya hay perfil guardado, marcamos como completos los pasos base */
+    if(isLogged() && CU.name && CU.age && CU.city){
+      if(steps[0]) steps[0].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.likes || CU.gustos || CU.interests || CU.plans)){
+      if(steps[1]) steps[1].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.bio || CU.about || CU.desc)){
+      if(steps[2]) steps[2].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.photo || getUserPhoto(CU.id) || CU.photos)){
+      if(steps[3]) steps[3].classList.add("done","completed");
+    }
+  }
+
+  function renderRegisterStep(n){
+    window.regStep=n;
+    window.currentStep=n;
+
+    /* Usar el render original: esto evita que quede solo el diamante */
+    if(typeof rRegister==="function"){
+      try{ rRegister(); }catch(e){}
+    }else{
+      const names=["goRegStep","setRegStep","showRegStep","renderRegStep","renderStep","goToStep"];
+      for(const name of names){
+        if(typeof window[name]==="function"){
+          try{
+            window[name](n);
+            break;
+          }catch(e){}
+        }
+      }
+    }
+
+    setTimeout(function(){
+      bindStepper();
+      markSteps();
+      forceMyProfileIcon();
+      bindMyProfileButton();
+    },90);
+  }
+
+  function bindStepper(){
+    document.querySelectorAll(".reg-step").forEach(function(step){
+      if(step.__sebasFinalStepperBound) return;
+      step.__sebasFinalStepperBound=true;
+
+      step.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const n=getStepNumber(step);
+        renderRegisterStep(n);
+      },true);
+    });
+
+    markSteps();
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      forceMyProfileIcon();
+      bindMyProfileButton();
+      bindStepper();
+    }catch(e){}
+
+    running=false;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasFinalProfileStepperCards){
+    const wrapped=function(page){
+      const r=oldGo.apply(this,arguments);
+
+      setTimeout(run,80);
+      setTimeout(run,260);
+
+      /* Si va a mi perfil y queda vacío, fuerza render de mi perfil */
+      if(page==="myprofile"){
+        setTimeout(function(){
+          if(typeof rMyP==="function") rMyP();
+          run();
+        },120);
+      }
+
+      return r;
+    };
+
+    wrapped.__sebasFinalProfileStepperCards=true;
+    window.go=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,250);
+  setTimeout(run,900);
+  setInterval(run,1200);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX FINAL SEBAS: MENU ARMONICO + PERFIL FIJO + TARJETAS PROLIJAS
+========================================================= -->
+<style id="sebas-final-menu-cards-harmony-css">
+/* Menú inferior armónico */
+.bnav{
+  height:92px!important;
+  min-height:92px!important;
+  padding:7px 0 12px!important;
+  align-items:center!important;
+  overflow:visible!important;
+}
+
+.bnav .bn{
+  height:80px!important;
+  min-height:80px!important;
+  justify-content:center!important;
+  gap:4px!important;
+  overflow:visible!important;
+}
+
+/* Íconos generales del menú: mismo tamaño visual */
+.bnav .bn:not(#bn-plus) .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1.65rem!important;
+  line-height:1!important;
+  margin:0 auto 4px!important;
+}
+
+/* FortyUp+ puede quedar destacado */
+#bn-plus .bn-plus,
+#bnPlusIco{
+  width:54px!important;
+  height:54px!important;
+  min-width:54px!important;
+  min-height:54px!important;
+  margin:0 auto 4px!important;
+  background:
+    conic-gradient(from 210deg,
+      #7dd3fc 0deg,
+      #38bdf8 42deg,
+      #60a5fa 88deg,
+      #a78bfa 132deg,
+      #f0abfc 178deg,
+      #fef3c7 226deg,
+      #86efac 276deg,
+      #22d3ee 320deg,
+      #7dd3fc 360deg
+    )!important;
+  border:4px solid #fff!important;
+  box-shadow:0 8px 24px rgba(80,120,255,.30), 0 0 0 5px rgba(255,255,255,.33), inset 0 0 18px rgba(255,255,255,.62)!important;
+}
+
+#bn-plus .bn-plus:before,
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.86rem!important;
+  filter:saturate(1.55) brightness(1.08)!important;
+}
+
+/* Labels del menú */
+.bnav .bn-l{
+  height:18px!important;
+  line-height:18px!important;
+  font-size:.66rem!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin:0!important;
+  padding:0!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+}
+
+/* FortyUp+ legible */
+#bn-plus .bn-l,
+#bnPlusLbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:19px!important;
+  line-height:19px!important;
+}
+
+#bn-plus .bn-l *,
+#bnPlusLbl *{
+  display:none!important;
+}
+
+#bn-plus .bn-l:before,
+#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  display:block!important;
+  font-size:.68rem!important;
+  line-height:19px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
+
+/* Mi perfil: blindado contra “Próximamente” o diamante */
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  font-size:0!important;
+  color:transparent!important;
+  margin:0 auto 4px!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before,
+#bn-me .bn-ico:after,
+#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+#bn-me .bn-l,
+#bn-me-lbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:18px!important;
+  line-height:18px!important;
+}
+
+#bn-me .bn-l *,
+#bn-me-lbl *{
+  display:none!important;
+}
+
+#bn-me .bn-l:before,
+#bn-me-lbl:before{
+  content:"Mi perfil"!important;
+  display:block!important;
+  font-size:.66rem!important;
+  line-height:18px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
+
+/* Tarjetas: estilo FortyUp pero prolijo, sin pegar al borde */
+.pcard-body{
+  padding:1.1rem 1.4rem .92rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.18rem!important;
+  line-height:1.12!important;
+  letter-spacing:-.01em!important;
+  margin:0 0 .34rem!important;
+  padding-left:.28rem!important;
+  padding-right:.6rem!important;
+  color:#10231D!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Edad integrada con el nombre, sin verse gigante */
+.pcard-name *{
+  font-family:inherit!important;
+}
+
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.35!important;
+  color:#6B7C76!important;
+  margin:0 0 .55rem!important;
+  padding-left:.32rem!important;
+  padding-right:.72rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.dist-b{
+  margin-left:.32rem!important;
+  margin-top:.22rem!important;
+  font-size:.72rem!important;
+  padding:.2rem .65rem!important;
+  line-height:1.2!important;
+}
+
+/* En móviles, aún más cuidado de margen */
+@media(max-width:480px){
+  .pcard-body{
+    padding:1rem 1.24rem .85rem!important;
+  }
+  .pcard-name{
+    font-size:1.12rem!important;
+    padding-left:.26rem!important;
+  }
+  .pcard-meta{
+    font-size:.76rem!important;
+    padding-left:.3rem!important;
+  }
+}
+</style>
+
+<script id="sebas-final-menu-cards-harmony-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function lockFortyPlus(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+
+    const icon=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
+    const label=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+
+    if(icon){
+      icon.innerHTML="";
+      icon.textContent="";
+    }
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","FortyUp+");
+    }
+  }
+
+  function lockMyProfile(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label){
+      label.innerHTML="";
+      label.textContent="";
+      label.setAttribute("data-label","Mi perfil");
+    }
+
+    if(icon){
+      const photo=currentPhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+initial+'</span>';
+      }else{
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
+      }
+    }
+  }
+
+  function polishCards(){
+    document.querySelectorAll(".pcard-name").forEach(function(el){
+      el.style.fontFamily="'Playfair Display',serif";
+    });
+
+    document.querySelectorAll(".pcard-meta").forEach(function(el){
+      el.style.fontFamily="'Nunito',sans-serif";
+    });
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      lockFortyPlus();
+      lockMyProfile();
+      polishCards();
+    }catch(e){}
+
+    running=false;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasMenuCardsHarmony){
+    const wrapped=function(){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(run,20);
+      setTimeout(run,140);
+      setTimeout(run,360);
+      return r;
+    };
+    wrapped.__sebasMenuCardsHarmony=true;
+    window.go=wrapped;
+  }
+
+  const oldRProfiles=window.rProfiles;
+  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasMenuCardsHarmony){
+    const wrapped=function(){
+      const r=oldRProfiles.apply(this,arguments);
+      setTimeout(polishCards,80);
+      setTimeout(polishCards,260);
+      return r;
+    };
+    wrapped.__sebasMenuCardsHarmony=true;
+    window.rProfiles=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,150);
+  setTimeout(run,600);
+
+  function observeMenu(){
+    const nav=document.querySelector(".bnav");
+    if(!nav || !window.MutationObserver) return;
+
+    const obs=new MutationObserver(function(){
+      setTimeout(run,10);
+    });
+
+    obs.observe(nav,{childList:true,subtree:true,characterData:true,attributes:true});
+  }
+
+  document.addEventListener("DOMContentLoaded",observeMenu);
+  setTimeout(observeMenu,400);
+
+  setInterval(run,900);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX SEBAS: TARJETAS REALES + MI PERFIL SIN BLANCO
+========================================================= -->
+<style id="sebas-final-cards-profile-fast-css">
+/* TARJETAS: aplicar directo a estructura real, con selectores más fuertes */
+.pgrid .pcard .pcard-body,
+#page-profiles .pcard .pcard-body,
+.pcard > .pcard-body{
+  padding:1.18rem 1.38rem .95rem!important;
+}
+
+.pgrid .pcard .pcard-name,
+#page-profiles .pcard .pcard-name,
+.pcard > .pcard-body .pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.14rem!important;
+  line-height:1.08!important;
+  letter-spacing:-.01em!important;
+  font-weight:800!important;
+  color:#10231D!important;
+  margin:0 0 .35rem!important;
+  padding:0 .55rem 0 .32rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pgrid .pcard .pcard-meta,
+#page-profiles .pcard .pcard-meta,
+.pcard > .pcard-body .pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.32!important;
+  font-weight:600!important;
+  color:#6B7C76!important;
+  margin:0 0 .58rem!important;
+  padding:0 .7rem 0 .34rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pgrid .pcard .dist-b,
+#page-profiles .pcard .dist-b,
+.pcard .dist-b{
+  margin-left:.34rem!important;
+  margin-top:.22rem!important;
+  font-size:.72rem!important;
+  line-height:1.2!important;
+  padding:.22rem .68rem!important;
+}
+
+/* Si el nombre viene con edad dentro, mantenerlo elegante */
+.pcard-name strong,
+.pcard-name span,
+.pcard-name b{
+  font-family:inherit!important;
+}
+
+/* Evitar que la ubicación arranque pegada al borde si hay pin */
+.pcard-meta::first-letter{
+  margin-left:.1rem;
+}
+
+/* MI PERFIL: evitar parpadeo/blanco visual */
+#page-myprofile{
+  min-height:calc(100vh - 160px)!important;
+}
+
+#page-myprofile:not(.active){
+  display:none!important;
+}
+
+#page-myprofile.active:empty::before,
+#page-myprofile.active .inner:empty::before{
+  content:"Cargando tu perfil..."!important;
+  display:block!important;
+  margin:2rem auto!important;
+  width:max-content!important;
+  max-width:90%!important;
+  background:#fff!important;
+  border:1.5px solid #D1E8DF!important;
+  border-radius:999px!important;
+  padding:.8rem 1.2rem!important;
+  color:#064E3B!important;
+  font-weight:900!important;
+  box-shadow:0 8px 24px rgba(6,78,59,.08)!important;
+}
+</style>
+
+<script id="sebas-final-cards-profile-fast-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function polishProfileCards(){
+    document.querySelectorAll(".pcard").forEach(function(card){
+      const body=card.querySelector(".pcard-body");
+      const name=card.querySelector(".pcard-name");
+      const meta=card.querySelector(".pcard-meta");
+      const dist=card.querySelector(".dist-b");
+
+      if(body){
+        body.style.padding="1.18rem 1.38rem .95rem";
+      }
+
+      if(name){
+        name.style.fontFamily="'Playfair Display',serif";
+        name.style.fontSize="1.14rem";
+        name.style.lineHeight="1.08";
+        name.style.fontWeight="800";
+        name.style.margin="0 0 .35rem";
+        name.style.padding="0 .55rem 0 .32rem";
+        name.style.whiteSpace="nowrap";
+        name.style.overflow="hidden";
+        name.style.textOverflow="ellipsis";
+        name.style.color="#10231D";
+      }
+
+      if(meta){
+        meta.style.fontFamily="'Nunito',sans-serif";
+        meta.style.fontSize=".78rem";
+        meta.style.lineHeight="1.32";
+        meta.style.fontWeight="600";
+        meta.style.color="#6B7C76";
+        meta.style.margin="0 0 .58rem";
+        meta.style.padding="0 .7rem 0 .34rem";
+        meta.style.whiteSpace="nowrap";
+        meta.style.overflow="hidden";
+        meta.style.textOverflow="ellipsis";
+      }
+
+      if(dist){
+        dist.style.marginLeft=".34rem";
+        dist.style.marginTop=".22rem";
+        dist.style.fontSize=".72rem";
+        dist.style.padding=".22rem .68rem";
+      }
+    });
+  }
+
+  function renderMyProfileFast(){
+    if(!isLogged()) return;
+
+    /* Render inmediato para evitar pantalla en blanco */
+    try{
+      if(typeof refreshCU==="function") refreshCU();
+    }catch(e){}
+
+    try{
+      if(typeof rMyP==="function") rMyP();
+    }catch(e){}
+  }
+
+  function bindMyProfileFast(){
+    const me=document.getElementById("bn-me");
+    if(!me || me.__sebasFastProfileBound) return;
+    me.__sebasFastProfileBound=true;
+
+    me.addEventListener("click",function(){
+      setTimeout(renderMyProfileFast,0);
+      setTimeout(renderMyProfileFast,60);
+      setTimeout(renderMyProfileFast,180);
+    },true);
+  }
+
+  function wrapGoForMyProfile(){
+    const oldGo=window.go;
+    if(typeof oldGo==="function" && !oldGo.__sebasFastProfileRender){
+      const wrapped=function(page){
+        if(page==="myprofile"){
+          renderMyProfileFast();
+        }
+
+        const result=oldGo.apply(this,arguments);
+
+        if(page==="myprofile"){
+          setTimeout(renderMyProfileFast,0);
+          setTimeout(renderMyProfileFast,70);
+          setTimeout(renderMyProfileFast,200);
+        }
+
+        setTimeout(function(){
+          polishProfileCards();
+          bindMyProfileFast();
+        },100);
+
+        return result;
+      };
+
+      wrapped.__sebasFastProfileRender=true;
+      window.go=wrapped;
+    }
+  }
+
+  function wrapProfilesRender(){
+    const oldRProfiles=window.rProfiles;
+    if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasCardsRealPolish){
+      const wrapped=function(){
+        const result=oldRProfiles.apply(this,arguments);
+        setTimeout(polishProfileCards,0);
+        setTimeout(polishProfileCards,80);
+        setTimeout(polishProfileCards,260);
+        setTimeout(polishProfileCards,600);
+        return result;
+      };
+
+      wrapped.__sebasCardsRealPolish=true;
+      window.rProfiles=wrapped;
+    }
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      wrapGoForMyProfile();
+      wrapProfilesRender();
+      bindMyProfileFast();
+      polishProfileCards();
+
+      if(document.getElementById("page-myprofile")?.classList.contains("active")){
+        renderMyProfileFast();
+      }
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,150);
+  setTimeout(run,600);
+  setInterval(function(){
+    polishProfileCards();
+    bindMyProfileFast();
+  },1200);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX LOGIN/HOME BLOQUEADO
+Cuando el usuario está logueado, el home deja de mostrar Registrate/Iniciar sesión
+y permite navegar normalmente.
+========================================================= -->
+<style id="sebas-fix-login-home-css">
+/* Usuario logueado: ocultar botones de invitado en la pantalla principal */
+body.sebas-logged .h-btns,
+body.sebas-logged .hero .h-btns,
+body.sebas-logged .btn-join{
+  display:none!important;
+}
+
+/* Usuario logueado: mostrar menú inferior */
+body.sebas-logged .bnav{
+  display:flex!important;
+}
+
+/* Invitado: si no inició sesión, mantiene botones visibles */
+body.sebas-guest .h-btns{
+  display:flex;
+}
+
+/* Evitar que el bloque verde de invitado deje espacio raro cuando ya está logueado */
+body.sebas-logged .hero{
+  min-height:auto!important;
+}
+
+@media(max-width:750px){
+  body.sebas-logged .hero{
+    padding-bottom:2rem!important;
+  }
+
+  body.sebas-logged .h-btns:before,
+  body.sebas-logged .h-btns:after{
+    display:none!important;
+    content:none!important;
+  }
+}
+</style>
+
+<script id="sebas-fix-login-home-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function refreshCurrentUser(){
+    try{
+      if(typeof refreshCU==="function") refreshCU();
+    }catch(e){}
+  }
+
+  function applyLoginState(){
+    refreshCurrentUser();
+
+    const logged=isLogged();
+
+    document.body.classList.toggle("sebas-logged", logged);
+    document.body.classList.toggle("sebas-guest", !logged);
+
+    const hBtns=document.querySelector(".h-btns");
+    if(hBtns){
+      hBtns.style.display = logged ? "none" : "";
+    }
+
+    const joinBtns=document.querySelectorAll(".btn-join");
+    joinBtns.forEach(function(btn){
+      btn.style.display = logged ? "none" : "";
+    });
+
+    const bnav=document.querySelector(".bnav");
+    if(bnav){
+      bnav.style.display = logged ? "flex" : "";
+    }
+
+    /* Si está logueado y quedó atrapado en home invitado, mandarlo a perfiles */
+    const home=document.getElementById("page-home");
+    const profiles=document.getElementById("page-profiles");
+
+    if(logged && home && home.classList.contains("active")){
+      const stillGuestButtons = hBtns && getComputedStyle(hBtns).display !== "none";
+
+      /* No forzamos siempre; solo si está en home con botones o recién entró */
+      if(stillGuestButtons || !sessionStorage.getItem("fortyup_logged_redirect_done")){
+        sessionStorage.setItem("fortyup_logged_redirect_done","1");
+
+        if(typeof go==="function"){
+          setTimeout(function(){
+            try{ go("profiles"); }catch(e){}
+          },80);
+        }else if(profiles){
+          home.classList.remove("active");
+          profiles.classList.add("active");
+        }
+      }
+    }
+  }
+
+  function fixAuthAfterLogin(){
+    /* Envolver funciones comunes de login/auth para corregir pantalla apenas entra */
+    const candidates=["login","doLogin","authLogin","submitLogin","saveLogin","enterApp"];
+
+    candidates.forEach(function(name){
+      const fn=window[name];
+      if(typeof fn==="function" && !fn.__sebasLoginHomeFix){
+        const wrapped=function(){
+          const result=fn.apply(this,arguments);
+          setTimeout(applyLoginState,80);
+          setTimeout(applyLoginState,250);
+          setTimeout(applyLoginState,700);
+          return result;
+        };
+        wrapped.__sebasLoginHomeFix=true;
+        window[name]=wrapped;
+      }
+    });
+  }
+
+  function fixLogout(){
+    const candidates=["logout","out","signOut"];
+
+    candidates.forEach(function(name){
+      const fn=window[name];
+      if(typeof fn==="function" && !fn.__sebasLoginHomeFix){
+        const wrapped=function(){
+          sessionStorage.removeItem("fortyup_logged_redirect_done");
+          const result=fn.apply(this,arguments);
+          setTimeout(applyLoginState,80);
+          setTimeout(applyLoginState,250);
+          return result;
+        };
+        wrapped.__sebasLoginHomeFix=true;
+        window[name]=wrapped;
+      }
+    });
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      fixAuthAfterLogin();
+      fixLogout();
+      applyLoginState();
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,150);
+  setTimeout(run,600);
+  setTimeout(run,1200);
+
+  /* Observa cambios de CU / navegación sin romper nada */
+  setInterval(run,1000);
+})();
+</script>
+
+
+<!-- =========================================================
+FORTYUP - FIX FINAL SESION: NO QUEDAR TRABADO EN HOME PUBLICO
+========================================================= -->
+<style id="sebas-fix-session-navigation-css">
+/* Logueado: nunca mostrar bloque de invitado */
+body.sebas-logged .h-btns,
+body.sebas-logged .hero .h-btns,
+body.sebas-logged .btn-join{
+  display:none!important;
+}
+
+body.sebas-logged .h-btns:before,
+body.sebas-logged .h-btns:after{
+  display:none!important;
+  content:none!important;
+}
+
+body.sebas-logged .bnav{
+  display:flex!important;
+}
+
+body.sebas-logged{
+  padding-bottom:96px!important;
+}
+
+/* Evita que el home público capture la navegación cuando ya inició sesión */
+body.sebas-logged #page-home .h-btns{
+  display:none!important;
+}
+</style>
+
+<script id="sebas-fix-session-navigation-js">
+(function(){
+  let running=false;
+  let justLoggedRedirect=false;
+
+  function isLogged(){
+    try{
+      if(typeof refreshCU==="function") refreshCU();
+    }catch(e){}
+    return !!(window.CU && CU.id);
+  }
+
+  function setLoggedClasses(){
+    const logged=isLogged();
+    document.body.classList.toggle("sebas-logged", logged);
+    document.body.classList.toggle("sebas-guest", !logged);
+    return logged;
+  }
+
+  function getActivePageId(){
+    const active=document.querySelector(".page.active");
+    return active ? active.id : "";
+  }
+
+  function showPageSafe(page){
+    if(typeof go==="function"){
+      try{
+        go(page);
+        return;
+      }catch(e){}
+    }
+
+    document.querySelectorAll(".page").forEach(function(p){
+      p.classList.remove("active");
+    });
+
+    const el=document.getElementById("page-"+page) || document.getElementById(page);
+    if(el) el.classList.add("active");
+  }
+
+  function hideGuestHomeButtons(){
+    const logged=isLogged();
+
+    document.querySelectorAll(".h-btns").forEach(function(el){
+      if(logged) el.style.display="none";
+      else el.style.display="";
+    });
+
+    document.querySelectorAll(".btn-join").forEach(function(el){
+      if(logged) el.style.display="none";
+      else el.style.display="";
+    });
+
+    const nav=document.querySelector(".bnav");
+    if(nav && logged) nav.style.display="flex";
+  }
+
+  function chooseLoggedLanding(){
+    if(!isLogged()) return;
+
+    /* Si tiene perfil completo, perfiles. Si no, crear/editar perfil */
+    if(window.CU && CU.name && CU.age && CU.city){
+      showPageSafe("profiles");
+    }else{
+      showPageSafe("register");
+    }
+  }
+
+  function preventLoggedHomeTrap(){
+    const logged=setLoggedClasses();
+    hideGuestHomeButtons();
+
+    if(!logged) return;
+
+    const activeId=getActivePageId();
+
+    /* Si está logueado y queda en home público, sacarlo de ahí */
+    if(activeId==="page-home" || activeId==="home" || !activeId){
+      if(!justLoggedRedirect){
+        justLoggedRedirect=true;
+        setTimeout(function(){
+          chooseLoggedLanding();
+          setTimeout(function(){ justLoggedRedirect=false; },400);
+        },40);
+      }
+    }
+  }
+
+  function wrapGo(){
+    const oldGo=window.go;
+    if(typeof oldGo==="function" && !oldGo.__sebasSessionNavFix){
+      const wrapped=function(page){
+        const logged=setLoggedClasses();
+
+        /* Si está logueado, no dejar que botones/back lo manden al home público */
+        if(logged && (page==="home" || page==="page-home")){
+          if(window.CU && CU.name && CU.age && CU.city){
+            page="profiles";
+          }else{
+            page="register";
+          }
+        }
+
+        const result=oldGo.call(this,page);
+
+        setTimeout(preventLoggedHomeTrap,60);
+        setTimeout(preventLoggedHomeTrap,220);
+
+        return result;
+      };
+
+      wrapped.__sebasSessionNavFix=true;
+      window.go=wrapped;
+    }
+  }
+
+  function wrapAuthFunctions(){
+    const names=["login","doLogin","authLogin","submitLogin","enterApp"];
+    names.forEach(function(name){
+      const fn=window[name];
+      if(typeof fn==="function" && !fn.__sebasSessionNavFix){
+        const wrapped=function(){
+          const result=fn.apply(this,arguments);
+
+          setTimeout(function(){
+            setLoggedClasses();
+            hideGuestHomeButtons();
+            chooseLoggedLanding();
+          },120);
+
+          setTimeout(preventLoggedHomeTrap,400);
+          setTimeout(preventLoggedHomeTrap,900);
+
+          return result;
+        };
+
+        wrapped.__sebasSessionNavFix=true;
+        window[name]=wrapped;
+      }
+    });
+  }
+
+  function bindBottomNavSafety(){
+    const homeBtn=document.getElementById("bn-home");
+    if(homeBtn && !homeBtn.__sebasSessionNavFix){
+      homeBtn.__sebasSessionNavFix=true;
+      homeBtn.addEventListener("click",function(ev){
+        if(isLogged()){
+          ev.preventDefault();
+          ev.stopPropagation();
+          showPageSafe("profiles");
+          setTimeout(preventLoggedHomeTrap,80);
+          return false;
+        }
+      },true);
+    }
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      wrapGo();
+      wrapAuthFunctions();
+      bindBottomNavSafety();
+      preventLoggedHomeTrap();
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,100);
+  setTimeout(run,500);
+  setTimeout(run,1200);
+
+  setInterval(run,900);
+})();
+</script>
+
 </body>
 </html>
