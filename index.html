@@ -9453,5 +9453,251 @@ FORTYUP - FIX FINAL SEBAS: MENU ARMONICO + PERFIL FIJO + TARJETAS PROLIJAS
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX SEBAS: TARJETAS REALES + MI PERFIL SIN BLANCO
+========================================================= -->
+<style id="sebas-final-cards-profile-fast-css">
+/* TARJETAS: aplicar directo a estructura real, con selectores más fuertes */
+.pgrid .pcard .pcard-body,
+#page-profiles .pcard .pcard-body,
+.pcard > .pcard-body{
+  padding:1.18rem 1.38rem .95rem!important;
+}
+
+.pgrid .pcard .pcard-name,
+#page-profiles .pcard .pcard-name,
+.pcard > .pcard-body .pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.14rem!important;
+  line-height:1.08!important;
+  letter-spacing:-.01em!important;
+  font-weight:800!important;
+  color:#10231D!important;
+  margin:0 0 .35rem!important;
+  padding:0 .55rem 0 .32rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pgrid .pcard .pcard-meta,
+#page-profiles .pcard .pcard-meta,
+.pcard > .pcard-body .pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.32!important;
+  font-weight:600!important;
+  color:#6B7C76!important;
+  margin:0 0 .58rem!important;
+  padding:0 .7rem 0 .34rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pgrid .pcard .dist-b,
+#page-profiles .pcard .dist-b,
+.pcard .dist-b{
+  margin-left:.34rem!important;
+  margin-top:.22rem!important;
+  font-size:.72rem!important;
+  line-height:1.2!important;
+  padding:.22rem .68rem!important;
+}
+
+/* Si el nombre viene con edad dentro, mantenerlo elegante */
+.pcard-name strong,
+.pcard-name span,
+.pcard-name b{
+  font-family:inherit!important;
+}
+
+/* Evitar que la ubicación arranque pegada al borde si hay pin */
+.pcard-meta::first-letter{
+  margin-left:.1rem;
+}
+
+/* MI PERFIL: evitar parpadeo/blanco visual */
+#page-myprofile{
+  min-height:calc(100vh - 160px)!important;
+}
+
+#page-myprofile:not(.active){
+  display:none!important;
+}
+
+#page-myprofile.active:empty::before,
+#page-myprofile.active .inner:empty::before{
+  content:"Cargando tu perfil..."!important;
+  display:block!important;
+  margin:2rem auto!important;
+  width:max-content!important;
+  max-width:90%!important;
+  background:#fff!important;
+  border:1.5px solid #D1E8DF!important;
+  border-radius:999px!important;
+  padding:.8rem 1.2rem!important;
+  color:#064E3B!important;
+  font-weight:900!important;
+  box-shadow:0 8px 24px rgba(6,78,59,.08)!important;
+}
+</style>
+
+<script id="sebas-final-cards-profile-fast-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function polishProfileCards(){
+    document.querySelectorAll(".pcard").forEach(function(card){
+      const body=card.querySelector(".pcard-body");
+      const name=card.querySelector(".pcard-name");
+      const meta=card.querySelector(".pcard-meta");
+      const dist=card.querySelector(".dist-b");
+
+      if(body){
+        body.style.padding="1.18rem 1.38rem .95rem";
+      }
+
+      if(name){
+        name.style.fontFamily="'Playfair Display',serif";
+        name.style.fontSize="1.14rem";
+        name.style.lineHeight="1.08";
+        name.style.fontWeight="800";
+        name.style.margin="0 0 .35rem";
+        name.style.padding="0 .55rem 0 .32rem";
+        name.style.whiteSpace="nowrap";
+        name.style.overflow="hidden";
+        name.style.textOverflow="ellipsis";
+        name.style.color="#10231D";
+      }
+
+      if(meta){
+        meta.style.fontFamily="'Nunito',sans-serif";
+        meta.style.fontSize=".78rem";
+        meta.style.lineHeight="1.32";
+        meta.style.fontWeight="600";
+        meta.style.color="#6B7C76";
+        meta.style.margin="0 0 .58rem";
+        meta.style.padding="0 .7rem 0 .34rem";
+        meta.style.whiteSpace="nowrap";
+        meta.style.overflow="hidden";
+        meta.style.textOverflow="ellipsis";
+      }
+
+      if(dist){
+        dist.style.marginLeft=".34rem";
+        dist.style.marginTop=".22rem";
+        dist.style.fontSize=".72rem";
+        dist.style.padding=".22rem .68rem";
+      }
+    });
+  }
+
+  function renderMyProfileFast(){
+    if(!isLogged()) return;
+
+    /* Render inmediato para evitar pantalla en blanco */
+    try{
+      if(typeof refreshCU==="function") refreshCU();
+    }catch(e){}
+
+    try{
+      if(typeof rMyP==="function") rMyP();
+    }catch(e){}
+  }
+
+  function bindMyProfileFast(){
+    const me=document.getElementById("bn-me");
+    if(!me || me.__sebasFastProfileBound) return;
+    me.__sebasFastProfileBound=true;
+
+    me.addEventListener("click",function(){
+      setTimeout(renderMyProfileFast,0);
+      setTimeout(renderMyProfileFast,60);
+      setTimeout(renderMyProfileFast,180);
+    },true);
+  }
+
+  function wrapGoForMyProfile(){
+    const oldGo=window.go;
+    if(typeof oldGo==="function" && !oldGo.__sebasFastProfileRender){
+      const wrapped=function(page){
+        if(page==="myprofile"){
+          renderMyProfileFast();
+        }
+
+        const result=oldGo.apply(this,arguments);
+
+        if(page==="myprofile"){
+          setTimeout(renderMyProfileFast,0);
+          setTimeout(renderMyProfileFast,70);
+          setTimeout(renderMyProfileFast,200);
+        }
+
+        setTimeout(function(){
+          polishProfileCards();
+          bindMyProfileFast();
+        },100);
+
+        return result;
+      };
+
+      wrapped.__sebasFastProfileRender=true;
+      window.go=wrapped;
+    }
+  }
+
+  function wrapProfilesRender(){
+    const oldRProfiles=window.rProfiles;
+    if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasCardsRealPolish){
+      const wrapped=function(){
+        const result=oldRProfiles.apply(this,arguments);
+        setTimeout(polishProfileCards,0);
+        setTimeout(polishProfileCards,80);
+        setTimeout(polishProfileCards,260);
+        setTimeout(polishProfileCards,600);
+        return result;
+      };
+
+      wrapped.__sebasCardsRealPolish=true;
+      window.rProfiles=wrapped;
+    }
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      wrapGoForMyProfile();
+      wrapProfilesRender();
+      bindMyProfileFast();
+      polishProfileCards();
+
+      if(document.getElementById("page-myprofile")?.classList.contains("active")){
+        renderMyProfileFast();
+      }
+    }catch(e){}
+
+    running=false;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,150);
+  setTimeout(run,600);
+  setInterval(function(){
+    polishProfileCards();
+    bindMyProfileFast();
+  },1200);
+})();
+</script>
+
 </body>
 </html>
