@@ -8732,5 +8732,337 @@ body{
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX FINAL SEBAS: MI PERFIL + STEPPER EDITABLE + TARJETAS PROLIJAS
+========================================================= -->
+<style id="sebas-final-profile-stepper-cards-css">
+/* Perfiles: separar texto del borde y unificar tipografía */
+.pcard-body{
+  padding:1.18rem 1.35rem .9rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.32rem!important;
+  line-height:1.08!important;
+  letter-spacing:-.015em!important;
+  margin:0 0 .34rem!important;
+  padding-left:.28rem!important;
+  padding-right:.6rem!important;
+  color:#10231D!important;
+}
+
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.84rem!important;
+  line-height:1.32!important;
+  color:#6B7C76!important;
+  margin:0 0 .55rem!important;
+  padding-left:.3rem!important;
+  padding-right:.65rem!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.dist-b{
+  margin-left:.28rem!important;
+  margin-top:.24rem!important;
+  font-size:.75rem!important;
+  padding:.22rem .68rem!important;
+}
+
+/* Mi perfil siempre con foto/inicial */
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+}
+
+#bn-me .bn-ico:before,
+#bn-me-ico:before,
+#bn-me .bn-ico:after,
+#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+/* Stepper editable */
+.reg-step{
+  cursor:pointer!important;
+  user-select:none!important;
+  touch-action:manipulation!important;
+}
+
+.reg-step.done .reg-dot,
+.reg-step.completed .reg-dot{
+  background:linear-gradient(135deg,#10B981,#064E3B)!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+
+.reg-step.done .reg-dot:before,
+.reg-step.completed .reg-dot:before{
+  content:"✓"!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+.reg-step.active .reg-dot{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(6,78,59,.22)!important;
+}
+</style>
+
+<script id="sebas-final-profile-stepper-cards-js">
+(function(){
+  let running=false;
+
+  function isLogged(){
+    return !!(window.CU && CU.id);
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const parsed=JSON.parse(localStorage.getItem(k)||"{}");
+        if(parsed && parsed.photo) return parsed.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || getUserPhoto(CU.id) || "";
+  }
+
+  function forceMyProfileIcon(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    const icon=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+
+    if(label){
+      label.textContent="Mi perfil";
+      label.innerHTML="Mi perfil";
+    }
+
+    if(icon){
+      const photo=currentPhoto();
+
+      if(photo){
+        const img=icon.querySelector("img");
+        if(!img || img.getAttribute("src")!==photo){
+          icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }
+      }else if(isLogged()){
+        const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+initial+'</span>';
+      }else{
+        icon.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
+      }
+    }
+  }
+
+  function openProfileOrCreate(){
+    if(!isLogged()){
+      if(typeof openAuth==="function") openAuth("login");
+      return;
+    }
+
+    /* Si el usuario ya tiene datos, abre Mi perfil real; si no, crear perfil */
+    if(CU.name && CU.age && CU.city){
+      if(typeof go==="function") go("myprofile");
+      setTimeout(function(){
+        if(typeof rMyP==="function") rMyP();
+      },80);
+    }else{
+      if(typeof go==="function") go("register");
+    }
+  }
+
+  function bindMyProfileButton(){
+    const me=document.getElementById("bn-me");
+    if(!me) return;
+
+    me.onclick=function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      openProfileOrCreate();
+      return false;
+    };
+  }
+
+  function getStepNumber(step){
+    const direct=step.getAttribute("data-step") || step.dataset.step;
+    if(direct) return parseInt(direct,10);
+
+    const dot=step.querySelector(".reg-dot");
+    const txt=(dot ? dot.textContent : step.textContent || "").trim();
+    const n=parseInt(txt,10);
+    if(!isNaN(n)) return n;
+
+    return Array.from(document.querySelectorAll(".reg-step")).indexOf(step)+1;
+  }
+
+  function markSteps(){
+    const steps=Array.from(document.querySelectorAll(".reg-step"));
+    if(!steps.length) return;
+
+    const active=document.querySelector(".reg-step.active");
+    const current=active ? getStepNumber(active) : (window.regStep || window.currentStep || 1);
+
+    steps.forEach(function(step){
+      const n=getStepNumber(step);
+      step.classList.toggle("active", n===current);
+      if(n<current){
+        step.classList.add("done","completed");
+      }
+    });
+
+    /* Si ya hay perfil guardado, marcamos como completos los pasos base */
+    if(isLogged() && CU.name && CU.age && CU.city){
+      if(steps[0]) steps[0].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.likes || CU.gustos || CU.interests || CU.plans)){
+      if(steps[1]) steps[1].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.bio || CU.about || CU.desc)){
+      if(steps[2]) steps[2].classList.add("done","completed");
+    }
+    if(isLogged() && (CU.photo || getUserPhoto(CU.id) || CU.photos)){
+      if(steps[3]) steps[3].classList.add("done","completed");
+    }
+  }
+
+  function renderRegisterStep(n){
+    window.regStep=n;
+    window.currentStep=n;
+
+    /* Usar el render original: esto evita que quede solo el diamante */
+    if(typeof rRegister==="function"){
+      try{ rRegister(); }catch(e){}
+    }else{
+      const names=["goRegStep","setRegStep","showRegStep","renderRegStep","renderStep","goToStep"];
+      for(const name of names){
+        if(typeof window[name]==="function"){
+          try{
+            window[name](n);
+            break;
+          }catch(e){}
+        }
+      }
+    }
+
+    setTimeout(function(){
+      bindStepper();
+      markSteps();
+      forceMyProfileIcon();
+      bindMyProfileButton();
+    },90);
+  }
+
+  function bindStepper(){
+    document.querySelectorAll(".reg-step").forEach(function(step){
+      if(step.__sebasFinalStepperBound) return;
+      step.__sebasFinalStepperBound=true;
+
+      step.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const n=getStepNumber(step);
+        renderRegisterStep(n);
+      },true);
+    });
+
+    markSteps();
+  }
+
+  function run(){
+    if(running) return;
+    running=true;
+
+    try{
+      forceMyProfileIcon();
+      bindMyProfileButton();
+      bindStepper();
+    }catch(e){}
+
+    running=false;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasFinalProfileStepperCards){
+    const wrapped=function(page){
+      const r=oldGo.apply(this,arguments);
+
+      setTimeout(run,80);
+      setTimeout(run,260);
+
+      /* Si va a mi perfil y queda vacío, fuerza render de mi perfil */
+      if(page==="myprofile"){
+        setTimeout(function(){
+          if(typeof rMyP==="function") rMyP();
+          run();
+        },120);
+      }
+
+      return r;
+    };
+
+    wrapped.__sebasFinalProfileStepperCards=true;
+    window.go=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,250);
+  setTimeout(run,900);
+  setInterval(run,1200);
+})();
+</script>
+
 </body>
 </html>
