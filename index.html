@@ -7958,5 +7958,177 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 })();
 </script>
 
+
+<!-- =========================================================
+FORTYUP - FIX FINAL SEBAS SOBRE CODIGOREAL
+Menú estable / Mi perfil foto / FortyUp+ centro / tarjetas prolijas
+========================================================= -->
+<style id="sebas-final-real-fix-css">
+.bnav{
+  position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;
+  height:86px!important;min-height:86px!important;z-index:999999!important;
+  display:flex!important;align-items:center!important;justify-content:space-around!important;
+  gap:0!important;padding:6px 0 10px!important;transform:none!important;translate:none!important;
+  transition:none!important;animation:none!important;will-change:auto!important;box-sizing:border-box!important;
+}
+body{padding-bottom:96px!important}
+.page{padding-bottom:102px!important}
+.bnav .bn{
+  flex:1 1 20%!important;width:20%!important;max-width:20%!important;min-width:0!important;
+  height:74px!important;min-height:74px!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:3px!important;padding:4px 2px!important;
+  margin:0!important;border-radius:22px!important;transform:none!important;translate:none!important;
+  transition:none!important;animation:none!important;box-sizing:border-box!important;
+}
+.bnav .bn.active{transform:none!important;translate:none!important}
+
+#bn-plus .bn-plus,#bnPlusIco{
+  width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
+  max-width:52px!important;max-height:52px!important;border-radius:50%!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;margin:0 auto 2px!important;padding:0!important;
+  overflow:hidden!important;background:radial-gradient(circle at 25% 20%,#fff 0 10%,#fff1a8 11% 24%,#8be9ff 25% 42%,#4aa3ff 43% 60%,#9b5cff 61% 79%,#0ea5e9 80% 100%)!important;
+  border:3px solid #fff!important;box-shadow:0 8px 24px rgba(80,120,255,.30), inset 0 0 16px rgba(255,255,255,.45)!important;
+  font-size:0!important;color:transparent!important;transform:none!important;transition:none!important;
+}
+#bn-plus .bn-plus:before,#bnPlusIco:before{
+  content:"💎"!important;font-size:1.78rem!important;line-height:1!important;color:#fff!important;filter:saturate(1.25)!important;
+}
+#bn-plus .bn-l,#bnPlusLbl{
+  display:block!important;height:16px!important;line-height:16px!important;text-align:center!important;
+  overflow:hidden!important;font-size:0!important;color:transparent!important;margin:0!important;padding:0!important;
+}
+#bn-plus .bn-l *,#bnPlusLbl *{display:none!important}
+#bn-plus .bn-l:before,#bnPlusLbl:before{
+  content:"FortyUp+"!important;display:block!important;font-size:.62rem!important;line-height:16px!important;
+  font-weight:900!important;color:#6B7C76!important;text-align:center!important;
+}
+
+#bn-me .bn-ico,#bn-me-ico{
+  width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+  max-width:42px!important;max-height:42px!important;border-radius:50%!important;overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;color:#fff!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;font-size:1rem!important;font-weight:900!important;
+  margin:0 auto 3px!important;padding:0!important;border:0!important;box-shadow:none!important;transform:none!important;transition:none!important;
+}
+#bn-me .bn-ico img,#bn-me-ico img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;display:block!important}
+#bn-me .bn-l,#bn-me-lbl{
+  display:block!important;height:16px!important;line-height:16px!important;font-size:.57rem!important;
+  font-weight:900!important;text-align:center!important;color:#6B7C76!important;margin:0!important;padding:0!important;overflow:hidden!important;
+}
+
+.pcard-body{padding:1.08rem 1.22rem .84rem!important}
+.pcard-name{
+  font-family:'Playfair Display',serif!important;font-size:1.28rem!important;line-height:1.08!important;
+  letter-spacing:-.015em!important;margin:0 0 .28rem!important;padding-left:.2rem!important;padding-right:.45rem!important;color:#10231D!important;
+}
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;font-size:.82rem!important;line-height:1.28!important;color:#6B7C76!important;
+  margin:0 0 .5rem!important;padding-left:.22rem!important;padding-right:.5rem!important;max-width:100%!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.dist-b{margin-left:.2rem!important;margin-top:.22rem!important}
+.pcard-ph{overflow:hidden!important}
+.pcard-ph img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;display:block!important}
+.pcard-ph.has-photo .pcard-av{display:none!important}
+</style>
+
+<script id="sebas-final-real-fix-js">
+(function(){
+  let fixing=false;
+  function isLogged(){return !!(window.CU&&CU.id)}
+  function getStore(k,d){try{if(typeof g==="function")return g(k,d);const raw=localStorage.getItem(k);return raw?JSON.parse(raw):d}catch(e){return d}}
+  function usersKey(){try{return(window.K&&K.U)?K.U:"fu_u"}catch(e){return"fu_u"}}
+  function mediaKeys(id){return["fortyup_profile_media_FINAL_HOME_"+id,"fortyup_profile_media_final_FIX_"+id,"fortyup_profile_media_final_"+id,"fu_profile_media_final_"+id,"fu_profile_media_"+id,"profile_photo_"+id]}
+  function getUserPhoto(id){
+    if(!id)return"";
+    for(const k of mediaKeys(id)){
+      try{const parsed=JSON.parse(localStorage.getItem(k)||"{}");if(parsed&&parsed.photo)return parsed.photo}
+      catch(e){try{const raw=localStorage.getItem(k);if(raw&&raw.startsWith("data:image"))return raw}catch(_){}}
+    }
+    return"";
+  }
+  function currentProfilePhoto(){return isLogged()?(CU.photo||getUserPhoto(CU.id)||""):""}
+  function allUsers(){
+    let arr=[];try{arr=typeof normalizeUsers==="function"?normalizeUsers():getStore(usersKey(),[])}catch(e){arr=getStore(usersKey(),[])}
+    return(arr||[]).map(function(u){const nu=Object.assign({},u);const photo=getUserPhoto(nu.id);if(photo)nu.photo=photo;return nu})
+  }
+  function ensureFortyPlusPage(){
+    if(document.getElementById("page-fortyplus"))return;
+    const page=document.createElement("section");
+    page.id="page-fortyplus";page.className="page";
+    page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="go(\\'home\\')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
+    const bnav=document.querySelector(".bnav");if(bnav&&bnav.parentNode)bnav.parentNode.insertBefore(page,bnav);else document.body.appendChild(page);
+  }
+  function openFortyPlus(){
+    ensureFortyPlusPage();
+    document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});
+    const page=document.getElementById("page-fortyplus");if(page)page.classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function openProfileOrCreate(){
+    if(!isLogged()){if(typeof openAuth==="function")openAuth("login");return}
+    if(CU.name&&CU.age&&CU.city){if(typeof go==="function")go("myprofile");if(typeof rMyP==="function")setTimeout(rMyP,60)}
+    else{if(typeof go==="function")go("register")}
+  }
+  function fixMenu(){
+    const nav=document.querySelector(".bnav");if(!nav)return;
+    nav.style.position="fixed";nav.style.left="0";nav.style.right="0";nav.style.bottom="0";nav.style.width="100%";
+    nav.style.height="86px";nav.style.minHeight="86px";nav.style.zIndex="999999";nav.style.transform="none";
+    nav.style.transition="none";nav.style.animation="none";document.body.style.paddingBottom="96px";
+  }
+  function fixFortyPlusButton(){
+    const plus=document.getElementById("bn-plus");if(!plus)return;
+    const icon=plus.querySelector(".bn-plus")||document.getElementById("bnPlusIco");
+    const label=plus.querySelector(".bn-l")||document.getElementById("bnPlusLbl");
+    if(icon){icon.innerHTML="";icon.textContent=""}
+    if(label){label.innerHTML="";label.textContent="";label.setAttribute("data-label","FortyUp+")}
+    plus.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openFortyPlus();return false};
+  }
+  function fixMyProfileButton(){
+    const me=document.getElementById("bn-me");if(!me)return;
+    const icon=me.querySelector(".bn-ico")||document.getElementById("bn-me-ico");
+    const label=me.querySelector(".bn-l")||document.getElementById("bn-me-lbl");
+    if(label)label.textContent="Mi perfil";
+    if(icon){
+      const photo=currentProfilePhoto();
+      if(photo){const existing=icon.querySelector("img");if(!existing||existing.getAttribute("src")!==photo)icon.innerHTML='<img src="'+photo+'" alt="Mi perfil">'}
+      else if(isLogged()){const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();if(icon.textContent!==initial)icon.textContent=initial}
+      else{icon.textContent="👤"}
+    }
+    me.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openProfileOrCreate();return false};
+  }
+  function fixProfileCards(){
+    const users=allUsers();
+    document.querySelectorAll(".pcard").forEach(function(card){
+      const text=(card.textContent||"").toLowerCase();
+      let found=users.find(function(u){const name=(u.name||"").toLowerCase();return name&&text.includes(name)});
+      if(!found){const initial=(card.querySelector(".pcard-av")?.textContent||"").trim().toLowerCase();found=users.find(function(u){return(u.photo||getUserPhoto(u.id))&&(u.name||"").trim().charAt(0).toLowerCase()===initial})}
+      const ph=card.querySelector(".pcard-ph");
+      if(found&&ph){const photo=found.photo||getUserPhoto(found.id);if(photo){ph.classList.add("has-photo");const img=ph.querySelector("img");if(!img||img.getAttribute("src")!==photo)ph.innerHTML='<img src="'+photo+'" alt="'+(found.name||"perfil")+'">'}}
+    });
+  }
+  function runFix(){
+    if(fixing)return;fixing=true;
+    try{fixMenu();ensureFortyPlusPage();fixFortyPlusButton();fixMyProfileButton();fixProfileCards()}catch(e){}
+    fixing=false;
+  }
+  const oldGo=window.go;
+  if(typeof oldGo==="function"&&!oldGo.__sebasRealFinalFix){
+    const wrappedGo=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(runFix,80);return}const result=oldGo.apply(this,arguments);setTimeout(runFix,80);return result};
+    wrappedGo.__sebasRealFinalFix=true;window.go=wrappedGo;
+  }
+  const oldRProfiles=window.rProfiles;
+  if(typeof oldRProfiles==="function"&&!oldRProfiles.__sebasRealFinalFix){
+    const wrappedProfiles=function(){const result=oldRProfiles.apply(this,arguments);setTimeout(fixProfileCards,120);setTimeout(fixProfileCards,450);return result};
+    wrappedProfiles.__sebasRealFinalFix=true;window.rProfiles=wrappedProfiles;
+  }
+  document.addEventListener("DOMContentLoaded",runFix);
+  setTimeout(runFix,250);setTimeout(runFix,900);
+  const target=document.querySelector(".bnav");
+  if(target&&window.MutationObserver){const obs=new MutationObserver(function(){setTimeout(runFix,30)});obs.observe(target,{childList:true,subtree:true,characterData:true,attributes:true})}
+  setInterval(runFix,1400);
+})();
+</script>
+
 </body>
 </html>
