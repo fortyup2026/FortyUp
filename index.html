@@ -2075,144 +2075,6 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
 .pa-super:after{content:none!important}
 
-
-/* Diamante multicolor en botón + */
-#bnPlusIco {
-  background: none !important;
-  font-size: 0 !important;
-  position: relative;
-  width: 48px !important;
-  height: 48px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-#bnPlusIco::before {
-  content: '◆';
-  font-size: 2rem !important;
-  background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #c77dff, #ff6b6b);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: diamondShine 3s ease infinite;
-  display: block;
-  filter: drop-shadow(0 0 6px rgba(100,200,255,.4));
-}
-@keyframes diamondShine {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-/* Tamaño consistente íconos del nav */
-.bn-ico { font-size: 1.35rem !important; }
-#bn-plus .bn-ico, #bnPlusIco { font-size: 0 !important; }
-
-
-/* ── Tarjetas de perfil rediseñadas ── */
-.pcard {
-  background: #fff;
-  border: none !important;
-  border-radius: 20px !important;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(6,78,59,.10) !important;
-  transition: transform .25s, box-shadow .25s !important;
-}
-.pcard:hover {
-  transform: translateY(-5px) !important;
-  box-shadow: 0 12px 32px rgba(6,78,59,.18) !important;
-}
-.pcard-ph {
-  height: 220px !important;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #064E3B 0%, #10B981 100%) !important;
-}
-.pcard-ph img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  transition: transform .4s !important;
-}
-.pcard:hover .pcard-ph img { transform: scale(1.04) !important; }
-.pcard-av {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-family: 'Playfair Display', serif !important;
-  font-size: 3.5rem !important;
-  font-weight: 800 !important;
-  color: rgba(255,255,255,.9) !important;
-}
-.pcard-info {
-  padding: .85rem 1rem .6rem !important;
-  background: #fff;
-}
-.pcard-nm {
-  font-family: 'Playfair Display', serif !important;
-  font-size: 1.15rem !important;
-  font-weight: 700 !important;
-  color: #064E3B !important;
-  line-height: 1.2 !important;
-  margin-bottom: .2rem !important;
-}
-.pcard-zod {
-  font-size: .75rem !important;
-  color: #10B981 !important;
-  font-weight: 700 !important;
-  margin-bottom: .15rem !important;
-}
-.pcard-meta {
-  font-size: .78rem !important;
-  color: #6B7C76 !important;
-  font-weight: 500 !important;
-}
-.dist-b {
-  display: inline-block !important;
-  background: rgba(6,78,59,.08) !important;
-  color: #064E3B !important;
-  font-size: .72rem !important;
-  font-weight: 700 !important;
-  padding: .18rem .55rem !important;
-  border-radius: 50px !important;
-  margin-top: .3rem !important;
-}
-.pcard-acts {
-  padding: .6rem .75rem .75rem !important;
-  background: #fff;
-  border-top: 1px solid #f0f7f4 !important;
-  display: flex;
-  gap: .4rem;
-  flex-wrap: wrap;
-}
-
-
-/* ── Chat que entra en pantalla ── */
-.chat-wrap, #page-chat .inner, #page-chats .inner {
-  display: flex !important;
-  flex-direction: column !important;
-  height: calc(100vh - 60px) !important;
-  max-height: calc(100vh - 60px) !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-}
-.chat-msgs {
-  flex: 1 !important;
-  overflow-y: auto !important;
-  min-height: 0 !important;
-}
-.chat-in-a {
-  flex-shrink: 0 !important;
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 10 !important;
-}
-.chat-hd {
-  flex-shrink: 0 !important;
-}
-
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -2517,7 +2379,7 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
   <button class="bn" id="bn-profiles" onclick="goTo('profiles');setBn('profiles')"><span class="bn-ico">👥</span><span class="bn-l">Perfiles</span></button>
-  <button class="bn" id="bn-plus" onclick="bnPlusClick()"><div class="bn-plus" id="bnPlusIco"></div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
+  <button class="bn" id="bn-plus" onclick="bnPlusClick()"><div class="bn-plus" id="bnPlusIco">＋</div><span class="bn-l" id="bnPlusLbl" style="margin-top:-.1rem">Unirme</span></button>
   <button class="bn" id="bn-chats" onclick="needLogin(function(){goTo('chats');rChatList()});setBn('chats')" style="position:relative;display:none">
   <span style="position:relative;display:inline-block">
     <span class="bn-ico">💬</span>
@@ -3879,7 +3741,7 @@ function rMyP(){
   var cards=document.createElement('div');cards.className='myp-cards';
   var cardData=[
     {ico:'<span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px"></span>',tit:'Mis Fortis',det:'Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong>',fn:function(){showMyFortis()},cls:'myp-card'},
-    {ico:'📸',tit:'Fotos y videos',det:'Álbumes públicos y privados',fn:function(){showAllAlbums()},cls:'myp-card'},
+    {ico:'💬',tit:'Mensajes',det:'Chats activos <strong style="color:var(--g1)">'+chC+'</strong>',fn:function(){if(CU){goTo('chats');rChatList()}},cls:'myp-card'},
     {ico:'⭐',tit:'Favoritos',det:'Guardados <strong style="color:#7c5500">'+fvC+'</strong>',fn:function(){if(CU){goTo('favorites');rFavs()}},cls:'myp-card myp-card-g'},
     {ico:'✏️',tit:'Editar perfil',det:'Actualizá tu info, fotos e intereses',fn:function(){goTo('register')},cls:'myp-card'}
   ];
@@ -8194,7 +8056,7 @@ body{padding-bottom:96px!important}
     if(document.getElementById("page-fortyplus"))return;
     const page=document.createElement("section");
     page.id="page-fortyplus";page.className="page";
-    page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goBack()">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
+    page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="go(\\'home\\')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
     const bnav=document.querySelector(".bnav");if(bnav&&bnav.parentNode)bnav.parentNode.insertBefore(page,bnav);else document.body.appendChild(page);
   }
   function openFortyPlus(){
@@ -9926,7 +9788,6 @@ body.fu-logged{
 </style>
 
 <script id="sebas-final-session-fix-js">
-(func
 (function(){
   let running=false;
 
@@ -10007,7 +9868,7 @@ body.fu-logged{
       page=document.createElement("section");
       page.id="page-fortyplus";
       page.className="page";
-      page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goTo('profiles')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
+      page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goTo(\\'profiles\\')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
       const nav=document.querySelector(".bnav");
       if(nav && nav.parentNode) nav.parentNode.insertBefore(page,nav);
       else document.body.appendChild(page);
@@ -10295,7 +10156,7 @@ body.fu-logged{
   setTimeout(run,1200);
   setInterval(run,1200);
 })();
-pt>
+</script>
 
 </body>
 </html>
