@@ -1110,6 +1110,109 @@ body.sebas-guest .pcard-meta{
   overflow:hidden!important;text-overflow:ellipsis!important
 }
 
+
+/* =========================================================
+   SEBAS FIX HERO LEGIBLE + NAV INFERIOR CORRECTO
+   ========================================================= */
+
+@media(max-width:750px){
+  .hero{
+    background:
+      radial-gradient(circle at 50% 72%,rgba(16,185,129,.14),transparent 24%),
+      linear-gradient(180deg,#FFFDF7 0%,#F7FEFA 72%,#063D33 72%,#063D33 100%)!important;
+    min-height:calc(100vh - 74px)!important;
+    padding-bottom:1.4rem!important;
+  }
+
+  .h-p{
+    color:#2D4A40!important;
+    opacity:1!important;
+    position:relative!important;
+    z-index:5!important;
+    margin-bottom:.75rem!important;
+  }
+
+  .h-tag{
+    position:relative!important;
+    z-index:5!important;
+    margin-bottom:2.2rem!important;
+  }
+
+  body:not(.sebas-guest) .h-btns{
+    display:block!important;
+    height:8.7rem!important;
+    margin-top:1.1rem!important;
+    padding-top:0!important;
+    pointer-events:none!important;
+    position:relative!important;
+  }
+
+  body:not(.sebas-guest) .h-btns:before{
+    content:"💎"!important;
+    position:absolute!important;
+    top:.2rem!important;
+    left:50%!important;
+    transform:translateX(-50%)!important;
+    font-size:6.1rem!important;
+    filter:drop-shadow(0 14px 20px rgba(6,78,59,.22))!important;
+  }
+
+  body:not(.sebas-guest) .h-btns:after{
+    content:none!important;
+    display:none!important;
+  }
+
+  body:not(.sebas-guest) .h-btns .btn{
+    display:none!important;
+  }
+}
+
+.bnav .bn-plus{
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 22px rgba(8,119,183,.30)!important;
+  font-size:0!important;
+}
+
+.bnav .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.75rem!important;
+  line-height:1!important;
+}
+
+#bn-plus .bn-l{
+  font-size:.54rem!important;
+  line-height:1.05!important;
+}
+
+#bn-me .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  margin-bottom:.14rem!important;
+}
+
+#bn-me .bn-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+}
+
+#bn-me .bn-l{
+  font-size:.57rem!important;
+  line-height:1.1!important;
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -5550,6 +5653,101 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener("DOMContentLoaded",()=>{ui();applyPhotos()});
   setTimeout(()=>{ui();applyPhotos()},350);
   setInterval(()=>{ui();applyPhotos()},1500);
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   SEBAS FIX NAV: FortyUp+ centro / Mi perfil derecha
+   ========================================================= */
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function getMedia(id){
+    const keys=[
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id
+    ];
+    for(const k of keys){
+      try{
+        const m=JSON.parse(localStorage.getItem(k)||"{}");
+        if(m && (m.photo || m.video)) return m;
+      }catch(e){}
+    }
+    return {};
+  }
+
+  function profilePhoto(){
+    if(!isLogged()) return "";
+    if(CU.photo) return CU.photo;
+    const m=getMedia(CU.id);
+    return m.photo || "";
+  }
+
+  function applyBottomNavSebasFinal(){
+    if(!isLogged()) return;
+
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const lab=plus.querySelector(".bn-l");
+      if(lab) lab.innerHTML="FortyUp+<br><span style='font-size:.48rem;color:#6B7C76'>Próximamente</span>";
+
+      plus.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(typeof toast==="function") toast("FortyUp+ próximamente 💎","gd");
+        else alert("FortyUp+ próximamente 💎");
+        return false;
+      };
+    }
+
+    const me=document.getElementById("bn-me");
+    if(me){
+      const ico=me.querySelector(".bn-ico");
+      const lab=me.querySelector(".bn-l");
+      const photo=profilePhoto();
+
+      if(ico){
+        if(photo){
+          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }else{
+          const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+          ico.textContent=initial;
+        }
+      }
+
+      if(lab) lab.textContent="Mi perfil";
+
+      me.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(typeof go==="function") go("myprofile");
+        else if(typeof goTo==="function") goTo("myprofile");
+        return false;
+      };
+    }
+  }
+
+  const oldUpNav=window.upNav;
+  if(typeof oldUpNav==="function" && !oldUpNav.__sebasHeroNavWrapped){
+    const wrapped=function(){
+      oldUpNav.apply(this,arguments);
+      setTimeout(applyBottomNavSebasFinal,80);
+    };
+    wrapped.__sebasHeroNavWrapped=true;
+    window.upNav=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(applyBottomNavSebasFinal,120);
+  });
+
+  setTimeout(applyBottomNavSebasFinal,350);
+  setInterval(applyBottomNavSebasFinal,1500);
 })();
 </script>
 
