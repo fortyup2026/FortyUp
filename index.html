@@ -7780,5 +7780,82 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 })();
 </script>
 
+
+<script>
+(function(){
+function killOldBehavior(){
+  const plus = document.getElementById("bn-plus");
+  const me = document.getElementById("bn-me");
+  if(plus){ plus.onclick=null; plus.replaceWith(plus.cloneNode(true)); }
+  if(me){ me.onclick=null; me.replaceWith(me.cloneNode(true)); }
+}
+function fixMenu(){
+  const nav=document.querySelector(".bnav");
+  if(!nav) return;
+  nav.style.position="fixed";
+  nav.style.bottom="0";
+  nav.style.left="0";
+  nav.style.width="100%";
+  nav.style.zIndex="9999";
+  nav.style.transform="none";
+}
+function fixDiamond(){
+  const plus=document.getElementById("bn-plus");
+  if(!plus) return;
+  const label=plus.querySelector(".bn-l");
+  const icon=plus.querySelector(".bn-plus");
+  if(label){ label.innerHTML="FortyUp+"; }
+  if(icon){
+    icon.style.background="radial-gradient(circle,#fff,#ffe082,#7dd3fc,#60a5fa,#a78bfa)";
+  }
+  plus.onclick=(e)=>{ e.preventDefault(); openFortyPlus && openFortyPlus(); };
+}
+function fixProfile(){
+  const me=document.getElementById("bn-me");
+  if(!me) return;
+  const ico=me.querySelector(".bn-ico");
+  const photo=localStorage.getItem("profile_photo");
+  if(photo && ico){
+    ico.innerHTML='<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+  }
+  me.onclick=()=>{
+    if(!window.CU || !CU.name){ go && go("register"); }
+    else{ go && go("myprofile"); }
+  };
+}
+function fixPhotos(){
+  document.querySelectorAll(".pcard").forEach(card=>{
+    const id=card.getAttribute("data-id");
+    if(!id) return;
+    const photo=localStorage.getItem("profile_photo_"+id);
+    const ph=card.querySelector(".pcard-ph");
+    if(photo && ph){
+      ph.innerHTML='<img src="'+photo+'">';
+    }
+  });
+}
+function fixLocation(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    localStorage.setItem("user_location",JSON.stringify({
+      lat:pos.coords.latitude,
+      lon:pos.coords.longitude
+    }));
+  });
+}
+function init(){
+  killOldBehavior();
+  fixMenu();
+  fixDiamond();
+  fixProfile();
+  fixPhotos();
+  fixLocation();
+}
+document.addEventListener("DOMContentLoaded",init);
+setTimeout(init,300);
+setInterval(init,2000);
+})();
+</script>
+
 </body>
 </html>
