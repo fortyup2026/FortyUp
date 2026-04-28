@@ -1213,6 +1213,260 @@ body.sebas-guest .pcard-meta{
   line-height:1.1!important;
 }
 
+
+/* =========================================================
+   SEBAS FIX FINAL NAV + PANTALLA FORTYUP+
+   ========================================================= */
+
+#bn-plus .bn-l{
+  font-size:.62rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+}
+
+#bn-plus .bn-plus{
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 22px rgba(8,119,183,.30)!important;
+  font-size:0!important;
+}
+
+#bn-plus .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.65rem!important;
+}
+
+#bn-me .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+}
+
+#bn-me .bn-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+}
+
+#page-fortyplus{
+  min-height:calc(100vh - 60px);
+  padding-bottom:6rem;
+}
+
+.fup-wrap{
+  max-width:720px;
+  margin:0 auto;
+  padding:1.5rem 1rem 2rem;
+}
+
+.fup-hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(189,239,255,.55),transparent 32%),
+    radial-gradient(circle at 85% 12%,rgba(242,183,5,.22),transparent 26%),
+    linear-gradient(155deg,#063D33 0%,#075A45 45%,#0A7C5D 100%);
+  color:#fff;
+  padding:2.2rem 1.25rem;
+  text-align:center;
+  box-shadow:0 22px 60px rgba(6,78,59,.26);
+  border:1.5px solid rgba(167,243,208,.25);
+}
+
+.fup-hero:before{
+  content:"FortyUp+";
+  position:absolute;
+  top:1rem;
+  right:-1.5rem;
+  font-family:'Playfair Display',serif;
+  font-size:4rem;
+  font-weight:900;
+  color:rgba(255,255,255,.055);
+  transform:rotate(-8deg);
+  pointer-events:none;
+}
+
+.fup-diamond{
+  width:108px;
+  height:108px;
+  margin:0 auto 1rem;
+  border-radius:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:4.6rem;
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%);
+  box-shadow:0 18px 34px rgba(8,119,183,.32), inset 0 0 18px rgba(255,255,255,.45);
+  border:4px solid rgba(255,255,255,.72);
+}
+
+.fup-title{
+  font-family:'Playfair Display',serif;
+  font-size:2.35rem;
+  font-weight:900;
+  line-height:1;
+  margin-bottom:.45rem;
+}
+
+.fup-title span{
+  color:#F2B705;
+  font-style:italic;
+}
+
+.fup-sub{
+  color:#CFFBE8;
+  font-size:.96rem;
+  line-height:1.55;
+  max-width:460px;
+  margin:0 auto 1.2rem;
+}
+
+.fup-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(167,243,208,.35);
+  border-radius:999px;
+  padding:.45rem .9rem;
+  font-size:.78rem;
+  font-weight:900;
+  color:#FDE68A;
+}
+
+.fup-section-title{
+  font-family:'Playfair Display',serif;
+  color:#064E3B;
+  font-size:1.5rem;
+  margin:1.35rem 0 .8rem;
+}
+
+.fup-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:.8rem;
+}
+
+.fup-card{
+  background:rgba(255,255,255,.96);
+  border:1.5px solid #D1E8DF;
+  border-radius:24px;
+  padding:1rem;
+  box-shadow:0 8px 24px rgba(6,78,59,.08);
+  display:flex;
+  gap:.85rem;
+  align-items:flex-start;
+}
+
+.fup-ico{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  background:#F0FDF8;
+  border:1.5px solid #A7F3D0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.45rem;
+  flex-shrink:0;
+}
+
+.fup-card h3{
+  font-family:'Nunito',sans-serif;
+  color:#10231D;
+  font-size:.96rem;
+  font-weight:900;
+  margin-bottom:.2rem;
+}
+
+.fup-card p{
+  color:#6B7C76;
+  font-size:.82rem;
+  line-height:1.45;
+}
+
+.fup-plan{
+  margin-top:1.1rem;
+  background:linear-gradient(135deg,#FFFDF7,#FFFBEB);
+  border:1.8px solid #FDE68A;
+  border-radius:28px;
+  padding:1.2rem;
+  box-shadow:0 10px 28px rgba(242,183,5,.14);
+}
+
+.fup-plan-head{
+  display:flex;
+  justify-content:space-between;
+  gap:.8rem;
+  align-items:center;
+  margin-bottom:.8rem;
+}
+
+.fup-plan-name{
+  font-family:'Playfair Display',serif;
+  color:#064E3B;
+  font-size:1.35rem;
+  font-weight:900;
+}
+
+.fup-soon{
+  background:#064E3B;
+  color:#FDE68A;
+  border-radius:999px;
+  padding:.28rem .72rem;
+  font-size:.7rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.fup-list{
+  display:flex;
+  flex-direction:column;
+  gap:.48rem;
+  margin:.8rem 0 1rem;
+}
+
+.fup-list div{
+  color:#2D4A40;
+  font-size:.86rem;
+  font-weight:800;
+}
+
+.fup-main-btn{
+  width:100%;
+  border-radius:999px;
+  background:linear-gradient(135deg,#064E3B,#059669);
+  color:#fff;
+  padding:.86rem 1rem;
+  font-weight:900;
+  box-shadow:0 10px 24px rgba(6,78,59,.22);
+}
+
+.fup-note{
+  text-align:center;
+  color:#6B7C76;
+  font-size:.72rem;
+  margin-top:.75rem;
+  line-height:1.4;
+}
+
+@media(min-width:650px){
+  .fup-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1443,6 +1697,76 @@ body.sebas-guest .pcard-meta{
 </div>
 
 <div class="m-ov" id="mOv" onclick="hMov(event)"><div class="m-box"><button class="m-cl" onclick="closeMod()">✕</button><div id="mCont"></div></div></div>
+
+
+<section id="page-fortyplus" class="page">
+  <div class="fup-wrap">
+    <button class="back-b" onclick="go('home')">← Volver</button>
+
+    <div class="fup-hero">
+      <div class="fup-diamond">💎</div>
+      <div class="fup-title">FortyUp<span>+</span></div>
+      <p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p>
+      <div class="fup-pill">✨ Próximamente disponible</div>
+    </div>
+
+    <h2 class="fup-section-title">¿Qué va a incluir?</h2>
+
+    <div class="fup-grid">
+      <div class="fup-card">
+        <div class="fup-ico">💎</div>
+        <div>
+          <h3>Más visibilidad</h3>
+          <p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p>
+        </div>
+      </div>
+
+      <div class="fup-card">
+        <div class="fup-ico">⭐</div>
+        <div>
+          <h3>Favoritos especiales</h3>
+          <p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p>
+        </div>
+      </div>
+
+      <div class="fup-card">
+        <div class="fup-ico">💬</div>
+        <div>
+          <h3>Mejores conversaciones</h3>
+          <p>Herramientas extra para iniciar charlas con más contexto.</p>
+        </div>
+      </div>
+
+      <div class="fup-card">
+        <div class="fup-ico">🔒</div>
+        <div>
+          <h3>Privacidad avanzada</h3>
+          <p>Más control sobre quién ve tus álbumes, fotos y datos sensibles.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fup-plan">
+      <div class="fup-plan-head">
+        <div class="fup-plan-name">Plan FortyUp+</div>
+        <div class="fup-soon">Próximamente</div>
+      </div>
+
+      <div class="fup-list">
+        <div>✓ Perfil destacado</div>
+        <div>✓ Súper Diamantes extra</div>
+        <div>✓ Álbumes privados mejorados</div>
+        <div>✓ Nuevas funciones sociales</div>
+      </div>
+
+      <button class="fup-main-btn" onclick="toast ? toast('FortyUp+ próximamente 💎','gd') : alert('FortyUp+ próximamente')">
+        Avisarme cuando esté disponible
+      </button>
+
+      <p class="fup-note">Todavía no se cobra nada. Esta pantalla queda preparada para activar más adelante.</p>
+    </div>
+  </div>
+</section>
 
 <div class="bnav" id="bnav">
   <button class="bn active" id="bn-home" onclick="goTo('home');setBn('home')"><span class="bn-ico">🏠</span><span class="bn-l">Inicio</span></button>
@@ -5748,6 +6072,136 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(applyBottomNavSebasFinal,350);
   setInterval(applyBottomNavSebasFinal,1500);
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   SEBAS FINAL: NAV + FORTYUP+
+   ========================================================= */
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function getMedia(id){
+    const keys=[
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id
+    ];
+    for(const k of keys){
+      try{
+        const m=JSON.parse(localStorage.getItem(k)||"{}");
+        if(m && (m.photo || m.video)) return m;
+      }catch(e){}
+    }
+    return {};
+  }
+
+  function profilePhoto(){
+    if(!isLogged()) return "";
+    if(CU.photo) return CU.photo;
+    const m=getMedia(CU.id);
+    return m.photo || "";
+  }
+
+  function userHasProfile(){
+    if(!isLogged()) return false;
+    return !!(CU.name && CU.age && CU.city);
+  }
+
+  function goProfileOrCreate(){
+    if(!isLogged()){
+      if(typeof openAuth==="function") openAuth("login");
+      return;
+    }
+    if(userHasProfile()){
+      if(typeof go==="function") go("myprofile");
+      else if(typeof goTo==="function") goTo("myprofile");
+    }else{
+      if(typeof go==="function") go("register");
+      else if(typeof goTo==="function") goTo("register");
+    }
+  }
+
+  function applyFinalNav(){
+    if(!isLogged()) return;
+
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const lab=plus.querySelector(".bn-l");
+      if(lab) lab.textContent="FortyUp+";
+
+      plus.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(typeof go==="function") go("fortyplus");
+        else if(typeof goTo==="function") goTo("fortyplus");
+        else if(typeof toast==="function") toast("FortyUp+ próximamente 💎","gd");
+        return false;
+      };
+    }
+
+    const me=document.getElementById("bn-me");
+    if(me){
+      const ico=me.querySelector(".bn-ico");
+      const lab=me.querySelector(".bn-l");
+      const photo=profilePhoto();
+
+      if(ico){
+        if(photo){
+          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }else{
+          const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+          ico.textContent=initial;
+        }
+      }
+
+      if(lab) lab.textContent="Mi perfil";
+
+      me.onclick=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        goProfileOrCreate();
+        return false;
+      };
+    }
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__fortyPlusWrapped){
+    const wrapped=function(page){
+      oldGo.apply(this,arguments);
+      if(page==="fortyplus"){
+        document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+        const fp=document.getElementById("page-fortyplus");
+        if(fp) fp.classList.add("active");
+        window.scrollTo({top:0,behavior:"smooth"});
+      }
+      setTimeout(applyFinalNav,80);
+    };
+    wrapped.__fortyPlusWrapped=true;
+    window.go=wrapped;
+  }
+
+  const oldUpNav=window.upNav;
+  if(typeof oldUpNav==="function" && !oldUpNav.__sebasPlusNavWrapped){
+    const wrapped=function(){
+      oldUpNav.apply(this,arguments);
+      setTimeout(applyFinalNav,80);
+    };
+    wrapped.__sebasPlusNavWrapped=true;
+    window.upNav=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(applyFinalNav,120);
+  });
+
+  setTimeout(applyFinalNav,350);
+  setInterval(applyFinalNav,1500);
 })();
 </script>
 
