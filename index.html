@@ -2081,6 +2081,113 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style id="sebas-restore-safe-css">
+/* RESTORE SEGURO - no borrar estructura base */
+#ageGateSebasFinal:not(.open),
+#sebasAgeGateFinal:not(.open),
+#ageFortySebasFinal:not(.open),
+.ageGate:not(.open),
+.age-gate:not(.open){
+  display:none!important;
+}
+
+/* Si quedaron popups de edad duplicados como bloques crudos, ocultarlos salvo que estén activos */
+body > div[id*="age"]:not(.open):not(.show),
+body > section[id*="age"]:not(.open):not(.show){
+  display:none!important;
+}
+
+/* Menú inferior fijo sin clonar ni re-renderizar */
+.bnav{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  z-index:99999!important;
+  transform:none!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+
+body:not(.sebas-guest){
+  padding-bottom:94px!important;
+}
+
+/* Mi perfil derecha: nunca diamante por CSS */
+#bn-me .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+#bn-me .bn-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+}
+
+/* FortyUp+ centro fijo visual */
+#bn-plus .bn-l{
+  font-size:.62rem!important;
+  font-weight:900!important;
+  line-height:1.05!important;
+}
+
+#bn-plus .bn-l,
+#bn-plus .bn-l *{
+  color:transparent!important;
+  font-size:0!important;
+}
+
+#bn-plus .bn-l:before{
+  content:"FortyUp+"!important;
+  color:#6B7C76!important;
+  font-size:.62rem!important;
+  font-weight:900!important;
+}
+
+#bn-plus .bn-plus{
+  background:radial-gradient(circle at 28% 22%,#fff 0 10%,#fff1a8 11% 25%,#8be9ff 26% 44%,#4aa3ff 45% 63%,#9b5cff 64% 82%,#0ea5e9 83% 100%)!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 24px rgba(80,120,255,.30), inset 0 0 16px rgba(255,255,255,.45)!important;
+  font-size:0!important;
+}
+
+#bn-plus .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+}
+
+/* Tarjetas más prolijas */
+.pcard-body{
+  padding:1.08rem 1.22rem .82rem!important;
+}
+
+.pcard-name{
+  padding-left:.18rem!important;
+  padding-right:.35rem!important;
+  margin-bottom:.28rem!important;
+  line-height:1.08!important;
+}
+
+.pcard-meta{
+  padding-left:.2rem!important;
+  padding-right:.4rem!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+</style>
+
 </head>
 <body>
 
@@ -7955,6 +8062,108 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   const oldGo=window.go;if(typeof oldGo==="function"&&!oldGo.__sebasNoJump){window.go=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(run,80);return}const r=oldGo.apply(this,arguments);setTimeout(run,120);return r};window.go.__sebasNoJump=true}
   document.addEventListener("DOMContentLoaded",()=>{updateLocationSoft();run()});
   setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,1500);
+})();
+</script>
+
+
+<script id="sebas-restore-safe-js">
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id,
+      "profile_photo_"+id
+    ];
+  }
+
+  function getUserPhoto(id){
+    if(!id) return "";
+    for(const k of mediaKeys(id)){
+      try{
+        const data=JSON.parse(localStorage.getItem(k)||"{}");
+        if(data && data.photo) return data.photo;
+      }catch(e){
+        try{
+          const raw=localStorage.getItem(k);
+          if(raw && raw.startsWith("data:image")) return raw;
+        }catch(_){}
+      }
+    }
+    return "";
+  }
+
+  function fixSafeNav(){
+    const nav=document.querySelector(".bnav");
+    if(nav){
+      nav.style.position="fixed";
+      nav.style.left="0";
+      nav.style.right="0";
+      nav.style.bottom="0";
+      nav.style.width="100%";
+      nav.style.zIndex="99999";
+      nav.style.transform="none";
+      nav.style.transition="none";
+    }
+
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const lab=plus.querySelector(".bn-l");
+      const ico=plus.querySelector(".bn-plus");
+      if(lab) lab.innerHTML="FortyUp+";
+      if(ico) ico.innerHTML="";
+      plus.onclick=function(e){
+        e.preventDefault();
+        if(typeof go==="function") go("fortyplus");
+        return false;
+      };
+    }
+
+    const me=document.getElementById("bn-me");
+    if(me){
+      const ico=me.querySelector(".bn-ico");
+      const lab=me.querySelector(".bn-l");
+      if(lab) lab.textContent="Mi perfil";
+
+      if(isLogged() && ico){
+        const photo=CU.photo || getUserPhoto(CU.id);
+        if(photo){
+          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }else{
+          ico.textContent=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        }
+      }
+
+      me.onclick=function(e){
+        e.preventDefault();
+        if(typeof go==="function"){
+          if(isLogged() && CU.name && CU.age && CU.city) go("myprofile");
+          else go("register");
+        }
+        return false;
+      };
+    }
+  }
+
+  function hideRawAgeDuplicates(){
+    document.querySelectorAll('body > div[id*="age"], body > section[id*="age"]').forEach(function(el){
+      if(!el.classList.contains("open") && !el.classList.contains("show")){
+        el.style.display="none";
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    hideRawAgeDuplicates();
+    fixSafeNav();
+  });
+
+  setTimeout(function(){ hideRawAgeDuplicates(); fixSafeNav(); },300);
+  setInterval(fixSafeNav,2000);
 })();
 </script>
 
