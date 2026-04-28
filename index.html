@@ -1175,7 +1175,11 @@ body.sebas-guest .pcard-meta{
   font-size:0!important;
 }
 
-
+.bnav .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.75rem!important;
+  line-height:1!important;
+}
 
 #bn-plus .bn-l{
   font-size:.54rem!important;
@@ -1228,7 +1232,10 @@ body.sebas-guest .pcard-meta{
   font-size:0!important;
 }
 
-
+#bn-plus .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.65rem!important;
+}
 
 #bn-me .bn-ico{
   width:42px!important;
@@ -1485,7 +1492,10 @@ body.sebas-guest .pcard-meta{
   font-size:0!important;
 }
 
-
+#bn-plus .bn-plus:before{
+  content:"💎"!important;
+  font-size:1.7rem!important;
+}
 
 /* Derecha: Mi perfil con foto real */
 #bn-me .bn-ico{
@@ -1541,7 +1551,11 @@ body.sebas-guest .pcard-meta{
 }
 
 #bn-plus .bn-plus:before,
-
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.75rem!important;
+  line-height:1!important;
+}
 
 #bn-plus .bn-l,
 #bnPlusLbl{
@@ -1737,7 +1751,12 @@ body.sebas-guest .pcard-meta{
 }
 
 #bn-plus .bn-plus:before,
-
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+  line-height:1!important;
+  filter:saturate(1.35);
+}
 
 /* Tarjetas: nombre y ciudad con margen, tipografía coherente */
 .pcard-body{
@@ -1964,7 +1983,12 @@ body:not(.sebas-guest){
 }
 
 #bn-plus .bn-plus:before,
-
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+  line-height:1!important;
+  filter:saturate(1.35);
+}
 
 
 /* ===== FIX LIMPIO SEBAS: MENU / PERFIL / TARJETAS ===== */
@@ -2007,7 +2031,11 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   font-size:0!important;
   overflow:hidden!important;
 }
-#bn-plus .bn-plus:before,
+#bn-plus .bn-plus:before,#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.72rem!important;
+  line-height:1!important;
+}
 
 /* derecha: siempre perfil */
 #bn-me .bn-ico,#bn-me-ico{
@@ -2047,15 +2075,6 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
 .pa-super:after{content:none!important}
 
-
-#bnPlusIco{font-size:0;display:flex;align-items:center;justify-content:center}
-#bnPlusIco::after{content:'💎';font-size:1.8rem;animation:diam 4s linear infinite}
-@keyframes diam{
-  0%{filter:hue-rotate(0deg) drop-shadow(0 0 5px #4d96ff)}
-  33%{filter:hue-rotate(120deg) drop-shadow(0 0 5px #c77dff)}
-  66%{filter:hue-rotate(240deg) drop-shadow(0 0 5px #ff6b6b)}
-  100%{filter:hue-rotate(360deg) drop-shadow(0 0 5px #4d96ff)}
-}
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -5273,7 +5292,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
   setTimeout(function(){showAgeSebas();bindPlusSebas();},300);
   setTimeout(function(){showAgeSebas();bindPlusSebas();},1000);
-  setInterval(bindPlusSebas,30000);
+  setInterval(bindPlusSebas,1200);
 })();
 </script>
 
@@ -5366,7 +5385,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},300);
   setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1000);
-  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},30000);
+  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1200);
 })();
 </script>
 
@@ -5429,7 +5448,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(()=>{fixBuscador();fixPlus();},300);
   setTimeout(()=>{fixBuscador();fixPlus();},1000);
-  setInterval(()=>{fixBuscador();fixPlus();},30000);
+  setInterval(()=>{fixBuscador();fixPlus();},2000);
 
 })();
 </script>
@@ -5503,7 +5522,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener('DOMContentLoaded', cleanSearchSebasFinal);
   setTimeout(cleanSearchSebasFinal,300);
   setTimeout(cleanSearchSebasFinal,1000);
-  setInterval(cleanSearchSebasFinal,30000);
+  setInterval(cleanSearchSebasFinal,1500);
 })();
 </script>
 
@@ -5664,7 +5683,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
         if(typeof rProfiles==='function' && document.getElementById('page-profiles') && document.getElementById('page-profiles').classList.contains('active')) rProfiles();
       }
     }catch(e){}
-  },30000);
+  },2500);
 })();
 </script>
 
@@ -5907,7 +5926,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   document.addEventListener('DOMContentLoaded',fixSearchUIFinal);
   setTimeout(fixSearchUIFinal,300);
   setTimeout(fixSearchUIFinal,1000);
-  setInterval(fixSearchUIFinal,30000);
+  setInterval(fixSearchUIFinal,1600);
 })();
 </script>
 
@@ -6015,7 +6034,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   document.addEventListener('DOMContentLoaded',upgradeAlbumInputs);
   setTimeout(upgradeAlbumInputs,400);
-  setInterval(upgradeAlbumInputs,30000);
+  setInterval(upgradeAlbumInputs,1500);
 })();
 </script>
 
@@ -6500,7 +6519,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
     updateProfileViewMode();
     simplifyGuestCards();
     forcePhotoEverywhere();
-  },30000);
+  },1500);
 })();
 </script>
 
@@ -6565,7 +6584,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   const oldChat=window.openChat;if(typeof oldChat==="function")window.openChat=function(){oldChat.apply(this,arguments);setTimeout(applyPhotos,90)};
   document.addEventListener("DOMContentLoaded",()=>{ui();applyPhotos()});
   setTimeout(()=>{ui();applyPhotos()},350);
-  setInterval(()=>{ui();applyPhotos()},30000);
+  setInterval(()=>{ui();applyPhotos()},1500);
 })();
 </script>
 
@@ -6660,7 +6679,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(applyBottomNavSebasFinal,350);
-  setInterval(applyBottomNavSebasFinal,30000);
+  setInterval(applyBottomNavSebasFinal,1500);
 })();
 </script>
 
@@ -6790,7 +6809,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(applyFinalNav,350);
-  setInterval(applyFinalNav,30000);
+  setInterval(applyFinalNav,1500);
 })();
 </script>
 
@@ -7053,7 +7072,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(function(){ensureFortyPlusPage();applyNav();fixProfilePhotos();},350);
-  setInterval(function(){applyNav();fixProfilePhotos();},30000);
+  setInterval(function(){applyNav();fixProfilePhotos();},900);
 })();
 </script>
 
@@ -7340,7 +7359,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   });
 
   setTimeout(function(){ensureFortyPlusPage();applyNavHard();fixCardPhotosAndFormat();},350);
-  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},30000);
+  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},500);
 })();
 </script>
 
@@ -7525,7 +7544,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   setInterval(function(){
     forceFortyPlusLabel();
     bindStepper();
-  },30000);
+  },500);
 })();
 </script>
 
@@ -7842,7 +7861,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
     forceFortyPlusLabel();
     bindStepper();
     fixNearbyPhotos();
-  },30000);
+  },700);
 })();
 </script>
 
@@ -7935,7 +7954,7 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
   const oldRProfiles=window.rProfiles;if(typeof oldRProfiles==="function"&&!oldRProfiles.__sebasNoJump){window.rProfiles=function(){const r=oldRProfiles.apply(this,arguments);setTimeout(fixCards,120);setTimeout(fixCards,450);return r};window.rProfiles.__sebasNoJump=true}
   const oldGo=window.go;if(typeof oldGo==="function"&&!oldGo.__sebasNoJump){window.go=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(run,80);return}const r=oldGo.apply(this,arguments);setTimeout(run,120);return r};window.go.__sebasNoJump=true}
   document.addEventListener("DOMContentLoaded",()=>{updateLocationSoft();run()});
-  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,30000);
+  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,1500);
 })();
 </script>
 
@@ -8013,8 +8032,7 @@ body{padding-bottom:96px!important}
 .pcard-ph.has-photo .pcard-av{display:none!important}
 </style>
 
-<script id="sebas-final-real-fix-js">function goBack(){if(window.goTo)goTo('home');}
-
+<script id="sebas-final-real-fix-js">
 (function(){
   let fixing=false;
   function isLogged(){return !!(window.CU&&CU.id)}
@@ -8038,7 +8056,7 @@ body{padding-bottom:96px!important}
     if(document.getElementById("page-fortyplus"))return;
     const page=document.createElement("section");
     page.id="page-fortyplus";page.className="page";
-    page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goBack()">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
+    page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="go(\\'home\\')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
     const bnav=document.querySelector(".bnav");if(bnav&&bnav.parentNode)bnav.parentNode.insertBefore(page,bnav);else document.body.appendChild(page);
   }
   function openFortyPlus(){
@@ -8108,7 +8126,7 @@ body{padding-bottom:96px!important}
   setTimeout(runFix,250);setTimeout(runFix,900);
   const target=document.querySelector(".bnav");
   if(target&&window.MutationObserver){const obs=new MutationObserver(function(){setTimeout(runFix,30)});obs.observe(target,{childList:true,subtree:true,characterData:true,attributes:true})}
-  setInterval(runFix,30000);
+  setInterval(runFix,1400);
 })();
 </script>
 
@@ -8452,7 +8470,7 @@ Base: CODIGOREAL-FIX-MENU-PERFIL-FINAL
   setTimeout(run,900);
 
   /* Más liviano que antes: solo corrige textos/iconos, no reordena menú */
-  setInterval(run,30000);
+  setInterval(run,1200);
 })();
 </script>
 
@@ -8710,7 +8728,7 @@ body{
 
   document.addEventListener("DOMContentLoaded",observeMenu);
   setTimeout(observeMenu,300);
-  setInterval(run,30000);
+  setInterval(run,700);
 })();
 </script>
 
@@ -9042,7 +9060,7 @@ FORTYUP - FIX FINAL SEBAS: MI PERFIL + STEPPER EDITABLE + TARJETAS PROLIJAS
   document.addEventListener("DOMContentLoaded",run);
   setTimeout(run,250);
   setTimeout(run,900);
-  setInterval(run,30000);
+  setInterval(run,1200);
 })();
 </script>
 
@@ -9431,7 +9449,7 @@ FORTYUP - FIX FINAL SEBAS: MENU ARMONICO + PERFIL FIJO + TARJETAS PROLIJAS
   document.addEventListener("DOMContentLoaded",observeMenu);
   setTimeout(observeMenu,400);
 
-  setInterval(run,30000);
+  setInterval(run,900);
 })();
 </script>
 
@@ -9677,7 +9695,7 @@ FORTYUP - FIX SEBAS: TARJETAS REALES + MI PERFIL SIN BLANCO
   setInterval(function(){
     polishProfileCards();
     bindMyProfileFast();
-  },30000);
+  },1200);
 })();
 </script>
 
@@ -9769,8 +9787,7 @@ body.fu-logged{
 }
 </style>
 
-<script id="sebas-final-session-fix-js">function goProfiles(){if(window.goTo)goTo('profiles');}
-
+<script id="sebas-final-session-fix-js">
 (function(){
   let running=false;
 
@@ -9851,7 +9868,7 @@ body.fu-logged{
       page=document.createElement("section");
       page.id="page-fortyplus";
       page.className="page";
-      page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goProfiles()">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
+      page.innerHTML='<div class="fup-wrap"><button class="back-b" onclick="goTo(\\'profiles\\')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div></div>';
       const nav=document.querySelector(".bnav");
       if(nav && nav.parentNode) nav.parentNode.insertBefore(page,nav);
       else document.body.appendChild(page);
@@ -10137,7 +10154,7 @@ body.fu-logged{
   setTimeout(run,100);
   setTimeout(run,500);
   setTimeout(run,1200);
-  setInterval(run,30000);
+  setInterval(run,1200);
 })();
 </script>
 
