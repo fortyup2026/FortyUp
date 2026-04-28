@@ -1531,6 +1531,184 @@ body.sebas-guest .pcard-meta{
   display:none!important;
 }
 
+
+/* =========================================================
+   SEBAS FIX DEFINITIVO: NAV + TARJETAS + SUPER DIAMANTE
+   ========================================================= */
+
+/* Centro: botón FortyUp+ limpio, sin Perfil ni Próximamente */
+#bn-plus{
+  position:relative!important;
+}
+
+#bn-plus .bn-plus,
+#bnPlusIco{
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 8px 22px rgba(8,119,183,.30)!important;
+  font-size:0!important;
+}
+
+#bn-plus .bn-plus:before,
+#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.75rem!important;
+  line-height:1!important;
+}
+
+#bn-plus .bn-l,
+#bnPlusLbl{
+  font-size:.62rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin-top:.12rem!important;
+}
+
+#bn-plus .bn-l span,
+#bnPlusLbl span{
+  display:none!important;
+}
+
+/* Derecha: Mi perfil con foto real */
+#bn-me .bn-ico,
+#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  margin-bottom:.14rem!important;
+}
+
+#bn-me .bn-ico img,
+#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+}
+
+/* Tarjetas: formato más prolijo */
+.pcard-body{
+  padding:1rem 1.15rem .75rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.35rem!important;
+  line-height:1.1!important;
+  margin-bottom:.18rem!important;
+  letter-spacing:-.02em!important;
+}
+
+.pcard-meta{
+  font-size:.82rem!important;
+  line-height:1.25!important;
+  color:#6B7C76!important;
+  margin:.1rem 0 .45rem!important;
+}
+
+.dist-b{
+  margin-top:.22rem!important;
+  font-size:.74rem!important;
+}
+
+/* Acciones: que no se encimen */
+.pcard-acts{
+  display:flex!important;
+  align-items:center!important;
+  gap:.5rem!important;
+  flex-wrap:nowrap!important;
+  padding:.75rem 1rem 1rem!important;
+  overflow:hidden!important;
+}
+
+/* Súper diamante: solo diamante, sin texto encimado */
+.pa-super{
+  flex:0 0 46px!important;
+  width:46px!important;
+  height:46px!important;
+  border-radius:50%!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:0!important;
+  color:transparent!important;
+  overflow:hidden!important;
+  background:radial-gradient(circle at 30% 25%,#fff,#bdefff 30%,#39a7e8 62%,#0877b7 100%)!important;
+  border:3px solid #fff!important;
+  box-shadow:0 6px 18px rgba(8,119,183,.26)!important;
+  position:relative!important;
+}
+
+.pa-super:before{
+  content:"💎"!important;
+  font-size:1.45rem!important;
+  color:#fff!important;
+  line-height:1!important;
+}
+
+.pa-super.used,
+.pa-super.sent{
+  opacity:.9!important;
+  filter:none!important;
+}
+
+.pa-super.used:after,
+.pa-super.sent:after{
+  content:"✓"!important;
+  position:absolute!important;
+  right:3px!important;
+  bottom:2px!important;
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#10B981!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:.58rem!important;
+  font-weight:900!important;
+  border:2px solid #fff!important;
+}
+
+/* Forti enviado: sin desbordes */
+.pa-forti{
+  min-width:100px!important;
+  height:46px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+}
+
+.pa-forti.sent{
+  font-size:.82rem!important;
+  line-height:1!important;
+}
+
+/* Fotos de perfiles siempre cubren bien */
+.pcard-ph img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+}
+
+.pcard-ph.has-photo .pcard-av{
+  display:none!important;
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -6529,6 +6707,293 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 
   setTimeout(function(){ensureFortyPlusPage();applyNav();fixProfilePhotos();},350);
   setInterval(function(){applyNav();fixProfilePhotos();},900);
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   SEBAS FIX DEFINITIVO JS: CLICK DIAMANTE + PERFIL + FOTOS
+   ========================================================= */
+(function(){
+  function isLogged(){ return !!(window.CU && CU.id); }
+
+  function getStore(k,d){
+    try{
+      if(typeof g==="function") return g(k,d);
+      const raw=localStorage.getItem(k);
+      return raw ? JSON.parse(raw) : d;
+    }catch(e){ return d; }
+  }
+
+  function usersKey(){
+    try{ return (window.K && K.U) ? K.U : "fu_u"; }catch(e){ return "fu_u"; }
+  }
+
+  function mediaKeys(id){
+    return [
+      "fortyup_profile_media_FINAL_HOME_"+id,
+      "fortyup_profile_media_final_FIX_"+id,
+      "fortyup_profile_media_final_"+id,
+      "fu_profile_media_final_"+id,
+      "fu_profile_media_"+id
+    ];
+  }
+
+  function getMedia(id){
+    for(const k of mediaKeys(id)){
+      try{
+        const m=JSON.parse(localStorage.getItem(k)||"{}");
+        if(m && (m.photo || m.video)) return m;
+      }catch(e){}
+    }
+    return {};
+  }
+
+  function photoOf(u){
+    if(!u) return "";
+    if(u.photo) return u.photo;
+    const m=getMedia(u.id);
+    return m.photo || "";
+  }
+
+  function allUsers(){
+    let arr=[];
+    try{
+      arr = typeof normalizeUsers==="function" ? normalizeUsers() : getStore(usersKey(),[]);
+    }catch(e){
+      arr = getStore(usersKey(),[]);
+    }
+
+    return (arr||[]).map(function(u){
+      const nu=Object.assign({},u);
+      const m=getMedia(nu.id);
+      if(m.photo) nu.photo=m.photo;
+      if(m.video) nu.video=m.video;
+      return nu;
+    });
+  }
+
+  function ensureFortyPlusPage(){
+    if(document.getElementById("page-fortyplus")) return;
+
+    const page=document.createElement("section");
+    page.id="page-fortyplus";
+    page.className="page";
+    page.innerHTML = `
+      <div class="fup-wrap">
+        <button class="back-b" onclick="goTo ? goTo('home') : go('home')">← Volver</button>
+        <div class="fup-hero">
+          <div class="fup-diamond">💎</div>
+          <div class="fup-title">FortyUp<span>+</span></div>
+          <p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p>
+          <div class="fup-pill">✨ Próximamente disponible</div>
+        </div>
+        <h2 class="fup-section-title">¿Qué va a incluir?</h2>
+        <div class="fup-grid">
+          <div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div>
+          <div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div>
+        </div>
+        <div class="fup-plan">
+          <div class="fup-plan-head"><div class="fup-plan-name">Plan FortyUp+</div><div class="fup-soon">Próximamente</div></div>
+          <div class="fup-list">
+            <div>✓ Perfil destacado</div>
+            <div>✓ Súper Diamantes extra</div>
+            <div>✓ Álbumes privados mejorados</div>
+            <div>✓ Nuevas funciones sociales</div>
+          </div>
+          <button class="fup-main-btn" onclick="toast ? toast('FortyUp+ próximamente 💎','gd') : alert('FortyUp+ próximamente')">Avisarme cuando esté disponible</button>
+          <p class="fup-note">Todavía no se cobra nada. Esta pantalla queda preparada para activar más adelante.</p>
+        </div>
+      </div>
+    `;
+    const bnav=document.querySelector(".bnav");
+    if(bnav && bnav.parentNode) bnav.parentNode.insertBefore(page,bnav);
+    else document.body.appendChild(page);
+  }
+
+  function openFortyPlus(){
+    ensureFortyPlusPage();
+    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+    const page=document.getElementById("page-fortyplus");
+    if(page) page.classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function userHasProfile(){
+    if(!isLogged()) return false;
+    return !!(CU.name && CU.age && CU.city);
+  }
+
+  function openMyProfileOrCreate(){
+    if(!isLogged()){
+      if(typeof openAuth==="function") openAuth("login");
+      return;
+    }
+
+    if(userHasProfile()){
+      if(typeof goTo==="function") goTo("myprofile");
+      else if(typeof go==="function") go("myprofile");
+      if(typeof rMyP==="function") setTimeout(rMyP,80);
+    }else{
+      if(typeof goTo==="function") goTo("register");
+      else if(typeof go==="function") go("register");
+    }
+  }
+
+  function currentPhoto(){
+    if(!isLogged()) return "";
+    return CU.photo || photoOf(CU);
+  }
+
+  function applyNavHard(){
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      plus.removeAttribute("onclick");
+      plus.onclick=null;
+
+      const lab=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
+      if(lab){
+        lab.textContent="FortyUp+";
+        lab.innerHTML="FortyUp+";
+      }
+
+      plus.addEventListener("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        openFortyPlus();
+        return false;
+      }, true);
+    }
+
+    const plusIco=document.getElementById("bnPlusIco");
+    if(plusIco){
+      plusIco.textContent="";
+      plusIco.innerHTML="";
+    }
+
+    const me=document.getElementById("bn-me");
+    if(me){
+      me.removeAttribute("onclick");
+      me.onclick=null;
+
+      const ico=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
+      const lab=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
+      const photo=currentPhoto();
+
+      if(ico){
+        if(photo){
+          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
+        }else if(isLogged()){
+          ico.textContent=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
+        }else{
+          ico.textContent="👤";
+        }
+      }
+
+      if(lab) lab.textContent="Mi perfil";
+
+      me.addEventListener("click", function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        openMyProfileOrCreate();
+        return false;
+      }, true);
+    }
+  }
+
+  function fixCardPhotosAndFormat(){
+    const users=allUsers();
+
+    document.querySelectorAll(".pcard").forEach(function(card){
+      const txt=(card.textContent||"").toLowerCase();
+
+      let found=users.find(function(u){
+        const name=(u.name||"").toLowerCase();
+        return name && txt.includes(name);
+      });
+
+      if(!found){
+        const init=(card.querySelector(".pcard-av")?.textContent || "").trim().toLowerCase();
+        found=users.find(function(u){
+          return photoOf(u) && (u.name||"").charAt(0).toLowerCase()===init;
+        });
+      }
+
+      const ph=card.querySelector(".pcard-ph");
+      if(found && ph && photoOf(found)){
+        ph.classList.add("has-photo");
+        ph.innerHTML='<img src="'+photoOf(found)+'" alt="'+(found.name||"perfil")+'">';
+      }
+
+      const name=card.querySelector(".pcard-name");
+      if(name){
+        name.innerHTML=name.textContent.replace(/,\s*/g,", ");
+      }
+
+      card.querySelectorAll(".pa-super").forEach(function(btn){
+        btn.textContent="";
+        btn.innerHTML="";
+      });
+    });
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__sebasHardFinal){
+    const wrapped=function(page){
+      if(page==="fortyplus"){
+        openFortyPlus();
+        setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},80);
+        return;
+      }
+      const res=oldGo.apply(this,arguments);
+      setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},120);
+      return res;
+    };
+    wrapped.__sebasHardFinal=true;
+    window.go=wrapped;
+  }
+
+  const oldGoTo=window.goTo;
+  if(typeof oldGoTo==="function" && !oldGoTo.__sebasHardFinal){
+    const wrapped=function(page){
+      if(page==="fortyplus"){
+        openFortyPlus();
+        setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},80);
+        return;
+      }
+      const res=oldGoTo.apply(this,arguments);
+      setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},120);
+      return res;
+    };
+    wrapped.__sebasHardFinal=true;
+    window.goTo=wrapped;
+  }
+
+  const oldRProfiles=window.rProfiles;
+  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasHardPhotos){
+    const wrapped=function(){
+      const res=oldRProfiles.apply(this,arguments);
+      setTimeout(fixCardPhotosAndFormat,120);
+      setTimeout(fixCardPhotosAndFormat,450);
+      return res;
+    };
+    wrapped.__sebasHardPhotos=true;
+    window.rProfiles=wrapped;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    ensureFortyPlusPage();
+    applyNavHard();
+    fixCardPhotosAndFormat();
+  });
+
+  setTimeout(function(){ensureFortyPlusPage();applyNavHard();fixCardPhotosAndFormat();},350);
+  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},500);
 })();
 </script>
 
