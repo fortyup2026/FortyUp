@@ -2081,6 +2081,60 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style id="fortyup-final-user-request-css">
+body:not(.fu-logged) .bnav{display:none!important}
+body.fu-logged .bnav{display:flex!important}
+body.fu-logged{padding-bottom:104px!important}
+
+body:not(.fu-logged) #page-home.active{height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+body:not(.fu-logged) #page-home .inner{height:100%!important;max-height:100%!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;padding:.65rem 1rem .9rem!important;box-sizing:border-box!important}
+body:not(.fu-logged) #page-home .hero,body:not(.fu-logged) #page-home .home-hero,body:not(.fu-logged) #page-home .landing,body:not(.fu-logged) #page-home .cover{flex:1!important;min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;overflow:hidden!important;padding:.2rem 0!important;box-sizing:border-box!important}
+body:not(.fu-logged) #page-home h1,body:not(.fu-logged) #page-home .hero-title,body:not(.fu-logged) #page-home .brand-title{font-size:clamp(2.35rem,9.8vw,3.7rem)!important;line-height:.9!important;margin:.04rem 0 .22rem!important}
+body:not(.fu-logged) #page-home h2,body:not(.fu-logged) #page-home .hero h2,body:not(.fu-logged) #page-home .headline{font-size:clamp(1.28rem,5.7vw,1.95rem)!important;line-height:1!important;margin:.04rem 0 .24rem!important}
+body:not(.fu-logged) #page-home p,body:not(.fu-logged) #page-home .desc{font-size:.8rem!important;line-height:1.22!important;margin:.04rem auto .22rem!important;max-width:92%!important}
+body:not(.fu-logged) #page-home .hero-diamond,body:not(.fu-logged) #page-home .diamond,body:not(.fu-logged) #page-home .big-diamond,body:not(.fu-logged) #page-home img[alt*="diamante"],body:not(.fu-logged) #page-home img[src*="diamond"]{max-height:78px!important;max-width:112px!important;margin:.06rem auto!important}
+body:not(.fu-logged) #page-home .h-btns{flex-shrink:0!important;display:flex!important;flex-direction:column!important;gap:.6rem!important;width:min(88%,420px)!important;margin:.22rem auto 0!important}
+body:not(.fu-logged) #page-home .h-btns button,body:not(.fu-logged) #page-home .h-btns .btn,body:not(.fu-logged) #page-home .h-btns a{min-height:45px!important;max-height:52px!important}
+
+.bnav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:92px!important;min-height:92px!important;z-index:999999!important;align-items:center!important;justify-content:space-around!important;padding:7px 0 12px!important;background:rgba(240,253,248,.96)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;transform:none!important;translate:none!important;transition:none!important;animation:none!important;overflow:visible!important;box-sizing:border-box!important}
+.bnav .bn{flex:1 1 20%!important;width:20%!important;max-width:20%!important;min-width:0!important;height:80px!important;min-height:80px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;padding:4px 2px!important;margin:0!important;transform:none!important;translate:none!important;transition:none!important;animation:none!important;overflow:visible!important;box-sizing:border-box!important}
+.bnav .bn:not(#bn-plus) .bn-ico{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;max-height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:1.58rem!important;line-height:1!important;margin:0 auto 4px!important;overflow:hidden!important;border-radius:50%!important}
+.bnav .bn-l{height:18px!important;line-height:18px!important;font-size:.66rem!important;font-weight:900!important;color:#6B7C76!important;margin:0!important;padding:0!important;text-align:center!important;white-space:nowrap!important;overflow:visible!important}
+
+#bn-plus .bn-plus,#bnPlusIco{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;max-width:58px!important;max-height:58px!important;border-radius:50%!important;margin:0 auto 4px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 23%),conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 48deg,#22d3ee 96deg,#60a5fa 142deg,#a78bfa 190deg,#f0abfc 232deg,#fde68a 278deg,#86efac 318deg,#7dd3fc 360deg)!important;border:6px solid #fff!important;box-shadow:0 10px 28px rgba(80,120,255,.30),0 0 0 6px rgba(255,255,255,.26),0 0 35px rgba(125,211,252,.32),inset 0 0 22px rgba(255,255,255,.52)!important;color:transparent!important;font-size:0!important;overflow:hidden!important}
+#bn-plus .bn-plus:before,#bnPlusIco:before{content:""!important;display:block!important;width:100%!important;height:100%!important;border-radius:50%!important;background:radial-gradient(circle at 34% 60%,rgba(0,205,255,.55) 0 18%,transparent 34%),radial-gradient(circle at 70% 36%,rgba(255,238,160,.55) 0 18%,transparent 34%),radial-gradient(circle at 50% 24%,rgba(255,130,255,.45) 0 18%,transparent 35%),radial-gradient(circle at 48% 78%,rgba(43,218,195,.48) 0 22%,transparent 38%);filter:blur(.3px) saturate(1.2)!important}
+#bn-plus .bn-l,#bnPlusLbl{font-size:0!important;color:transparent!important;height:19px!important;line-height:19px!important}
+#bn-plus .bn-l:before,#bnPlusLbl:before{content:"FortyUp+"!important;display:block!important;font-size:.68rem!important;line-height:19px!important;font-weight:900!important;color:#6B7C76!important;text-align:center!important}
+
+#bn-me .bn-ico,#bn-me-ico{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;max-height:42px!important;border-radius:50%!important;overflow:hidden!important;background:linear-gradient(135deg,#064E3B,#10B981)!important;font-size:0!important;color:transparent!important;margin:0 auto 4px!important;box-shadow:none!important;border:0!important}
+#bn-me .bn-ico img,#bn-me-ico img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;display:block!important}
+#bn-me .bn-l,#bn-me-lbl{font-size:0!important;color:transparent!important;height:18px!important;line-height:18px!important}
+#bn-me .bn-l:before,#bn-me-lbl:before{content:"Mi perfil"!important;display:block!important;font-size:.66rem!important;line-height:18px!important;font-weight:900!important;color:#6B7C76!important;text-align:center!important}
+
+#page-fortyplus.active{height:calc(100dvh - 92px)!important;max-height:calc(100dvh - 92px)!important;overflow:hidden!important;padding:.45rem .95rem 6rem!important;box-sizing:border-box!important;background:linear-gradient(180deg,#F0FDF8 0%,#FFFBF1 100%)!important;display:flex!important;flex-direction:column!important}
+#page-fortyplus .inner{height:100%!important;max-height:100%!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;gap:.36rem!important;padding:0!important;box-sizing:border-box!important}
+.fup-final-hero{flex:0 0 auto!important;border-radius:24px!important;padding:.68rem .8rem!important;min-height:0!important;margin:0!important}
+.fup-final-diamond{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;margin:0 auto .35rem!important}
+.fup-final-title{font-size:1.32rem!important;line-height:.95!important;margin:0 0 .22rem!important}
+.fup-final-copy{font-size:.66rem!important;line-height:1.15!important;max-width:310px!important;margin:0 auto .18rem!important}
+.fup-final-divider{margin:.28rem auto!important}
+.fup-final-soon{margin-top:.2rem!important;padding:.32rem .7rem!important;font-size:.64rem!important}
+.fup-final-list{flex:0 0 auto!important;display:grid!important;gap:.32rem!important;margin-top:.3rem!important}
+.fup-final-item{border-radius:16px!important;padding:.4rem .52rem!important;grid-template-columns:34px 1fr 24px!important;gap:.45rem!important;min-height:44px!important}
+.fup-final-icon{width:30px!important;height:30px!important;border-radius:11px!important;font-size:.95rem!important}
+.fup-final-item h3{font-size:.72rem!important;line-height:1.06!important;margin:0 0 .06rem!important}
+.fup-final-item p{font-size:.6rem!important;line-height:1.12!important}
+.fup-final-check{width:22px!important;height:22px!important;font-size:.7rem!important}
+.fup-final-gradient{flex:0 0 auto!important;margin-top:.3rem!important;border-radius:16px!important;padding:.42rem .55rem!important}
+.fup-final-gradient b{font-size:.72rem!important;margin-bottom:.04rem!important}
+.fup-final-gradient span{font-size:.6rem!important;line-height:1.1!important}
+
+.myp-card-media{background:linear-gradient(135deg,#F7FFFB,#FFFFFF)!important;border:1.8px solid #A7F3D0!important}
+.myp-card-media .myp-ct{font-family:'Nunito',sans-serif!important;font-size:1rem!important;font-weight:900!important;color:#10231D!important}
+.myp-card-media .myp-cd{font-family:'Nunito',sans-serif!important;font-size:.78rem!important;line-height:1.35!important;color:#6B7C76!important}
+</style>
+
 </head>
 <body>
 
@@ -3503,7 +3557,7 @@ function doAuth(){
     if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);
   }
 }
-function logout(){CU=null;CW=null;sv(K.S,null);clearReg();upNav();checkUnread();goTo('home');toast('Sesión cerrada.','ok')}
+function logout(){CU=null;CW=null;sv(K.S,null);clearReg();upNav();checkUnread();goTo('home');}
 function nowMs(){return Date.now()}
 function isNormalFortiActive(f){
   if(!f||f.type==='super')return false;
@@ -3741,7 +3795,7 @@ function rMyP(){
   var cards=document.createElement('div');cards.className='myp-cards';
   var cardData=[
     {ico:'<span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px"></span>',tit:'Mis Fortis',det:'Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong>',fn:function(){showMyFortis()},cls:'myp-card'},
-    {ico:'💬',tit:'Mensajes',det:'Chats activos <strong style="color:var(--g1)">'+chC+'</strong>',fn:function(){if(CU){goTo('chats');rChatList()}},cls:'myp-card'},
+    {ico:'📸',tit:'Fotos y videos',det:'Álbumes públicos y privados',fn:function(){toast('Fotos y videos próximamente 📸','ok')},cls:'myp-card myp-card-media'},
     {ico:'⭐',tit:'Favoritos',det:'Guardados <strong style="color:#7c5500">'+fvC+'</strong>',fn:function(){if(CU){goTo('favorites');rFavs()}},cls:'myp-card myp-card-g'},
     {ico:'✏️',tit:'Editar perfil',det:'Actualizá tu info, fotos e intereses',fn:function(){goTo('register')},cls:'myp-card'}
   ];
@@ -3752,11 +3806,7 @@ function rMyP(){
   });
 
   // Config section
-  var cfgHtml='<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;margin-top:1rem">📸 Fotos y videos</div>'
-    +'<div class="myp-cfg" style="margin-bottom:1rem">'
-    +'<div class="cfg-item" onclick="showAllAlbums()"><div class="cfg-ico">📸</div><div class="cfg-nm">Mis álbumes</div><div style="font-size:.72rem;color:var(--txt3)">Públicos y privados</div><span class="cfg-arr">›</span></div>'
-    +'</div>'
-    +'<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem">🔗 Redes sociales</div>'
+  var cfgHtml='<div style="font-weight:900;font-size:.88rem;color:var(--txt);margin-bottom:.65rem;margin-top:1rem">🔗 Redes sociales</div>'
     +'<div class="myp-cfg" style="margin-bottom:1rem">'
     +'<div class="cfg-item" onclick="showSocial()"><div class="cfg-ico">📱</div><div class="cfg-nm">Instagram, Facebook, TikTok, LinkedIn</div><span class="cfg-arr">›</span></div>'
     +'</div>'
@@ -7959,741 +8009,19 @@ init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(che
 </script>
 
 
-<!-- =========================================================
-FORTYUP - SOLO CAMBIOS PEDIDOS
-1) Invitado: home con botones sin scroll
-2) Invitado: sin menú inferior
-3) Logueado: menú visible
-4) Botón central círculo multicolor
-5) FortyUp+ abre pantalla Premium sin scroll
-========================================================= -->
-<style id="fortyup-solo-pedido-css">
-/* ---------- MENÚ SOLO CON SESIÓN ---------- */
-body:not(.fu-logged) .bnav{
-  display:none!important;
-}
-
-body.fu-logged .bnav{
-  display:flex!important;
-}
-
-/* ---------- HOME SIN SCROLL PARA INVITADO ---------- */
-body:not(.fu-logged) #page-home.active{
-  height:100dvh!important;
-  max-height:100dvh!important;
-  overflow:hidden!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-
-body:not(.fu-logged) #page-home .inner{
-  height:100%!important;
-  max-height:100%!important;
-  overflow:hidden!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:space-between!important;
-  padding-top:.75rem!important;
-  padding-bottom:.9rem!important;
-  box-sizing:border-box!important;
-}
-
-body:not(.fu-logged) #page-home .hero,
-body:not(.fu-logged) #page-home .home-hero,
-body:not(.fu-logged) #page-home .landing,
-body:not(.fu-logged) #page-home .cover{
-  flex:1!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:space-evenly!important;
-  overflow:hidden!important;
-  padding-top:.35rem!important;
-  padding-bottom:.35rem!important;
-  box-sizing:border-box!important;
-}
-
-/* Compactar textos de presentación */
-body:not(.fu-logged) #page-home h1,
-body:not(.fu-logged) #page-home .hero-title,
-body:not(.fu-logged) #page-home .brand-title{
-  margin:.1rem 0 .3rem!important;
-  line-height:.92!important;
-  font-size:clamp(2.75rem, 12vw, 4.55rem)!important;
-}
-
-body:not(.fu-logged) #page-home h2,
-body:not(.fu-logged) #page-home .hero h2,
-body:not(.fu-logged) #page-home .headline{
-  margin:.1rem 0 .35rem!important;
-  line-height:1!important;
-  font-size:clamp(1.55rem, 7vw, 2.45rem)!important;
-}
-
-body:not(.fu-logged) #page-home p,
-body:not(.fu-logged) #page-home .hero p,
-body:not(.fu-logged) #page-home .desc{
-  margin:.1rem auto .38rem!important;
-  line-height:1.32!important;
-  font-size:clamp(.84rem, 3.65vw, 1rem)!important;
-  max-width:92%!important;
-}
-
-body:not(.fu-logged) #page-home .tagline,
-body:not(.fu-logged) #page-home .gold{
-  margin:.22rem auto .38rem!important;
-  font-size:clamp(.84rem, 3.6vw, 1rem)!important;
-  line-height:1.1!important;
-}
-
-/* Diamante grande de home compacto para que entren botones */
-body:not(.fu-logged) #page-home .hero-diamond,
-body:not(.fu-logged) #page-home .diamond,
-body:not(.fu-logged) #page-home .big-diamond,
-body:not(.fu-logged) #page-home img[alt*="diamante"],
-body:not(.fu-logged) #page-home img[src*="diamond"]{
-  max-height:98px!important;
-  max-width:140px!important;
-  margin:.15rem auto .1rem!important;
-}
-
-/* Botones visibles dentro de pantalla */
-body:not(.fu-logged) #page-home .h-btns{
-  flex-shrink:0!important;
-  display:flex!important;
-  flex-direction:column!important;
-  gap:.7rem!important;
-  margin:.35rem auto .2rem!important;
-  width:min(88%,420px)!important;
-}
-
-body:not(.fu-logged) #page-home .h-btns button,
-body:not(.fu-logged) #page-home .h-btns .btn,
-body:not(.fu-logged) #page-home .h-btns a{
-  min-height:48px!important;
-  max-height:56px!important;
-}
-
-/* ---------- MENÚ LOGUEADO ---------- */
-body.fu-logged{
-  padding-bottom:104px!important;
-}
-
-.bnav{
-  position:fixed!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  height:92px!important;
-  min-height:92px!important;
-  z-index:999999!important;
-  align-items:center!important;
-  justify-content:space-around!important;
-  padding:7px 0 12px!important;
-  background:rgba(240,253,248,.96)!important;
-  backdrop-filter:blur(20px)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  transform:none!important;
-  translate:none!important;
-  transition:none!important;
-  animation:none!important;
-  overflow:visible!important;
-  box-sizing:border-box!important;
-}
-
-.bnav .bn{
-  flex:1 1 20%!important;
-  width:20%!important;
-  max-width:20%!important;
-  min-width:0!important;
-  height:80px!important;
-  min-height:80px!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:4px!important;
-  padding:4px 2px!important;
-  margin:0!important;
-  transform:none!important;
-  translate:none!important;
-  transition:none!important;
-  animation:none!important;
-  overflow:visible!important;
-  box-sizing:border-box!important;
-}
-
-.bnav .bn:not(#bn-plus) .bn-ico{
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  max-width:42px!important;
-  max-height:42px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  font-size:1.58rem!important;
-  line-height:1!important;
-  margin:0 auto 4px!important;
-  overflow:hidden!important;
-  border-radius:50%!important;
-}
-
-.bnav .bn-l{
-  height:18px!important;
-  line-height:18px!important;
-  font-size:.66rem!important;
-  font-weight:900!important;
-  color:#6B7C76!important;
-  margin:0!important;
-  padding:0!important;
-  text-align:center!important;
-  white-space:nowrap!important;
-  overflow:visible!important;
-}
-
-/* ---------- BOTÓN CENTRAL CÍRCULO MULTICOLOR, COMO LA IMAGEN ---------- */
-#bn-plus .bn-plus,
-#bnPlusIco{
-  width:58px!important;
-  height:58px!important;
-  min-width:58px!important;
-  min-height:58px!important;
-  max-width:58px!important;
-  max-height:58px!important;
-  border-radius:50%!important;
-  margin:0 auto 4px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  background:
-    radial-gradient(circle at 50% 48%,
-      rgba(255,255,255,.18) 0%,
-      rgba(255,255,255,0) 23%),
-    conic-gradient(from 210deg,
-      #7dd3fc 0deg,
-      #38bdf8 48deg,
-      #22d3ee 96deg,
-      #60a5fa 142deg,
-      #a78bfa 190deg,
-      #f0abfc 232deg,
-      #fde68a 278deg,
-      #86efac 318deg,
-      #7dd3fc 360deg
-    )!important;
-  border:6px solid #fff!important;
-  box-shadow:
-    0 10px 28px rgba(80,120,255,.30),
-    0 0 0 6px rgba(255,255,255,.26),
-    0 0 35px rgba(125,211,252,.32),
-    inset 0 0 22px rgba(255,255,255,.52)!important;
-  color:transparent!important;
-  font-size:0!important;
-  overflow:hidden!important;
-}
-
-#bn-plus .bn-plus:before,
-#bnPlusIco:before{
-  content:""!important;
-  display:block!important;
-  width:100%!important;
-  height:100%!important;
-  border-radius:50%!important;
-  background:
-    radial-gradient(circle at 34% 60%, rgba(0,205,255,.55) 0 18%, transparent 34%),
-    radial-gradient(circle at 70% 36%, rgba(255,238,160,.55) 0 18%, transparent 34%),
-    radial-gradient(circle at 50% 24%, rgba(255,130,255,.45) 0 18%, transparent 35%),
-    radial-gradient(circle at 48% 78%, rgba(43,218,195,.48) 0 22%, transparent 38%);
-  filter:blur(.3px) saturate(1.2)!important;
-}
-
-#bn-plus .bn-l,
-#bnPlusLbl{
-  font-size:0!important;
-  color:transparent!important;
-  height:19px!important;
-  line-height:19px!important;
-}
-
-#bn-plus .bn-l:before,
-#bnPlusLbl:before{
-  content:"FortyUp+"!important;
-  display:block!important;
-  font-size:.68rem!important;
-  line-height:19px!important;
-  font-weight:900!important;
-  color:#6B7C76!important;
-  text-align:center!important;
-}
-
-/* ---------- MI PERFIL FOTO ESTABLE ---------- */
-#bn-me .bn-ico,
-#bn-me-ico{
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  max-width:42px!important;
-  max-height:42px!important;
-  border-radius:50%!important;
-  overflow:hidden!important;
-  background:linear-gradient(135deg,#064E3B,#10B981)!important;
-  font-size:0!important;
-  color:transparent!important;
-  margin:0 auto 4px!important;
-  box-shadow:none!important;
-  border:0!important;
-}
-
-#bn-me .bn-ico img,
-#bn-me-ico img{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  border-radius:50%!important;
-  display:block!important;
-}
-
-#bn-me .bn-l,
-#bn-me-lbl{
-  font-size:0!important;
-  color:transparent!important;
-  height:18px!important;
-  line-height:18px!important;
-}
-
-#bn-me .bn-l:before,
-#bn-me-lbl:before{
-  content:"Mi perfil"!important;
-  display:block!important;
-  font-size:.66rem!important;
-  line-height:18px!important;
-  font-weight:900!important;
-  color:#6B7C76!important;
-  text-align:center!important;
-}
-
-/* ---------- FORTYUP+ PREMIUM SIN SCROLL ---------- */
-#page-fortyplus.active{
-  height:calc(100dvh - 92px)!important;
-  max-height:calc(100dvh - 92px)!important;
-  overflow:hidden!important;
-  padding:.55rem .95rem 6rem!important;
-  box-sizing:border-box!important;
-  background:linear-gradient(180deg,#F0FDF8 0%,#FFFBF1 100%)!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-
-#page-fortyplus .inner{
-  height:100%!important;
-  max-height:100%!important;
-  overflow:hidden!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:space-between!important;
-  gap:.42rem!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-}
-
-.fup-final-hero{
-  flex:0 0 auto!important;
-  border-radius:26px!important;
-  padding:.9rem .9rem!important;
-  min-height:0!important;
-  margin:0!important;
-}
-
-.fup-final-diamond{
-  width:72px!important;
-  height:72px!important;
-  min-width:72px!important;
-  min-height:72px!important;
-  margin:0 auto .55rem!important;
-}
-
-.fup-final-title{
-  font-size:1.58rem!important;
-  line-height:.95!important;
-  margin:0 0 .32rem!important;
-}
-
-.fup-final-copy{
-  font-size:.74rem!important;
-  line-height:1.22!important;
-  max-width:310px!important;
-  margin:0 auto .28rem!important;
-}
-
-.fup-final-divider{
-  margin:.38rem auto!important;
-}
-
-.fup-final-soon{
-  margin-top:.3rem!important;
-  padding:.4rem .85rem!important;
-  font-size:.7rem!important;
-}
-
-.fup-final-list{
-  flex:0 0 auto!important;
-  display:grid!important;
-  gap:.4rem!important;
-  margin-top:.38rem!important;
-}
-
-.fup-final-item{
-  border-radius:18px!important;
-  padding:.52rem .62rem!important;
-  grid-template-columns:38px 1fr 26px!important;
-  gap:.5rem!important;
-  min-height:52px!important;
-}
-
-.fup-final-icon{
-  width:34px!important;
-  height:34px!important;
-  border-radius:13px!important;
-  font-size:1.05rem!important;
-}
-
-.fup-final-item h3{
-  font-size:.78rem!important;
-  line-height:1.08!important;
-  margin:0 0 .08rem!important;
-}
-
-.fup-final-item p{
-  font-size:.64rem!important;
-  line-height:1.16!important;
-}
-
-.fup-final-check{
-  width:24px!important;
-  height:24px!important;
-  font-size:.75rem!important;
-}
-
-.fup-final-gradient{
-  flex:0 0 auto!important;
-  margin-top:.38rem!important;
-  border-radius:18px!important;
-  padding:.58rem .65rem!important;
-}
-
-.fup-final-gradient b{
-  font-size:.78rem!important;
-  margin-bottom:.08rem!important;
-}
-
-.fup-final-gradient span{
-  font-size:.64rem!important;
-  line-height:1.12!important;
-}
-
-@media(max-height:760px){
-  body:not(.fu-logged) #page-home h1,
-  body:not(.fu-logged) #page-home .hero-title,
-  body:not(.fu-logged) #page-home .brand-title{
-    font-size:clamp(2.45rem, 10.4vw, 3.8rem)!important;
-  }
-
-  body:not(.fu-logged) #page-home h2,
-  body:not(.fu-logged) #page-home .hero h2,
-  body:not(.fu-logged) #page-home .headline{
-    font-size:clamp(1.32rem, 6vw, 2rem)!important;
-  }
-
-  body:not(.fu-logged) #page-home p,
-  body:not(.fu-logged) #page-home .hero p,
-  body:not(.fu-logged) #page-home .desc{
-    font-size:.8rem!important;
-    line-height:1.24!important;
-    margin-bottom:.25rem!important;
-  }
-
-  body:not(.fu-logged) #page-home .hero-diamond,
-  body:not(.fu-logged) #page-home .diamond,
-  body:not(.fu-logged) #page-home .big-diamond,
-  body:not(.fu-logged) #page-home img[alt*="diamante"],
-  body:not(.fu-logged) #page-home img[src*="diamond"]{
-    max-height:78px!important;
-    max-width:112px!important;
-  }
-
-  #page-fortyplus.active{
-    padding-top:.3rem!important;
-  }
-
-  .fup-final-hero{
-    padding:.68rem .8rem!important;
-  }
-
-  .fup-final-diamond{
-    width:58px!important;
-    height:58px!important;
-    min-width:58px!important;
-    min-height:58px!important;
-    margin-bottom:.35rem!important;
-  }
-
-  .fup-final-title{
-    font-size:1.32rem!important;
-  }
-
-  .fup-final-copy{
-    font-size:.66rem!important;
-    line-height:1.15!important;
-  }
-
-  .fup-final-item{
-    min-height:46px!important;
-    padding:.42rem .55rem!important;
-  }
-
-  .fup-final-gradient{
-    padding:.46rem .6rem!important;
-  }
-}
-</style>
-
-<script id="fortyup-solo-pedido-js">
+<script id="fortyup-final-user-request-js">
 (function(){
-  function isLogged(){
-    try{
-      if(typeof refreshCU==="function") refreshCU();
-    }catch(e){}
-    return !!(window.CU && CU.id);
-  }
-
-  function applyState(){
-    const ok=isLogged();
-    document.body.classList.toggle("fu-logged",ok);
-    document.body.classList.toggle("fu-guest",!ok);
-
-    const nav=document.querySelector(".bnav");
-    if(nav) nav.style.display=ok ? "flex" : "none";
-
-    lockPlusButton();
-    lockProfilePhoto();
-  }
-
-  function lockPlusButton(){
-    const plus=document.getElementById("bn-plus");
-    if(!plus) return;
-
-    const ico=document.getElementById("bnPlusIco") || plus.querySelector(".bn-plus");
-    const lab=document.getElementById("bnPlusLbl") || plus.querySelector(".bn-l");
-
-    if(ico){
-      ico.innerHTML="";
-      ico.textContent="";
-    }
-
-    if(lab){
-      lab.innerHTML="";
-      lab.textContent="";
-    }
-  }
-
-  function lockProfilePhoto(){
-    const ico=document.getElementById("bn-me-ico");
-    const lab=document.getElementById("bn-me-lbl");
-
-    if(lab){
-      lab.innerHTML="";
-      lab.textContent="";
-    }
-
-    if(ico && isLogged()){
-      if(CU.photo){
-        const img=ico.querySelector("img");
-        if(!img || img.getAttribute("src")!==CU.photo){
-          ico.innerHTML='<img src="'+CU.photo+'" alt="Mi perfil">';
-        }
-      }else{
-        const nm=(CU.name||CU.email||"S").charAt(0).toUpperCase();
-        ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+nm+'</span>';
-      }
-    }
-  }
-
-  function ensurePlusPage(){
-    let page=document.getElementById("page-fortyplus");
-    if(!page){
-      page=document.createElement("section");
-      page.id="page-fortyplus";
-      page.className="page";
-      const nav=document.querySelector(".bnav");
-      if(nav && nav.parentNode) nav.parentNode.insertBefore(page,nav);
-      else document.body.appendChild(page);
-    }
-
-    page.innerHTML=`
-      <div class="inner">
-        <div class="fup-final-hero">
-          <div class="fup-final-diamond"></div>
-          <div class="fup-final-title">Forty<span>Up+</span></div>
-          <div class="fup-final-copy">
-            Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.
-          </div>
-          <div class="fup-final-divider"></div>
-          <div class="fup-final-copy">
-            Descubrí herramientas exclusivas pensadas para disfrutar tu mejor etapa.
-          </div>
-          <div class="fup-final-soon">✨ Próximamente disponible</div>
-        </div>
-
-        <div class="fup-final-list">
-          <div class="fup-final-item">
-            <div class="fup-final-icon">💎</div>
-            <div>
-              <h3>Más visibilidad</h3>
-              <p>Tu perfil aparece primero.</p>
-            </div>
-            <div class="fup-final-check">✓</div>
-          </div>
-
-          <div class="fup-final-item">
-            <div class="fup-final-icon">⭐</div>
-            <div>
-              <h3>Perfiles destacados</h3>
-              <p>Accedé a perfiles premium.</p>
-            </div>
-            <div class="fup-final-check">✓</div>
-          </div>
-
-          <div class="fup-final-item">
-            <div class="fup-final-icon">💬</div>
-            <div>
-              <h3>Más conexión</h3>
-              <p>Mejores chances de match.</p>
-            </div>
-            <div class="fup-final-check">✓</div>
-          </div>
-        </div>
-
-        <div class="fup-final-gradient">
-          <b>✦ Próximamente disponible</b>
-          <span>Estamos preparando algo increíble para vos.</span>
-        </div>
-      </div>
-    `;
-  }
-
-  function openPlus(){
-    if(!isLogged()) return;
-
-    ensurePlusPage();
-
-    document.querySelectorAll(".page").forEach(function(p){
-      p.classList.remove("active");
-    });
-
-    const page=document.getElementById("page-fortyplus");
-    if(page){
-      page.classList.add("active");
-      page.style.height="calc(100dvh - 92px)";
-      page.style.maxHeight="calc(100dvh - 92px)";
-      page.style.overflow="hidden";
-    }
-
-    if(typeof setBn==="function"){
-      try{setBn("plus");}catch(e){}
-    }
-
-    applyState();
-    window.scrollTo(0,0);
-  }
-
-  function bindPlus(){
-    const plus=document.getElementById("bn-plus");
-    if(!plus) return;
-
-    plus.onclick=function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      openPlus();
-      return false;
-    };
-
-    plus.addEventListener("click",function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-      openPlus();
-      return false;
-    },true);
-  }
-
-  function fixHome(){
-    const home=document.getElementById("page-home");
-    if(!home || !home.classList.contains("active") || isLogged()) return;
-
-    home.style.height="100dvh";
-    home.style.maxHeight="100dvh";
-    home.style.overflow="hidden";
-
-    const inner=home.querySelector(".inner");
-    if(inner){
-      inner.style.height="100%";
-      inner.style.maxHeight="100%";
-      inner.style.overflow="hidden";
-      inner.style.display="flex";
-      inner.style.flexDirection="column";
-      inner.style.justifyContent="space-between";
-    }
-  }
-
-  const oldGoTo=window.goTo;
-  if(typeof oldGoTo==="function" && !oldGoTo.__soloPedido){
-    window.goTo=function(page){
-      if(page==="plus" || page==="fortyplus"){
-        openPlus();
-        return;
-      }
-
-      const r=oldGoTo.apply(this,arguments);
-      setTimeout(applyState,40);
-      setTimeout(fixHome,60);
-      setTimeout(bindPlus,60);
-      return r;
-    };
-    window.goTo.__soloPedido=true;
-  }
-
-  const oldUpNav=window.upNav;
-  if(typeof oldUpNav==="function" && !oldUpNav.__soloPedido){
-    window.upNav=function(){
-      const r=oldUpNav.apply(this,arguments);
-      setTimeout(applyState,20);
-      setTimeout(bindPlus,40);
-      return r;
-    };
-    window.upNav.__soloPedido=true;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    ensurePlusPage();
-    applyState();
-    fixHome();
-    bindPlus();
-  });
-
-  setTimeout(function(){
-    ensurePlusPage();
-    applyState();
-    fixHome();
-    bindPlus();
-  },300);
-
-  setInterval(function(){
-    applyState();
-    fixHome();
-    bindPlus();
-  },1000);
+function isLogged(){try{if(typeof refreshCU==="function")refreshCU();}catch(e){}return !!(window.CU&&CU.id)}
+function state(){var ok=isLogged();document.body.classList.toggle("fu-logged",ok);document.body.classList.toggle("fu-guest",!ok);var nav=document.querySelector(".bnav");if(nav)nav.style.display=ok?"flex":"none";lockPlus();lockPhoto()}
+function lockPlus(){var plus=document.getElementById("bn-plus");if(!plus)return;var ico=document.getElementById("bnPlusIco")||plus.querySelector(".bn-plus");var lab=document.getElementById("bnPlusLbl")||plus.querySelector(".bn-l");if(ico){ico.innerHTML="";ico.textContent=""}if(lab){lab.innerHTML="";lab.textContent=""}}
+function lockPhoto(){var ico=document.getElementById("bn-me-ico");var lab=document.getElementById("bn-me-lbl");if(lab){lab.innerHTML="";lab.textContent=""}if(ico&&isLogged()){if(CU.photo){var img=ico.querySelector("img");if(!img||img.getAttribute("src")!==CU.photo){ico.innerHTML='<img src="'+CU.photo+'" alt="Mi perfil">'}}else{var nm=(CU.name||CU.email||"S").charAt(0).toUpperCase();ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+nm+"</span>"}}}
+function fixHome(){var home=document.getElementById("page-home");if(!home||!home.classList.contains("active")||isLogged())return;home.style.height="100dvh";home.style.maxHeight="100dvh";home.style.overflow="hidden";var inner=home.querySelector(".inner");if(inner){inner.style.height="100%";inner.style.maxHeight="100%";inner.style.overflow="hidden";inner.style.display="flex";inner.style.flexDirection="column";inner.style.justifyContent="space-between"}}
+function ensurePlus(){var page=document.getElementById("page-fortyplus");if(!page){page=document.createElement("section");page.id="page-fortyplus";page.className="page";var nav=document.querySelector(".bnav");if(nav&&nav.parentNode)nav.parentNode.insertBefore(page,nav);else document.body.appendChild(page)}page.innerHTML='<div class="inner"><div class="fup-final-hero"><div class="fup-final-diamond"></div><div class="fup-final-title">Forty<span>Up+</span></div><div class="fup-final-copy">Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.</div><div class="fup-final-divider"></div><div class="fup-final-copy">Descubrí herramientas exclusivas pensadas para disfrutar tu mejor etapa.</div><div class="fup-final-soon">✨ Próximamente disponible</div></div><div class="fup-final-list"><div class="fup-final-item"><div class="fup-final-icon">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil aparece primero.</p></div><div class="fup-final-check">✓</div></div><div class="fup-final-item"><div class="fup-final-icon">⭐</div><div><h3>Perfiles destacados</h3><p>Accedé a perfiles premium.</p></div><div class="fup-final-check">✓</div></div><div class="fup-final-item"><div class="fup-final-icon">💬</div><div><h3>Más conexión</h3><p>Mejores chances de match.</p></div><div class="fup-final-check">✓</div></div></div><div class="fup-final-gradient"><b>✦ Próximamente disponible</b><span>Estamos preparando algo increíble para vos.</span></div></div>'}
+function openPlus(){if(!isLogged())return;ensurePlus();document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});var page=document.getElementById("page-fortyplus");if(page){page.classList.add("active");page.style.height="calc(100dvh - 92px)";page.style.maxHeight="calc(100dvh - 92px)";page.style.overflow="hidden"}if(typeof setBn==="function"){try{setBn("plus")}catch(e){}}state();window.scrollTo(0,0)}
+function bindPlus(){var plus=document.getElementById("bn-plus");if(!plus)return;plus.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openPlus();return false}}
+var oldGoTo=window.goTo;if(typeof oldGoTo==="function"&&!oldGoTo.__finalUserRequest){window.goTo=function(page){if(page==="plus"||page==="fortyplus"){openPlus();return}var r=oldGoTo.apply(this,arguments);setTimeout(state,40);setTimeout(fixHome,60);setTimeout(bindPlus,60);return r};window.goTo.__finalUserRequest=true}
+var oldUpNav=window.upNav;if(typeof oldUpNav==="function"&&!oldUpNav.__finalUserRequest){window.upNav=function(){var r=oldUpNav.apply(this,arguments);setTimeout(state,20);setTimeout(bindPlus,40);return r};window.upNav.__finalUserRequest=true}
+document.addEventListener("DOMContentLoaded",function(){ensurePlus();state();fixHome();bindPlus()});setTimeout(function(){ensurePlus();state();fixHome();bindPlus()},300);setInterval(function(){state();fixHome();bindPlus()},1000)
 })();
 </script>
 
