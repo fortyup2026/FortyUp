@@ -2389,6 +2389,170 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
 }
 
+
+
+/* === FortyUp v71 - chat adaptado a pantalla, input fijo dentro de la ventana === */
+#page-chatwindow.active,
+#page-chat.active{
+  height:calc(100dvh - 74px - 92px)!important;
+  max-height:calc(100dvh - 74px - 92px)!important;
+  min-height:0!important;
+  padding:.62rem .86rem .74rem!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+#page-chatwindow .inner,
+#page-chat .inner{
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0 auto!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+#page-chatwindow .chat-win,
+#page-chat .chat-win{
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:24px!important;
+  background:#F1FFF8!important;
+  border:1.5px solid #D1E8DF!important;
+  box-shadow:0 14px 36px rgba(6,78,59,.10)!important;
+}
+
+#page-chatwindow .chat-hdr,
+#page-chat .chat-hdr{
+  flex:0 0 68px!important;
+  height:68px!important;
+  min-height:68px!important;
+  border:0!important;
+  border-bottom:1.5px solid #D1E8DF!important;
+  border-radius:24px 24px 0 0!important;
+  background:#fff!important;
+  padding:.66rem .82rem!important;
+}
+
+#page-chatwindow .chat-msgs,
+#page-chat .chat-msgs{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  border:0!important;
+  background:#F1FFF8!important;
+  padding:.78rem .72rem .72rem!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:.56rem!important;
+}
+
+#page-chatwindow .chat-in-a,
+#page-chat .chat-in-a{
+  position:static!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  flex:0 0 66px!important;
+  height:66px!important;
+  min-height:66px!important;
+  max-height:66px!important;
+  z-index:5!important;
+  border:0!important;
+  border-top:1.5px solid #D1E8DF!important;
+  border-radius:0 0 24px 24px!important;
+  background:rgba(255,255,255,.98)!important;
+  padding:.46rem .54rem!important;
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr) 38px 42px!important;
+  gap:.38rem!important;
+  align-items:center!important;
+  box-shadow:none!important;
+}
+
+#page-chatwindow .chat-in,
+#page-chat .chat-in{
+  height:42px!important;
+  min-width:0!important;
+  font-size:.88rem!important;
+}
+
+#page-chatwindow .chat-photo-btn,
+#page-chatwindow .chat-audio-btn,
+#page-chat .chat-photo-btn,
+#page-chat .chat-audio-btn{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  flex:0 0 38px!important;
+}
+
+#page-chatwindow .chat-sd,
+#page-chat .chat-sd{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  flex:0 0 42px!important;
+}
+
+@media(min-width:751px){
+  #page-chatwindow.active,
+  #page-chat.active{
+    height:calc(100dvh - 60px)!important;
+    max-height:calc(100dvh - 60px)!important;
+    padding:1rem 1rem 1.2rem!important;
+  }
+}
+
+@media(max-width:480px){
+  #page-chatwindow.active,
+  #page-chat.active{
+    height:calc(100dvh - 74px - 88px)!important;
+    max-height:calc(100dvh - 74px - 88px)!important;
+    padding:.54rem .78rem .62rem!important;
+  }
+  #page-chatwindow .chat-hdr,
+  #page-chat .chat-hdr{
+    flex-basis:64px!important;
+    height:64px!important;
+    min-height:64px!important;
+  }
+  #page-chatwindow .chat-in-a,
+  #page-chat .chat-in-a{
+    flex-basis:62px!important;
+    height:62px!important;
+    min-height:62px!important;
+    max-height:62px!important;
+    grid-template-columns:36px minmax(0,1fr) 36px 40px!important;
+    gap:.32rem!important;
+    padding:.42rem .48rem!important;
+  }
+  #page-chatwindow .chat-photo-btn,
+  #page-chatwindow .chat-audio-btn,
+  #page-chat .chat-photo-btn,
+  #page-chat .chat-audio-btn{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+  }
+  #page-chatwindow .chat-sd,
+  #page-chat .chat-sd{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+  }
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -11641,6 +11805,42 @@ body{padding-bottom:110px!important;}
  var or=window.showRewardSparkle;if(typeof or==='function'&&!or.__fuNotifWrapped){var wr=function(kind,name,id){try{fuAddNotification(kind==='super'?'super':'forti',name,id)}catch(e){}return or.apply(this,arguments)};wr.__fuNotifWrapped=true;window.showRewardSparkle=wr}
  var om=window.showMatch;if(typeof om==='function'&&!om.__fuNotifWrapped){var wm=function(id){try{var u=(typeof userById==='function')?userById(id):null;fuAddNotification('match',u?(u.name||'alguien'):'alguien',id)}catch(e){}return om.apply(this,arguments)};wm.__fuNotifWrapped=true;window.showMatch=wm}
  document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){try{fuInjectBell();fuUpdateNotifBadge()}catch(e){}},300)}); setTimeout(function(){try{fuInjectBell();fuUpdateNotifBadge()}catch(e){}},600);
+})();
+</script>
+
+
+<script>
+/* FortyUp v71 - mantener el chat usable y los mensajes al fondo */
+(function(){
+  function adjustChatV71(){
+    var chat=document.getElementById('page-chatwindow')||document.getElementById('page-chat');
+    if(!chat || !chat.classList.contains('active')) return;
+    var msgs=chat.querySelector('#chatMsgs,.chat-msgs');
+    if(msgs){
+      requestAnimationFrame(function(){ msgs.scrollTop=msgs.scrollHeight; });
+    }
+  }
+  var oldGoTo=window.goTo;
+  if(typeof oldGoTo==='function'){
+    window.goTo=function(p){
+      var r=oldGoTo.apply(this,arguments);
+      if(p==='chatwindow'||p==='chat') setTimeout(adjustChatV71,60);
+      return r;
+    };
+  }
+  var oldRChatMsgs=window.rChatMsgs;
+  if(typeof oldRChatMsgs==='function'){
+    window.rChatMsgs=function(){
+      var r=oldRChatMsgs.apply(this,arguments);
+      setTimeout(adjustChatV71,30);
+      return r;
+    };
+  }
+  window.addEventListener('resize',adjustChatV71);
+  window.addEventListener('orientationchange',function(){setTimeout(adjustChatV71,250)});
+  document.addEventListener('focusin',function(e){
+    if(e.target && e.target.classList && e.target.classList.contains('chat-in')) setTimeout(adjustChatV71,250);
+  });
 })();
 </script>
 
