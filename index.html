@@ -362,7 +362,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   .h-btns:after{content:'+';position:absolute;top:4.15rem;left:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#008A63,#064E3B);color:#fff;border:8px solid #fff;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:300;box-shadow:0 10px 32px rgba(6,78,59,.35)}
   .h-btns .btn{width:100%;justify-content:center;margin:.5rem 0}
   .h-btns .btn-p{margin-top:5.2rem;background:transparent;box-shadow:none;font-size:1.35rem!important;padding:.45rem!important}
-  .h-btns .btn-p:before{content:'Unite a FortyUp';display:block;color:#fff;font-weight:900}
+  .h-btns .btn-p:before{content:'Registrate';display:block;color:#fff;font-weight:900}
   .h-btns .btn-p{font-size:0!important}
   .h-btns .btn-o{border-color:#61C99B;color:#8FE2BC;background:transparent;font-size:1.1rem!important}
   .h-proof,.hcard,.sec-pil,.sec-st,.sec-cta,.footer{display:none}
@@ -2075,57 +2075,6 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
 .pa-super:after{content:none!important}
 
-
-/* ── Mobile Home: no scroll, fits screen ── */
-@media (max-width: 700px) {
-  #page-home {
-    overflow: hidden;
-    height: 100dvh;
-    height: calc(var(--vh, 1vh) * 100);
-  }
-  .hero {
-    min-height: 0 !important;
-    height: 100dvh !important;
-    height: calc(var(--vh, 1vh) * 100) !important;
-    padding: 1.5rem 1.25rem 5rem !important;
-    align-items: center !important;
-    overflow: hidden !important;
-  }
-  .hero-in {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    gap: .8rem !important;
-    width: 100% !important;
-  }
-  .hero-left {
-    width: 100% !important;
-  }
-  /* Hide the demo card on mobile - not needed */
-  .hcard { display: none !important; }
-  /* Compact text */
-  .h-title { font-size: 3.2rem !important; margin-bottom: .2rem !important; }
-  .h-sub { font-size: 1.1rem !important; margin-bottom: .5rem !important; }
-  .h-p { font-size: .82rem !important; margin-bottom: .5rem !important; line-height: 1.5 !important; }
-  .h-tag { font-size: .78rem !important; margin-bottom: .8rem !important; }
-  .h-pill { margin-bottom: .6rem !important; }
-  /* Big clear buttons */
-  .h-btns {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: .6rem !important;
-    width: 100% !important;
-    margin-bottom: .75rem !important;
-  }
-  .h-btns .btn {
-    width: 100% !important;
-    padding: .9rem !important;
-    font-size: 1rem !important;
-    border-radius: 50px !important;
-  }
-  .h-proof { justify-content: center !important; }
-}
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3989,8 +3938,8 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <p class="h-p">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias. Sin filtros. Sin superficialidades.</p>
         <p class="h-tag">✦ Nuevas etapas. Conexiones reales.</p>
         <div class="h-btns" id="heroBtns">
-          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate gratis</button>
-          <button class="btn btn-o btn-lg" onclick="openAuth('login')">Iniciá sesión</button>
+          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate →</button>
+          <button class="btn btn-o btn-lg" onclick="goTo('profiles')">Iniciar sesión</button>
         </div>
         <div class="h-proof">
           <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
@@ -4032,7 +3981,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <span class="sec-ey" style="color:rgba(167,243,208,.8)">¿Listo?</span>
         <h2>¿Listo para una nueva etapa?</h2>
         <p>Creá tu perfil en menos de 2 minutos y empezá a conocer personas increíbles.</p>
-        <button class="btn btn-gd btn-lg" onclick="openAuth('register')">Crear mi perfil gratis →</button>
+        <button class="btn btn-gd btn-lg" onclick="openAuth('register')">Registrate →</button>
       </div>
     </div>
   </section>
@@ -4041,7 +3990,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 
 <div class="page" id="page-profiles">
   <div class="inner"><div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
-  <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
+  <div><h2 class="pg-tit">Iniciar sesión</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
 <div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
@@ -4075,7 +4024,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <div class="fld"><label>Ciudad <span class="req">*</span></label><input type="text" id="rC" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div>
         <div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div>
       </div>
-      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Explorar perfiles te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
+      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Iniciar sesión te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
       <input type="hidden" id="rLat"><input type="hidden" id="rLng">
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto de perfil</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rPF').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>
@@ -5111,14 +5060,14 @@ function updateHeroLoggedIn(){
   if(!btns)return;
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.style.minWidth='200px';b1.textContent='Explorar perfiles →';b1.onclick=function(){goTo('profiles')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.style.minWidth='200px';b1.textContent='Iniciar sesión →';b1.onclick=function(){goTo('profiles')};
     var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Mi perfil';b2.onclick=function(){goTo('myprofile');rMyP()};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
   }else{
     btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Crear mi perfil gratis →';b1.onclick=function(){openAuth('register')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Explorar perfiles';b2.onclick=function(){goTo('profiles')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate →';b1.onclick=function(){openAuth('register')};
+    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciar sesión';b2.onclick=function(){goTo('profiles')};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>Comunidad exclusiva · Mayores de 40';
   }
@@ -6957,6 +6906,211 @@ body{padding-bottom:110px!important;}
   line-height:1.28!important;
   font-weight:700!important;
 }
+
+
+/* =========================================================
+   HOME INVITADO FINAL - INTEGRADO EN BASE BUENA
+   Objetivo: sin scroll, todo visible, botones Registrate/Iniciar sesión
+   ========================================================= */
+@media(max-width:750px){
+  body:not(.fu-logged){
+    overflow:hidden!important;
+    padding-bottom:0!important;
+  }
+
+  body:not(.fu-logged) #page-home.active{
+    height:100dvh!important;
+    max-height:100dvh!important;
+    overflow:hidden!important;
+    display:block!important;
+  }
+
+  body:not(.fu-logged) .nav{
+    height:74px!important;
+    min-height:74px!important;
+    max-height:74px!important;
+    position:sticky!important;
+    top:0!important;
+  }
+
+  body:not(.fu-logged) #page-home .hero{
+    height:calc(100dvh - 74px)!important;
+    min-height:calc(100dvh - 74px)!important;
+    max-height:calc(100dvh - 74px)!important;
+    overflow:hidden!important;
+    padding:.55rem 1rem .78rem!important;
+    align-items:center!important;
+    display:flex!important;
+    border-radius:0 0 34px 34px!important;
+    background:
+      radial-gradient(circle at 50% 46%,rgba(16,185,129,.13),transparent 38%),
+      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 66%,#063D33 66%,#063D33 100%)!important;
+  }
+
+  body:not(.fu-logged) #page-home .hero-in{
+    height:100%!important;
+    max-height:100%!important;
+    width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:0!important;
+    overflow:hidden!important;
+    text-align:center!important;
+  }
+
+  body:not(.fu-logged) #page-home .hero-left{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    width:100%!important;
+    padding:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-pill{
+    max-width:96%!important;
+    margin:0 auto .54rem!important;
+    padding:.3rem .72rem!important;
+    font-size:.64rem!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+    transform:none!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-title{
+    font-size:clamp(2.2rem,9.8vw,3.25rem)!important;
+    line-height:.88!important;
+    margin:0 0 .34rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-sub{
+    font-size:clamp(1.1rem,4.9vw,1.55rem)!important;
+    line-height:1.02!important;
+    margin:0 0 .42rem!important;
+    max-width:96%!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-p{
+    font-size:clamp(.75rem,3.2vw,.88rem)!important;
+    line-height:1.18!important;
+    max-width:95%!important;
+    margin:0 auto .36rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-tag{
+    font-size:clamp(.72rem,3.1vw,.84rem)!important;
+    line-height:1.05!important;
+    margin:0 auto!important;
+  }
+
+  body:not(.fu-logged) #page-home .hcard,
+  body:not(.fu-logged) #page-home .h-proof{
+    display:none!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns{
+    position:relative!important;
+    flex:0 0 auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:.48rem!important;
+    width:min(88%,420px)!important;
+    margin:0 auto!important;
+    padding:0!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns:before,
+  body:not(.fu-logged) #page-home .h-btns:after,
+  body:not(.fu-logged) #page-home .h-btns .btn-p:before{
+    display:none!important;
+    content:none!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns .btn,
+  body:not(.fu-logged) #page-home .h-btns button,
+  body:not(.fu-logged) #page-home .h-btns a{
+    width:100%!important;
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:999px!important;
+    margin:0!important;
+    padding:0 .9rem!important;
+    font-size:.92rem!important;
+    line-height:1!important;
+    font-weight:900!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns .btn-p{
+    background:linear-gradient(135deg,#064E3B,#059669)!important;
+    color:#fff!important;
+    border:2px solid rgba(167,243,208,.58)!important;
+    box-shadow:0 8px 24px rgba(6,78,59,.24)!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns .btn-o{
+    background:rgba(6,78,59,.10)!important;
+    color:#D1FAE5!important;
+    border:2px solid #7ee6b1!important;
+  }
+}
+
+@media(max-width:750px) and (max-height:740px){
+  body:not(.fu-logged) #page-home .hero{
+    padding:.38rem .9rem .56rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-pill{
+    font-size:.56rem!important;
+    margin-bottom:.28rem!important;
+    padding:.25rem .58rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-title{
+    font-size:clamp(1.85rem,8.1vw,2.65rem)!important;
+    margin-bottom:.22rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-sub{
+    font-size:clamp(.98rem,4.25vw,1.3rem)!important;
+    margin-bottom:.26rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-p{
+    font-size:.68rem!important;
+    line-height:1.12!important;
+    margin-bottom:.24rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-tag{
+    font-size:.66rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns{
+    gap:.36rem!important;
+  }
+
+  body:not(.fu-logged) #page-home .h-btns .btn,
+  body:not(.fu-logged) #page-home .h-btns button,
+  body:not(.fu-logged) #page-home .h-btns a{
+    height:41px!important;
+    min-height:41px!important;
+    max-height:41px!important;
+    font-size:.84rem!important;
+  }
+}
+
 </style>
 
 <script id="fortyup-clean-final-js">
@@ -7647,12 +7801,5 @@ body{padding-bottom:110px!important;}
 })();
 </script>
 
-
-<script>
-// Fix 100vh on mobile browsers
-function setVh(){document.documentElement.style.setProperty('--vh', window.innerHeight*0.01+'px')}
-setVh();
-window.addEventListener('resize', setVh);
-</script>
 </body>
 </html>
