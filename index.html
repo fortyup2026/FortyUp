@@ -2553,6 +2553,18 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   }
 }
 
+
+
+/* === FortyUp v74 - Crear perfil por etapas reales === */
+#page-register .reg-steps{position:sticky;top:74px;z-index:180;background:rgba(240,253,248,.92);backdrop-filter:blur(14px);padding:.55rem .15rem .65rem;border-radius:0 0 22px 22px;margin:.2rem 0 1.15rem!important}
+#page-register .reg-step{transition:.2s ease}
+#page-register .reg-step.active span{color:#064E3B;font-weight:900}
+#page-register .reg-step.completed span,#page-register .reg-step.done span{color:#064E3B;font-weight:900}
+#page-register .reg-stage-hint{font-size:.75rem;color:var(--txt3);font-weight:800;margin:-.45rem 0 1rem;text-align:center}
+#page-register .fcard{scroll-margin-top:145px}
+#page-register .fsec{scroll-margin-top:150px}
+#page-register .reg-photos-sec:before{content:'📸';display:inline-flex;margin-right:.35rem}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -5760,8 +5772,6 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Iniciar sesión te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
       <input type="hidden" id="rLat"><input type="hidden" id="rLng">
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>
-      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto de perfil</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rPF').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>
-      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Video de perfil <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rVF').click()">🎥 Cargar video corto</button><span class="photo-or">o pegá una URL de video</span><input type="url" id="rV" placeholder="https://... video" oninput="prevVideo(this.value)"><input type="file" id="rVF" accept="video/*" style="display:none" onchange="handleVideoFile(this)"></div><span class="gps-st" id="vidSt">Tip: para esta versión de prueba conviene usar videos cortos o URL.</span></div></div>
       <p class="fsec" style="margin-top:1.1rem">¿Qué buscás?</p>
       <div class="chips">
         <label class="chip"><input type="checkbox" name="lk" value="Amistad">Amistad</label>
@@ -5784,6 +5794,9 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
       <p class="fsec" style="margin-top:1.1rem">Sobre vos</p>
       <div class="fld"><label>Descripción <span class="req">*</span></label><textarea id="rD" rows="4" placeholder="Contá algo sobre vos..."></textarea></div>
       <div class="fld" style="margin-top:.85rem"><label>Intereses</label><input type="text" id="rI" placeholder="viajes, música, cocina..."></div>
+      <p class="fsec reg-photos-sec" style="margin-top:1.1rem">Fotos</p>
+      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto de perfil</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rPF').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>
+      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Video de perfil <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rVF').click()">🎥 Cargar video corto</button><span class="photo-or">o pegá una URL de video</span><input type="url" id="rV" placeholder="https://... video" oninput="prevVideo(this.value)"><input type="file" id="rVF" accept="video/*" style="display:none" onchange="handleVideoFile(this)"></div><span class="gps-st" id="vidSt">La foto que cargues acá se usa en tu perfil, en el menú, en los chats y en la tarjeta de fotos.</span></div></div>
       <div class="f-sub"><button class="btn btn-p btn-lg" onclick="saveProfile()">Guardar perfil ✦</button></div>
     </div>
   </div>
@@ -11899,6 +11912,91 @@ body{padding-bottom:110px!important;}
   document.addEventListener('focusin',function(e){
     if(e.target && e.target.classList && e.target.classList.contains('chat-in')) setTimeout(adjustChatV71,250);
   });
+})();
+
+
+/* === FortyUp v74 - flujo de crear perfil corregido === */
+(function(){
+  function fuFindRegSection(txt){
+    var page=document.getElementById('page-register');
+    if(!page)return null;
+    var secs=page.querySelectorAll('.fsec');
+    for(var i=0;i<secs.length;i++){
+      if((secs[i].textContent||'').trim().toLowerCase().indexOf(txt.toLowerCase())>-1)return secs[i];
+    }
+    return null;
+  }
+  window.findRegSection=fuFindRegSection;
+  window.enhanceRegisterUI=function(){
+    var page=document.getElementById('page-register');
+    if(!page)return;
+    var inner=page.querySelector('.inner');
+    var header=inner?inner.querySelector('div[style*="margin-bottom"]'):null;
+    var old=page.querySelector('.reg-steps');
+    if(old)old.remove();
+    var hintOld=page.querySelector('#regStageHint');
+    if(hintOld)hintOld.remove();
+    var steps=document.createElement('div');
+    steps.className='reg-steps reg-flow-live';
+    steps.innerHTML='<div class="reg-step done completed" data-step="1"><div class="reg-dot">✓</div><span>Cuenta</span></div><div class="reg-step active" data-step="2"><div class="reg-dot">2</div><span>Gustos</span></div><div class="reg-step" data-step="3"><div class="reg-dot">3</div><span>Sobre vos</span></div><div class="reg-step" data-step="4"><div class="reg-dot">4</div><span>Fotos</span></div>';
+    if(header&&header.parentNode)header.parentNode.insertBefore(steps,header.nextSibling);
+    var hint=document.createElement('div');
+    hint.className='reg-stage-hint';
+    hint.id='regStageHint';
+    hint.textContent='Completá los datos y avanzá bajando por el formulario.';
+    if(steps.parentNode)steps.parentNode.insertBefore(hint,steps.nextSibling);
+    window.setupRegisterScrollSpy();
+  };
+  window.setupRegisterScrollSpy=function(){
+    var page=document.getElementById('page-register');
+    if(!page)return;
+    var secs=[
+      {step:2,el:fuFindRegSection('¿Qué buscás?')||fuFindRegSection('Plan ideal')},
+      {step:3,el:fuFindRegSection('Sobre vos')},
+      {step:4,el:fuFindRegSection('Fotos')||document.getElementById('rP')}
+    ];
+    function setStep(n){
+      var all=page.querySelectorAll('.reg-step');
+      all.forEach(function(st){
+        var v=parseInt(st.getAttribute('data-step')||'0',10);
+        st.classList.toggle('active',v===n);
+        st.classList.toggle('completed',v<n);
+        var dot=st.querySelector('.reg-dot');
+        if(dot)dot.textContent=v<n?'✓':String(v);
+      });
+      var hint=document.getElementById('regStageHint');
+      if(hint)hint.textContent=n===2?'Elegí qué buscás y tus planes ideales.':n===3?'Contá algo sobre vos e intereses.':n===4?'Cargá tu foto: se replica en todos tus avatares.':'Completá tu perfil.';
+    }
+    function update(){
+      if(!page.classList.contains('active'))return;
+      var y=window.innerHeight*.35;
+      var current=2;
+      secs.forEach(function(sec){
+        if(!sec.el)return;
+        var r=sec.el.getBoundingClientRect();
+        if(r.top<y)current=sec.step;
+      });
+      setStep(current);
+    }
+    if(!window.__fuRegSpyBound){
+      window.addEventListener('scroll',update,{passive:true});
+      window.addEventListener('resize',update);
+      window.__fuRegSpyBound=true;
+    }
+    setTimeout(update,80);
+  };
+  function wrapGoTo(){
+    if(typeof window.goTo==='function' && !window.__fuGoToRegWrapped){
+      var oldGoTo=window.goTo;
+      window.goTo=function(p){
+        oldGoTo(p);
+        if(p==='register')setTimeout(function(){window.enhanceRegisterUI();window.setupRegisterScrollSpy();},120);
+      };
+      window.__fuGoToRegWrapped=true;
+    }
+  }
+  document.addEventListener('DOMContentLoaded',function(){wrapGoTo();setTimeout(function(){wrapGoTo();window.enhanceRegisterUI();window.setupRegisterScrollSpy();},350);});
+  setTimeout(wrapGoTo,700);
 })();
 </script>
 
