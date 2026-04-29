@@ -6909,12 +6909,18 @@ body{padding-bottom:110px!important;}
 
 
 /* =========================================================
-   HOME INVITADO - AJUSTE LIMPIO SOBRE BASE REAL
+   HOME MOBILE DEFINITIVO - BASE ORIGINAL
    ========================================================= */
 @media(max-width:750px){
   body:not(.fu-logged){
-    overflow:hidden!important;
     padding-bottom:0!important;
+    overflow:hidden!important;
+    height:100svh!important;
+    max-height:100svh!important;
+  }
+
+  body:not(.fu-logged) .bnav{
+    display:none!important;
   }
 
   body:not(.fu-logged) #page-home.active{
@@ -6930,80 +6936,94 @@ body{padding-bottom:110px!important;}
     max-height:74px!important;
   }
 
+  body:not(.fu-logged) .nav-in{
+    height:74px!important;
+  }
+
   body:not(.fu-logged) #page-home .hero{
     height:calc(100svh - 74px)!important;
     min-height:calc(100svh - 74px)!important;
     max-height:calc(100svh - 74px)!important;
     overflow:hidden!important;
-    padding:.42rem 1rem .72rem!important;
+    padding:0!important;
+    margin:0!important;
     border-radius:0 0 34px 34px!important;
-    display:flex!important;
-    align-items:stretch!important;
-    justify-content:center!important;
+    display:block!important;
     background:
-      radial-gradient(circle at 50% 38%,rgba(16,185,129,.12),transparent 34%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 61%,#063D33 61%,#063D33 100%)!important;
+      radial-gradient(circle at 50% 33%,rgba(16,185,129,.14),transparent 34%),
+      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 62%,#063D33 62%,#063D33 100%)!important;
+  }
+
+  body:not(.fu-logged) #page-home .hero-glow,
+  body:not(.fu-logged) #page-home .hero-b1,
+  body:not(.fu-logged) #page-home .hero-b2{
+    display:none!important;
   }
 
   body:not(.fu-logged) #page-home .hero-in{
-    width:100%!important;
     height:100%!important;
     max-height:100%!important;
+    width:100%!important;
     overflow:hidden!important;
-    display:grid!important;
-    grid-template-rows:minmax(0,1fr) auto!important;
-    align-items:stretch!important;
-    justify-items:center!important;
-    gap:.7rem!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    padding:20px 18px 28px!important;
+    gap:0!important;
     text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .hero-left{
-    width:100%!important;
+    flex:0 0 60%!important;
+    height:60%!important;
+    max-height:60%!important;
     min-height:0!important;
+    width:100%!important;
     padding:0!important;
     display:flex!important;
     flex-direction:column!important;
     align-items:center!important;
-    justify-content:center!important;
+    justify-content:flex-end!important;
   }
 
   body:not(.fu-logged) #page-home .h-pill{
-    max-width:96%!important;
-    margin:0 auto .6rem!important;
-    padding:.3rem .7rem!important;
-    font-size:.64rem!important;
+    max-width:100%!important;
+    margin:0 auto 14px!important;
+    padding:6px 12px!important;
+    font-size:12px!important;
     line-height:1!important;
     white-space:nowrap!important;
     transform:none!important;
+    box-shadow:0 7px 18px rgba(6,78,59,.07)!important;
   }
 
   body:not(.fu-logged) #page-home .h-title{
-    font-size:clamp(2.35rem,10vw,3.35rem)!important;
-    line-height:.9!important;
-    margin:0 0 .42rem!important;
+    font-size:38px!important;
+    line-height:.88!important;
+    margin:0 0 9px!important;
     text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:clamp(1.22rem,5.25vw,1.72rem)!important;
+    font-size:21px!important;
     line-height:1.02!important;
-    margin:0 0 .55rem!important;
-    max-width:96%!important;
+    margin:0 0 12px!important;
+    max-width:95%!important;
     text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-p{
-    font-size:clamp(.8rem,3.35vw,.92rem)!important;
-    line-height:1.22!important;
-    max-width:95%!important;
-    margin:0 auto .48rem!important;
+    font-size:14px!important;
+    line-height:1.24!important;
+    max-width:96%!important;
+    margin:0 auto 10px!important;
     text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-tag{
-    font-size:clamp(.76rem,3.2vw,.9rem)!important;
-    line-height:1.08!important;
+    font-size:13px!important;
+    line-height:1.05!important;
     margin:0 auto!important;
     text-align:center!important;
   }
@@ -7015,13 +7035,17 @@ body{padding-bottom:110px!important;}
 
   body:not(.fu-logged) #page-home .h-btns{
     position:relative!important;
+    flex:0 0 30%!important;
+    height:30%!important;
+    max-height:30%!important;
     width:min(88%,420px)!important;
     display:flex!important;
     flex-direction:column!important;
     justify-content:flex-start!important;
-    gap:.72rem!important;
+    align-items:center!important;
+    gap:14px!important;
     margin:0 auto!important;
-    padding:0 0 .2rem!important;
+    padding:12px 0 0!important;
     opacity:1!important;
     visibility:visible!important;
   }
@@ -7046,7 +7070,7 @@ body{padding-bottom:110px!important;}
     border-radius:999px!important;
     margin:0!important;
     padding:0 1rem!important;
-    font-size:1rem!important;
+    font-size:18px!important;
     line-height:1!important;
     font-weight:900!important;
     opacity:1!important;
@@ -7062,62 +7086,61 @@ body{padding-bottom:110px!important;}
   }
 
   body:not(.fu-logged) #page-home .h-btns .btn-o{
-    background:rgba(6,78,59,.18)!important;
+    background:rgba(6,78,59,.16)!important;
     color:#D1FAE5!important;
     border:2px solid #7ee6b1!important;
   }
 }
 
-@media(max-width:750px) and (max-height:740px){
-  body:not(.fu-logged) #page-home .hero{
-    padding:.34rem .9rem .54rem!important;
-    background:
-      radial-gradient(circle at 50% 37%,rgba(16,185,129,.12),transparent 34%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 59%,#063D33 59%,#063D33 100%)!important;
+@media(max-width:750px) and (max-height:760px){
+  body:not(.fu-logged) #page-home .hero-in{
+    padding:14px 18px 22px!important;
   }
 
-  body:not(.fu-logged) #page-home .hero-in{
-    gap:.55rem!important;
+  body:not(.fu-logged) #page-home .hero-left{
+    flex-basis:58%!important;
+    height:58%!important;
+    max-height:58%!important;
   }
 
   body:not(.fu-logged) #page-home .h-pill{
-    font-size:.58rem!important;
-    margin-bottom:.34rem!important;
-    padding:.25rem .6rem!important;
+    font-size:11px!important;
+    padding:5px 10px!important;
+    margin-bottom:10px!important;
   }
 
   body:not(.fu-logged) #page-home .h-title{
-    font-size:clamp(2rem,8.6vw,2.8rem)!important;
-    margin-bottom:.28rem!important;
+    font-size:32px!important;
+    margin-bottom:7px!important;
   }
 
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:clamp(1.05rem,4.5vw,1.38rem)!important;
-    margin-bottom:.34rem!important;
+    font-size:18px!important;
+    margin-bottom:9px!important;
   }
 
   body:not(.fu-logged) #page-home .h-p{
-    font-size:.7rem!important;
-    line-height:1.14!important;
-    margin-bottom:.28rem!important;
+    font-size:12.5px!important;
+    line-height:1.17!important;
+    margin-bottom:8px!important;
   }
 
   body:not(.fu-logged) #page-home .h-tag{
-    font-size:.68rem!important;
+    font-size:12px!important;
   }
 
   body:not(.fu-logged) #page-home .h-btns{
-    gap:.46rem!important;
-    padding-bottom:.1rem!important;
+    gap:11px!important;
+    padding-top:10px!important;
   }
 
   body:not(.fu-logged) #page-home .h-btns .btn,
   body:not(.fu-logged) #page-home .h-btns button,
   body:not(.fu-logged) #page-home .h-btns a{
-    height:44px!important;
-    min-height:44px!important;
-    max-height:44px!important;
-    font-size:.88rem!important;
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+    font-size:16px!important;
   }
 }
 
