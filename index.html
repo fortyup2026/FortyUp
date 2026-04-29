@@ -3939,7 +3939,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <p class="h-tag">✦ Nuevas etapas. Conexiones reales.</p>
         <div class="h-btns" id="heroBtns">
           <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate →</button>
-          <button class="btn btn-o btn-lg" onclick="goTo('profiles')">Iniciar sesión</button>
+          <button class="btn btn-o btn-lg" onclick="openAuth('login')">Iniciar sesión</button>
         </div>
         <div class="h-proof">
           <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
@@ -6909,8 +6909,7 @@ body{padding-bottom:110px!important;}
 
 
 /* =========================================================
-   HOME INVITADO FINAL - INTEGRADO EN BASE BUENA
-   Objetivo: sin scroll, todo visible, botones Registrate/Iniciar sesión
+   HOME INVITADO - AJUSTE LIMPIO SOBRE BASE REAL
    ========================================================= */
 @media(max-width:750px){
   body:not(.fu-logged){
@@ -6919,8 +6918,8 @@ body{padding-bottom:110px!important;}
   }
 
   body:not(.fu-logged) #page-home.active{
-    height:100dvh!important;
-    max-height:100dvh!important;
+    height:100svh!important;
+    max-height:100svh!important;
     overflow:hidden!important;
     display:block!important;
   }
@@ -6929,41 +6928,39 @@ body{padding-bottom:110px!important;}
     height:74px!important;
     min-height:74px!important;
     max-height:74px!important;
-    position:sticky!important;
-    top:0!important;
   }
 
   body:not(.fu-logged) #page-home .hero{
-    height:calc(100dvh - 74px)!important;
-    min-height:calc(100dvh - 74px)!important;
-    max-height:calc(100dvh - 74px)!important;
+    height:calc(100svh - 74px)!important;
+    min-height:calc(100svh - 74px)!important;
+    max-height:calc(100svh - 74px)!important;
     overflow:hidden!important;
-    padding:.55rem 1rem .78rem!important;
-    align-items:center!important;
-    display:flex!important;
+    padding:.42rem 1rem .72rem!important;
     border-radius:0 0 34px 34px!important;
+    display:flex!important;
+    align-items:stretch!important;
+    justify-content:center!important;
     background:
-      radial-gradient(circle at 50% 46%,rgba(16,185,129,.13),transparent 38%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 66%,#063D33 66%,#063D33 100%)!important;
+      radial-gradient(circle at 50% 38%,rgba(16,185,129,.12),transparent 34%),
+      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 61%,#063D33 61%,#063D33 100%)!important;
   }
 
   body:not(.fu-logged) #page-home .hero-in{
+    width:100%!important;
     height:100%!important;
     max-height:100%!important;
-    width:100%!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    justify-content:space-between!important;
-    gap:0!important;
     overflow:hidden!important;
+    display:grid!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    align-items:stretch!important;
+    justify-items:center!important;
+    gap:.7rem!important;
     text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .hero-left{
-    flex:1 1 auto!important;
-    min-height:0!important;
     width:100%!important;
+    min-height:0!important;
     padding:0!important;
     display:flex!important;
     flex-direction:column!important;
@@ -6973,8 +6970,8 @@ body{padding-bottom:110px!important;}
 
   body:not(.fu-logged) #page-home .h-pill{
     max-width:96%!important;
-    margin:0 auto .54rem!important;
-    padding:.3rem .72rem!important;
+    margin:0 auto .6rem!important;
+    padding:.3rem .7rem!important;
     font-size:.64rem!important;
     line-height:1!important;
     white-space:nowrap!important;
@@ -6982,29 +6979,33 @@ body{padding-bottom:110px!important;}
   }
 
   body:not(.fu-logged) #page-home .h-title{
-    font-size:clamp(2.2rem,9.8vw,3.25rem)!important;
-    line-height:.88!important;
-    margin:0 0 .34rem!important;
+    font-size:clamp(2.35rem,10vw,3.35rem)!important;
+    line-height:.9!important;
+    margin:0 0 .42rem!important;
+    text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:clamp(1.1rem,4.9vw,1.55rem)!important;
+    font-size:clamp(1.22rem,5.25vw,1.72rem)!important;
     line-height:1.02!important;
-    margin:0 0 .42rem!important;
+    margin:0 0 .55rem!important;
     max-width:96%!important;
+    text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-p{
-    font-size:clamp(.75rem,3.2vw,.88rem)!important;
-    line-height:1.18!important;
+    font-size:clamp(.8rem,3.35vw,.92rem)!important;
+    line-height:1.22!important;
     max-width:95%!important;
-    margin:0 auto .36rem!important;
+    margin:0 auto .48rem!important;
+    text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-tag{
-    font-size:clamp(.72rem,3.1vw,.84rem)!important;
-    line-height:1.05!important;
+    font-size:clamp(.76rem,3.2vw,.9rem)!important;
+    line-height:1.08!important;
     margin:0 auto!important;
+    text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .hcard,
@@ -7014,13 +7015,13 @@ body{padding-bottom:110px!important;}
 
   body:not(.fu-logged) #page-home .h-btns{
     position:relative!important;
-    flex:0 0 auto!important;
+    width:min(88%,420px)!important;
     display:flex!important;
     flex-direction:column!important;
-    gap:.48rem!important;
-    width:min(88%,420px)!important;
+    justify-content:flex-start!important;
+    gap:.72rem!important;
     margin:0 auto!important;
-    padding:0!important;
+    padding:0 0 .2rem!important;
     opacity:1!important;
     visibility:visible!important;
   }
@@ -7036,20 +7037,21 @@ body{padding-bottom:110px!important;}
   body:not(.fu-logged) #page-home .h-btns button,
   body:not(.fu-logged) #page-home .h-btns a{
     width:100%!important;
-    height:46px!important;
-    min-height:46px!important;
-    max-height:46px!important;
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
     border-radius:999px!important;
     margin:0!important;
-    padding:0 .9rem!important;
-    font-size:.92rem!important;
+    padding:0 1rem!important;
+    font-size:1rem!important;
     line-height:1!important;
     font-weight:900!important;
     opacity:1!important;
     visibility:visible!important;
+    text-align:center!important;
   }
 
   body:not(.fu-logged) #page-home .h-btns .btn-p{
@@ -7060,7 +7062,7 @@ body{padding-bottom:110px!important;}
   }
 
   body:not(.fu-logged) #page-home .h-btns .btn-o{
-    background:rgba(6,78,59,.10)!important;
+    background:rgba(6,78,59,.18)!important;
     color:#D1FAE5!important;
     border:2px solid #7ee6b1!important;
   }
@@ -7068,46 +7070,54 @@ body{padding-bottom:110px!important;}
 
 @media(max-width:750px) and (max-height:740px){
   body:not(.fu-logged) #page-home .hero{
-    padding:.38rem .9rem .56rem!important;
+    padding:.34rem .9rem .54rem!important;
+    background:
+      radial-gradient(circle at 50% 37%,rgba(16,185,129,.12),transparent 34%),
+      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 59%,#063D33 59%,#063D33 100%)!important;
+  }
+
+  body:not(.fu-logged) #page-home .hero-in{
+    gap:.55rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-pill{
-    font-size:.56rem!important;
-    margin-bottom:.28rem!important;
-    padding:.25rem .58rem!important;
+    font-size:.58rem!important;
+    margin-bottom:.34rem!important;
+    padding:.25rem .6rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-title{
-    font-size:clamp(1.85rem,8.1vw,2.65rem)!important;
-    margin-bottom:.22rem!important;
+    font-size:clamp(2rem,8.6vw,2.8rem)!important;
+    margin-bottom:.28rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:clamp(.98rem,4.25vw,1.3rem)!important;
-    margin-bottom:.26rem!important;
+    font-size:clamp(1.05rem,4.5vw,1.38rem)!important;
+    margin-bottom:.34rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-p{
-    font-size:.68rem!important;
-    line-height:1.12!important;
-    margin-bottom:.24rem!important;
+    font-size:.7rem!important;
+    line-height:1.14!important;
+    margin-bottom:.28rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-tag{
-    font-size:.66rem!important;
+    font-size:.68rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-btns{
-    gap:.36rem!important;
+    gap:.46rem!important;
+    padding-bottom:.1rem!important;
   }
 
   body:not(.fu-logged) #page-home .h-btns .btn,
   body:not(.fu-logged) #page-home .h-btns button,
   body:not(.fu-logged) #page-home .h-btns a{
-    height:41px!important;
-    min-height:41px!important;
-    max-height:41px!important;
-    font-size:.84rem!important;
+    height:44px!important;
+    min-height:44px!important;
+    max-height:44px!important;
+    font-size:.88rem!important;
   }
 }
 
