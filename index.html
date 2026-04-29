@@ -3396,6 +3396,465 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 }
 </style>
 
+
+<!-- FORTYUP - BLOQUEO TOTAL PANTALLAS / SIN SCROLL -->
+<style id="fortyup-lock-all-screens-final-css">
+html,body{
+  width:100%!important;
+  min-height:100%!important;
+  overscroll-behavior:none!important;
+}
+
+/* Bloqueo general de pantallas principales */
+body:not(.fu-logged) #page-home.active,
+#page-fortyplus.active,
+#page-chatwindow.active,
+#page-chat.active{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+
+/* HOME INVITADO: todo entra, botones visibles, sin moverse */
+body:not(.fu-logged) #page-home.active{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  padding:0!important;
+}
+
+body:not(.fu-logged) #page-home .hero{
+  height:calc(100dvh - 74px)!important;
+  min-height:calc(100dvh - 74px)!important;
+  max-height:calc(100dvh - 74px)!important;
+  padding:.45rem .95rem .75rem!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+body:not(.fu-logged) #page-home .hero-in{
+  height:100%!important;
+  max-height:100%!important;
+  width:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:.18rem!important;
+}
+
+body:not(.fu-logged) #page-home .hero-left{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+}
+
+body:not(.fu-logged) #page-home .h-pill{
+  flex:0 0 auto!important;
+  margin:0 auto .75rem!important;
+  padding:.32rem .72rem!important;
+  font-size:.72rem!important;
+  line-height:1!important;
+  transform:none!important;
+  max-width:96%!important;
+  white-space:nowrap!important;
+}
+
+body:not(.fu-logged) #page-home .h-title{
+  font-size:clamp(2.55rem,11vw,4rem)!important;
+  line-height:.88!important;
+  margin:0 0 .55rem!important;
+  text-align:center!important;
+}
+
+body:not(.fu-logged) #page-home .h-sub{
+  font-size:clamp(1.36rem,6vw,2rem)!important;
+  line-height:1!important;
+  margin:0 0 .8rem!important;
+  max-width:96%!important;
+  text-align:center!important;
+}
+
+body:not(.fu-logged) #page-home .h-p{
+  font-size:clamp(.86rem,3.8vw,1rem)!important;
+  line-height:1.28!important;
+  max-width:94%!important;
+  margin:0 auto .75rem!important;
+  text-align:center!important;
+}
+
+body:not(.fu-logged) #page-home .h-tag{
+  font-size:clamp(.82rem,3.55vw,.96rem)!important;
+  line-height:1.1!important;
+  margin:0 auto!important;
+  text-align:center!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns{
+  flex:0 0 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:.62rem!important;
+  width:min(88%,420px)!important;
+  margin:0 auto!important;
+  padding:0!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns:before,
+body:not(.fu-logged) #page-home .h-btns:after,
+body:not(.fu-logged) #page-home .h-btns .btn-p:before{
+  display:none!important;
+  content:none!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn,
+body:not(.fu-logged) #page-home .h-btns button,
+body:not(.fu-logged) #page-home .h-btns a{
+  width:100%!important;
+  min-height:52px!important;
+  height:52px!important;
+  max-height:52px!important;
+  border-radius:999px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1.02rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  margin:0!important;
+  padding:0 1rem!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn-p{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  border:2px solid rgba(167,243,208,.58)!important;
+  box-shadow:0 10px 28px rgba(6,78,59,.25)!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn-o{
+  background:rgba(6,78,59,.16)!important;
+  color:#D1FAE5!important;
+  border:2px solid #7ee6b1!important;
+}
+
+/* PREMIUM: sin scroll, todo más compacto/armónico */
+#page-fortyplus.active{
+  height:calc(100dvh - 92px)!important;
+  max-height:calc(100dvh - 92px)!important;
+  padding:.55rem .85rem 6rem!important;
+  box-sizing:border-box!important;
+}
+
+#page-fortyplus .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:.34rem!important;
+  padding:0!important;
+}
+
+.fup-final-hero{
+  flex:0 0 auto!important;
+  border-radius:26px!important;
+  padding:.8rem .8rem .7rem!important;
+  min-height:0!important;
+  margin:0!important;
+}
+
+.fup-crystal-counter{
+  top:.55rem!important;
+  right:.6rem!important;
+  padding:.26rem .5rem!important;
+  font-size:.68rem!important;
+}
+
+.fup-final-diamond{
+  width:58px!important;
+  height:52px!important;
+  min-width:58px!important;
+  min-height:52px!important;
+  max-width:58px!important;
+  max-height:52px!important;
+  margin:.05rem auto .36rem!important;
+}
+
+.fup-final-title{
+  font-size:1.55rem!important;
+  line-height:.95!important;
+  margin:0 0 .25rem!important;
+}
+
+.fup-final-copy{
+  font-size:.72rem!important;
+  line-height:1.16!important;
+  max-width:330px!important;
+  margin:0 auto .16rem!important;
+}
+
+.fup-final-soon{
+  padding:.36rem .75rem!important;
+  font-size:.7rem!important;
+  margin-top:.22rem!important;
+}
+
+.fup-final-list{
+  flex:0 0 auto!important;
+  display:grid!important;
+  gap:.36rem!important;
+  margin-top:.34rem!important;
+}
+
+.fup-final-item{
+  min-height:50px!important;
+  border-radius:17px!important;
+  padding:.46rem .58rem!important;
+  grid-template-columns:36px 1fr 24px!important;
+  gap:.48rem!important;
+}
+
+.fup-final-icon{
+  width:32px!important;
+  height:32px!important;
+  border-radius:12px!important;
+  font-size:.95rem!important;
+}
+
+.fup-final-item h3{
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  margin:0 0 .04rem!important;
+}
+
+.fup-final-item p{
+  font-size:.58rem!important;
+  line-height:1.08!important;
+  margin:0!important;
+}
+
+.fup-final-check{
+  width:22px!important;
+  height:22px!important;
+  font-size:.66rem!important;
+}
+
+.fup-final-gradient{
+  flex:0 0 auto!important;
+  margin-top:.28rem!important;
+  border-radius:16px!important;
+  padding:.42rem .52rem!important;
+}
+
+.fup-final-gradient b{
+  font-size:.74rem!important;
+  line-height:1.05!important;
+}
+
+.fup-final-gradient span{
+  font-size:.54rem!important;
+  line-height:1.05!important;
+}
+
+/* MENSAJES: sin superponer, caja fija, input fijo abajo de la caja */
+#page-chatwindow.active,
+#page-chat.active{
+  height:calc(100dvh - 92px)!important;
+  max-height:calc(100dvh - 92px)!important;
+  padding:.85rem .9rem 6rem!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+
+#page-chatwindow .inner,
+#page-chat .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  padding:0!important;
+}
+
+.chat-win{
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:24px!important;
+  background:#F1FFF8!important;
+  border:1.5px solid #D1E8DF!important;
+  box-shadow:0 14px 36px rgba(6,78,59,.10)!important;
+}
+
+.chat-hdr{
+  flex:0 0 72px!important;
+  min-height:72px!important;
+  height:72px!important;
+  border:0!important;
+  border-bottom:1.5px solid #D1E8DF!important;
+  border-radius:24px 24px 0 0!important;
+  background:#fff!important;
+  padding:.75rem .9rem!important;
+  display:flex!important;
+  align-items:center!important;
+}
+
+.chat-hav{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  font-size:.95rem!important;
+}
+
+.chat-hnm{
+  font-size:1rem!important;
+  line-height:1!important;
+}
+
+.chat-msgs{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  border:0!important;
+  background:#F1FFF8!important;
+  padding:.8rem .72rem!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:.55rem!important;
+}
+
+.chat-msg{
+  max-width:76%!important;
+  padding:.52rem .78rem!important;
+  font-size:.82rem!important;
+  line-height:1.28!important;
+  margin:0!important;
+}
+
+.chat-msg audio{
+  max-width:220px!important;
+  width:100%!important;
+}
+
+.chat-msg-img{
+  max-width:min(210px,60vw)!important;
+  border-radius:15px!important;
+}
+
+.chat-in-a{
+  flex:0 0 72px!important;
+  height:72px!important;
+  min-height:72px!important;
+  position:relative!important;
+  bottom:auto!important;
+  z-index:40!important;
+  border:0!important;
+  border-top:1.5px solid #D1E8DF!important;
+  border-radius:0 0 24px 24px!important;
+  background:rgba(255,255,255,.98)!important;
+  padding:.5rem .56rem!important;
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr) 38px 42px!important;
+  gap:.38rem!important;
+  align-items:center!important;
+  box-shadow:none!important;
+}
+
+.chat-photo-btn,
+.chat-audio-btn{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  flex:0 0 38px!important;
+  border-radius:50%!important;
+  font-size:1rem!important;
+}
+
+.chat-in{
+  width:100%!important;
+  min-width:0!important;
+  height:40px!important;
+  border-radius:999px!important;
+  padding:.5rem .78rem!important;
+  font-size:.86rem!important;
+}
+
+.chat-sd{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  flex:0 0 42px!important;
+  border-radius:50%!important;
+  padding:0!important;
+  font-size:.92rem!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+/* Menú: fijo sin saltos */
+.bnav{
+  height:92px!important;
+  min-height:92px!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+  overflow:visible!important;
+}
+
+.bnav .bn,
+.bnav .bn-ico,
+.bnav .bn-l{
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+
+/* Ajustes para pantallas bajas */
+@media(max-height:740px){
+  body:not(.fu-logged) #page-home .h-pill{margin-bottom:.5rem!important;font-size:.66rem!important}
+  body:not(.fu-logged) #page-home .h-title{font-size:clamp(2.25rem,9.7vw,3.35rem)!important;margin-bottom:.38rem!important}
+  body:not(.fu-logged) #page-home .h-sub{font-size:clamp(1.18rem,5.25vw,1.65rem)!important;margin-bottom:.52rem!important}
+  body:not(.fu-logged) #page-home .h-p{font-size:.78rem!important;line-height:1.18!important;margin-bottom:.5rem!important}
+  body:not(.fu-logged) #page-home .h-tag{font-size:.76rem!important}
+  body:not(.fu-logged) #page-home .h-btns{gap:.48rem!important}
+  body:not(.fu-logged) #page-home .h-btns .btn{height:46px!important;min-height:46px!important;font-size:.92rem!important}
+
+  #page-fortyplus.active{padding-top:.38rem!important}
+  .fup-final-hero{padding:.55rem .68rem!important;border-radius:22px!important}
+  .fup-final-diamond{width:48px!important;height:43px!important;min-width:48px!important;min-height:43px!important;margin-bottom:.22rem!important}
+  .fup-final-title{font-size:1.24rem!important}
+  .fup-final-copy{font-size:.58rem!important;line-height:1.08!important}
+  .fup-final-soon{font-size:.58rem!important;padding:.28rem .58rem!important}
+  .fup-final-list{gap:.26rem!important;margin-top:.24rem!important}
+  .fup-final-item{min-height:40px!important;padding:.32rem .44rem!important;grid-template-columns:30px 1fr 20px!important}
+  .fup-final-icon{width:27px!important;height:27px!important;font-size:.78rem!important}
+  .fup-final-item h3{font-size:.64rem!important}
+  .fup-final-item p{font-size:.5rem!important}
+  .fup-final-gradient{padding:.3rem .42rem!important}
+  .fup-final-gradient b{font-size:.62rem!important}
+  .fup-final-gradient span{font-size:.48rem!important}
+
+  #page-chatwindow.active,#page-chat.active{padding-top:.55rem!important}
+  .chat-hdr{height:62px!important;min-height:62px!important;flex-basis:62px!important}
+  .chat-in-a{height:62px!important;min-height:62px!important;flex-basis:62px!important}
+  .chat-msg{font-size:.78rem!important;padding:.46rem .7rem!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -7017,6 +7476,123 @@ body{padding-bottom:110px!important;}
     fixChat();
     fixGuestHome();
   },1000);
+})();
+</script>
+
+
+<script id="fortyup-lock-all-screens-final-js">
+(function(){
+  function isLogged(){
+    try{ if(typeof refreshCU==="function") refreshCU(); }catch(e){}
+    return !!(window.CU && CU.id);
+  }
+
+  function lockHome(){
+    if(isLogged()) return;
+    const home=document.getElementById("page-home");
+    if(!home || !home.classList.contains("active")) return;
+
+    home.style.height="100dvh";
+    home.style.maxHeight="100dvh";
+    home.style.overflow="hidden";
+
+    const hero=home.querySelector(".hero");
+    if(hero){
+      hero.style.height="calc(100dvh - 74px)";
+      hero.style.maxHeight="calc(100dvh - 74px)";
+      hero.style.overflow="hidden";
+    }
+
+    const btns=home.querySelector(".h-btns");
+    if(btns){
+      btns.style.display="flex";
+      btns.style.visibility="visible";
+      btns.style.opacity="1";
+      btns.style.paddingTop="0";
+    }
+  }
+
+  function lockPremium(){
+    const page=document.getElementById("page-fortyplus");
+    if(!page || !page.classList.contains("active")) return;
+
+    page.style.height="calc(100dvh - 92px)";
+    page.style.maxHeight="calc(100dvh - 92px)";
+    page.style.overflow="hidden";
+
+    const inner=page.querySelector(".inner");
+    if(inner){
+      inner.style.height="100%";
+      inner.style.maxHeight="100%";
+      inner.style.overflow="hidden";
+      inner.style.display="flex";
+      inner.style.flexDirection="column";
+      inner.style.justifyContent="space-between";
+    }
+  }
+
+  function lockChat(){
+    const chat=document.getElementById("page-chatwindow")||document.getElementById("page-chat");
+    if(!chat || !chat.classList.contains("active")) return;
+
+    chat.style.height="calc(100dvh - 92px)";
+    chat.style.maxHeight="calc(100dvh - 92px)";
+    chat.style.overflow="hidden";
+
+    const inner=chat.querySelector(".inner");
+    if(inner){
+      inner.style.height="100%";
+      inner.style.maxHeight="100%";
+      inner.style.overflow="hidden";
+      inner.style.display="flex";
+      inner.style.flexDirection="column";
+    }
+
+    const win=chat.querySelector(".chat-win");
+    if(win){
+      win.style.height="100%";
+      win.style.maxHeight="100%";
+      win.style.overflow="hidden";
+      win.style.display="flex";
+      win.style.flexDirection="column";
+    }
+
+    const msgs=chat.querySelector(".chat-msgs,.messages-list,#chatMsgs");
+    if(msgs){
+      msgs.style.flex="1 1 auto";
+      msgs.style.minHeight="0";
+      msgs.style.overflowY="auto";
+    }
+
+    const input=chat.querySelector(".chat-in-a,.chat-input,.msg-input,.send-row");
+    if(input){
+      input.style.flex="0 0 auto";
+      input.style.position="relative";
+      input.style.bottom="auto";
+      input.style.zIndex="40";
+    }
+  }
+
+  function all(){
+    lockHome();
+    lockPremium();
+    lockChat();
+  }
+
+  const oldGoTo=window.goTo;
+  if(typeof oldGoTo==="function" && !oldGoTo.__lockAllScreensFinal){
+    window.goTo=function(){
+      const r=oldGoTo.apply(this,arguments);
+      setTimeout(all,30);
+      setTimeout(all,120);
+      return r;
+    };
+    window.goTo.__lockAllScreensFinal=true;
+  }
+
+  document.addEventListener("DOMContentLoaded",all);
+  setTimeout(all,300);
+  setInterval(all,900);
 })();
 </script>
 
