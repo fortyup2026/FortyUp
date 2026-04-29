@@ -2189,6 +2189,206 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 #heroHome .hz-desc { color: rgba(255,255,255,.78) !important; }
 #heroHome .hz-pill { color: rgba(255,255,255,.9) !important; }
 #heroHome .hz-proof-t { color: rgba(255,255,255,.7) !important; }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -2722,6 +2922,206 @@ body:not(.fu-logged) #page-home .h-btns a{
   overflow:hidden!important;
   text-overflow:ellipsis!important;
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -3056,6 +3456,206 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
   .fup-final-item h3{font-size:.7rem!important}
   .fup-final-item p{font-size:.55rem!important}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -3508,6 +4108,206 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
   .fup-final-item h3{font-size:.8rem!important}
   .fup-final-item p{font-size:.6rem!important}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -3967,6 +4767,206 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
   .chat-in-a{height:62px!important;min-height:62px!important;flex-basis:62px!important}
   .chat-msg{font-size:.78rem!important;padding:.46rem .7rem!important}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -4013,6 +5013,206 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
     margin:-.08rem auto .18rem!important;
   }
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 </head>
@@ -5690,9 +6890,10 @@ function rMyP(){
   // Build header
   var hdr=document.createElement('div');hdr.className='myp-hdr';
   var infoDiv=document.createElement('div');infoDiv.className='myp-info';
-  infoDiv.innerHTML='<div class="myp-name">'+e(nm)+(CU.age&&!isNaN(CU.age)?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city">📍 '+e(CU.city)+'</div>':'')+'<div class="myp-bdgs"><span class="myp-bdg">Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email</span>':'')+'</div>';
-  var editBtn=document.createElement('button');editBtn.className='myp-edit';editBtn.textContent='✏ Editar';editBtn.onclick=function(){goTo('register')};
-  hdr.appendChild(avDiv);hdr.appendChild(infoDiv);hdr.appendChild(editBtn);
+  infoDiv.innerHTML='<div class="myp-name">'+e(nm)+(CU.age&&!isNaN(CU.age)?', '+CU.age:'')+'</div>'+(CU.city?'<div class="myp-city"><span class="myp-loc-ico">📍</span> '+e(CU.city)+'</div>':'')+'<div class="myp-bdgs"><span class="myp-bdg">✓ Perfil activo</span>'+(CU.email?'<span class="myp-bdg v">✓ Email verificado</span>':'')+'</div>';
+  var statusDiv=document.createElement('div');statusDiv.className='myp-status';statusDiv.innerHTML='<span class="myp-status-dot"></span><div><strong>Conectado</strong><small>Activo ahora</small></div>';
+  var editBtn=document.createElement('button');editBtn.className='myp-edit';editBtn.textContent='✏ Editar perfil';editBtn.onclick=function(){goTo('register')};
+  hdr.appendChild(avDiv);hdr.appendChild(statusDiv);hdr.appendChild(infoDiv);hdr.appendChild(editBtn);
 
   // Build cards
   var cards=document.createElement('div');cards.className='myp-cards';
@@ -7436,6 +8637,206 @@ body{padding-bottom:110px!important;}
   }
 }
 
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 <script id="fortyup-clean-final-js">
@@ -8155,6 +9556,206 @@ body{padding-bottom:110px!important;}
   body:not(.fu-logged) #page-home #heroHome .hz-title{font-size:clamp(2.15rem,9.8vw,3.3rem)!important;}
   body:not(.fu-logged) #page-home #heroHome .hz-desc{font-size:.86rem!important;line-height:1.26!important;margin-top:.78rem!important;transform:translateY(6px)!important;}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8235,6 +9836,206 @@ body{padding-bottom:110px!important;}
     padding:.78rem 1rem!important;
   }
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8393,6 +10194,206 @@ body{padding-bottom:110px!important;}
     font-size:.76rem!important;
   }
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8499,6 +10500,206 @@ body{padding-bottom:110px!important;}
   .fup-final-item p{font-size:.62rem!important}
   .fup-final-check{width:26px!important;height:26px!important;font-size:.9rem!important}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8542,6 +10743,206 @@ body{padding-bottom:110px!important;}
   .fup-final-item p{font-size:.64rem!important;line-height:1.08!important}
   .fup-final-check{width:27px!important;height:27px!important;font-size:.92rem!important}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8573,6 +10974,206 @@ body{padding-bottom:110px!important;}
   content:''!important;display:block!important;position:absolute!important;left:18px!important;top:15px!important;width:30px!important;height:13px!important;border-radius:999px!important;background:rgba(255,255,255,.68)!important;filter:blur(.3px)!important;transform:rotate(-17deg)!important;
 }
 @media(max-width:750px) and (max-height:740px){#page-fortyplus .fup-final-hero{padding-top:1.10rem!important;}#page-fortyplus .fup-final-diamond{width:104px!important;height:88px!important;min-width:104px!important;min-height:88px!important;max-width:104px!important;max-height:88px!important;margin:-.03rem auto .14rem!important;}#page-fortyplus .fup-final-diamond:after{left:16px!important;top:13px!important;width:26px!important;height:11px!important;}}
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 </body>
 </html>
@@ -8590,6 +11191,206 @@ body{padding-bottom:110px!important;}
   #page-fortyplus .fup-final-diamond{width:76px!important;height:64px!important;min-width:76px!important;min-height:64px!important;max-width:76px!important;max-height:64px!important;margin:.06rem auto .28rem!important;}
   #page-fortyplus .fup-final-diamond:after{left:16px!important;top:10px!important;width:23px!important;height:11px!important;}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 
@@ -8632,6 +11433,206 @@ body{padding-bottom:110px!important;}
   #page-fortyplus .fup-final-hero{padding-top:1.28rem!important;min-height:250px!important;border-radius:32px!important;}
   #page-fortyplus .fup-final-diamond{width:108px!important;height:84px!important;min-width:108px!important;min-height:84px!important;max-width:108px!important;max-height:84px!important;margin:-.06rem auto .25rem!important;}
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 <!-- FORTYUP v10-63 - diamante facetado ancho multicolor Sebas -->
@@ -8670,6 +11671,206 @@ body{padding-bottom:110px!important;}
     width:110px!important;height:72px!important;min-width:110px!important;min-height:72px!important;max-width:110px!important;max-height:72px!important;margin:0 auto .30rem!important;
   }
 }
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
 
 <!-- FORTYUP v10-64 - archivo completo, diamante facetado ancho tipo cristal Sebas -->
@@ -8680,4 +11881,204 @@ body{padding-bottom:110px!important;}
   #page-fortyplus .fup-final-diamond:before,#page-fortyplus .fup-final-diamond:after{content:none!important;display:none!important;}
 }
 @media(max-width:750px) and (max-height:740px){#page-fortyplus .fup-final-hero{padding-top:1.18rem!important;}#page-fortyplus .fup-final-diamond{width:110px!important;height:66px!important;min-width:110px!important;min-height:66px!important;max-width:110px!important;max-height:66px!important;margin:0 auto .30rem!important;}}
+
+
+/* =========================================================
+   FortyUp v67 - tarjeta nueva de Mi Perfil (sin parches)
+   ========================================================= */
+#page-myprofile .myp-hdr{
+  display:grid!important;
+  grid-template-columns:132px 1px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:1.15rem!important;
+  row-gap:.72rem!important;
+  align-items:center!important;
+  min-height:214px!important;
+  padding:1.45rem 1.35rem!important;
+  margin:1.05rem 0 1.25rem!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 78% 26%,rgba(16,185,129,.23),transparent 30%),
+    radial-gradient(circle at 16% 18%,rgba(255,255,255,.08),transparent 24%),
+    linear-gradient(135deg,#063D33 0%,#007A5A 100%)!important;
+  box-shadow:0 18px 44px rgba(6,78,59,.18)!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+#page-myprofile .myp-hdr:before{
+  content:""!important;
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  width:1px!important;
+  height:100%!important;
+  min-height:154px!important;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.62),transparent)!important;
+  border-radius:99px!important;
+  align-self:stretch!important;
+}
+#page-myprofile .myp-hdr:after,
+#page-myprofile .myp-hdr::after{content:none!important;display:none!important;}
+#page-myprofile .myp-av{
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:center!important;
+  width:104px!important;
+  height:104px!important;
+  border-radius:50%!important;
+  border:6px solid rgba(52,211,153,.58)!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-av img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#page-myprofile .myp-status{
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-self:center!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.55rem!important;
+  color:#fff!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-status-dot{
+  width:15px!important;
+  height:15px!important;
+  border-radius:50%!important;
+  background:#34D399!important;
+  box-shadow:0 0 0 8px rgba(52,211,153,.13)!important;
+  flex:0 0 auto!important;
+}
+#page-myprofile .myp-status strong{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.05!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-status small{
+  display:block!important;
+  margin-top:.18rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.62)!important;
+}
+#page-myprofile .myp-info{
+  grid-column:3!important;
+  grid-row:1!important;
+  align-self:end!important;
+  padding:0!important;
+  min-width:0!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:2rem!important;
+  line-height:1.02!important;
+  font-weight:800!important;
+  color:#fff!important;
+  letter-spacing:-.03em!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.14)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-city{
+  margin-top:.34rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:1.02rem!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#7EEFC5!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#page-myprofile .myp-loc-ico{filter:drop-shadow(0 2px 4px rgba(0,0,0,.16));}
+#page-myprofile .myp-bdgs{
+  margin-top:.8rem!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:.5rem!important;
+}
+#page-myprofile .myp-bdg{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  border:1.5px solid rgba(52,211,153,.26)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.82rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)!important;
+}
+#page-myprofile .myp-bdg.v{
+  background:rgba(16,185,129,.16)!important;
+  border-color:rgba(52,211,153,.42)!important;
+  color:#fff!important;
+}
+#page-myprofile .myp-edit{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:end!important;
+  position:relative!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  min-width:152px!important;
+  min-height:48px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.15)!important;
+  border:1.8px solid rgba(167,243,208,.34)!important;
+  color:#fff!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  z-index:2!important;
+}
+#page-myprofile .myp-edit:hover{background:rgba(255,255,255,.24)!important;}
+
+@media(max-width:480px){
+  #page-myprofile .myp-hdr{
+    grid-template-columns:112px 1px minmax(0,1fr)!important;
+    column-gap:.85rem!important;
+    row-gap:.5rem!important;
+    min-height:166px!important;
+    padding:1.05rem .9rem!important;
+    border-radius:26px!important;
+  }
+  #page-myprofile .myp-hdr:before{min-height:124px!important;}
+  #page-myprofile .myp-av{width:82px!important;height:82px!important;border-width:5px!important;}
+  #page-myprofile .myp-status{gap:.42rem!important;justify-content:center!important;}
+  #page-myprofile .myp-status-dot{width:12px!important;height:12px!important;box-shadow:0 0 0 6px rgba(52,211,153,.12)!important;}
+  #page-myprofile .myp-status strong{font-size:.86rem!important;}
+  #page-myprofile .myp-status small{font-size:.68rem!important;}
+  #page-myprofile .myp-name{font-size:1.36rem!important;}
+  #page-myprofile .myp-city{font-size:.76rem!important;margin-top:.22rem!important;}
+  #page-myprofile .myp-bdgs{gap:.34rem!important;margin-top:.5rem!important;}
+  #page-myprofile .myp-bdg{min-height:30px!important;padding:.34rem .55rem!important;font-size:.66rem!important;}
+  #page-myprofile .myp-edit{min-width:104px!important;min-height:38px!important;font-size:.72rem!important;padding:.34rem .62rem!important;}
+}
+
 </style>
