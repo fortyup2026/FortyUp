@@ -8110,5 +8110,86 @@ body{padding-bottom:110px!important;}
   body:not(.fu-logged) #page-home #heroHome .hz-desc{font-size:.86rem!important;line-height:1.26!important;margin-top:.78rem!important;transform:translateY(6px)!important;}
 }
 </style>
+
+
+<!-- =========================================================
+     FORTYUP v10-56 - AJUSTE ANTI-SUPERPOSICIÓN HOME MOBILE
+     Archivo completo, no parche. Baja los botones y sube/compacta el subtítulo real (.hz-desc).
+     ========================================================= -->
+<style id="fortyup-v10-56-home-anti-superposicion-sebas">
+@media(max-width:750px){
+  body:not(.fu-logged) #page-home #heroHome .hero-grid{
+    grid-template-rows:36% 31% 33%!important;
+    padding:0 18px 18px!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-top{
+    padding-bottom:.85rem!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-mid{
+    justify-content:center!important;
+    gap:.38rem!important;
+    transform:translateY(-4px)!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-title{
+    font-size:clamp(2.28rem,9.65vw,3.45rem)!important;
+    line-height:1.01!important;
+    margin:0 auto!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-desc{
+    margin:.62rem auto 0!important;
+    transform:none!important;
+    font-size:.92rem!important;
+    line-height:1.28!important;
+    max-width:91%!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-bot{
+    justify-content:end!important;
+    padding-bottom:.65rem!important;
+    gap:.82rem!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-btns{
+    gap:.72rem!important;
+  }
+}
+@media(max-width:750px) and (max-height:760px){
+  body:not(.fu-logged) #page-home #heroHome .hero-grid{
+    grid-template-rows:35% 31% 34%!important;
+    padding-bottom:12px!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-top{
+    padding-bottom:.5rem!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-pill{
+    transform:translateY(-8px)!important;
+    margin-bottom:.55rem!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-logo{
+    font-size:clamp(2.85rem,12.3vw,4.15rem)!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-mid{
+    gap:.28rem!important;
+    transform:translateY(-8px)!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-title{
+    font-size:clamp(2rem,9vw,3rem)!important;
+    line-height:1!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-desc{
+    margin:.5rem auto 0!important;
+    transform:none!important;
+    font-size:.8rem!important;
+    line-height:1.22!important;
+    max-width:90%!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hero-zone-bot{
+    padding-bottom:.45rem!important;
+    gap:.7rem!important;
+  }
+  body:not(.fu-logged) #page-home #heroHome .hz-btn{
+    padding:.78rem 1rem!important;
+  }
+}
+</style>
+
 </body>
 </html>
