@@ -11844,6 +11844,120 @@ body{padding-bottom:110px!important;}
 })();
 </script>
 
+
+
+<!-- FortyUp v72 - modal de perfil adaptado a pantalla sin superponerse -->
+<style id="fortyup-v72-modal-fit">
+/* Modal de perfiles: queda dentro de la pantalla y no se esconde detrás del menú inferior */
+.m-ov{
+  z-index:1800!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  overflow:auto!important;
+  padding:1rem!important;
+  padding-bottom:calc(6.2rem + env(safe-area-inset-bottom,0px))!important;
+  background:rgba(6,20,16,.72)!important;
+}
+.m-ov.open{display:flex!important}
+.m-box{
+  width:min(92vw,490px)!important;
+  max-height:calc(100dvh - 7.4rem)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:28px!important;
+  margin:auto 0!important;
+  box-shadow:0 28px 80px rgba(0,0,0,.30)!important;
+}
+#mCont{
+  min-height:0!important;
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+}
+.m-ph{
+  height:clamp(150px,28dvh,220px)!important;
+  flex:0 0 auto!important;
+}
+.m-body{
+  padding:1rem 1rem .85rem!important;
+}
+.m-nm{
+  font-size:clamp(1.45rem,7vw,1.95rem)!important;
+  line-height:1.04!important;
+}
+.m-mt{
+  font-size:.92rem!important;
+  line-height:1.25!important;
+  margin:.2rem 0 .78rem!important;
+}
+.m-sec{
+  margin-bottom:.78rem!important;
+}
+.m-sl{
+  margin-bottom:.28rem!important;
+}
+.m-desc{
+  line-height:1.45!important;
+}
+.m-tags{
+  gap:.3rem!important;
+}
+.m-tags .pt,.m-tags .htag,.m-tags span{
+  max-width:100%!important;
+}
+.m-acts{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:8!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.88),#fff 38%)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+  margin:.65rem -1rem -.85rem!important;
+  padding:.85rem 1rem calc(.95rem + env(safe-area-inset-bottom,0px))!important;
+  border-top:1px solid #E5F3EE!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:.55rem!important;
+}
+.m-acts .btn{
+  width:100%!important;
+  justify-content:center!important;
+  min-height:44px!important;
+  padding:.62rem .7rem!important;
+  white-space:nowrap!important;
+}
+.m-acts .btn[style*="fef2f2"]{
+  grid-column:auto!important;
+}
+.m-cl{
+  z-index:20!important;
+}
+@media(max-width:750px){
+  .m-ov{
+    padding:.9rem .72rem!important;
+    padding-bottom:calc(6.4rem + env(safe-area-inset-bottom,0px))!important;
+  }
+  .m-box{
+    width:100%!important;
+    max-height:calc(100dvh - 7.5rem)!important;
+    border-radius:26px!important;
+  }
+  .m-ph{
+    height:clamp(145px,27dvh,205px)!important;
+  }
+  .m-body{
+    padding:.92rem .95rem .8rem!important;
+  }
+}
+@media(max-width:420px){
+  .m-box{max-height:calc(100dvh - 7rem)!important}
+  .m-ph{height:140px!important}
+  .m-acts{grid-template-columns:1fr!important}
+  .m-acts .btn{min-height:42px!important}
+}
+</style>
+
 </body>
 </html>
 
