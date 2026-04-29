@@ -2075,6 +2075,112 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
 .pa-super:after{content:none!important}
 
+
+/* ═══ HERO HOME NUEVO ═══ */
+#heroHome {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100dvh;
+  height: calc(var(--vh, 1vh) * 100);
+  min-height: 580px;
+  background: linear-gradient(160deg, #042f25 0%, #064E3B 45%, #0a6b50 100%);
+}
+.hero-grid {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  align-items: center;
+}
+/* Top zone */
+.hero-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.hero-zone-top { padding-top: 3.5rem; }
+.hz-pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 50px;
+  padding: .35rem .9rem;
+  font-size: .72rem; font-weight: 700;
+  color: rgba(255,255,255,.85);
+  margin-bottom: .75rem;
+}
+.hz-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.2rem, 14vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+.hz-logo .t1 { color: #fff; font-style: normal; }
+.hz-logo .t2 { color: #10B981; font-style: italic; }
+
+/* Mid zone */
+.hero-zone-mid { gap: .75rem; }
+.hz-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.15rem, 4.5vw, 1.5rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  margin: 0;
+}
+.hz-title em { color: #10B981; font-style: italic; }
+.hz-desc {
+  font-size: .88rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,.72);
+  margin: 0;
+  max-width: 340px;
+}
+
+/* Bot zone */
+.hero-zone-bot { gap: .85rem; padding-bottom: 3rem; }
+.hz-btns {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  width: 100%;
+}
+.hz-btn {
+  width: 100%;
+  padding: .95rem 1rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: transform .15s, box-shadow .15s;
+}
+.hz-btn:active { transform: scale(.97); }
+.hz-btn-p {
+  background: linear-gradient(135deg, #059669, #10B981);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(16,185,129,.35);
+}
+.hz-btn-o {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.3) !important;
+}
+.hz-proof {
+  display: flex; align-items: center; gap: .6rem;
+}
+.hz-proof-t {
+  font-size: .75rem;
+  color: rgba(255,255,255,.65);
+  margin: 0;
+}
+/* ═══════════════════════════ */
+
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3928,39 +4034,47 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 </div>
 
 <div class="page active" id="page-home">
-  <section class="hero" style="min-height:100dvh;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:2rem 1.5rem 4.5rem;overflow:hidden;box-sizing:border-box">
-    <div class="hero-glow"></div><div class="hero-b1"></div><div class="hero-b2"></div>
+  <section class="hero" id="heroHome">
+    <div class="hero-glow"></div>
+    <div class="hero-b1"></div>
+    <div class="hero-b2"></div>
 
-    <!-- TOP: pill -->
-    <div style="position:relative;z-index:2;text-align:center">
-      <div class="h-pill" id="heroPill"><span class="pdot"></span>Comunidad exclusiva · Mayores de 40</div>
-    </div>
+    <div class="hero-grid">
 
-    <!-- MIDDLE: logo + tagline -->
-    <div style="position:relative;z-index:2;text-align:center">
-      <div class="h-title"><span class="t1">Forty</span><span class="t2">Up</span></div>
-      <h1 class="h-sub" style="font-size:clamp(1rem,4vw,1.3rem);line-height:1.5;margin-top:.75rem;font-weight:400">
-        Conocé personas <em>reales</em>,<br>por planes reales.
-      </h1>
-      <p style="font-size:.9rem;color:var(--txt2);line-height:1.6;margin-top:.5rem;max-width:340px">
-        Una comunidad para mayores de 40. Sin filtros.<br>Sin superficialidades.
-      </p>
-    </div>
-
-    <!-- BOTTOM: buttons + proof -->
-    <div style="position:relative;z-index:2;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:1rem" id="heroBtns">
-      <button class="btn btn-p" onclick="openAuth('register')" style="width:100%;padding:1rem;font-size:1.05rem;border-radius:50px;font-weight:800;letter-spacing:.01em">
-        Registrate gratis
-      </button>
-      <button class="btn btn-o" onclick="openAuth('login')" style="width:100%;padding:1rem;font-size:1.05rem;border-radius:50px;font-weight:800">
-        Iniciá sesión
-      </button>
-      <div class="h-proof" style="display:flex;align-items:center;gap:.65rem;margin-top:.25rem">
-        <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
-        <p class="h-proof-t" style="font-size:.78rem">Más de <strong id="heroCount">8</strong> personas ya se unieron</p>
+      <!-- ZONA 1: Logo -->
+      <div class="hero-zone hero-zone-top">
+        <div class="hz-pill" id="heroPill">
+          <span class="pdot"></span>Comunidad exclusiva · Mayores de 40
+        </div>
+        <div class="hz-logo">
+          <span class="t1">Forty</span><span class="t2">Up</span>
+        </div>
       </div>
-    </div>
 
+      <!-- ZONA 2: Texto -->
+      <div class="hero-zone hero-zone-mid">
+        <h1 class="hz-title">Conocé personas <em>reales</em>,<br>por planes reales.</h1>
+        <p class="hz-desc">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias. Sin filtros.</p>
+      </div>
+
+      <!-- ZONA 3: Botones -->
+      <div class="hero-zone hero-zone-bot">
+        <div class="hz-btns" id="heroBtns">
+          <button class="hz-btn hz-btn-p" onclick="openAuth('register')">Registrate gratis</button>
+          <button class="hz-btn hz-btn-o" onclick="openAuth('login')">Iniciá sesión</button>
+        </div>
+        <div class="hz-proof">
+          <div class="pavs">
+            <div class="pav pav1">M</div>
+            <div class="pav pav2">R</div>
+            <div class="pav pav3">C</div>
+            <div class="pav pav4">G</div>
+          </div>
+          <p class="hz-proof-t">Más de <strong id="heroCount">8</strong> personas ya se unieron</p>
+        </div>
+      </div>
+
+    </div>
   </section>
   <section class="sec-pil">
     <div class="sec-hd"><span class="sec-ey">¿Qué es FortyUp?</span><h2 class="sec-tit">Tres palabras que lo dicen todo</h2></div>
@@ -5069,8 +5183,8 @@ function updateHeroLoggedIn(){
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
   }else{
     btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate gratis';b1.onclick=function(){openAuth('register')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciá sesión';b2.onclick=function(){openAuth('login')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate gratis';b1.className='hz-btn hz-btn-p';b1.style.cssText='width:100%';b1.onclick=function(){openAuth('register')};
+    var b2=document.createElement('button');b2.className='hz-btn hz-btn-o';b2.style.cssText='width:100%';b2.textContent='Iniciá sesión';b2.onclick=function(){openAuth('login')};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>COMUNIDAD EXCLUSIVA · MAYORES DE 40';
   }
@@ -7883,5 +7997,6 @@ body{padding-bottom:110px!important;}
 })();
 </script>
 
+<script>function setVh(){document.documentElement.style.setProperty("--vh",window.innerHeight*.01+"px")}setVh();window.addEventListener("resize",setVh)</script>
 </body>
 </html>
