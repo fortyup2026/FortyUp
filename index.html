@@ -362,7 +362,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   .h-btns:after{content:'+';position:absolute;top:4.15rem;left:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#008A63,#064E3B);color:#fff;border:8px solid #fff;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:300;box-shadow:0 10px 32px rgba(6,78,59,.35)}
   .h-btns .btn{width:100%;justify-content:center;margin:.5rem 0}
   .h-btns .btn-p{margin-top:5.2rem;background:transparent;box-shadow:none;font-size:1.35rem!important;padding:.45rem!important}
-  .h-btns .btn-p:before{content:'Registrate';display:block;color:#fff;font-weight:900}
+  .h-btns .btn-p:before{content:'Unite a FortyUp';display:block;color:#fff;font-weight:900}
   .h-btns .btn-p{font-size:0!important}
   .h-btns .btn-o{border-color:#61C99B;color:#8FE2BC;background:transparent;font-size:1.1rem!important}
   .h-proof,.hcard,.sec-pil,.sec-st,.sec-cta,.footer{display:none}
@@ -3855,6 +3855,68 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 }
 </style>
 
+
+<style>
+@media(max-width:750px){
+  body:not(.fu-logged){
+    height:100vh;
+    overflow:hidden;
+  }
+
+  #page-home .hero{
+    height:calc(100vh - 70px);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:20px 18px 30px;
+  }
+
+  #page-home .hero-left{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    text-align:center;
+    margin-top:10px;
+  }
+
+  #page-home .h-title{
+    font-size:42px;
+    line-height:1;
+    margin:0;
+  }
+
+  #page-home .h-sub{
+    font-size:22px;
+    margin:0;
+  }
+
+  #page-home .h-p{
+    font-size:15px;
+    margin:0;
+  }
+
+  #page-home .h-tag{
+    font-size:14px;
+    margin-top:4px;
+  }
+
+  #page-home .h-btns{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-top:auto;
+  }
+
+  #page-home .h-btns button{
+    height:52px;
+    border-radius:30px;
+    font-size:17px;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -3938,8 +4000,8 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <p class="h-p">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias. Sin filtros. Sin superficialidades.</p>
         <p class="h-tag">✦ Nuevas etapas. Conexiones reales.</p>
         <div class="h-btns" id="heroBtns">
-          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate →</button>
-          <button class="btn btn-o btn-lg" onclick="openAuth('login')">Iniciar sesión</button>
+          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Crear mi perfil gratis →</button>
+          <button class="btn btn-o btn-lg" onclick="goTo('profiles')">Explorar perfiles</button>
         </div>
         <div class="h-proof">
           <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
@@ -3981,7 +4043,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <span class="sec-ey" style="color:rgba(167,243,208,.8)">¿Listo?</span>
         <h2>¿Listo para una nueva etapa?</h2>
         <p>Creá tu perfil en menos de 2 minutos y empezá a conocer personas increíbles.</p>
-        <button class="btn btn-gd btn-lg" onclick="openAuth('register')">Registrate →</button>
+        <button class="btn btn-gd btn-lg" onclick="openAuth('register')">Crear mi perfil gratis →</button>
       </div>
     </div>
   </section>
@@ -3990,7 +4052,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 
 <div class="page" id="page-profiles">
   <div class="inner"><div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
-  <div><h2 class="pg-tit">Iniciar sesión</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
+  <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
 <div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
@@ -4024,7 +4086,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <div class="fld"><label>Ciudad <span class="req">*</span></label><input type="text" id="rC" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div>
         <div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div>
       </div>
-      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Iniciar sesión te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
+      <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a que Explorar perfiles te muestre personas acordes a lo que buscás. Tu perfil igual puede verse marcado como “Este sos vos”.</div></div></div>
       <input type="hidden" id="rLat"><input type="hidden" id="rLng">
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>
       <div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto de perfil</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="document.getElementById('rPF').click()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>
@@ -5066,8 +5128,8 @@ function updateHeroLoggedIn(){
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
   }else{
     btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate →';b1.onclick=function(){openAuth('register')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciar sesión';b2.onclick=function(){openAuth('login')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Crear mi perfil gratis →';b1.onclick=function(){openAuth('register')};
+    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Explorar perfiles';b2.onclick=function(){goTo('profiles')};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>Comunidad exclusiva · Mayores de 40';
   }
@@ -6906,299 +6968,6 @@ body{padding-bottom:110px!important;}
   line-height:1.28!important;
   font-weight:700!important;
 }
-
-
-/* =========================================================
-   HOME INVITADO DEFINITIVO - UNA PANTALLA, PROLIJO
-   ========================================================= */
-@media(max-width:750px){
-  body.sebas-guest,
-  body:not(.fu-logged){
-    height:100svh!important;
-    max-height:100svh!important;
-    overflow:hidden!important;
-    padding-bottom:0!important;
-  }
-
-  body.sebas-guest .bnav,
-  body:not(.fu-logged) .bnav{
-    display:none!important;
-  }
-
-  body.sebas-guest #page-home.active,
-  body:not(.fu-logged) #page-home.active{
-    height:100svh!important;
-    max-height:100svh!important;
-    overflow:hidden!important;
-    display:block!important;
-  }
-
-  body.sebas-guest .nav,
-  body.sebas-guest .nav-in,
-  body:not(.fu-logged) .nav,
-  body:not(.fu-logged) .nav-in{
-    height:74px!important;
-    min-height:74px!important;
-    max-height:74px!important;
-  }
-
-  body.sebas-guest #page-home .hero,
-  body:not(.fu-logged) #page-home .hero{
-    height:calc(100svh - 74px)!important;
-    min-height:calc(100svh - 74px)!important;
-    max-height:calc(100svh - 74px)!important;
-    overflow:hidden!important;
-    margin:0!important;
-    padding:0!important;
-    display:block!important;
-    border-radius:0 0 34px 34px!important;
-    background:
-      radial-gradient(circle at 50% 34%,rgba(16,185,129,.16),transparent 38%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 69%,#063D33 69%,#063D33 100%)!important;
-  }
-
-  body.sebas-guest #page-home .hero-glow,
-  body.sebas-guest #page-home .hero-b1,
-  body.sebas-guest #page-home .hero-b2,
-  body.sebas-guest #page-home .hcard,
-  body.sebas-guest #page-home .h-proof,
-  body:not(.fu-logged) #page-home .hero-glow,
-  body:not(.fu-logged) #page-home .hero-b1,
-  body:not(.fu-logged) #page-home .hero-b2,
-  body:not(.fu-logged) #page-home .hcard,
-  body:not(.fu-logged) #page-home .h-proof{
-    display:none!important;
-  }
-
-  body.sebas-guest #page-home .hero-in,
-  body:not(.fu-logged) #page-home .hero-in{
-    width:100%!important;
-    height:100%!important;
-    max-height:100%!important;
-    overflow:hidden!important;
-    display:grid!important;
-    grid-template-rows:69% 31%!important;
-    grid-template-columns:1fr!important;
-    align-items:stretch!important;
-    justify-items:center!important;
-    gap:0!important;
-    text-align:center!important;
-    padding:0 18px 24px!important;
-  }
-
-  body.sebas-guest #page-home .hero-left,
-  body:not(.fu-logged) #page-home .hero-left{
-    width:100%!important;
-    height:100%!important;
-    min-height:0!important;
-    padding:0!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    justify-content:center!important;
-    overflow:hidden!important;
-  }
-
-  body.sebas-guest #page-home .h-pill,
-  body:not(.fu-logged) #page-home .h-pill{
-    max-width:100%!important;
-    margin:0 auto 18px!important;
-    padding:7px 14px!important;
-    font-size:13px!important;
-    line-height:1!important;
-    white-space:nowrap!important;
-    transform:none!important;
-    background:#fff!important;
-    border-color:#CDE9DD!important;
-    box-shadow:0 8px 24px rgba(6,78,59,.05)!important;
-  }
-
-  body.sebas-guest #page-home .h-title,
-  body:not(.fu-logged) #page-home .h-title{
-    font-size:50px!important;
-    line-height:.88!important;
-    margin:0 0 16px!important;
-    text-align:center!important;
-  }
-
-  body.sebas-guest #page-home .h-sub,
-  body:not(.fu-logged) #page-home .h-sub{
-    font-size:28px!important;
-    line-height:1.08!important;
-    margin:0 0 20px!important;
-    max-width:96%!important;
-    text-align:center!important;
-  }
-
-  body.sebas-guest #page-home .h-p,
-  body:not(.fu-logged) #page-home .h-p{
-    font-size:17px!important;
-    line-height:1.42!important;
-    max-width:95%!important;
-    margin:0 auto 18px!important;
-    text-align:center!important;
-  }
-
-  body.sebas-guest #page-home .h-tag,
-  body:not(.fu-logged) #page-home .h-tag{
-    font-family:'Nunito',sans-serif!important;
-    font-size:16px!important;
-    font-weight:900!important;
-    line-height:1.1!important;
-    margin:0 auto!important;
-    color:#9B7610!important;
-    text-align:center!important;
-  }
-
-  body.sebas-guest #page-home .h-btns,
-  body:not(.fu-logged) #page-home .h-btns{
-    width:min(88vw,420px)!important;
-    max-width:min(88vw,420px)!important;
-    flex:0 0 auto!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    justify-content:flex-start!important;
-    gap:14px!important;
-    margin:0 auto!important;
-    padding:26px 0 0!important;
-    position:relative!important;
-    opacity:1!important;
-    visibility:visible!important;
-    overflow:visible!important;
-  }
-
-  body.sebas-guest #page-home .h-btns:before,
-  body.sebas-guest #page-home .h-btns:after,
-  body.sebas-guest #page-home .h-btns .btn-p:before,
-  body.sebas-guest #page-home .h-btns .btn-o:before,
-  body:not(.fu-logged) #page-home .h-btns:before,
-  body:not(.fu-logged) #page-home .h-btns:after,
-  body:not(.fu-logged) #page-home .h-btns .btn-p:before,
-  body:not(.fu-logged) #page-home .h-btns .btn-o:before{
-    display:none!important;
-    content:none!important;
-  }
-
-  body.sebas-guest #page-home .h-btns > *,
-  body:not(.fu-logged) #page-home .h-btns > *{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    margin:0!important;
-    position:static!important;
-    transform:none!important;
-  }
-
-  body.sebas-guest #page-home .h-btns .btn,
-  body.sebas-guest #page-home .h-btns button,
-  body.sebas-guest #page-home .h-btns a,
-  body:not(.fu-logged) #page-home .h-btns .btn,
-  body:not(.fu-logged) #page-home .h-btns button,
-  body:not(.fu-logged) #page-home .h-btns a{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    height:52px!important;
-    min-height:52px!important;
-    max-height:52px!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    border-radius:999px!important;
-    padding:0 1rem!important;
-    margin:0!important;
-    font-size:18px!important;
-    line-height:1!important;
-    font-weight:900!important;
-    text-align:center!important;
-    opacity:1!important;
-    visibility:visible!important;
-    box-sizing:border-box!important;
-  }
-
-  body.sebas-guest #page-home .h-btns .btn-p,
-  body:not(.fu-logged) #page-home .h-btns .btn-p{
-    background:linear-gradient(135deg,#064E3B,#059669)!important;
-    color:#fff!important;
-    border:2px solid rgba(167,243,208,.58)!important;
-    box-shadow:0 8px 24px rgba(6,78,59,.24)!important;
-    font-size:18px!important;
-  }
-
-  body.sebas-guest #page-home .h-btns .btn-o,
-  body:not(.fu-logged) #page-home .h-btns .btn-o{
-    background:rgba(6,78,59,.12)!important;
-    color:#D1FAE5!important;
-    border:2px solid #7ee6b1!important;
-    font-size:18px!important;
-  }
-}
-
-@media(max-width:750px) and (max-height:790px){
-  body.sebas-guest #page-home .hero-in,
-  body:not(.fu-logged) #page-home .hero-in{
-    grid-template-rows:68% 32%!important;
-    padding:0 18px 20px!important;
-  }
-
-  body.sebas-guest #page-home .h-pill,
-  body:not(.fu-logged) #page-home .h-pill{
-    font-size:11px!important;
-    padding:5px 10px!important;
-    margin-bottom:11px!important;
-  }
-
-  body.sebas-guest #page-home .h-title,
-  body:not(.fu-logged) #page-home .h-title{
-    font-size:39px!important;
-    margin-bottom:9px!important;
-  }
-
-  body.sebas-guest #page-home .h-sub,
-  body:not(.fu-logged) #page-home .h-sub{
-    font-size:22px!important;
-    margin-bottom:11px!important;
-  }
-
-  body.sebas-guest #page-home .h-p,
-  body:not(.fu-logged) #page-home .h-p{
-    font-size:13.5px!important;
-    line-height:1.24!important;
-    margin-bottom:10px!important;
-  }
-
-  body.sebas-guest #page-home .h-tag,
-  body:not(.fu-logged) #page-home .h-tag{
-    font-size:13px!important;
-  }
-
-  body.sebas-guest #page-home .h-btns,
-  body:not(.fu-logged) #page-home .h-btns{
-    gap:12px!important;
-    padding-top:22px!important;
-  }
-
-  body.sebas-guest #page-home .h-btns .btn,
-  body.sebas-guest #page-home .h-btns button,
-  body.sebas-guest #page-home .h-btns a,
-  body:not(.fu-logged) #page-home .h-btns .btn,
-  body:not(.fu-logged) #page-home .h-btns button,
-  body:not(.fu-logged) #page-home .h-btns a{
-    height:46px!important;
-    min-height:46px!important;
-    max-height:46px!important;
-    font-size:16px!important;
-  }
-
-  body.sebas-guest #page-home .h-btns .btn-p,
-  body.sebas-guest #page-home .h-btns .btn-o,
-  body:not(.fu-logged) #page-home .h-btns .btn-p,
-  body:not(.fu-logged) #page-home .h-btns .btn-o{
-    font-size:16px!important;
-  }
-}
-
 </style>
 
 <script id="fortyup-clean-final-js">
