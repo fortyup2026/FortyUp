@@ -5566,6 +5566,17 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 }
 </style>
 
+
+<style id="fortyup-v73-social-distance-css">
+.m-distance{color:#064E3B;font-weight:900}
+.m-social-list{display:flex;flex-wrap:wrap;gap:.45rem}
+.m-social-chip{display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;background:#F0FDF8;border:1.5px solid #A7F3D0;color:#064E3B;border-radius:999px;padding:.38rem .7rem;font-size:.78rem;font-weight:900;box-shadow:0 4px 12px rgba(6,78,59,.06)}
+.m-social-chip:active{transform:scale(.98)}
+@media(max-width:520px){
+  .m-social-chip{font-size:.74rem;padding:.34rem .62rem}
+}
+</style>
+
 </head>
 <body>
 
@@ -7919,6 +7930,51 @@ function clearReg(){
   var rl=document.getElementById('rLat');if(rl)rl.value='';var rn=document.getElementById('rLng');if(rn)rn.value='';
   window._photo=null;window._video=null;
 }
+
+/* FortyUp v73 perfil público: distancia exacta + redes sociales */
+function fortyFmtDistKm(d){
+  if(d==null || isNaN(d)) return '';
+  var meters=Math.round(d*1000);
+  if(meters<1) return 'A menos de 1 m';
+  if(meters<1000) return meters+' m de vos';
+  if(d<10) return d.toFixed(1).replace('.',',')+' km de vos';
+  return Math.round(d)+' km de vos';
+}
+function fortyDistanceText(u){
+  var baseLat=(_searchLat||MLAT||(CU&&CU.lat?CU.lat:null));
+  var baseLng=(_searchLng||MLNG||(CU&&CU.lng?CU.lng:null));
+  if(baseLat&&baseLng&&u&&u.lat&&u.lng){
+    return fortyFmtDistKm(cDist(parseFloat(baseLat),parseFloat(baseLng),parseFloat(u.lat),parseFloat(u.lng)));
+  }
+  return '';
+}
+function fortySocialLink(raw){
+  raw=(raw||'').trim();
+  if(!raw) return '';
+  if(/^https?:\/\//i.test(raw)) return raw;
+  if(raw[0]==='@') raw=raw.slice(1);
+  return 'https://'+raw;
+}
+function fortySocialHtml(u){
+  var soc=(u&&u.social)||{};
+  var defs=[
+    ['instagram','📸 Instagram'],
+    ['facebook','📘 Facebook'],
+    ['tiktok','🎵 TikTok'],
+    ['linkedin','💼 LinkedIn'],
+    ['otra','🌐 Otra red']
+  ];
+  var items=[];
+  defs.forEach(function(pair){
+    var key=pair[0],label=pair[1],val=(soc[key]||'').trim();
+    if(!val) return;
+    var href=fortySocialLink(val);
+    items.push('<a class="m-social-chip" href="'+e(href)+'" target="_blank" rel="noopener noreferrer">'+label+'</a>');
+  });
+  if(!items.length)return '';
+  return '<div class="m-sec m-social-sec"><div class="m-sl">Redes sociales</div><div class="m-social-list">'+items.join('')+'</div></div>';
+}
+
 function openMod(id){
   var u=g(K.U,[]).filter(function(x){return x.id===id})[0];
   if(!u)return;
@@ -7941,13 +7997,15 @@ function openMod(id){
 
   // Build body
   var body=document.createElement('div');body.className='m-body';
+  var dText=fortyDistanceText(u);
   body.innerHTML='<div class="m-nm">'+e(u.name)+', '+u.age+(u.zodiac?' <span style="font-size:.8rem;color:var(--txt3)">'+e(u.zodiac)+'</span>':'')+'</div>'
-    +'<div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+'</div>'
+    +'<div class="m-mt">📍 '+e(u.city)+' · '+e(u.gender)+(dText?' · <strong class="m-distance">'+e(dText)+'</strong>':'')+'</div>'
     +(u.interestedIn?'<div class="m-sec"><div class="m-sl">Le interesa conocer</div><p class="m-desc">'+e(u.interestedIn)+'</p></div>':'')
     +'<div class="m-sec"><div class="m-sl">Busca</div><div class="m-tags">'+lt+'</div></div>'
     +'<div class="m-sec"><div class="m-sl">Descripción</div><p class="m-desc">'+e(desc)+'</p></div>'
     +((u.int||u.interests)?'<div class="m-sec"><div class="m-sl">Intereses</div><p class="m-desc">'+e(u.int||u.interests)+'</p></div>':'')
-    +'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div>';
+    +'<div class="m-sec"><div class="m-sl">Plan ideal</div><div class="m-tags">'+pt+'</div></div>'
+    +fortySocialHtml(u);
 
   // Build action buttons
   var acts=document.createElement('div');acts.className='m-acts';
