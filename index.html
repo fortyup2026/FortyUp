@@ -2181,6 +2181,14 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 }
 /* ═══════════════════════════ */
 
+
+/* Hero text visibility fixes */
+#heroHome .t1 { color: #ffffff !important; }
+#heroHome .t2 { color: #6ee7b7 !important; }
+#heroHome .hz-title { color: #ffffff !important; }
+#heroHome .hz-desc { color: rgba(255,255,255,.78) !important; }
+#heroHome .hz-pill { color: rgba(255,255,255,.9) !important; }
+#heroHome .hz-proof-t { color: rgba(255,255,255,.7) !important; }
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -4047,13 +4055,13 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
           <span class="pdot"></span>Comunidad exclusiva · Mayores de 40
         </div>
         <div class="hz-logo">
-          <span class="t1">Forty</span><span class="t2">Up</span>
+          <span style="font-family:'Playfair Display',serif;font-weight:800;color:#ffffff;font-style:normal">Forty</span><span style="font-family:'Playfair Display',serif;font-weight:800;color:#6ee7b7;font-style:italic">Up</span>
         </div>
       </div>
 
       <!-- ZONA 2: Texto -->
       <div class="hero-zone hero-zone-mid">
-        <h1 class="hz-title">Conocé personas <em>reales</em>,<br>por planes reales.</h1>
+        <h1 class="hz-title" style="color:#fff">Conocé personas <em style="color:#6ee7b7;font-style:italic">reales</em>,<br>por planes reales.</h1>
         <p class="hz-desc">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias. Sin filtros.</p>
       </div>
 
@@ -5176,11 +5184,12 @@ function updateHeroLoggedIn(){
   var btns=document.getElementById('heroBtns');var pill=document.getElementById('heroPill');
   if(!btns)return;
   if(CU){
-    var nm=CU.name||CU.email.split('@')[0];btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Explorar perfiles →';b1.onclick=function(){goTo('profiles')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Mi perfil';b2.onclick=function(){goTo('myprofile');rMyP()};
-    btns.appendChild(b1);btns.appendChild(b2);
+    var nm=CU.name||CU.email.split('@')[0];
+    // Hide buttons when logged in - just show welcome
+    btns.style.display='none';
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
+    // Auto-go to profiles after a moment
+    setTimeout(function(){goTo('profiles')},800);
   }else{
     btns.innerHTML='';
     var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate gratis';b1.className='hz-btn hz-btn-p';b1.style.cssText='width:100%';b1.onclick=function(){openAuth('register')};
