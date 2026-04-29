@@ -5060,14 +5060,14 @@ function updateHeroLoggedIn(){
   if(!btns)return;
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.style.minWidth='200px';b1.textContent='Iniciar sesión →';b1.onclick=function(){goTo('profiles')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.style.minWidth='200px';b1.textContent='Explorar perfiles →';b1.onclick=function(){goTo('profiles')};
     var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Mi perfil';b2.onclick=function(){goTo('myprofile');rMyP()};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
   }else{
     btns.innerHTML='';
     var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate →';b1.onclick=function(){openAuth('register')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciar sesión';b2.onclick=function(){goTo('profiles')};
+    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciar sesión';b2.onclick=function(){openAuth('login')};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>Comunidad exclusiva · Mayores de 40';
   }
@@ -6909,9 +6909,10 @@ body{padding-bottom:110px!important;}
 
 
 /* =========================================================
-   HOME INVITADO INTEGRADO FINAL
+   HOME INVITADO DEFINITIVO - UNA PANTALLA, PROLIJO
    ========================================================= */
 @media(max-width:750px){
+  body.sebas-guest,
   body:not(.fu-logged){
     height:100svh!important;
     max-height:100svh!important;
@@ -6919,10 +6920,12 @@ body{padding-bottom:110px!important;}
     padding-bottom:0!important;
   }
 
+  body.sebas-guest .bnav,
   body:not(.fu-logged) .bnav{
     display:none!important;
   }
 
+  body.sebas-guest #page-home.active,
   body:not(.fu-logged) #page-home.active{
     height:100svh!important;
     max-height:100svh!important;
@@ -6930,6 +6933,8 @@ body{padding-bottom:110px!important;}
     display:block!important;
   }
 
+  body.sebas-guest .nav,
+  body.sebas-guest .nav-in,
   body:not(.fu-logged) .nav,
   body:not(.fu-logged) .nav-in{
     height:74px!important;
@@ -6937,6 +6942,7 @@ body{padding-bottom:110px!important;}
     max-height:74px!important;
   }
 
+  body.sebas-guest #page-home .hero,
   body:not(.fu-logged) #page-home .hero{
     height:calc(100svh - 74px)!important;
     min-height:calc(100svh - 74px)!important;
@@ -6947,10 +6953,15 @@ body{padding-bottom:110px!important;}
     display:block!important;
     border-radius:0 0 34px 34px!important;
     background:
-      radial-gradient(circle at 50% 33%,rgba(16,185,129,.13),transparent 35%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 68%,#063D33 68%,#063D33 100%)!important;
+      radial-gradient(circle at 50% 34%,rgba(16,185,129,.16),transparent 38%),
+      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 69%,#063D33 69%,#063D33 100%)!important;
   }
 
+  body.sebas-guest #page-home .hero-glow,
+  body.sebas-guest #page-home .hero-b1,
+  body.sebas-guest #page-home .hero-b2,
+  body.sebas-guest #page-home .hcard,
+  body.sebas-guest #page-home .h-proof,
   body:not(.fu-logged) #page-home .hero-glow,
   body:not(.fu-logged) #page-home .hero-b1,
   body:not(.fu-logged) #page-home .hero-b2,
@@ -6959,13 +6970,14 @@ body{padding-bottom:110px!important;}
     display:none!important;
   }
 
+  body.sebas-guest #page-home .hero-in,
   body:not(.fu-logged) #page-home .hero-in{
     width:100%!important;
     height:100%!important;
     max-height:100%!important;
     overflow:hidden!important;
     display:grid!important;
-    grid-template-rows:66% 34%!important;
+    grid-template-rows:69% 31%!important;
     grid-template-columns:1fr!important;
     align-items:stretch!important;
     justify-items:center!important;
@@ -6974,6 +6986,7 @@ body{padding-bottom:110px!important;}
     padding:0 18px 24px!important;
   }
 
+  body.sebas-guest #page-home .hero-left,
   body:not(.fu-logged) #page-home .hero-left{
     width:100%!important;
     height:100%!important;
@@ -6986,11 +6999,12 @@ body{padding-bottom:110px!important;}
     overflow:hidden!important;
   }
 
+  body.sebas-guest #page-home .h-pill,
   body:not(.fu-logged) #page-home .h-pill{
     max-width:100%!important;
-    margin:0 auto 16px!important;
-    padding:6px 12px!important;
-    font-size:12px!important;
+    margin:0 auto 18px!important;
+    padding:7px 14px!important;
+    font-size:13px!important;
     line-height:1!important;
     white-space:nowrap!important;
     transform:none!important;
@@ -6999,32 +7013,36 @@ body{padding-bottom:110px!important;}
     box-shadow:0 8px 24px rgba(6,78,59,.05)!important;
   }
 
+  body.sebas-guest #page-home .h-title,
   body:not(.fu-logged) #page-home .h-title{
-    font-size:40px!important;
+    font-size:50px!important;
     line-height:.88!important;
-    margin:0 0 14px!important;
+    margin:0 0 16px!important;
     text-align:center!important;
   }
 
+  body.sebas-guest #page-home .h-sub,
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:23px!important;
+    font-size:28px!important;
     line-height:1.08!important;
-    margin:0 0 18px!important;
+    margin:0 0 20px!important;
     max-width:96%!important;
     text-align:center!important;
   }
 
+  body.sebas-guest #page-home .h-p,
   body:not(.fu-logged) #page-home .h-p{
-    font-size:14px!important;
-    line-height:1.38!important;
+    font-size:17px!important;
+    line-height:1.42!important;
     max-width:95%!important;
-    margin:0 auto 16px!important;
+    margin:0 auto 18px!important;
     text-align:center!important;
   }
 
+  body.sebas-guest #page-home .h-tag,
   body:not(.fu-logged) #page-home .h-tag{
     font-family:'Nunito',sans-serif!important;
-    font-size:13.5px!important;
+    font-size:16px!important;
     font-weight:900!important;
     line-height:1.1!important;
     margin:0 auto!important;
@@ -7032,6 +7050,7 @@ body{padding-bottom:110px!important;}
     text-align:center!important;
   }
 
+  body.sebas-guest #page-home .h-btns,
   body:not(.fu-logged) #page-home .h-btns{
     width:min(88vw,420px)!important;
     max-width:min(88vw,420px)!important;
@@ -7042,20 +7061,26 @@ body{padding-bottom:110px!important;}
     justify-content:flex-start!important;
     gap:14px!important;
     margin:0 auto!important;
-    padding:30px 0 0!important;
+    padding:26px 0 0!important;
     position:relative!important;
     opacity:1!important;
     visibility:visible!important;
     overflow:visible!important;
   }
 
+  body.sebas-guest #page-home .h-btns:before,
+  body.sebas-guest #page-home .h-btns:after,
+  body.sebas-guest #page-home .h-btns .btn-p:before,
+  body.sebas-guest #page-home .h-btns .btn-o:before,
   body:not(.fu-logged) #page-home .h-btns:before,
   body:not(.fu-logged) #page-home .h-btns:after,
-  body:not(.fu-logged) #page-home .h-btns .btn-p:before{
+  body:not(.fu-logged) #page-home .h-btns .btn-p:before,
+  body:not(.fu-logged) #page-home .h-btns .btn-o:before{
     display:none!important;
     content:none!important;
   }
 
+  body.sebas-guest #page-home .h-btns > *,
   body:not(.fu-logged) #page-home .h-btns > *{
     width:100%!important;
     max-width:100%!important;
@@ -7065,22 +7090,25 @@ body{padding-bottom:110px!important;}
     transform:none!important;
   }
 
+  body.sebas-guest #page-home .h-btns .btn,
+  body.sebas-guest #page-home .h-btns button,
+  body.sebas-guest #page-home .h-btns a,
   body:not(.fu-logged) #page-home .h-btns .btn,
   body:not(.fu-logged) #page-home .h-btns button,
   body:not(.fu-logged) #page-home .h-btns a{
     width:100%!important;
     max-width:100%!important;
     min-width:0!important;
-    height:50px!important;
-    min-height:50px!important;
-    max-height:50px!important;
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
     border-radius:999px!important;
     padding:0 1rem!important;
     margin:0!important;
-    font-size:17px!important;
+    font-size:18px!important;
     line-height:1!important;
     font-weight:900!important;
     text-align:center!important;
@@ -7089,85 +7117,85 @@ body{padding-bottom:110px!important;}
     box-sizing:border-box!important;
   }
 
+  body.sebas-guest #page-home .h-btns .btn-p,
   body:not(.fu-logged) #page-home .h-btns .btn-p{
     background:linear-gradient(135deg,#064E3B,#059669)!important;
     color:#fff!important;
     border:2px solid rgba(167,243,208,.58)!important;
     box-shadow:0 8px 24px rgba(6,78,59,.24)!important;
+    font-size:18px!important;
   }
 
+  body.sebas-guest #page-home .h-btns .btn-o,
   body:not(.fu-logged) #page-home .h-btns .btn-o{
     background:rgba(6,78,59,.12)!important;
     color:#D1FAE5!important;
     border:2px solid #7ee6b1!important;
+    font-size:18px!important;
   }
 }
 
 @media(max-width:750px) and (max-height:790px){
-  body:not(.fu-logged) #page-home .hero{
-    background:
-      radial-gradient(circle at 50% 32%,rgba(16,185,129,.13),transparent 35%),
-      linear-gradient(180deg,#F4FFF9 0%,#F8FFFB 67%,#063D33 67%,#063D33 100%)!important;
-  }
-
+  body.sebas-guest #page-home .hero-in,
   body:not(.fu-logged) #page-home .hero-in{
-    grid-template-rows:67% 33%!important;
+    grid-template-rows:68% 32%!important;
     padding:0 18px 20px!important;
   }
 
+  body.sebas-guest #page-home .h-pill,
   body:not(.fu-logged) #page-home .h-pill{
     font-size:11px!important;
     padding:5px 10px!important;
     margin-bottom:11px!important;
   }
 
+  body.sebas-guest #page-home .h-title,
   body:not(.fu-logged) #page-home .h-title{
-    font-size:34px!important;
+    font-size:39px!important;
     margin-bottom:9px!important;
   }
 
+  body.sebas-guest #page-home .h-sub,
   body:not(.fu-logged) #page-home .h-sub{
-    font-size:19px!important;
+    font-size:22px!important;
+    margin-bottom:11px!important;
+  }
+
+  body.sebas-guest #page-home .h-p,
+  body:not(.fu-logged) #page-home .h-p{
+    font-size:13.5px!important;
+    line-height:1.24!important;
     margin-bottom:10px!important;
   }
 
-  body:not(.fu-logged) #page-home .h-p{
-    font-size:12.3px!important;
-    line-height:1.22!important;
-    margin-bottom:9px!important;
-  }
-
+  body.sebas-guest #page-home .h-tag,
   body:not(.fu-logged) #page-home .h-tag{
-    font-size:12px!important;
+    font-size:13px!important;
   }
 
+  body.sebas-guest #page-home .h-btns,
   body:not(.fu-logged) #page-home .h-btns{
     gap:12px!important;
-    padding-top:24px!important;
+    padding-top:22px!important;
   }
 
+  body.sebas-guest #page-home .h-btns .btn,
+  body.sebas-guest #page-home .h-btns button,
+  body.sebas-guest #page-home .h-btns a,
   body:not(.fu-logged) #page-home .h-btns .btn,
   body:not(.fu-logged) #page-home .h-btns button,
   body:not(.fu-logged) #page-home .h-btns a{
-    height:45px!important;
-    min-height:45px!important;
-    max-height:45px!important;
-    font-size:15px!important;
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+    font-size:16px!important;
   }
-}
 
-@media(max-width:750px) and (max-height:700px){
-  body:not(.fu-logged) #page-home .h-title{font-size:30px!important}
-  body:not(.fu-logged) #page-home .h-sub{font-size:17px!important}
-  body:not(.fu-logged) #page-home .h-p{font-size:11.4px!important;line-height:1.17!important}
-  body:not(.fu-logged) #page-home .h-tag{font-size:11px!important}
-  body:not(.fu-logged) #page-home .h-btns{padding-top:18px!important;gap:10px!important}
-  body:not(.fu-logged) #page-home .h-btns .btn,
-  body:not(.fu-logged) #page-home .h-btns button,
-  body:not(.fu-logged) #page-home .h-btns a{
-    height:42px!important;
-    min-height:42px!important;
-    max-height:42px!important;
+  body.sebas-guest #page-home .h-btns .btn-p,
+  body.sebas-guest #page-home .h-btns .btn-o,
+  body:not(.fu-logged) #page-home .h-btns .btn-p,
+  body:not(.fu-logged) #page-home .h-btns .btn-o{
+    font-size:16px!important;
   }
 }
 
