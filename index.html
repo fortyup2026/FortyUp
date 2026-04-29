@@ -7274,7 +7274,7 @@ function rMyP(){
   var cards=document.createElement('div');cards.className='myp-cards';
   var cardData=[
     {ico:'<span style="display:inline-block;width:22px;height:22px;background:var(--gold);transform:rotate(45deg);border-radius:3px"></span>',tit:'Mis Fortis',det:'Enviados <strong style="color:var(--g1)">'+fS+'</strong><br>Recibidos <strong style="color:var(--g1)">'+fR+'</strong>',fn:function(){showMyFortis()},cls:'myp-card'},
-    {ico:'📸',tit:'Fotos y videos',det:'Álbumes públicos y privados',fn:function(){toast('Fotos y videos próximamente 📸','ok')},cls:'myp-card myp-card-media'},
+    {ico:'📸',tit:'Fotos y videos',det:'Álbumes públicos y privados',fn:function(){showMyAlbums()},cls:'myp-card myp-card-media'},
     {ico:'⭐',tit:'Favoritos',det:'Guardados <strong style="color:#7c5500">'+fvC+'</strong>',fn:function(){if(CU){goTo('favorites');rFavs()}},cls:'myp-card myp-card-g'},
     {ico:'✏️',tit:'Editar perfil',det:'Actualizá tu info, fotos e intereses',fn:function(){goTo('register')},cls:'myp-card'}
   ];
@@ -13032,4 +13032,127 @@ body{padding-bottom:110px!important;}
 .fu-notif-t{font-weight:900!important;color:#064E3B!important;font-size:.9rem!important}.fu-notif-d{font-size:.76rem!important;color:#2D4A40!important;margin-top:.16rem!important}.fu-notif-time{font-size:.66rem!important;color:#6B7C76!important;margin-top:.2rem!important;font-weight:700!important}.fu-notif-empty{text-align:center!important;padding:1.8rem 1rem!important;color:#6B7C76!important;font-weight:800!important}
 .fu-notif-actions{display:flex!important;justify-content:space-between!important;padding:.75rem 1rem!important;border-top:1px solid #D1E8DF!important;background:#fff!important}.fu-notif-actions button{border-radius:999px!important;padding:.48rem .85rem!important;font-size:.76rem!important;font-weight:900!important;background:#F0FDF8!important;color:#064E3B!important;border:1.5px solid #D1E8DF!important}.fu-notif-actions .fu-clear{background:#FFFBEB!important;color:#7c5500!important;border-color:#FDE68A!important}
 @media(max-width:750px){.fu-notif-wrap{width:40px!important;height:40px!important;flex-basis:40px!important;margin-right:.18rem!important}.fu-notif-panel{padding-top:5.2rem!important}}
+
+
+/* === FortyUp v75 - Fotos y videos / álbumes === */
+.fu-albums-wrap{background:#FFFDF7;border-radius:28px;overflow:hidden;max-height:calc(100dvh - 8rem);display:flex;flex-direction:column}
+.fu-albums-head{padding:1.05rem 1.05rem .85rem;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;position:relative;overflow:hidden}
+.fu-albums-head:after{content:'📸';position:absolute;right:1rem;top:.25rem;font-size:4.2rem;opacity:.10;transform:rotate(-8deg)}
+.fu-albums-title{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:800;line-height:1.05;position:relative;z-index:1}
+.fu-albums-sub{font-size:.82rem;line-height:1.4;color:rgba(240,253,248,.86);font-weight:700;margin-top:.25rem;position:relative;z-index:1}
+.fu-albums-body{padding:.95rem;overflow-y:auto;background:linear-gradient(180deg,#F0FDF8,#FFFDF7);display:flex;flex-direction:column;gap:.8rem}
+.fu-album-note{background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:18px;padding:.72rem .85rem;font-size:.78rem;font-weight:800;line-height:1.35}
+.fu-albums-grid{display:grid;grid-template-columns:1fr;gap:.78rem}
+.fu-album-card{background:#fff;border:1.5px solid #D1E8DF;border-radius:24px;padding:.85rem;box-shadow:0 8px 22px rgba(6,78,59,.08);position:relative;overflow:hidden}
+.fu-album-main{display:grid;grid-template-columns:72px 1fr;gap:.8rem;align-items:center}
+.fu-album-cover{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#E8FFF5,#A7F3D0);border:1.5px solid #A7F3D0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#064E3B;font-size:1.7rem;font-weight:900;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+.fu-album-cover img{width:100%;height:100%;object-fit:cover}
+.fu-album-name{font-size:.98rem;font-weight:900;color:#064E3B;line-height:1.12;margin-bottom:.2rem}
+.fu-album-count{font-size:.72rem;color:#6B7C76;font-weight:800;margin-bottom:.38rem}
+.fu-album-thumbs{display:flex;gap:.25rem;margin-top:.45rem;min-height:26px}
+.fu-album-thumb{width:26px;height:26px;border-radius:8px;overflow:hidden;background:#ECFDF5;border:1px solid #A7F3D0;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#064E3B}
+.fu-album-thumb img{width:100%;height:100%;object-fit:cover}
+.fu-album-privacy{display:inline-flex;align-items:center;gap:.32rem;border-radius:999px;padding:.28rem .58rem;font-size:.68rem;font-weight:900;border:1.5px solid #A7F3D0;background:#ECFDF5;color:#064E3B;cursor:pointer;transition:.18s ease;user-select:none}
+.fu-album-privacy:hover{transform:translateY(-1px)}
+.fu-album-privacy.private{background:#FFFBEB;border-color:#FDE68A;color:#7c5500}
+.fu-album-privacy .clip{display:inline-flex;width:20px;height:20px;border-radius:50%;align-items:center;justify-content:center;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);font-size:.75rem}
+.fu-album-actions{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:.72rem;padding-top:.72rem;border-top:1px solid #ECFDF5}
+.fu-album-open{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:999px;padding:.45rem .85rem;font-size:.76rem;font-weight:900;box-shadow:0 4px 12px rgba(6,78,59,.18)}
+.fu-add-album{min-height:132px;border:2px dashed #A7F3D0;background:rgba(240,253,248,.82);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.38rem;color:#064E3B;cursor:pointer;transition:.18s ease;box-shadow:0 8px 22px rgba(6,78,59,.05)}
+.fu-add-album:hover{background:#ECFDF5;transform:translateY(-2px)}
+.fu-add-plus{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2.1rem;font-weight:300;box-shadow:0 8px 18px rgba(6,78,59,.22)}
+.fu-add-title{font-size:.94rem;font-weight:900}.fu-add-sub{font-size:.72rem;color:#6B7C76;font-weight:800;text-align:center}
+.fu-album-detail{background:#FFFDF7;border-radius:28px;overflow:hidden;max-height:calc(100dvh - 8rem);display:flex;flex-direction:column}
+.fu-album-detail-head{padding:1rem;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;display:flex;align-items:center;gap:.7rem}
+.fu-album-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}.fu-album-detail-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;line-height:1}.fu-album-detail-sub{font-size:.72rem;color:rgba(255,255,255,.78);font-weight:800;margin-top:.16rem}
+.fu-media-grid{padding:.95rem;overflow:auto;background:linear-gradient(180deg,#F0FDF8,#FFFDF7);display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.fu-media-item{aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#ECFDF5;border:1.5px solid #D1E8DF;display:flex;align-items:center;justify-content:center;color:#064E3B;font-size:1.9rem;font-weight:900}
+.fu-media-item img{width:100%;height:100%;object-fit:cover}.fu-empty-media{grid-column:1/-1;text-align:center;padding:2rem 1rem;color:#6B7C76;font-weight:800;line-height:1.4}
+@media(min-width:650px){.fu-albums-grid{grid-template-columns:repeat(2,1fr)}.fu-media-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.fu-albums-wrap,.fu-album-detail{max-height:calc(100dvh - 7rem)}.fu-album-main{grid-template-columns:64px 1fr}.fu-album-cover{width:64px;height:64px;border-radius:18px}.fu-albums-body{padding:.78rem}.fu-album-card{padding:.75rem}.fu-add-album{min-height:120px}.fu-add-plus{width:52px;height:52px}}
 </style>
+
+
+<script id="fortyup-v75-albumes-fotos-videos">
+(function(){
+  function esc(v){return (window.e?e(v):String(v||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]}));}
+  function albumsKey(){return CU?'fu_albums_'+CU.id:'fu_albums_guest'}
+  function getAlbumsRaw(){try{return JSON.parse(localStorage.getItem(albumsKey())||'[]')}catch(_){return []}}
+  function saveAlbumsRaw(a){localStorage.setItem(albumsKey(),JSON.stringify(a||[]))}
+  function uniqItems(items){var seen={};return (items||[]).filter(function(it){if(!it||!it.src)return false;var k=(it.type||'photo')+'|'+it.src;if(seen[k])return false;seen[k]=1;return true})}
+  function currentProfileItems(){
+    var arr=[];
+    if(CU){
+      if(Array.isArray(CU.profilePhotos)) CU.profilePhotos.forEach(function(src){if(src)arr.push({type:'photo',src:src,at:CU.updatedAt||CU.createdAt||new Date().toISOString()})});
+      if(CU.photo) arr.push({type:'photo',src:CU.photo,at:new Date().toISOString()});
+      if(CU.video) arr.push({type:'video',src:CU.video,at:new Date().toISOString()});
+    }
+    return uniqItems(arr);
+  }
+  window.fuSyncProfileAlbum=function(){
+    if(!CU)return [];
+    var albums=getAlbumsRaw();
+    var ix=albums.findIndex(function(a){return a&&a.kind==='profile'});
+    var profile={id:'profile',kind:'profile',name:'Fotos de perfil',private:false,items:currentProfileItems(),createdAt:CU.createdAt||new Date().toISOString()};
+    if(ix>=0){profile.private=!!albums[ix].private;profile.createdAt=albums[ix].createdAt||profile.createdAt;albums[ix]=Object.assign({},albums[ix],profile)}
+    else albums.unshift(profile);
+    saveAlbumsRaw(albums);
+    return albums;
+  };
+  function getAlbums(){fuSyncProfileAlbum();return getAlbumsRaw()}
+  function coverHtml(a){var first=(a.items||[]).find(function(x){return x&&x.type==='photo'&&x.src});if(first)return '<img src="'+esc(first.src)+'" onerror="this.parentElement.innerHTML=\'📁\'">';return a.kind==='profile'?'📷':'📁'}
+  function thumbsHtml(a){var items=(a.items||[]).slice(0,4);if(!items.length)return '<span class="fu-album-thumb">+</span>';return items.map(function(it){return '<span class="fu-album-thumb">'+(it.type==='photo'?'<img src="'+esc(it.src)+'" onerror="this.parentElement.textContent=\'📷\'">':'▶')+'</span>'}).join('')}
+  function privacyBtn(a){var isP=!!a.private;return '<button class="fu-album-privacy '+(isP?'private':'')+'" onclick="event.stopPropagation();fuToggleAlbumPrivacy(\''+esc(a.id)+'\')"><span class="clip">📎</span><span>'+(isP?'Privado':'Público')+'</span></button>'}
+  window.showMyAlbums=function(){
+    if(!CU){toast&&toast('Iniciá sesión para ver tus fotos','w');return}
+    var albums=getAlbums();
+    var html='<div class="fu-albums-wrap"><div class="fu-albums-head"><div class="fu-albums-title">Fotos y videos</div><div class="fu-albums-sub">Organizá tus álbumes. Las fotos de perfil se guardan automáticamente en su carpeta.</div></div><div class="fu-albums-body"><div class="fu-album-note">📎 Usá el clip para cambiar un álbum entre público y privado. Si movés el clip al lado privado, ese álbum será privado y no se mostrará públicamente.</div><div class="fu-albums-grid">';
+    albums.forEach(function(a){html+='<div class="fu-album-card" onclick="fuOpenAlbum(\''+esc(a.id)+'\')"><div class="fu-album-main"><div class="fu-album-cover">'+coverHtml(a)+'</div><div><div class="fu-album-name">'+esc(a.name)+'</div><div class="fu-album-count">'+((a.items||[]).length)+' archivo'+(((a.items||[]).length)==1?'':'s')+'</div>'+privacyBtn(a)+'<div class="fu-album-thumbs">'+thumbsHtml(a)+'</div></div></div><div class="fu-album-actions"><button class="fu-album-open" onclick="event.stopPropagation();fuOpenAlbum(\''+esc(a.id)+'\')">Ver álbum</button></div></div>'});
+    html+='<div class="fu-add-album" onclick="fuCreateAlbum()"><div class="fu-add-plus">+</div><div class="fu-add-title">Crear carpeta</div><div class="fu-add-sub">Álbum público o privado</div></div></div></div></div>';
+    var mc=document.getElementById('mCont'), ov=document.getElementById('mOv');if(mc&&ov){mc.innerHTML=html;ov.classList.add('open');document.body.style.overflow='hidden'}
+  };
+  window.fuCreateAlbum=function(){
+    if(!CU)return;
+    var name=prompt('Nombre de la nueva carpeta','Nuevo álbum');
+    if(!name)return;
+    var albums=getAlbums();
+    albums.push({id:'alb_'+Date.now(),name:name.trim()||'Nuevo álbum',private:false,items:[],createdAt:new Date().toISOString()});
+    saveAlbumsRaw(albums);showMyAlbums();toast&&toast('Carpeta creada ✓','ok')
+  };
+  window.fuToggleAlbumPrivacy=function(id){
+    var albums=getAlbumsRaw();
+    albums=albums.map(function(a){if(a.id===id)a.private=!a.private;return a});
+    saveAlbumsRaw(albums);showMyAlbums();
+  };
+  window.fuOpenAlbum=function(id){
+    var albums=getAlbums();var a=albums.find(function(x){return x.id===id});if(!a)return;
+    var items=a.items||[];
+    var html='<div class="fu-album-detail"><div class="fu-album-detail-head"><button class="fu-album-back" onclick="showMyAlbums()">←</button><div><div class="fu-album-detail-title">'+esc(a.name)+'</div><div class="fu-album-detail-sub">'+(a.private?'Privado':'Público')+' · '+items.length+' archivo'+(items.length===1?'':'s')+'</div></div></div><div class="fu-media-grid">';
+    if(!items.length){html+='<div class="fu-empty-media">Todavía no hay fotos ni videos en esta carpeta.<br>Cuando cargues fotos de perfil, aparecerán automáticamente en “Fotos de perfil”.</div>'}
+    else items.forEach(function(it){html+='<div class="fu-media-item" onclick="fuViewAlbumMedia(\''+esc(id)+'\',\''+items.indexOf(it)+'\')">'+(it.type==='video'?'▶':'<img src="'+esc(it.src)+'" onerror="this.parentElement.textContent=\'📷\'">')+'</div>'});
+    html+='</div></div>';var mc=document.getElementById('mCont');if(mc)mc.innerHTML=html;
+  };
+  window.fuViewAlbumMedia=function(id,i){
+    var albums=getAlbums();var a=albums.find(function(x){return x.id===id});if(!a)return;var it=(a.items||[])[parseInt(i,10)];if(!it)return;
+    var html='<div class="photo-view"><button class="m-cl" onclick="showMyAlbums()">✕</button>'+(it.type==='video'?'<video src="'+esc(it.src)+'" controls playsinline></video>':'<img src="'+esc(it.src)+'" alt="'+esc(a.name)+'">')+'<div class="photo-view-title">'+esc(a.name)+'</div></div>';
+    var mc=document.getElementById('mCont');if(mc)mc.innerHTML=html;
+  };
+  function syncUserProfilePhotos(){
+    if(!CU)return;
+    var photos=Array.isArray(CU.profilePhotos)?CU.profilePhotos.slice():[];
+    if(CU.photo && photos.indexOf(CU.photo)===-1)photos.push(CU.photo);
+    CU.profilePhotos=photos;
+    try{var users=g(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{profilePhotos:photos}):u});sv(K.U,users)}catch(_){ }
+    fuSyncProfileAlbum();
+  }
+  window.fuSyncUserProfilePhotos=syncUserProfilePhotos;
+  var oldSave=window.saveProfile;
+  if(typeof oldSave==='function'){
+    window.saveProfile=function(){var r=oldSave.apply(this,arguments);setTimeout(syncUserProfilePhotos,80);return r;}
+  }
+  var oldRMyP=window.rMyP;
+  if(typeof oldRMyP==='function'){
+    window.rMyP=function(){var r=oldRMyP.apply(this,arguments);setTimeout(function(){var cards=document.querySelectorAll('#page-myprofile .myp-card-media');cards.forEach(function(c){c.onclick=function(){showMyAlbums()}})},30);return r;}
+  }
+})();
+</script>
