@@ -62,34 +62,34 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 .btn-o:hover{background:var(--g1);color:#fff;transform:translateY(-2px)}
 .btn-gd{background:linear-gradient(135deg,var(--gold),#e0a800);color:var(--g1);box-shadow:0 4px 14px rgba(242,183,5,.32)}
 .btn-gd:hover{transform:translateY(-2px)}
-.btn-lg{padding:.85rem 1.5rem;font-size:.98rem;border-radius:50px;width:100%;font-weight:800}
+.btn-lg{padding:.8rem 1.9rem!important;font-size:.98rem!important}
 .btn-sm{padding:.36rem .82rem!important;font-size:.76rem!important}
 .btn-fw{width:100%;justify-content:center}
 /* HERO */
-.hero{position:relative;overflow:hidden;min-height:100dvh;min-height:calc(var(--vh,1vh)*100);display:flex;align-items:center;justify-content:center;padding:1.5rem 1.25rem 5rem}
+.hero{position:relative;overflow:hidden;min-height:calc(100vh - 60px);display:flex;align-items:center;padding:2.8rem 1.25rem}
 .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:650px;height:650px;background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 65%);pointer-events:none;z-index:0}
 .hero-b1{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.1),transparent 70%);top:-140px;right:-90px;filter:blur(55px);pointer-events:none}
 .hero-b2{position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(242,183,5,.08),transparent 70%);bottom:-90px;left:-70px;filter:blur(55px);pointer-events:none}
-.hero-in{position:relative;z-index:2;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.6rem}
-.hero-left{width:100%}
-.h-pill{display:inline-flex;align-items:center;gap:.4rem;background:rgba(6,78,59,.08);border:1px solid rgba(6,78,59,.15);border-radius:50px;padding:.35rem .85rem;font-size:.75rem;font-weight:700;color:var(--g1);margin-bottom:.5rem}
+.hero-in{position:relative;z-index:2;max-width:1100px;margin:auto;width:100%;display:flex;align-items:center;gap:2.8rem}
+.hero-left{flex:1;min-width:0}
+.h-pill{display:inline-flex;align-items:center;gap:.45rem;background:rgba(16,185,129,.12);border:1.5px solid rgba(16,185,129,.22);color:var(--g1);border-radius:var(--r3);padding:.33rem .82rem;font-size:.76rem;font-weight:800;margin-bottom:1.1rem;text-transform:uppercase;letter-spacing:.05em}
 .pdot{width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 0 3px rgba(16,185,129,.25);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(16,185,129,.25)}50%{box-shadow:0 0 0 6px rgba(16,185,129,.08)}}
-.h-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:.2rem}
+.h-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.5rem);font-weight:800;line-height:1;letter-spacing:-.03em}
 .h-title .t1{color:var(--g1)}.h-title .t2{color:var(--g2);font-style:italic}
-.h-sub{font-size:clamp(.95rem,3vw,1.15rem);font-weight:400;line-height:1.4;margin-bottom:.4rem}
+.h-sub{font-family:'Playfair Display',serif;font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;line-height:1.15;color:var(--txt);margin:.15rem 0 .85rem}
 .h-sub em{color:var(--g2);font-style:italic}
-.h-p{font-size:.88rem;line-height:1.6;color:var(--txt2);margin-bottom:.4rem}
-.h-tag{font-size:.8rem;margin-bottom:.6rem}
-.h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
-.h-proof{display:flex;align-items:center;justify-content:center;gap:.65rem}
+.h-p{font-size:.98rem;line-height:1.7;color:var(--txt2);max-width:475px;margin-bottom:.55rem}
+.h-tag{font-family:'Playfair Display',serif;font-style:italic;font-size:.98rem;color:#e0a800;margin-bottom:1.5rem}
+.h-btns{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.4rem}
+.h-proof{display:flex;align-items:center;gap:.7rem}
 .pavs{display:flex}
 .pav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;color:#fff;border:2px solid #fff;margin-left:-8px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .pav:first-child{margin-left:0}
 .pav1{background:linear-gradient(135deg,#064E3B,#10B981)}.pav2{background:linear-gradient(135deg,#10B981,#34d399)}.pav3{background:linear-gradient(135deg,#F2B705,#10B981)}.pav4{background:linear-gradient(135deg,#059669,#064E3B)}
 .h-proof-t{font-size:.8rem;color:var(--txt3)}.h-proof-t strong{color:var(--g1)}
 /* HERO CARD */
-.hcard{display:none}
+.hcard{width:270px;flex-shrink:0;background:var(--card);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh2);border:1px solid rgba(209,232,223,.4);position:relative}
 .hcard-img{height:195px;overflow:hidden;background:linear-gradient(135deg,var(--g1),var(--g2));display:flex;align-items:center;justify-content:center}
 .hcard-img img{width:100%;height:100%;object-fit:cover;object-position:top}
 .hcard-bdg{position:absolute;top:.65rem;left:.65rem;background:rgba(242,183,5,.95);color:var(--g1);font-size:.64rem;font-weight:900;padding:.2rem .6rem;border-radius:var(--r3)}
@@ -320,8 +320,8 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 @keyframes tin{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes tout{from{opacity:1}to{opacity:0;transform:translateY(8px) scale(.95)}}
 /* RESPONSIVE */
-@media(max-width:1020px){.hero-in{position:relative;z-index:2;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.6rem}.h-btns,.h-proof{display:flex;align-items:center;justify-content:center;gap:.65rem}.h-p{font-size:.88rem;line-height:1.6;color:var(--txt2);margin-bottom:.4rem}.h-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:.2rem}.h-sub{font-size:clamp(.95rem,3vw,1.15rem);font-weight:400;line-height:1.4;margin-bottom:.4rem}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:750px){.nav-links{display:none}.hbg{display:flex}.pg3{grid-template-columns:1fr}.hero{position:relative;overflow:hidden;min-height:100dvh;min-height:calc(var(--vh,1vh)*100);display:flex;align-items:center;justify-content:center;padding:1.5rem 1.25rem 5rem}.h-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:.2rem}.hcard{display:none}.st-in{gap:1.2rem}.st-dv{display:none}.cta-box{padding:2.8rem 1.4rem}.fcard{padding:1.3rem .9rem}.inner{padding:1.75rem 1rem 4rem}.toast{white-space:normal;text-align:center;max-width:84vw}.bnav{display:flex}body{padding-bottom:82px}.myp-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1020px){.hero-in{flex-direction:column;text-align:center;gap:2rem;align-items:center}.h-btns,.h-proof{justify-content:center}.h-p{margin-left:auto;margin-right:auto}.h-title{font-size:3.2rem}.h-sub{font-size:1.95rem}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:750px){.nav-links{display:none}.hbg{display:flex}.pg3{grid-template-columns:1fr}.hero{padding:2rem 1.25rem;min-height:auto}.h-title{font-size:2.8rem}.hcard{width:100%;max-width:270px}.st-in{gap:1.2rem}.st-dv{display:none}.cta-box{padding:2.8rem 1.4rem}.fcard{padding:1.3rem .9rem}.inner{padding:1.75rem 1rem 4rem}.toast{white-space:normal;text-align:center;max-width:84vw}.bnav{display:flex}body{padding-bottom:82px}.myp-cards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.pgrid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.m-body{padding:.9rem 1rem 1.3rem}.favs-grid{grid-template-columns:repeat(2,1fr)}}
 
 .chat-photo-btn{background:none;border:1.5px solid var(--border2);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;flex-shrink:0;transition:.2s}
@@ -338,23 +338,26 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 
 /* ===== FortyUp V3 - retoques visuales Sebas ===== */
 :root{--cream:#FFFDF7;--soft:#F4FBF7;--dark:#063D33;--emerald:#008A63;--emerald2:#10B981;--yellow:#F2B705;--yellowSoft:#FFF3BF}
-.hero{position:relative;overflow:hidden;min-height:100dvh;min-height:calc(var(--vh,1vh)*100);display:flex;align-items:center;justify-content:center;padding:1.5rem 1.25rem 5rem}
-.hero-in{position:relative;z-index:2;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.6rem}
-.h-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:.2rem}
-.h-sub{font-size:clamp(.95rem,3vw,1.15rem);font-weight:400;line-height:1.4;margin-bottom:.4rem}
-.hcard{display:none}
+.hero{background:
+  radial-gradient(circle at 50% 68%,rgba(16,185,129,.16),transparent 26%),
+  linear-gradient(180deg,#FFFDF7 0%,#F7FEFA 58%,#063D33 58%,#063D33 100%);
+}
+.hero-in{max-width:980px}
+.h-title{font-size:clamp(3.4rem,9vw,6rem)}
+.h-sub{font-size:clamp(1.7rem,4.5vw,3rem);text-align:inherit}
+.hcard{border:0;box-shadow:0 18px 44px rgba(6,78,59,.18)}
 @media(max-width:750px){
   .nav{background:#F5FFF9}
   .nav-in{height:74px}
   .nav-logo{font-size:2rem}
   .btn-join{padding:.62rem 1.25rem}
-  .hero{position:relative;overflow:hidden;min-height:100dvh;min-height:calc(var(--vh,1vh)*100);display:flex;align-items:center;justify-content:center;padding:1.5rem 1.25rem 5rem}
-  .hero-in{position:relative;z-index:2;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.6rem}
-  .hero-left{width:100%}
-  .h-pill{display:inline-flex;align-items:center;gap:.4rem;background:rgba(6,78,59,.08);border:1px solid rgba(6,78,59,.15);border-radius:50px;padding:.35rem .85rem;font-size:.75rem;font-weight:700;color:var(--g1);margin-bottom:.5rem}
-  .h-p{font-size:.88rem;line-height:1.6;color:var(--txt2);margin-bottom:.4rem}
-  .h-tag{font-size:.8rem;margin-bottom:.6rem}
-  .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+  .hero{padding:2.2rem 1.15rem 0;min-height:calc(100vh - 74px);align-items:flex-start;border-radius:0 0 36px 36px}
+  .hero-in{display:block;text-align:center}
+  .hero-left{padding-top:.6rem}
+  .h-pill{font-size:.78rem;background:#fff;border-color:#CDE9DD;box-shadow:0 8px 24px rgba(6,78,59,.05)}
+  .h-p{font-size:1rem;line-height:1.75;margin:1.25rem auto .85rem}
+  .h-tag{font-family:'Nunito',sans-serif;font-weight:800;color:#9B7610}
+  .h-btns{margin-top:2.8rem;padding-top:4.4rem;position:relative;display:block}
   .h-btns:before{content:'💎';position:absolute;top:-2.4rem;left:50%;transform:translateX(-50%);font-size:6.5rem;filter:drop-shadow(0 16px 20px rgba(6,78,59,.25))}
   .h-btns:after{content:'+';position:absolute;top:4.15rem;left:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#008A63,#064E3B);color:#fff;border:8px solid #fff;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:300;box-shadow:0 10px 32px rgba(6,78,59,.35)}
   .h-btns .btn{width:100%;justify-content:center;margin:.5rem 0}
@@ -412,7 +415,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 
 /* FortyUp v4 ajustes Sebas */
 @media(max-width:750px){
-  .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+  .h-btns{padding-top:6.2rem!important;margin-top:2rem!important}
   .h-btns:before{top:-2.95rem!important;font-size:6.8rem!important;z-index:1}
   .h-btns:after{top:6.05rem!important;width:82px!important;height:82px!important;z-index:2}
   .h-btns .btn-p{margin-top:5.9rem!important}
@@ -523,8 +526,15 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 @keyframes rainFall{0%{transform:translateY(-30px) rotate(-10deg);opacity:0}10%{opacity:1}90%{opacity:.8}100%{transform:translateY(100vh) rotate(10deg);opacity:0}}
 /* ===== FIX SEBAS FINAL: HOME + REGISTRO POR PASOS ===== */
 @media(max-width:750px){
-  .h-tag{font-size:.8rem;margin-bottom:.6rem}
-  .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+  .h-tag{
+    margin-bottom:4.1rem!important;
+    position:relative!important;
+    z-index:5!important;
+  }
+  .h-btns{
+    padding-top:8.2rem!important;
+    margin-top:.25rem!important;
+  }
   .h-btns:before{
     top:-2rem!important;
     font-size:5.65rem!important;
@@ -619,7 +629,7 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
   border:1.5px solid #D1E8DF!important;
 }
 @media(max-width:750px){
-  .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+  .h-btns{position:relative!important}
   .h-btns::after{pointer-events:none!important}
   .h-btns .btn-p{position:relative!important;z-index:6!important}
 }
@@ -720,8 +730,14 @@ input,select,textarea{font-family:'Nunito',sans-serif;border:none;outline:none}
 
 /* Separar FortyUp central de "Conocé personas..." */
 @media(max-width:750px){
-  .h-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;line-height:1;letter-spacing:-.03em;margin-bottom:.2rem}
-  .h-sub{font-size:clamp(.95rem,3vw,1.15rem);font-weight:400;line-height:1.4;margin-bottom:.4rem}
+  .h-title{
+    margin-bottom:1.35rem!important;
+    line-height:.92!important;
+  }
+  .h-sub{
+    margin-top:.45rem!important;
+    line-height:1.22!important;
+  }
 }
 
 /* Buscador limpio: sin pin duplicado y con 3 piezas */
@@ -1044,7 +1060,11 @@ body.sebas-guest #bn-chats,
 body.sebas-guest #bn-me,
 body.sebas-guest .btn-join{display:none!important}
 body.sebas-guest{padding-bottom:0!important}
-body.sebas-guest .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+body.sebas-guest .h-btns{
+  display:flex!important;flex-direction:column!important;gap:1rem!important;
+  align-items:center!important;justify-content:center!important;width:100%!important;
+  margin:2.2rem auto 0!important;padding-top:6rem!important;position:relative!important
+}
 body.sebas-guest .h-btns:before{
   content:"💎"!important;position:absolute!important;top:-2.55rem!important;left:50%!important;
   transform:translateX(-50%)!important;font-size:6.2rem!important;
@@ -1066,7 +1086,7 @@ body.sebas-guest .h-btns .btn-o{
   box-shadow:none!important;font-size:0!important
 }
 body.sebas-guest .h-btns .btn-o:before{content:"↪  Iniciar sesión"!important;font-size:1.05rem!important;color:#A7F3D0!important}
-body:not(.sebas-guest) .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+body:not(.sebas-guest) .h-btns{display:none!important}
 .sebas-profile-img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:inherit!important;display:block!important}
 .av-c,.myp-av,.chat-av,.chat-hav,.pcard-ph,.fav-ph{overflow:hidden!important}
 body.sebas-guest #locationSearchBar,
@@ -1096,13 +1116,36 @@ body.sebas-guest .pcard-meta{
    ========================================================= */
 
 @media(max-width:750px){
-  .hero{position:relative;overflow:hidden;min-height:100dvh;min-height:calc(var(--vh,1vh)*100);display:flex;align-items:center;justify-content:center;padding:1.5rem 1.25rem 5rem}
+  .hero{
+    background:
+      radial-gradient(circle at 50% 72%,rgba(16,185,129,.14),transparent 24%),
+      linear-gradient(180deg,#FFFDF7 0%,#F7FEFA 72%,#063D33 72%,#063D33 100%)!important;
+    min-height:calc(100vh - 74px)!important;
+    padding-bottom:1.4rem!important;
+  }
 
-  .h-p{font-size:.88rem;line-height:1.6;color:var(--txt2);margin-bottom:.4rem}
+  .h-p{
+    color:#2D4A40!important;
+    opacity:1!important;
+    position:relative!important;
+    z-index:5!important;
+    margin-bottom:.75rem!important;
+  }
 
-  .h-tag{font-size:.8rem;margin-bottom:.6rem}
+  .h-tag{
+    position:relative!important;
+    z-index:5!important;
+    margin-bottom:2.2rem!important;
+  }
 
-  body:not(.sebas-guest) .h-btns{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:.8rem}
+  body:not(.sebas-guest) .h-btns{
+    display:block!important;
+    height:8.7rem!important;
+    margin-top:1.1rem!important;
+    padding-top:0!important;
+    pointer-events:none!important;
+    position:relative!important;
+  }
 
   body:not(.sebas-guest) .h-btns:before{
     content:"💎"!important;
@@ -3885,22 +3928,39 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 </div>
 
 <div class="page active" id="page-home">
-  <section class="hero">
+  <section class="hero" style="min-height:100dvh;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:2rem 1.5rem 4.5rem;overflow:hidden;box-sizing:border-box">
     <div class="hero-glow"></div><div class="hero-b1"></div><div class="hero-b2"></div>
-    <div class="hero-in">
+
+    <!-- TOP: pill -->
+    <div style="position:relative;z-index:2;text-align:center">
       <div class="h-pill" id="heroPill"><span class="pdot"></span>Comunidad exclusiva · Mayores de 40</div>
+    </div>
+
+    <!-- MIDDLE: logo + tagline -->
+    <div style="position:relative;z-index:2;text-align:center">
       <div class="h-title"><span class="t1">Forty</span><span class="t2">Up</span></div>
-      <h1 class="h-sub">Conocé personas <em>reales</em>,<br>por planes reales.</h1>
-      <p class="h-p">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias.</p>
-      <div class="h-btns" id="heroBtns">
-        <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate gratis</button>
-        <button class="btn btn-o btn-lg" onclick="openAuth('login')">Iniciá sesión</button>
-      </div>
-      <div class="h-proof">
+      <h1 class="h-sub" style="font-size:clamp(1rem,4vw,1.3rem);line-height:1.5;margin-top:.75rem;font-weight:400">
+        Conocé personas <em>reales</em>,<br>por planes reales.
+      </h1>
+      <p style="font-size:.9rem;color:var(--txt2);line-height:1.6;margin-top:.5rem;max-width:340px">
+        Una comunidad para mayores de 40. Sin filtros.<br>Sin superficialidades.
+      </p>
+    </div>
+
+    <!-- BOTTOM: buttons + proof -->
+    <div style="position:relative;z-index:2;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:1rem" id="heroBtns">
+      <button class="btn btn-p" onclick="openAuth('register')" style="width:100%;padding:1rem;font-size:1.05rem;border-radius:50px;font-weight:800;letter-spacing:.01em">
+        Registrate gratis
+      </button>
+      <button class="btn btn-o" onclick="openAuth('login')" style="width:100%;padding:1rem;font-size:1.05rem;border-radius:50px;font-weight:800">
+        Iniciá sesión
+      </button>
+      <div class="h-proof" style="display:flex;align-items:center;gap:.65rem;margin-top:.25rem">
         <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
-        <p class="h-proof-t">Más de <strong id="heroCount">8</strong> personas ya se unieron</p>
+        <p class="h-proof-t" style="font-size:.78rem">Más de <strong id="heroCount">8</strong> personas ya se unieron</p>
       </div>
     </div>
+
   </section>
   <section class="sec-pil">
     <div class="sec-hd"><span class="sec-ey">¿Qué es FortyUp?</span><h2 class="sec-tit">Tres palabras que lo dicen todo</h2></div>
@@ -5009,8 +5069,8 @@ function updateHeroLoggedIn(){
     if(pill)pill.innerHTML='<span class="pdot"></span>¡Hola, '+e(nm)+'! 👋';
   }else{
     btns.innerHTML='';
-    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate →';b1.onclick=function(){openAuth('register')};
-    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciar sesión';b2.onclick=function(){openAuth('login')};
+    var b1=document.createElement('button');b1.className='btn btn-p btn-lg';b1.textContent='Registrate gratis';b1.onclick=function(){openAuth('register')};
+    var b2=document.createElement('button');b2.className='btn btn-o btn-lg';b2.textContent='Iniciá sesión';b2.onclick=function(){openAuth('login')};
     btns.appendChild(b1);btns.appendChild(b2);
     if(pill)pill.innerHTML='<span class="pdot"></span>COMUNIDAD EXCLUSIVA · MAYORES DE 40';
   }
@@ -7823,6 +7883,5 @@ body{padding-bottom:110px!important;}
 })();
 </script>
 
-<script>function setVh(){document.documentElement.style.setProperty("--vh",window.innerHeight*.01+"px")}setVh();window.addEventListener("resize",setVh)</script>
 </body>
 </html>
