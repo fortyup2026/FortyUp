@@ -2610,6 +2610,340 @@ body:not(.fu-logged) #page-home .h-btns a{
 }
 </style>
 
+
+<!-- FORTYUP FIX HOME BUTTONS + PREMIUM AMARILLA -->
+<style id="fortyup-fix-home-premium-yellow-css">
+/* HOME invitado: recuperar botones y que se vea todo */
+body:not(.fu-logged) #page-home.active{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+body:not(.fu-logged) #page-home .hero{
+  min-height:calc(100dvh - 74px)!important;
+  height:calc(100dvh - 74px)!important;
+  padding:.55rem 1.1rem 1rem!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+
+body:not(.fu-logged) #page-home .hero-in{
+  height:100%!important;
+  max-height:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-evenly!important;
+  align-items:center!important;
+  gap:.15rem!important;
+  overflow:hidden!important;
+}
+
+body:not(.fu-logged) #page-home .hero-left{
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:space-evenly!important;
+  min-height:0!important;
+  flex:1 1 auto!important;
+  padding-top:0!important;
+}
+
+body:not(.fu-logged) #page-home .h-pill{
+  margin:.05rem auto .25rem!important;
+  transform:scale(.92)!important;
+}
+
+body:not(.fu-logged) #page-home .h-title{
+  font-size:clamp(2.1rem,9vw,3.35rem)!important;
+  line-height:.9!important;
+  margin:.05rem 0 .12rem!important;
+}
+
+body:not(.fu-logged) #page-home .h-sub{
+  font-size:clamp(1.18rem,5vw,1.7rem)!important;
+  line-height:1!important;
+  margin:.02rem 0 .14rem!important;
+}
+
+body:not(.fu-logged) #page-home .h-p{
+  font-size:.78rem!important;
+  line-height:1.18!important;
+  max-width:94%!important;
+  margin:.05rem auto .15rem!important;
+}
+
+body:not(.fu-logged) #page-home .h-tag{
+  font-size:.8rem!important;
+  line-height:1.08!important;
+  margin:.08rem auto .12rem!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  width:min(88%,420px)!important;
+  gap:.62rem!important;
+  margin:.15rem auto 0!important;
+  padding:0!important;
+  flex-shrink:0!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns:before,
+body:not(.fu-logged) #page-home .h-btns:after,
+body:not(.fu-logged) #page-home .h-btns .btn-p:before,
+body:not(.fu-logged) #page-home .h-btns .btn-o:before{
+  display:none!important;
+  content:none!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn,
+body:not(.fu-logged) #page-home .h-btns button,
+body:not(.fu-logged) #page-home .h-btns a{
+  width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  max-height:52px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1rem!important;
+  line-height:1!important;
+  margin:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  color:inherit!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn-p{
+  background:linear-gradient(135deg,#064E3B,#059669)!important;
+  color:#fff!important;
+  border:2px solid rgba(167,243,208,.55)!important;
+  box-shadow:0 8px 24px rgba(6,78,59,.25)!important;
+}
+
+body:not(.fu-logged) #page-home .h-btns .btn-o{
+  background:transparent!important;
+  color:#D1FAE5!important;
+  border:2px solid #7ee6b1!important;
+}
+
+/* Premium FortyUp+ amarilla, llamativa y sin scroll */
+#page-fortyplus.active{
+  height:calc(100dvh - 92px)!important;
+  max-height:calc(100dvh - 92px)!important;
+  overflow:hidden!important;
+  padding:.55rem .9rem 6rem!important;
+  box-sizing:border-box!important;
+  background:linear-gradient(180deg,#FFF8CC 0%,#FFF1A8 45%,#FFFBEB 100%)!important;
+}
+
+#page-fortyplus .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:.34rem!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+
+.fup-final-hero{
+  position:relative!important;
+  border-radius:28px!important;
+  padding:.9rem .9rem .8rem!important;
+  background:
+    radial-gradient(circle at 20% 18%,rgba(255,255,255,.75),transparent 28%),
+    radial-gradient(circle at 82% 22%,rgba(255,214,102,.9),transparent 35%),
+    linear-gradient(135deg,#F2B705 0%,#FFD75A 48%,#FFB703 100%)!important;
+  color:#4A3400!important;
+  text-align:center!important;
+  box-shadow:0 18px 42px rgba(242,183,5,.35)!important;
+  border:2px solid rgba(255,255,255,.7)!important;
+  overflow:hidden!important;
+}
+
+.fup-crystal-counter{
+  position:absolute!important;
+  top:.65rem!important;
+  right:.7rem!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:.26rem!important;
+  padding:.28rem .55rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.7)!important;
+  border:1.5px solid rgba(255,255,255,.9)!important;
+  color:#064E3B!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.72rem!important;
+  font-weight:900!important;
+  box-shadow:0 6px 16px rgba(124,85,0,.13)!important;
+  z-index:3!important;
+}
+
+.fup-final-diamond{
+  width:68px!important;
+  height:68px!important;
+  min-width:68px!important;
+  min-height:68px!important;
+  margin:.2rem auto .35rem!important;
+  border-radius:50%!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 23%),
+    conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 48deg,#22d3ee 96deg,#60a5fa 142deg,#a78bfa 190deg,#f0abfc 232deg,#fde68a 278deg,#86efac 318deg,#7dd3fc 360deg)!important;
+  border:5px solid #fff!important;
+  box-shadow:0 10px 26px rgba(124,85,0,.18),inset 0 0 18px rgba(255,255,255,.55)!important;
+}
+
+.fup-final-title{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.6rem!important;
+  line-height:.98!important;
+  color:#064E3B!important;
+  margin:0 0 .25rem!important;
+}
+
+.fup-final-title span{
+  color:#059669!important;
+  font-style:italic!important;
+}
+
+.fup-final-copy{
+  font-family:'Nunito',sans-serif!important;
+  color:#5A4000!important;
+  font-size:.75rem!important;
+  line-height:1.18!important;
+  max-width:300px!important;
+  margin:0 auto .18rem!important;
+}
+
+.fup-final-divider{
+  width:58%!important;
+  height:1px!important;
+  background:linear-gradient(90deg,transparent,rgba(100,70,0,.35),transparent)!important;
+  margin:.28rem auto!important;
+}
+
+.fup-final-soon{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:.36rem .78rem!important;
+  border-radius:999px!important;
+  background:rgba(6,78,59,.12)!important;
+  border:1.5px solid rgba(6,78,59,.2)!important;
+  color:#064E3B!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.68rem!important;
+  font-weight:900!important;
+  margin-top:.2rem!important;
+}
+
+.fup-final-list{
+  display:grid!important;
+  gap:.38rem!important;
+  margin-top:.38rem!important;
+  flex:0 0 auto!important;
+}
+
+.fup-final-item{
+  background:rgba(255,255,255,.88)!important;
+  border:1.5px solid rgba(242,183,5,.35)!important;
+  border-radius:18px!important;
+  min-height:50px!important;
+  padding:.48rem .62rem!important;
+  display:grid!important;
+  grid-template-columns:38px 1fr 24px!important;
+  align-items:center!important;
+  gap:.5rem!important;
+  box-shadow:0 8px 22px rgba(124,85,0,.08)!important;
+}
+
+.fup-final-icon{
+  width:34px!important;
+  height:34px!important;
+  border-radius:13px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#FFF3BF!important;
+  font-size:1rem!important;
+}
+
+.fup-final-item h3{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.05!important;
+  color:#064E3B!important;
+  margin:0 0 .04rem!important;
+}
+
+.fup-final-item p{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.62rem!important;
+  line-height:1.12!important;
+  color:#735300!important;
+  margin:0!important;
+}
+
+.fup-final-check{
+  width:22px!important;
+  height:22px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#D1FAE5!important;
+  color:#059669!important;
+  font-size:.68rem!important;
+  font-weight:900!important;
+}
+
+.fup-final-gradient{
+  flex:0 0 auto!important;
+  margin-top:.35rem!important;
+  border-radius:18px!important;
+  padding:.5rem .6rem!important;
+  text-align:center!important;
+  background:linear-gradient(100deg,#FFF3BF,#FFE066,#FDE68A)!important;
+  border:1.5px solid rgba(242,183,5,.45)!important;
+  box-shadow:0 8px 22px rgba(124,85,0,.09)!important;
+}
+
+.fup-final-gradient b{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  color:#064E3B!important;
+  font-size:.78rem!important;
+  margin-bottom:.04rem!important;
+}
+
+.fup-final-gradient span{
+  font-family:'Nunito',sans-serif!important;
+  color:#735300!important;
+  font-size:.58rem!important;
+  line-height:1.08!important;
+}
+
+@media(max-height:760px){
+  .fup-final-hero{padding:.65rem .75rem!important;border-radius:24px!important}
+  .fup-final-diamond{width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important}
+  .fup-final-title{font-size:1.32rem!important}
+  .fup-final-copy{font-size:.64rem!important}
+  .fup-final-item{min-height:42px!important;padding:.36rem .52rem!important}
+  .fup-final-icon{width:30px!important;height:30px!important}
+  .fup-final-item h3{font-size:.7rem!important}
+  .fup-final-item p{font-size:.55rem!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -5934,6 +6268,153 @@ body{padding-bottom:110px!important;}
     applyState();
     fixHome();
     fixChat();
+    bindPlus();
+  },1000);
+})();
+</script>
+
+
+<script id="fortyup-fix-home-premium-yellow-js">
+(function(){
+  function isLogged(){
+    try{ if(typeof refreshCU==="function") refreshCU(); }catch(e){}
+    return !!(window.CU && CU.id);
+  }
+
+  function fixGuestHomeButtons(){
+    if(isLogged()) return;
+    const home=document.getElementById("page-home");
+    if(!home || !home.classList.contains("active")) return;
+
+    const btns=home.querySelector(".h-btns");
+    if(btns){
+      btns.style.display="flex";
+      btns.style.visibility="visible";
+      btns.style.opacity="1";
+      btns.style.paddingTop="0";
+    }
+
+    const buttons=home.querySelectorAll(".h-btns .btn,.h-btns button,.h-btns a");
+    buttons.forEach(function(b){
+      b.style.display="flex";
+      b.style.visibility="visible";
+      b.style.opacity="1";
+      b.style.fontSize="1rem";
+      b.style.height="48px";
+      b.style.alignItems="center";
+      b.style.justifyContent="center";
+    });
+  }
+
+  function ensurePlusPage(){
+    let page=document.getElementById("page-fortyplus");
+    if(!page){
+      page=document.createElement("section");
+      page.id="page-fortyplus";
+      page.className="page";
+      const nav=document.querySelector(".bnav");
+      if(nav&&nav.parentNode) nav.parentNode.insertBefore(page,nav);
+      else document.body.appendChild(page);
+    }
+
+    let crystals = 1;
+    try{
+      const stored = localStorage.getItem("fortyup_crystals");
+      crystals = stored ? Number(stored) || 1 : 1;
+    }catch(e){}
+
+    page.innerHTML=`
+      <div class="inner">
+        <div class="fup-final-hero">
+          <div class="fup-crystal-counter">💎 ${crystals}</div>
+          <div class="fup-final-diamond"></div>
+          <div class="fup-final-title">Forty<span>Up+</span></div>
+          <div class="fup-final-copy">Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.</div>
+          <div class="fup-final-divider"></div>
+          <div class="fup-final-copy">Cristales exclusivos para destacar perfiles y enviar señales especiales.</div>
+          <div class="fup-final-soon">✨ Próximamente disponible</div>
+        </div>
+
+        <div class="fup-final-list">
+          <div class="fup-final-item">
+            <div class="fup-final-icon">💎</div>
+            <div><h3>Cristales diarios</h3><p>Ganás 1 por día en futuros juegos.</p></div>
+            <div class="fup-final-check">✓</div>
+          </div>
+          <div class="fup-final-item">
+            <div class="fup-final-icon">⭐</div>
+            <div><h3>Más visibilidad</h3><p>Tu perfil puede destacarse más.</p></div>
+            <div class="fup-final-check">✓</div>
+          </div>
+          <div class="fup-final-item">
+            <div class="fup-final-icon">💬</div>
+            <div><h3>Más conexión</h3><p>Más chances de iniciar una charla.</p></div>
+            <div class="fup-final-check">✓</div>
+          </div>
+        </div>
+
+        <div class="fup-final-gradient">
+          <b>✦ Próximamente disponible</b>
+          <span>Estamos preparando algo especial para FortyUp+.</span>
+        </div>
+      </div>`;
+  }
+
+  function openPlus(){
+    if(!isLogged()) return;
+    ensurePlusPage();
+    document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+    const page=document.getElementById("page-fortyplus");
+    if(page){
+      page.classList.add("active");
+      page.style.height="calc(100dvh - 92px)";
+      page.style.maxHeight="calc(100dvh - 92px)";
+      page.style.overflow="hidden";
+    }
+    if(typeof setBn==="function"){try{setBn("plus");}catch(e){}}
+    window.scrollTo(0,0);
+  }
+
+  function bindPlus(){
+    const plus=document.getElementById("bn-plus");
+    if(!plus) return;
+    plus.onclick=function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      openPlus();
+      return false;
+    };
+  }
+
+  const oldGoTo=window.goTo;
+  if(typeof oldGoTo==="function" && !oldGoTo.__premiumYellowFix){
+    window.goTo=function(page){
+      if(page==="plus" || page==="fortyplus"){
+        openPlus();
+        return;
+      }
+      const r=oldGoTo.apply(this,arguments);
+      setTimeout(fixGuestHomeButtons,50);
+      setTimeout(bindPlus,80);
+      return r;
+    };
+    window.goTo.__premiumYellowFix=true;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    ensurePlusPage();
+    fixGuestHomeButtons();
+    bindPlus();
+  });
+
+  setTimeout(function(){
+    ensurePlusPage();
+    fixGuestHomeButtons();
+    bindPlus();
+  },300);
+
+  setInterval(function(){
+    fixGuestHomeButtons();
     bindPlus();
   },1000);
 })();
