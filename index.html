@@ -2082,57 +2082,532 @@ body:not(.sebas-guest){padding-bottom:94px!important}
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<style id="fortyup-final-user-request-css">
+<!-- FORTYUP - AJUSTES FINALES INTEGRADOS CHATGPT -->
+<style id="fortyup-final-integrado-chatgpt-css">
+/* Estado sesión */
 body:not(.fu-logged) .bnav{display:none!important}
 body.fu-logged .bnav{display:flex!important}
 body.fu-logged{padding-bottom:104px!important}
 
-body:not(.fu-logged) #page-home.active{height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
-body:not(.fu-logged) #page-home .inner{height:100%!important;max-height:100%!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;padding:.65rem 1rem .9rem!important;box-sizing:border-box!important}
-body:not(.fu-logged) #page-home .hero,body:not(.fu-logged) #page-home .home-hero,body:not(.fu-logged) #page-home .landing,body:not(.fu-logged) #page-home .cover{flex:1!important;min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:space-evenly!important;overflow:hidden!important;padding:.2rem 0!important;box-sizing:border-box!important}
-body:not(.fu-logged) #page-home h1,body:not(.fu-logged) #page-home .hero-title,body:not(.fu-logged) #page-home .brand-title{font-size:clamp(2.35rem,9.8vw,3.7rem)!important;line-height:.9!important;margin:.04rem 0 .22rem!important}
-body:not(.fu-logged) #page-home h2,body:not(.fu-logged) #page-home .hero h2,body:not(.fu-logged) #page-home .headline{font-size:clamp(1.28rem,5.7vw,1.95rem)!important;line-height:1!important;margin:.04rem 0 .24rem!important}
-body:not(.fu-logged) #page-home p,body:not(.fu-logged) #page-home .desc{font-size:.8rem!important;line-height:1.22!important;margin:.04rem auto .22rem!important;max-width:92%!important}
-body:not(.fu-logged) #page-home .hero-diamond,body:not(.fu-logged) #page-home .diamond,body:not(.fu-logged) #page-home .big-diamond,body:not(.fu-logged) #page-home img[alt*="diamante"],body:not(.fu-logged) #page-home img[src*="diamond"]{max-height:78px!important;max-width:112px!important;margin:.06rem auto!important}
-body:not(.fu-logged) #page-home .h-btns{flex-shrink:0!important;display:flex!important;flex-direction:column!important;gap:.6rem!important;width:min(88%,420px)!important;margin:.22rem auto 0!important}
-body:not(.fu-logged) #page-home .h-btns button,body:not(.fu-logged) #page-home .h-btns .btn,body:not(.fu-logged) #page-home .h-btns a{min-height:45px!important;max-height:52px!important}
+/* Home/inicio sin scroll, sin superposición */
+body:not(.fu-logged) #page-home.active{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  background:linear-gradient(180deg,#F0FDF8 0%,#FFFBF1 100%)!important;
+}
+body:not(.fu-logged) #page-home .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  padding:.45rem 1rem .75rem!important;
+  box-sizing:border-box!important;
+}
+body:not(.fu-logged) #page-home .hero,
+body:not(.fu-logged) #page-home .home-hero,
+body:not(.fu-logged) #page-home .landing,
+body:not(.fu-logged) #page-home .cover{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-evenly!important;
+  align-items:center!important;
+  overflow:hidden!important;
+  padding:.04rem 0!important;
+  box-sizing:border-box!important;
+}
+body:not(.fu-logged) #page-home h1,
+body:not(.fu-logged) #page-home .hero-title,
+body:not(.fu-logged) #page-home .brand-title,
+body:not(.fu-logged) #page-home .h-title{
+  font-size:clamp(2rem,8.8vw,3.25rem)!important;
+  line-height:.88!important;
+  margin:.01rem 0 .1rem!important;
+}
+body:not(.fu-logged) #page-home h2,
+body:not(.fu-logged) #page-home .hero h2,
+body:not(.fu-logged) #page-home .headline,
+body:not(.fu-logged) #page-home .h-sub{
+  font-size:clamp(1.12rem,5vw,1.7rem)!important;
+  line-height:.98!important;
+  margin:.01rem 0 .12rem!important;
+}
+body:not(.fu-logged) #page-home p,
+body:not(.fu-logged) #page-home .desc,
+body:not(.fu-logged) #page-home .h-p{
+  font-size:.74rem!important;
+  line-height:1.14!important;
+  margin:.01rem auto .1rem!important;
+  max-width:92%!important;
+}
+body:not(.fu-logged) #page-home .tagline,
+body:not(.fu-logged) #page-home .gold,
+body:not(.fu-logged) #page-home .h-tag{
+  font-size:.74rem!important;
+  line-height:1.06!important;
+  margin:.04rem auto .08rem!important;
+}
+body:not(.fu-logged) #page-home .hero-diamond,
+body:not(.fu-logged) #page-home .diamond,
+body:not(.fu-logged) #page-home .big-diamond,
+body:not(.fu-logged) #page-home img[alt*="diamante"],
+body:not(.fu-logged) #page-home img[src*="diamond"]{
+  max-height:60px!important;
+  max-width:92px!important;
+  margin:.01rem auto!important;
+  flex-shrink:1!important;
+}
+body:not(.fu-logged) #page-home .h-btns{
+  flex-shrink:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:.48rem!important;
+  width:min(88%,420px)!important;
+  margin:.08rem auto 0!important;
+  padding-top:0!important;
+}
+body:not(.fu-logged) #page-home .h-btns:before,
+body:not(.fu-logged) #page-home .h-btns:after{
+  display:none!important;
+  content:none!important;
+}
+body:not(.fu-logged) #page-home .h-btns button,
+body:not(.fu-logged) #page-home .h-btns .btn,
+body:not(.fu-logged) #page-home .h-btns a{
+  min-height:42px!important;
+  max-height:48px!important;
+  font-size:.88rem!important;
+  margin:.12rem 0!important;
+}
 
-.bnav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:92px!important;min-height:92px!important;z-index:999999!important;align-items:center!important;justify-content:space-around!important;padding:7px 0 12px!important;background:rgba(240,253,248,.96)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;transform:none!important;translate:none!important;transition:none!important;animation:none!important;overflow:visible!important;box-sizing:border-box!important}
-.bnav .bn{flex:1 1 20%!important;width:20%!important;max-width:20%!important;min-width:0!important;height:80px!important;min-height:80px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;padding:4px 2px!important;margin:0!important;transform:none!important;translate:none!important;transition:none!important;animation:none!important;overflow:visible!important;box-sizing:border-box!important}
-.bnav .bn:not(#bn-plus) .bn-ico{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;max-height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:1.58rem!important;line-height:1!important;margin:0 auto 4px!important;overflow:hidden!important;border-radius:50%!important}
-.bnav .bn-l{height:18px!important;line-height:18px!important;font-size:.66rem!important;font-weight:900!important;color:#6B7C76!important;margin:0!important;padding:0!important;text-align:center!important;white-space:nowrap!important;overflow:visible!important}
+/* Menú logueado estable */
+.bnav{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:92px!important;
+  min-height:92px!important;
+  z-index:999999!important;
+  align-items:center!important;
+  justify-content:space-around!important;
+  padding:7px 0 12px!important;
+  background:rgba(240,253,248,.96)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  transform:none!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+.bnav .bn{
+  flex:1 1 20%!important;
+  width:20%!important;
+  max-width:20%!important;
+  min-width:0!important;
+  height:80px!important;
+  min-height:80px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  padding:4px 2px!important;
+  margin:0!important;
+  transform:none!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+.bnav .bn:not(#bn-plus) .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1.58rem!important;
+  line-height:1!important;
+  margin:0 auto 4px!important;
+  overflow:hidden!important;
+  border-radius:50%!important;
+}
+.bnav .bn-l{
+  height:18px!important;
+  line-height:18px!important;
+  font-size:.66rem!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin:0!important;
+  padding:0!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+}
 
-#bn-plus .bn-plus,#bnPlusIco{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;max-width:58px!important;max-height:58px!important;border-radius:50%!important;margin:0 auto 4px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 23%),conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 48deg,#22d3ee 96deg,#60a5fa 142deg,#a78bfa 190deg,#f0abfc 232deg,#fde68a 278deg,#86efac 318deg,#7dd3fc 360deg)!important;border:6px solid #fff!important;box-shadow:0 10px 28px rgba(80,120,255,.30),0 0 0 6px rgba(255,255,255,.26),0 0 35px rgba(125,211,252,.32),inset 0 0 22px rgba(255,255,255,.52)!important;color:transparent!important;font-size:0!important;overflow:hidden!important}
-#bn-plus .bn-plus:before,#bnPlusIco:before{content:""!important;display:block!important;width:100%!important;height:100%!important;border-radius:50%!important;background:radial-gradient(circle at 34% 60%,rgba(0,205,255,.55) 0 18%,transparent 34%),radial-gradient(circle at 70% 36%,rgba(255,238,160,.55) 0 18%,transparent 34%),radial-gradient(circle at 50% 24%,rgba(255,130,255,.45) 0 18%,transparent 35%),radial-gradient(circle at 48% 78%,rgba(43,218,195,.48) 0 22%,transparent 38%);filter:blur(.3px) saturate(1.2)!important}
-#bn-plus .bn-l,#bnPlusLbl{font-size:0!important;color:transparent!important;height:19px!important;line-height:19px!important}
-#bn-plus .bn-l:before,#bnPlusLbl:before{content:"FortyUp+"!important;display:block!important;font-size:.68rem!important;line-height:19px!important;font-weight:900!important;color:#6B7C76!important;text-align:center!important}
+/* Botón central multicolor */
+#bn-plus .bn-plus,#bnPlusIco{
+  width:58px!important;
+  height:58px!important;
+  min-width:58px!important;
+  min-height:58px!important;
+  max-width:58px!important;
+  max-height:58px!important;
+  border-radius:50%!important;
+  margin:0 auto 4px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 23%),
+    conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 48deg,#22d3ee 96deg,#60a5fa 142deg,#a78bfa 190deg,#f0abfc 232deg,#fde68a 278deg,#86efac 318deg,#7dd3fc 360deg)!important;
+  border:6px solid #fff!important;
+  box-shadow:0 10px 28px rgba(80,120,255,.30),0 0 0 6px rgba(255,255,255,.26),0 0 35px rgba(125,211,252,.32),inset 0 0 22px rgba(255,255,255,.52)!important;
+  color:transparent!important;
+  font-size:0!important;
+  overflow:hidden!important;
+}
+#bn-plus .bn-plus:before,#bnPlusIco:before{
+  content:""!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  border-radius:50%!important;
+  background:
+    radial-gradient(circle at 34% 60%,rgba(0,205,255,.55) 0 18%,transparent 34%),
+    radial-gradient(circle at 70% 36%,rgba(255,238,160,.55) 0 18%,transparent 34%),
+    radial-gradient(circle at 50% 24%,rgba(255,130,255,.45) 0 18%,transparent 35%),
+    radial-gradient(circle at 48% 78%,rgba(43,218,195,.48) 0 22%,transparent 38%);
+  filter:blur(.3px) saturate(1.2)!important;
+}
+#bn-plus .bn-l,#bnPlusLbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:19px!important;
+  line-height:19px!important;
+}
+#bn-plus .bn-l:before,#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  display:block!important;
+  font-size:.68rem!important;
+  line-height:19px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
 
-#bn-me .bn-ico,#bn-me-ico{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;max-height:42px!important;border-radius:50%!important;overflow:hidden!important;background:linear-gradient(135deg,#064E3B,#10B981)!important;font-size:0!important;color:transparent!important;margin:0 auto 4px!important;box-shadow:none!important;border:0!important}
-#bn-me .bn-ico img,#bn-me-ico img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;display:block!important}
-#bn-me .bn-l,#bn-me-lbl{font-size:0!important;color:transparent!important;height:18px!important;line-height:18px!important}
-#bn-me .bn-l:before,#bn-me-lbl:before{content:"Mi perfil"!important;display:block!important;font-size:.66rem!important;line-height:18px!important;font-weight:900!important;color:#6B7C76!important;text-align:center!important}
+/* Mi perfil foto fija */
+#bn-me .bn-ico,#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  font-size:0!important;
+  color:transparent!important;
+  margin:0 auto 4px!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+#bn-me .bn-ico img,#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#bn-me .bn-l,#bn-me-lbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:18px!important;
+  line-height:18px!important;
+}
+#bn-me .bn-l:before,#bn-me-lbl:before{
+  content:"Mi perfil"!important;
+  display:block!important;
+  font-size:.66rem!important;
+  line-height:18px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
 
-#page-fortyplus.active{height:calc(100dvh - 92px)!important;max-height:calc(100dvh - 92px)!important;overflow:hidden!important;padding:.45rem .95rem 6rem!important;box-sizing:border-box!important;background:linear-gradient(180deg,#F0FDF8 0%,#FFFBF1 100%)!important;display:flex!important;flex-direction:column!important}
-#page-fortyplus .inner{height:100%!important;max-height:100%!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;gap:.36rem!important;padding:0!important;box-sizing:border-box!important}
-.fup-final-hero{flex:0 0 auto!important;border-radius:24px!important;padding:.68rem .8rem!important;min-height:0!important;margin:0!important}
-.fup-final-diamond{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;margin:0 auto .35rem!important}
-.fup-final-title{font-size:1.32rem!important;line-height:.95!important;margin:0 0 .22rem!important}
-.fup-final-copy{font-size:.66rem!important;line-height:1.15!important;max-width:310px!important;margin:0 auto .18rem!important}
-.fup-final-divider{margin:.28rem auto!important}
-.fup-final-soon{margin-top:.2rem!important;padding:.32rem .7rem!important;font-size:.64rem!important}
-.fup-final-list{flex:0 0 auto!important;display:grid!important;gap:.32rem!important;margin-top:.3rem!important}
-.fup-final-item{border-radius:16px!important;padding:.4rem .52rem!important;grid-template-columns:34px 1fr 24px!important;gap:.45rem!important;min-height:44px!important}
-.fup-final-icon{width:30px!important;height:30px!important;border-radius:11px!important;font-size:.95rem!important}
-.fup-final-item h3{font-size:.72rem!important;line-height:1.06!important;margin:0 0 .06rem!important}
-.fup-final-item p{font-size:.6rem!important;line-height:1.12!important}
-.fup-final-check{width:22px!important;height:22px!important;font-size:.7rem!important}
-.fup-final-gradient{flex:0 0 auto!important;margin-top:.3rem!important;border-radius:16px!important;padding:.42rem .55rem!important}
-.fup-final-gradient b{font-size:.72rem!important;margin-bottom:.04rem!important}
-.fup-final-gradient span{font-size:.6rem!important;line-height:1.1!important}
+/* Premium sin scroll */
+#page-fortyplus.active{
+  height:calc(100dvh - 92px)!important;
+  max-height:calc(100dvh - 92px)!important;
+  overflow:hidden!important;
+  padding:.34rem .85rem 6rem!important;
+  box-sizing:border-box!important;
+  background:linear-gradient(180deg,#F0FDF8 0%,#FFFBF1 100%)!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#page-fortyplus .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:.22rem!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+.fup-final-hero{
+  flex:0 0 auto!important;
+  border-radius:20px!important;
+  padding:.46rem .65rem!important;
+  min-height:0!important;
+  margin:0!important;
+  background:radial-gradient(circle at 58% 20%,rgba(255,255,255,.22),transparent 35%),radial-gradient(circle at 30% 26%,rgba(59,130,246,.20),transparent 28%),linear-gradient(135deg,#064E3B 0%,#08785C 48%,#0AA979 100%)!important;
+  color:white!important;
+  text-align:center!important;
+  box-shadow:0 15px 36px rgba(6,78,59,.16)!important;
+}
+.fup-final-diamond{
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  min-height:46px!important;
+  margin:0 auto .22rem!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.24) 0%,rgba(255,255,255,0) 23%),conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 48deg,#22d3ee 96deg,#60a5fa 142deg,#a78bfa 190deg,#f0abfc 232deg,#fde68a 278deg,#86efac 318deg,#7dd3fc 360deg)!important;
+  border:4px solid white!important;
+  box-shadow:0 8px 26px rgba(80,120,255,.26),inset 0 0 18px rgba(255,255,255,.52)!important;
+}
+.fup-final-title{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.08rem!important;
+  line-height:.95!important;
+  margin:0 0 .14rem!important;
+  color:white!important;
+}
+.fup-final-title span{color:#A7F3D0!important;font-style:italic!important}
+.fup-final-copy{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.54rem!important;
+  line-height:1.08!important;
+  max-width:290px!important;
+  margin:0 auto .08rem!important;
+  color:rgba(255,255,255,.92)!important;
+}
+.fup-final-divider{
+  width:48%!important;
+  height:1px!important;
+  margin:.16rem auto!important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)!important;
+}
+.fup-final-soon{
+  display:inline-block!important;
+  margin-top:.1rem!important;
+  padding:.24rem .52rem!important;
+  font-size:.52rem!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.16)!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  color:#FEF3C7!important;
+  font-weight:900!important;
+}
+.fup-final-list{
+  flex:0 0 auto!important;
+  display:grid!important;
+  gap:.2rem!important;
+  margin-top:.16rem!important;
+}
+.fup-final-item{
+  background:white!important;
+  border:1.2px solid #D1E8DF!important;
+  border-radius:13px!important;
+  padding:.28rem .42rem!important;
+  display:grid!important;
+  grid-template-columns:27px 1fr 20px!important;
+  align-items:center!important;
+  gap:.34rem!important;
+  min-height:34px!important;
+  box-shadow:0 7px 20px rgba(6,78,59,.06)!important;
+}
+.fup-final-icon{
+  width:24px!important;
+  height:24px!important;
+  border-radius:9px!important;
+  font-size:.72rem!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#D1FAE5!important;
+}
+.fup-final-item:nth-child(2) .fup-final-icon{background:#F3E8FF!important}
+.fup-final-item:nth-child(3) .fup-final-icon{background:#FEF3C7!important}
+.fup-final-item h3{
+  font-family:'Nunito',sans-serif!important;
+  color:#064E3B!important;
+  font-size:.58rem!important;
+  line-height:1!important;
+  margin:0 0 .02rem!important;
+}
+.fup-final-item p{
+  font-family:'Nunito',sans-serif!important;
+  color:#6B7C76!important;
+  font-size:.48rem!important;
+  line-height:1.04!important;
+  margin:0!important;
+}
+.fup-final-check{
+  width:18px!important;
+  height:18px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:.54rem!important;
+  background:#D1FAE5!important;
+  color:#059669!important;
+  font-weight:900!important;
+}
+.fup-final-gradient{
+  flex:0 0 auto!important;
+  margin-top:.16rem!important;
+  border-radius:13px!important;
+  padding:.28rem .42rem!important;
+  text-align:center!important;
+  background:linear-gradient(100deg,#BAE6FD,#E9D5FF,#FEF3C7,#BBF7D0)!important;
+}
+.fup-final-gradient b{
+  display:block!important;
+  font-family:'Nunito',sans-serif!important;
+  color:#111827!important;
+  font-size:.58rem!important;
+  margin-bottom:0!important;
+}
+.fup-final-gradient span{
+  font-family:'Nunito',sans-serif!important;
+  color:#374151!important;
+  font-size:.48rem!important;
+  line-height:1.04!important;
+}
 
-.myp-card-media{background:linear-gradient(135deg,#F7FFFB,#FFFFFF)!important;border:1.8px solid #A7F3D0!important}
-.myp-card-media .myp-ct{font-family:'Nunito',sans-serif!important;font-size:1rem!important;font-weight:900!important;color:#10231D!important}
-.myp-card-media .myp-cd{font-family:'Nunito',sans-serif!important;font-size:.78rem!important;line-height:1.35!important;color:#6B7C76!important}
+/* Chat: input siempre visible */
+#page-chatwindow.active,
+#page-chat.active{
+  height:calc(100dvh - 92px)!important;
+  max-height:calc(100dvh - 92px)!important;
+  overflow:hidden!important;
+  padding-bottom:6rem!important;
+  box-sizing:border-box!important;
+}
+#page-chatwindow .inner,
+#page-chat .inner{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  box-sizing:border-box!important;
+}
+.chat-win,
+.chat-box,
+.chat-panel{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  max-height:none!important;
+  height:auto!important;
+}
+.chat-msgs,
+.messages-list,
+#chatMsgs{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  padding-bottom:.8rem!important;
+}
+.chat-in-a,
+.chat-input,
+.msg-input,
+.send-row{
+  flex:0 0 auto!important;
+  position:sticky!important;
+  bottom:0!important;
+  z-index:50!important;
+  background:#fff!important;
+  padding:.55rem!important;
+}
+
+/* Tarjeta Fotos y videos */
+.myp-card-media{
+  background:linear-gradient(135deg,#F7FFFB,#FFFFFF)!important;
+  border:1.8px solid #A7F3D0!important;
+}
+.myp-card-media .myp-ct{
+  font-family:'Nunito',sans-serif!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#10231D!important;
+}
+.myp-card-media .myp-cd{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.35!important;
+  color:#6B7C76!important;
+}
+
+/* Tarjetas usuarios más limpias */
+.pcard-body{padding:1.12rem 1.28rem .9rem!important}
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.15rem!important;
+  line-height:1.08!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+  color:#10231D!important;
+  margin:0 0 .34rem!important;
+  padding-left:.22rem!important;
+  padding-right:.6rem!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.pcard-age{
+  font-family:'Playfair Display',serif!important;
+  font-size:1rem!important;
+  font-weight:500!important;
+  color:#6B7C76!important;
+}
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.34!important;
+  font-weight:700!important;
+  color:#6B7C76!important;
+  margin:0 0 .56rem!important;
+  padding-left:.22rem!important;
+  padding-right:.7rem!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
 </style>
 
 </head>
@@ -3485,7 +3960,18 @@ function upNav(){
   if(bml)bml.textContent=CU?'Mi perfil':'Ingresar';
   // Update me icon
   var bMeIco=document.getElementById('bn-me-ico');
-  if(bMeIco)bMeIco.textContent=CU?(CU.name?CU.name[0].toUpperCase():'👤'):'👤';
+  if(bMeIco){
+    if(CU){
+      var nmI=(CU.name||CU.email||'S');
+      if(CU.photo){
+        bMeIco.innerHTML='<img src="'+e(CU.photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.textContent=\''+nmI[0].toUpperCase()+'\'">';
+      }else{
+        bMeIco.textContent=nmI[0].toUpperCase();
+      }
+    }else{
+      bMeIco.textContent='👤';
+    }
+  }
   var badge=document.getElementById('chatBadge');if(badge&&!CU)badge.style.display='none';
   if(CU){
     var nm=CU.name||CU.email.split('@')[0];
@@ -3557,7 +4043,7 @@ function doAuth(){
     if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);
   }
 }
-function logout(){CU=null;CW=null;sv(K.S,null);clearReg();upNav();checkUnread();goTo('home');}
+function logout(){CU=null;CW=null;sv(K.S,null);clearReg();upNav();checkUnread();goTo('home')}
 function nowMs(){return Date.now()}
 function isNormalFortiActive(f){
   if(!f||f.type==='super')return false;
@@ -3642,9 +4128,9 @@ function bCard(u,forti,fav,idx,superSent){
     meta='<span class="dist-b">📍 '+(d<1?'Menos de 1 km':'~'+Math.round(d)+' km '+dLabel)+'</span>';
   }
   inf.innerHTML=
-    '<div style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:var(--txt);margin-bottom:.15rem">'+e(u.name||'')+(u.age?'<span style="font-weight:400;font-size:.95rem;color:var(--txt3)">, '+u.age+'</span>':'')+'</div>'
-    +(u.zodiac?'<div style="font-size:.75rem;color:var(--g2);font-weight:700;margin-bottom:.1rem">'+e(u.zodiac)+'</div>':'')
-    +(u.city?'<div style="font-size:.8rem;color:var(--txt3)">📍 '+e(u.city)+'</div>':'')
+    '<div class="pcard-name">'+e(u.name||'')+(u.age?'<span class="pcard-age">, '+u.age+'</span>':'')+'</div>'
+    +(u.zodiac?'<div class="pcard-zodiac">'+e(u.zodiac)+'</div>':'')
+    +(u.city?'<div class="pcard-meta">📍 '+e(u.city)+'</div>':'')
     +meta;
 
   // Actions
@@ -4881,3147 +5367,575 @@ function checkSuperDiamNotif(){
 }
 init();goTo('home');initFirebase();setTimeout(checkAgePopup,100);setInterval(checkUnread,5000);
 </script>
+<style id="fortyup-clean-final-css">
+/* ===== MENÚ ESTABLE: no se mueve, no titila ===== */
+.bnav{
+  display:flex!important;
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:92px!important;
+  min-height:92px!important;
+  z-index:999999!important;
+  align-items:center!important;
+  justify-content:space-around!important;
+  padding:7px 0 12px!important;
+  background:rgba(240,253,248,.96)!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  transform:none!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
 
-<script>
-/* ===== SEBAS PATCH: REGISTRO REAL POR PASOS + SOCIAL ===== */
+body{padding-bottom:110px!important;}
+
+.bnav .bn{
+  flex:1 1 20%!important;
+  width:20%!important;
+  max-width:20%!important;
+  min-width:0!important;
+  height:80px!important;
+  min-height:80px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  padding:4px 2px!important;
+  margin:0!important;
+  transform:none!important;
+  translate:none!important;
+  transition:none!important;
+  animation:none!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+
+.bnav .bn.active{
+  transform:none!important;
+  translate:none!important;
+}
+
+.bnav .bn:not(#bn-plus) .bn-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:1.58rem!important;
+  line-height:1!important;
+  margin:0 auto 4px!important;
+  overflow:hidden!important;
+  border-radius:50%!important;
+}
+
+.bnav .bn-l{
+  height:18px!important;
+  line-height:18px!important;
+  font-size:.66rem!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  margin:0!important;
+  padding:0!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+}
+
+/* FortyUp+ multicolor del menú */
+#bn-plus .bn-plus,#bnPlusIco{
+  width:54px!important;
+  height:54px!important;
+  min-width:54px!important;
+  min-height:54px!important;
+  max-width:54px!important;
+  max-height:54px!important;
+  border-radius:50%!important;
+  margin:0 auto 4px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:conic-gradient(from 210deg,#7dd3fc 0deg,#38bdf8 42deg,#60a5fa 88deg,#a78bfa 132deg,#f0abfc 178deg,#fef3c7 226deg,#86efac 276deg,#22d3ee 320deg,#7dd3fc 360deg)!important;
+  border:4px solid #fff!important;
+  box-shadow:0 8px 24px rgba(80,120,255,.30),0 0 0 5px rgba(255,255,255,.33),inset 0 0 18px rgba(255,255,255,.62)!important;
+  font-size:0!important;
+  color:transparent!important;
+  overflow:hidden!important;
+}
+#bn-plus .bn-plus:before,#bnPlusIco:before{
+  content:"💎"!important;
+  font-size:1.86rem!important;
+  line-height:1!important;
+  filter:saturate(1.55) brightness(1.08)!important;
+}
+#bn-plus .bn-l,#bnPlusLbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:19px!important;
+  line-height:19px!important;
+}
+#bn-plus .bn-l:before,#bnPlusLbl:before{
+  content:"FortyUp+"!important;
+  display:block!important;
+  font-size:.68rem!important;
+  line-height:19px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
+
+/* Mi perfil fijo con foto */
+#bn-me .bn-ico,#bn-me-ico{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#064E3B,#10B981)!important;
+  font-size:0!important;
+  color:transparent!important;
+  margin:0 auto 4px!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+#bn-me .bn-ico:before,#bn-me-ico:before,#bn-me .bn-ico:after,#bn-me-ico:after{
+  content:none!important;
+  display:none!important;
+}
+#bn-me .bn-ico img,#bn-me-ico img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+#bn-me .bn-l,#bn-me-lbl{
+  font-size:0!important;
+  color:transparent!important;
+  height:18px!important;
+  line-height:18px!important;
+}
+#bn-me .bn-l:before,#bn-me-lbl:before{
+  content:"Mi perfil"!important;
+  display:block!important;
+  font-size:.66rem!important;
+  line-height:18px!important;
+  font-weight:900!important;
+  color:#6B7C76!important;
+  text-align:center!important;
+}
+
+/* Contenido largo: que la barra no tape el final */
+.page .inner,
+#page-profile .inner,
+#page-chatwindow .inner,
+#page-chats .inner,
+#page-myprofile .inner,
+#page-profiles .inner{
+  padding-bottom:128px!important;
+}
+
+#page-chatwindow .inner{
+  padding-bottom:112px!important;
+}
+
+.chat-win{
+  height:calc(100dvh - 250px)!important;
+  max-height:none!important;
+  padding-bottom:0!important;
+}
+
+.chat-msgs{
+  min-height:0!important;
+}
+
+.chat-in-a{
+  position:sticky!important;
+  bottom:96px!important;
+  z-index:30!important;
+}
+
+/* Tarjetas de usuarios y perfil: fuente y margen */
+.pcard-info{
+  padding:1.08rem 1.25rem .82rem!important;
+}
+
+.pcard-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.15rem!important;
+  line-height:1.08!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+  color:#10231D!important;
+  margin:0 0 .34rem!important;
+  padding-left:.18rem!important;
+  padding-right:.6rem!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pcard-age{
+  font-family:'Playfair Display',serif!important;
+  font-size:1rem!important;
+  font-weight:500!important;
+  color:#6B7C76!important;
+}
+
+.pcard-meta{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.34!important;
+  font-weight:700!important;
+  color:#6B7C76!important;
+  margin:0 0 .56rem!important;
+  padding-left:.2rem!important;
+  padding-right:.7rem!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.pcard-zodiac{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.74rem!important;
+  color:#10B981!important;
+  font-weight:800!important;
+  margin:0 0 .18rem!important;
+  padding-left:.2rem!important;
+}
+
+.dist-b{
+  margin-left:.2rem!important;
+  margin-top:.24rem!important;
+  font-size:.72rem!important;
+  line-height:1.2!important;
+  padding:.22rem .68rem!important;
+}
+
+/* Tarjeta verde Mi perfil */
+.myp-hdr:after,.myp-hdr::after{content:none!important;display:none!important;}
+.myp-card-media{
+  background:linear-gradient(135deg,#F7FFFB,#FFFFFF)!important;
+  border:1.8px solid #A7F3D0!important;
+  box-shadow:0 8px 24px rgba(6,78,59,.07)!important;
+}
+.myp-card-media .myp-ico{font-size:1.8rem!important;}
+.myp-card-media .myp-ct{
+  font-family:'Nunito',sans-serif!important;
+  font-size:1rem!important;
+  font-weight:900!important;
+  color:#10231D!important;
+}
+.myp-card-media .myp-cd{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.78rem!important;
+  line-height:1.35!important;
+  color:#6B7C76!important;
+}
+
+.myp-name{
+  font-family:'Playfair Display',serif!important;
+  font-size:1.34rem!important;
+  line-height:1.06!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+}
+.myp-city{
+  font-family:'Nunito',sans-serif!important;
+  font-size:.8rem!important;
+  line-height:1.28!important;
+  font-weight:700!important;
+}
+</style>
+
+<script id="fortyup-clean-final-js">
 (function(){
-  var oldGoTo = window.goTo;
-  var oldLoadProfileForm = window.loadProfileForm;
-  var oldSaveProfile = window.saveProfile;
-  var oldClearReg = window.clearReg;
-  var REG_STEP = 1;
+  let running=false;
 
-  function buildRegisterWizard(){
-    var page=document.getElementById('page-register');
-    if(!page)return;
-    var inner=page.querySelector('.inner');
-    if(!inner || inner.getAttribute('data-wizard-ok')==='1')return;
-    inner.setAttribute('data-wizard-ok','1');
-    inner.innerHTML = ''
-      +'<button class="back-b" onclick="goBack()">← Volver</button>'
-      +'<div style="margin-bottom:1.15rem"><h2 class="pg-tit">Creá tu perfil</h2><p class="pg-sub">Solo para mayores de 40.</p></div>'
-      +'<div class="reg-steps reg-steps-5" id="regSteps">'
-        +'<div class="reg-step active"><div class="reg-dot">1</div><span>Cuenta</span></div>'
-        +'<div class="reg-step"><div class="reg-dot">2</div><span>Gustos</span></div>'
-        +'<div class="reg-step"><div class="reg-dot">3</div><span>Sobre vos</span></div>'
-        +'<div class="reg-step"><div class="reg-dot">4</div><span>Fotos</span></div>'
-        +'<div class="reg-step"><div class="reg-dot">5</div><span>Redes</span></div>'
-      +'</div>'
-      +'<div class="fcard">'
-        +'<div id="rErr" class="alert alert-e" style="display:none"></div>'
-        +'<div id="rOk" class="alert alert-ok" style="display:none"></div>'
+  function isLogged(){return !!(window.CU&&CU.id);}
 
-        +'<div class="reg-panel active" data-reg-step="1">'
-          +'<p class="fsec">Datos personales</p>'
-          +'<div class="frow">'
-            +'<div class="fld"><label>Nombre <span class="req">*</span></label><input type="text" id="rN" placeholder="Tu nombre"></div>'
-            +'<div class="fld"><label>Edad <span class="req">*</span></label><input type="number" id="rA" placeholder="Tu edad" min="40" max="120"></div>'
-          +'</div>'
-          +'<div class="frow">'
-            +'<div class="fld"><label>Ciudad <span class="req">*</span></label><input type="text" id="rC" placeholder="Tu ciudad"><button type="button" class="gps-btn" onclick="getGPS()">📍 Usar mi ubicación</button><span class="gps-st" id="gpsSt"></span></div>'
-            +'<div class="fld"><label>Género <span class="req">*</span></label><select id="rG"><option value="">Seleccioná...</option><option>Mujer</option><option>Hombre</option><option>No binario</option><option>Prefiero no decir</option></select></div>'
-          +'</div>'
-          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Email <span class="req">*</span></label><input type="email" id="rE" placeholder="tu@email.com"></div></div>'
-          +'<input type="hidden" id="rLat"><input type="hidden" id="rLng">'
-        +'</div>'
-
-        +'<div class="reg-panel" data-reg-step="2">'
-          +'<p class="fsec">Gustos y búsqueda</p>'
-          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Me interesa conocer</label><select id="rPref"><option value="todos">Todos / sin preferencia</option><option value="mujeres">Mujeres</option><option value="hombres">Hombres</option><option value="ambos">Hombres y mujeres</option></select><div class="pref-note">Esto ayuda a mostrarte perfiles acordes a lo que buscás.</div></div></div>'
-          +'<p class="fsec" style="margin-top:1.1rem">¿Qué buscás?</p>'
-          +'<div class="chips">'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Amistad">Amistad</label>'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Compañía">Compañía</label>'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Relación seria">Relación seria</label>'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Salir a tomar algo">Salir a tomar algo</label>'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Viajar">Viajar</label>'
-            +'<label class="chip"><input type="checkbox" name="lk" value="Charlar">Charlar</label>'
-          +'</div>'
-          +'<p class="fsec" style="margin-top:1.1rem">Plan ideal</p>'
-          +'<div class="chips">'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="☕ Café">☕ Café</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍷 Vino">🍷 Vino</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🚶 Caminata">🚶 Caminata</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🍽️ Cena">🍽️ Cena</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎬 Cine">🎬 Cine</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="🎵 Música en vivo">🎵 Música en vivo</label>'
-            +'<label class="chip chip-g"><input type="checkbox" name="pl" value="✈️ Viaje corto">✈️ Viaje corto</label>'
-          +'</div>'
-        +'</div>'
-
-        +'<div class="reg-panel" data-reg-step="3">'
-          +'<p class="fsec">Sobre vos</p>'
-          +'<div class="fld"><label>Descripción <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><textarea id="rD" rows="5" placeholder="Contá algo sobre vos..."></textarea></div>'
-          +'<div class="fld" style="margin-top:.85rem"><label>Intereses</label><input type="text" id="rI" placeholder="viajes, música, cocina..."></div>'
-          +'<div class="reg-help">La descripción es opcional. Si no querés escribir nada ahora, podés continuar igual y completarla después.</div>'
-        +'</div>'
-
-        +'<div class="reg-panel" data-reg-step="4">'
-          +'<p class="fsec">Fotos y videos</p>'
-          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Foto principal</label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="triggerPhotoInput()">📷 Subir foto desde el celular</button><span class="photo-or">o pegá una URL</span><input type="url" id="rP" placeholder="https://..." oninput="prevPhoto(this.value)"><input type="file" id="rPF" accept="image/*" style="display:none" onchange="handleFile(this)"></div><div class="ph-prev" id="phprev" style="display:none"><img id="phimg" alt=""></div></div></div>'
-          +'<div class="frow"><div class="fld" style="flex:1 1 100%"><label>Video de perfil <span style="font-weight:600;color:var(--txt3)">(opcional)</span></label><div class="photo-wrap"><button type="button" class="photo-btn" onclick="triggerVideoInput()">🎥 Cargar video corto</button><span class="photo-or">o pegá una URL de video</span><input type="url" id="rV" placeholder="https://... video" oninput="prevVideo(this.value)"><input type="file" id="rVF" accept="video/*" style="display:none" onchange="handleVideoFile(this)"></div><span class="gps-st" id="vidSt">Tip: para esta versión conviene usar videos cortos o URL.</span></div></div>'
-          +'<div class="reg-help">Después vas a poder agregar álbum público y privado desde Mi perfil.</div>'
-        +'</div>'
-
-        +'<div class="reg-panel" data-reg-step="5">'
-          +'<p class="fsec">Redes sociales</p>'
-          +'<div class="reg-help">Opcional. Podés agregarlas ahora o más adelante desde Mi perfil.</div>'
-          +'<div class="social-grid">'
-            +'<div class="fld"><label>Instagram</label><input id="rSocInstagram" placeholder="@usuario o link"></div>'
-            +'<div class="fld"><label>Facebook</label><input id="rSocFacebook" placeholder="perfil o link"></div>'
-            +'<div class="fld"><label>TikTok</label><input id="rSocTiktok" placeholder="@usuario o link"></div>'
-            +'<div class="fld"><label>LinkedIn</label><input id="rSocLinkedin" placeholder="perfil o link"></div>'
-            +'<div class="fld" style="grid-column:1/-1"><label>Otra red</label><input id="rSocOtra" placeholder="otra red o link"></div>'
-          +'</div>'
-        +'</div>'
-
-        +'<div class="reg-actions">'
-          +'<button type="button" class="btn btn-o btn-lg" id="regBackBtn" onclick="regPrev()">← Volver</button>'
-          +'<button type="button" class="btn btn-p btn-lg" id="regNextBtn" onclick="regNext()">Continuar →</button>'
-        +'</div>'
-      +'</div>';
-  }
-
-  function setStep(n){
-    REG_STEP=Math.max(1,Math.min(5,n));
-    document.querySelectorAll('.reg-panel').forEach(function(p){
-      p.classList.toggle('active',parseInt(p.getAttribute('data-reg-step'),10)===REG_STEP);
-    });
-    document.querySelectorAll('#regSteps .reg-step').forEach(function(s,i){
-      var step=i+1;
-      s.classList.toggle('active',step===REG_STEP);
-      s.classList.toggle('done',step<REG_STEP);
-      var dot=s.querySelector('.reg-dot');
-      if(dot)dot.textContent=step<REG_STEP?'✓':step;
-    });
-    var back=document.getElementById('regBackBtn'), next=document.getElementById('regNextBtn');
-    if(back)back.style.visibility=REG_STEP===1?'hidden':'visible';
-    if(next)next.textContent=REG_STEP===5?'Guardar perfil ✦':'Continuar →';
-    var ee=document.getElementById('rErr');if(ee)ee.style.display='none';
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-
-  function regValidate(){
-    var ee=document.getElementById('rErr');
-    function err(msg){if(ee){ee.textContent=msg;ee.style.display='block';ee.scrollIntoView({behavior:'smooth',block:'center'});}return false}
-    if(REG_STEP===1){
-      var name=(document.getElementById('rN')||{}).value||'';
-      var age=parseInt((document.getElementById('rA')||{}).value||'',10);
-      var city=(document.getElementById('rC')||{}).value||'';
-      var gender=(document.getElementById('rG')||{}).value||'';
-      var email=(document.getElementById('rE')||{}).value||'';
-      if(!name.trim()||!city.trim()||!gender.trim())return err('Completá nombre, ciudad y género.');
-      if(!age||isNaN(age)||age<40)return err('FortyUp es solo para mayores de 40 años.');
-      if(!CU && (!email.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())))return err('Ingresá un email válido.');
-    }
-    return true;
-  }
-
-  window.regNext=function(){
-    if(!regValidate())return;
-    if(REG_STEP<5){setStep(REG_STEP+1);return;}
-    saveProfile();
-    saveSocialFromRegister();
-  };
-  window.regPrev=function(){setStep(REG_STEP-1)};
-
-  function saveSocialFromRegister(){
-    var cu=window.CU;
-    if(!cu)return;
-    var soc={
-      instagram:(document.getElementById('rSocInstagram')||{}).value||'',
-      facebook:(document.getElementById('rSocFacebook')||{}).value||'',
-      tiktok:(document.getElementById('rSocTiktok')||{}).value||'',
-      linkedin:(document.getElementById('rSocLinkedin')||{}).value||'',
-      otra:(document.getElementById('rSocOtra')||{}).value||''
-    };
-    try{
-      var users=normalizeUsers().map(function(u){return u.id===cu.id?Object.assign({},u,{social:soc}):u});
-      sv(K.U,users);refreshCU();upNav();
-    }catch(e){}
-  }
-
-  function loadSocialToRegister(){
-    var cu=window.CU;if(!cu)return;
-    var soc=cu.social||{};
-    var set=function(id,val){var el=document.getElementById(id);if(el)el.value=val||''};
-    set('rSocInstagram',soc.instagram);set('rSocFacebook',soc.facebook);set('rSocTiktok',soc.tiktok);set('rSocLinkedin',soc.linkedin);set('rSocOtra',soc.otra);
-  }
-
-  window.goTo=function(pg){
-    oldGoTo(pg);
-    if(pg==='register'){
-      setTimeout(function(){
-        buildRegisterWizard();
-        if(typeof oldLoadProfileForm==='function')oldLoadProfileForm();
-        loadSocialToRegister();
-        setStep(1);
-      },0);
-    }
-  };
-
-  window.loadProfileForm=function(){
-    buildRegisterWizard();
-    if(typeof oldLoadProfileForm==='function')oldLoadProfileForm();
-    loadSocialToRegister();
-    setStep(1);
-  };
-
-  window.clearReg=function(){
-    if(typeof oldClearReg==='function')oldClearReg();
-    ['rSocInstagram','rSocFacebook','rSocTiktok','rSocLinkedin','rSocOtra'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
-  };
-
-  window.saveProfile=function(){
-    oldSaveProfile();
-    setTimeout(saveSocialFromRegister,50);
-  };
-
-  window.enhanceRegisterUI=function(){
-    buildRegisterWizard();
-    setStep(REG_STEP||1);
-  };
-
-  // Si la página ya está cargada y entra a registro, que también funcione.
-  if(document.getElementById('page-register') && document.getElementById('page-register').classList.contains('active')){
-    buildRegisterWizard();setStep(1);
-  }
-})();
-</script>
-
-<script>
-/* ===== FIX SEBAS: REGISTRO 5 PASOS - PASO 3 Y 4 AVANZAN ===== */
-(function(){
-  function getStep(){
-    var active = document.querySelector('.reg-panel.active, .reg-panel-s.active, .fu-reg5-panel.active');
-    if(active){
-      return parseInt(active.getAttribute('data-reg-step') || active.getAttribute('data-step') || '1', 10);
-    }
-    var activeStep = document.querySelector('#regSteps .reg-step.active, #regStepsS .reg-step.active, #fuRegSteps .reg-step.active');
-    if(activeStep){
-      var all = Array.from(activeStep.parentElement.children);
-      return all.indexOf(activeStep) + 1;
-    }
-    return window.REG_STEP || window.REG_STEP_S || window.FU_REG_STEP || 1;
-  }
-
-  function setStepFixed(n){
-    n = Math.max(1, Math.min(5, n));
-
-    document.querySelectorAll('.reg-panel, .reg-panel-s, .fu-reg5-panel').forEach(function(p){
-      var step = parseInt(p.getAttribute('data-reg-step') || p.getAttribute('data-step') || '1', 10);
-      p.classList.toggle('active', step === n);
-      p.style.display = step === n ? 'block' : 'none';
-    });
-
-    document.querySelectorAll('#regSteps .reg-step, #regStepsS .reg-step, #fuRegSteps .reg-step').forEach(function(s, i){
-      var step = i + 1;
-      s.classList.toggle('active', step === n);
-      s.classList.toggle('done', step < n);
-      var dot = s.querySelector('.reg-dot');
-      if(dot) dot.textContent = step < n ? '✓' : step;
-    });
-
-    var back = document.getElementById('regBackBtn') || document.getElementById('regBackS') || document.getElementById('fuBackReg');
-    var next = document.getElementById('regNextBtn') || document.getElementById('regNextS') || document.getElementById('fuNextReg');
-
-    if(back) back.style.visibility = n === 1 ? 'hidden' : 'visible';
-    if(next) next.textContent = n === 5 ? 'Guardar perfil ✦' : 'Continuar →';
-
-    window.REG_STEP = n;
-    window.REG_STEP_S = n;
-    window.FU_REG_STEP = n;
-
-    var err = document.getElementById('rErr');
-    if(err) err.style.display = 'none';
-
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  function validStepFixed(step){
-    var err = document.getElementById('rErr');
-    function show(msg){
-      if(err){
-        err.textContent = msg;
-        err.style.display = 'block';
-        err.scrollIntoView({behavior:'smooth', block:'center'});
-      }else{
-        alert(msg);
-      }
-      return false;
+  function lockNav(){
+    const plus=document.getElementById("bn-plus");
+    if(plus){
+      const ico=document.getElementById("bnPlusIco") || plus.querySelector(".bn-plus");
+      const lab=document.getElementById("bnPlusLbl") || plus.querySelector(".bn-l");
+      if(ico){ico.innerHTML="";ico.textContent="";}
+      if(lab){lab.innerHTML="";lab.textContent="";}
     }
 
-    if(step === 1){
-      var name = (document.getElementById('rN') || {}).value || '';
-      var age = parseInt((document.getElementById('rA') || {}).value || '', 10);
-      var city = (document.getElementById('rC') || {}).value || '';
-      var gender = (document.getElementById('rG') || {}).value || '';
-      var email = (document.getElementById('rE') || {}).value || '';
+    const me=document.getElementById("bn-me");
+    const ico=document.getElementById("bn-me-ico");
+    const lab=document.getElementById("bn-me-lbl");
 
-      if(!name.trim() || !city.trim() || !gender.trim()){
-        return show('Completá nombre, ciudad y género.');
-      }
-      if(!age || age < 40){
-        return show('FortyUp es solo para mayores de 40 años.');
-      }
-      if(!window.CU && (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))){
-        return show('Ingresá un email válido.');
-      }
-    }
+    if(lab){lab.innerHTML="";lab.textContent="";}
 
-    // Paso 2, 3 y 4 quedan opcionales para poder avanzar.
-    // Paso 3: descripción/intereses opcionales.
-    // Paso 4: foto/video opcionales.
-    return true;
-  }
-
-  function continueFixed(){
-    var step = getStep();
-    if(!validStepFixed(step)) return;
-
-    if(step < 5){
-      setStepFixed(step + 1);
-      return;
-    }
-
-    if(typeof window.__fuOldSaveProfile === 'function'){
-      window.__fuOldSaveProfile();
-    }else if(typeof window.saveProfile === 'function' && window.saveProfile !== saveProfileFixed){
-      window.saveProfile();
-    }else{
-      var ok = document.getElementById('rOk');
-      if(ok){
-        ok.textContent = 'Perfil guardado.';
-        ok.style.display = 'block';
-      }else{
-        alert('Perfil guardado.');
-      }
-    }
-  }
-
-  function saveProfileFixed(){
-    continueFixed();
-  }
-
-  window.regNext = continueFixed;
-  window.regNextS = continueFixed;
-  window.fuRegNext = continueFixed;
-
-  window.regPrev = function(){ setStepFixed(getStep() - 1); };
-  window.regPrevS = window.regPrev;
-  window.fuRegPrev = window.regPrev;
-
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('#regNextBtn, #regNextS, #fuNextReg');
-    if(btn){
-      e.preventDefault();
-      e.stopPropagation();
-      continueFixed();
-    }
-
-    var back = e.target.closest('#regBackBtn, #regBackS, #fuBackReg');
-    if(back){
-      e.preventDefault();
-      e.stopPropagation();
-      setStepFixed(getStep() - 1);
-    }
-  }, true);
-
-  setTimeout(function(){
-    if(document.querySelector('.reg-panel, .reg-panel-s, .fu-reg5-panel')){
-      setStepFixed(getStep());
-    }
-  }, 400);
-})();
-</script>
-
-
-<!-- MAP SEARCH MODAL -->
-<div id="mapSearchModal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(6,20,16,.85);display:none;align-items:flex-end;justify-content:center">
-  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:600px;padding:1.25rem 1.25rem 2rem">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <strong style="font-family:Playfair Display,serif;font-size:1.1rem;color:#064E3B">🗺 Elegí una zona</strong>
-      <button onclick="closeMapSearch()" style="background:var(--bg3);border:0;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem">✕</button>
-    </div>
-    <p style="font-size:.82rem;color:var(--txt3);margin-bottom:.85rem">Tocá el mapa para buscar perfiles en esa zona</p>
-    <div id="mapSearchContainer" style="height:280px;border-radius:16px;overflow:hidden;border:1.5px solid var(--border)"></div>
-    <div id="mapSearchInfo" style="margin-top:.75rem;font-size:.84rem;color:var(--txt3);text-align:center;min-height:1.5rem"></div>
-    <button id="mapSearchBtn" onclick="applyMapSearch()" style="display:none;width:100%;margin-top:.85rem;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;border-radius:50px;padding:.78rem;font-size:.92rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Ver perfiles en esta zona →</button>
-  </div>
-</div>
-
-<script>
-/* ===== SEBAS FIX FINAL: +40 + BOTÓN + ===== */
-(function(){
-  function hasSessionSebas(){
-    try{
-      if(window.CU && CU.id) return true;
-      var keys=['fu_session','fu_s','fortyup_session','session'];
-      for(var i=0;i<keys.length;i++){
-        var v=localStorage.getItem(keys[i]);
-        if(v && v !== 'null' && v !== 'undefined') return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  window.acceptAgeFortySebas=function(){
-    try{localStorage.setItem('fortyup_age_ok_sebas','1')}catch(e){}
-    var el=document.getElementById('ageFortySebas');
-    if(el)el.classList.remove('open');
-  };
-
-  function showAgeSebas(){
-    var el=document.getElementById('ageFortySebas');
-    if(!el)return;
-    try{
-      if(localStorage.getItem('fortyup_age_ok_sebas')==='1')return;
-    }catch(e){}
-    el.classList.add('open');
-  }
-
-  function goJoinSebas(){
-    if(hasSessionSebas()){
-      if(typeof goTo==='function')goTo('myprofile');
-      else if(typeof rMyP==='function')rMyP();
-    }else{
-      if(typeof openAuth==='function')openAuth('register');
-      else if(typeof goTo==='function')goTo('register');
-    }
-  }
-
-  function bindPlusSebas(){
-    var bnPlus=document.getElementById('bn-plus');
-    if(bnPlus){
-      bnPlus.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        goJoinSebas();
-      };
-      var lbl=bnPlus.querySelector('.bn-l');
-      if(lbl)lbl.textContent=hasSessionSebas()?'Perfil':'Unirme';
-    }
-
-    document.querySelectorAll('.btn-join').forEach(function(btn){
-      btn.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        goJoinSebas();
-      };
-    });
-
-    document.querySelectorAll('.h-btns .btn-p').forEach(function(btn){
-      btn.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        goJoinSebas();
-      };
-    });
-
-    document.querySelectorAll('.h-btns').forEach(function(area){
-      if(area.__sebasPlusBound)return;
-      area.__sebasPlusBound=true;
-      area.addEventListener('click',function(ev){
-        if(ev.target.closest('.btn'))return;
-        var r=area.getBoundingClientRect();
-        var x=ev.clientX-r.left;
-        var y=ev.clientY-r.top;
-        var cx=r.width/2;
-        if(Math.abs(x-cx)<95 && y>40 && y<270){
-          ev.preventDefault();
-          ev.stopPropagation();
-          goJoinSebas();
-        }
-      },true);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded',function(){
-    showAgeSebas();
-    bindPlusSebas();
-  });
-  setTimeout(function(){showAgeSebas();bindPlusSebas();},300);
-  setTimeout(function(){showAgeSebas();bindPlusSebas();},1000);
-  setInterval(bindPlusSebas,1200);
-})();
-</script>
-
-<script>
-/* ===== SEBAS FIX: BOTÓN + SIEMPRE VA A REGISTRO / PERFIL ===== */
-(function(){
-  function hasUserSebas(){
-    try{
-      return !!(window.CU && CU.id);
-    }catch(e){return false}
-  }
-
-  function openRegisterSebas(){
-    try{
-      if(hasUserSebas()){
-        if(typeof goTo === 'function'){
-          goTo('register'); // editar/completar perfil con sesión
-        }
-        if(typeof loadProfileForm === 'function'){
-          setTimeout(loadProfileForm,80);
-        }
-      }else{
-        if(typeof openAuth === 'function'){
-          openAuth('register');
-        }else if(typeof goTo === 'function'){
-          goTo('register');
-        }
-      }
-    }catch(e){
-      console.warn('plus register fix', e);
-      if(typeof goTo === 'function')goTo('register');
-    }
-  }
-
-  function bindPlusToRegisterSebas(){
-    var bnPlus=document.getElementById('bn-plus');
-    if(bnPlus){
-      bnPlus.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        openRegisterSebas();
-        return false;
-      };
-      var lbl=bnPlus.querySelector('.bn-l');
-      if(lbl)lbl.textContent=hasUserSebas()?'Perfil':'Unirme';
-    }
-
-    document.querySelectorAll('.bn-plus').forEach(function(el){
-      el.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        openRegisterSebas();
-        return false;
-      };
-    });
-
-    document.querySelectorAll('.btn-join, .h-btns .btn-p').forEach(function(btn){
-      btn.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        openRegisterSebas();
-        return false;
-      };
-    });
-  }
-
-  function fixMapSearchTextSebas(){
-    var allBtns=[].slice.call(document.querySelectorAll('button'));
-    allBtns.forEach(function(btn){
-      var t=(btn.textContent||'').trim().toLowerCase();
-      if(t.includes('elegir en mapa')){
-        btn.innerHTML='🗺️ Mapa';
-      }
-      if(t.includes('mi ubicación')){
-        btn.innerHTML='📍 Mi ubicación';
-      }
-    });
-
-    document.querySelectorAll('input').forEach(function(inp){
-      var ph=(inp.getAttribute('placeholder')||'').toLowerCase();
-      if(ph.includes('buscar por c') || ph.includes('ciudad')){
-        inp.setAttribute('placeholder','📍 Buscar');
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded',function(){
-    bindPlusToRegisterSebas();
-    fixMapSearchTextSebas();
-  });
-  setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},300);
-  setTimeout(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1000);
-  setInterval(function(){bindPlusToRegisterSebas();fixMapSearchTextSebas();},1200);
-})();
-</script>
-
-
-<script>
-(function(){
-
-  function fixBuscador(){
-    const container =
-      document.querySelector('.pfilters') ||
-      document.querySelector('.filters') ||
-      document.querySelector('.search-row');
-
-    if(!container) return;
-
-    let btnUbicacion=null, btnMapa=null, inputBuscar=null;
-
-    container.querySelectorAll('button, input').forEach(el=>{
-      const txt=(el.textContent||'').toLowerCase();
-      const ph=(el.placeholder||'').toLowerCase();
-
-      if(txt.includes('ubicación')) btnUbicacion=el;
-      if(txt.includes('mapa')) btnMapa=el;
-      if(ph.includes('buscar')||ph.includes('ciudad')) inputBuscar=el;
-    });
-
-    if(btnUbicacion && btnMapa && inputBuscar){
-      container.innerHTML='';
-      btnUbicacion.innerHTML="📍 Mi ubicación";
-      btnMapa.innerHTML="🗺️ Elegir en mapa";
-      inputBuscar.placeholder="Buscar";
-
-      container.appendChild(btnUbicacion);
-      container.appendChild(btnMapa);
-      container.appendChild(inputBuscar);
-    }
-  }
-
-  function fixPlus(){
-    const plus=document.getElementById('bn-plus');
-    if(!plus) return;
-
-    plus.onclick=function(e){
-      e.preventDefault();
-      e.stopPropagation();
-
-      if(window.CU && CU.id){
-        if(typeof goTo==='function') goTo('register');
-      }else{
-        if(typeof openAuth==='function') openAuth('register');
-        else if(typeof goTo==='function') goTo('register');
-      }
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded',()=>{
-    fixBuscador();
-    fixPlus();
-  });
-
-  setTimeout(()=>{fixBuscador();fixPlus();},300);
-  setTimeout(()=>{fixBuscador();fixPlus();},1000);
-  setInterval(()=>{fixBuscador();fixPlus();},2000);
-
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FIX FINAL 2: BUSCADOR SIN PIN DUPLICADO ===== */
-(function(){
-  function cleanSearchSebasFinal(){
-    var containers = [
-      '.pfilters',
-      '.filters',
-      '.profile-filters',
-      '.search-row',
-      '.map-search',
-      '.radar-controls'
-    ];
-
-    containers.forEach(function(sel){
-      document.querySelectorAll(sel).forEach(function(container){
-        var btnUbicacion=null, btnMapa=null, inputBuscar=null, btnBuscar=null;
-
-        Array.from(container.querySelectorAll('button,input')).forEach(function(el){
-          var txt=(el.textContent||'').trim().toLowerCase();
-          var ph=(el.getAttribute('placeholder')||'').trim().toLowerCase();
-
-          if(txt.includes('ubicación')) btnUbicacion=el;
-          if(txt.includes('mapa')) btnMapa=el;
-          if(ph.includes('buscar') || ph.includes('ciudad')) inputBuscar=el;
-          if(txt === 'buscar' || txt.includes('buscar')) btnBuscar=el;
-        });
-
-        if(btnUbicacion) btnUbicacion.innerHTML='📍<br>Mi ubicación';
-        if(btnMapa) btnMapa.innerHTML='🗺️<br>Elegir en mapa';
-
-        if(inputBuscar){
-          inputBuscar.setAttribute('placeholder','Buscar');
-          inputBuscar.value = (inputBuscar.value || '').replace(/📍/g,'').trim();
-          inputBuscar.style.backgroundImage='none';
-        }
-
-        // Si existe un botón X rojo, lo dejo oculto visualmente porque pediste botón Buscar.
-        Array.from(container.querySelectorAll('button')).forEach(function(btn){
-          var t=(btn.textContent||'').trim();
-          if(t === '×' || t === '✕' || t === 'X'){
-            btn.style.display='none';
+    if(ico){
+      if(isLogged()){
+        const nm=(CU.name||CU.email||"S");
+        if(CU.photo){
+          const current=ico.querySelector("img");
+          if(!current || current.getAttribute("src")!==CU.photo){
+            ico.innerHTML='<img src="'+CU.photo+'" alt="Mi perfil">';
           }
-        });
-
-        // Si no hay botón Buscar, lo creamos sin romper funciones: dispara Enter/cambio en el input.
-        if(inputBuscar && !btnBuscar && !container.querySelector('.sebas-search-btn')){
-          var b=document.createElement('button');
-          b.type='button';
-          b.className='sebas-search-btn';
-          b.textContent='Buscar';
-          b.style.cssText='background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:50px;padding:.72rem 1rem;font-weight:900;height:58px;white-space:nowrap;';
-          b.onclick=function(){
-            inputBuscar.dispatchEvent(new Event('input',{bubbles:true}));
-            inputBuscar.dispatchEvent(new Event('change',{bubbles:true}));
-            inputBuscar.blur();
-          };
-          container.appendChild(b);
-          container.style.gridTemplateColumns='auto auto 1fr auto';
-        }else if(btnBuscar){
-          btnBuscar.textContent='Buscar';
+        }else{
+          ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+nm.charAt(0).toUpperCase()+'</span>';
         }
-      });
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', cleanSearchSebasFinal);
-  setTimeout(cleanSearchSebasFinal,300);
-  setTimeout(cleanSearchSebasFinal,1000);
-  setInterval(cleanSearchSebasFinal,1500);
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FIX: GUARDAR Y MOSTRAR FOTO/VIDEO EDITADOS ===== */
-(function(){
-  function getUsersSebas(){
-    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_users')||localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
-  }
-  function saveUsersSebas(users){
-    try{
-      if(typeof sv==='function' && window.K && K.U) sv(K.U,users);
-      else localStorage.setItem('fu_users',JSON.stringify(users));
-    }catch(e){}
-  }
-  function localMediaKey(id){return 'fu_local_media_'+id}
-
-  function saveLocalMediaSebas(u){
-    if(!u||!u.id)return;
-    var media={};
-    if(u.photo)media.photo=u.photo;
-    if(u.video)media.video=u.video;
-    try{localStorage.setItem(localMediaKey(u.id),JSON.stringify(media))}catch(e){}
-  }
-
-  function mergeLocalMediaSebas(u){
-    if(!u||!u.id)return u;
-    try{
-      var media=JSON.parse(localStorage.getItem(localMediaKey(u.id))||'{}');
-      if(media.photo && (!u.photo || String(u.photo).indexOf('data:')!==0)) u.photo=media.photo;
-      if(media.video && (!u.video || String(u.video).indexOf('data:')!==0)) u.video=media.video;
-    }catch(e){}
-    return u;
-  }
-
-  function publicAlbumsSebas(id){
-    var out=[];
-    try{
-      var a1=JSON.parse(localStorage.getItem('fu_albums_pub_'+id)||'[]');
-      a1.forEach(function(al){
-        if(al.visible===false)return;
-        (al.items||[]).forEach(function(it){if(it&&it.src)out.push(it)});
-      });
-      var a2=JSON.parse(localStorage.getItem('fu_album_pub_'+id)||'[]');
-      a2.forEach(function(it){if(it&&it.src)out.push(it)});
-    }catch(e){}
-    return out;
-  }
-
-  function publicMediaHtmlSebas(u){
-    u=mergeLocalMediaSebas(Object.assign({},u));
-    var items=[];
-    if(u.photo)items.push({type:'image',src:u.photo,label:'Foto'});
-    if(u.video)items.push({type:'video',src:u.video,label:'Video'});
-    publicAlbumsSebas(u.id).forEach(function(it){items.push(it)});
-
-    var html='<div class="m-sec public-media-sebas"><div class="m-sl">Fotos y videos públicos</div>';
-    if(!items.length){
-      html+='<div class="pm-empty">Este perfil todavía no tiene fotos o videos públicos.</div></div>';
-      return html;
-    }
-    html+='<div class="pm-grid">';
-    items.forEach(function(it){
-      var type=it.type==='video'?'video':'image';
-      if(type==='video'){
-        html+='<div class="pm-item" onclick="window.open(\''+String(it.src).replace(/'/g,"\\'")+'\',\'_blank\')"><video src="'+e(it.src)+'" muted playsinline></video><span class="pm-badge">▶</span></div>';
       }else{
-        html+='<div class="pm-item" onclick="window.open(\''+String(it.src).replace(/'/g,"\\'")+'\',\'_blank\')"><img src="'+e(it.src)+'"><span class="pm-badge">Foto</span></div>';
+        ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">👤</span>';
       }
-    });
-    html+='</div></div>';
-    return html;
+    }
   }
 
-  // Mejorar guardado: si la foto/video son data URL, guardarlos localmente y reinyectarlos aunque Firebase no los guarde.
-  var oldSaveProfile=window.saveProfile;
-  if(typeof oldSaveProfile==='function'){
-    window.saveProfile=function(){
-      oldSaveProfile();
-      setTimeout(function(){
-        try{
-          var users=getUsersSebas();
-          var current=window.CU;
-          if(!current&&window.K&&K.S){
-            var s=JSON.parse(localStorage.getItem(K.S)||'{}');
-            current=users.find(function(u){return u.id===s.id});
-          }
-          if(!current)return;
-          var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || current.photo || CU.photo || '';
-          var video=window._video || (document.getElementById('rV')&&document.getElementById('rV').value) || current.video || '';
-          users=users.map(function(u){
-            if(u.id!==current.id)return u;
-            var nu=Object.assign({},u);
-            if(photo)nu.photo=photo;
-            if(video)nu.video=video;
-            saveLocalMediaSebas(nu);
-            window.CU=nu;
-            return nu;
-          });
-          saveUsersSebas(users);
-          if(typeof upNav==='function')upNav();
-          if(typeof rProfiles==='function')rProfiles();
-        }catch(e){console.warn('save media sebas',e)}
-      },120);
+  function run(){
+    if(running)return;
+    running=true;
+    try{lockNav();}catch(e){}
+    running=false;
+  }
+
+  const oldUpNav=window.upNav;
+  if(typeof oldUpNav==="function" && !oldUpNav.__fortyClean){
+    window.upNav=function(){
+      const r=oldUpNav.apply(this,arguments);
+      setTimeout(run,0);
+      setTimeout(run,80);
+      return r;
     };
+    window.upNav.__fortyClean=true;
   }
 
-  // Corregir rProfiles para que use media local si Firebase pisó la foto.
-  var oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==='function'){
-    window.rProfiles=function(){
-      try{
-        var users=getUsersSebas().map(function(u){return mergeLocalMediaSebas(Object.assign({},u))});
-        saveUsersSebas(users);
-        if(window.CU){
-          var me=users.find(function(u){return u.id===CU.id});
-          if(me)window.CU=me;
-        }
-      }catch(e){}
-      oldRProfiles();
+  const oldGoTo=window.goTo;
+  if(typeof oldGoTo==="function" && !oldGoTo.__fortyClean){
+    window.goTo=function(){
+      const r=oldGoTo.apply(this,arguments);
+      setTimeout(run,0);
+      setTimeout(run,80);
+      return r;
     };
+    window.goTo.__fortyClean=true;
   }
 
-  // Agregar sección pública en Ver más, sin reemplazar el modal original.
-  var oldOpenMod=window.openMod;
-  if(typeof oldOpenMod==='function'){
-    window.openMod=function(id){
-      oldOpenMod(id);
-      setTimeout(function(){
-        try{
-          var u=getUsersSebas().find(function(x){return x.id===id});
-          if(!u)return;
-          var body=document.querySelector('#mCont .m-body');
-          if(!body || body.querySelector('.public-media-sebas'))return;
-          var acts=body.querySelector('.m-acts');
-          var wrap=document.createElement('div');
-          wrap.innerHTML=publicMediaHtmlSebas(u);
-          if(acts)body.insertBefore(wrap,acts); else body.appendChild(wrap);
-        }catch(e){console.warn('public media sebas',e)}
-      },80);
-    };
-  }
-
-  // Si vuelve de Firebase sin media, reinyectar.
-  setInterval(function(){
-    try{
-      var changed=false;
-      var users=getUsersSebas().map(function(u){
-        var before=(u.photo||'')+'|'+(u.video||'');
-        var nu=mergeLocalMediaSebas(Object.assign({},u));
-        var after=(nu.photo||'')+'|'+(nu.video||'');
-        if(before!==after)changed=true;
-        return nu;
-      });
-      if(changed){
-        saveUsersSebas(users);
-        if(typeof rProfiles==='function' && document.getElementById('page-profiles') && document.getElementById('page-profiles').classList.contains('active')) rProfiles();
-      }
-    }catch(e){}
-  },2500);
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,200);
+  setTimeout(run,700);
+  setInterval(run,700);
 })();
 </script>
 
 
-<script>
-/* ===== SEBAS FINAL: FOTO/VIDEO PERSISTENTE + ÁLBUMES + BUSCADOR REAL ===== */
+<script id="fortyup-final-integrado-chatgpt-js">
 (function(){
-  function eSebas(s){return String(s||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]})}
-  function usersSebas(){
-    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_users')||localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
-  }
-  function saveUsersSebas(users){
-    try{
-      if(typeof sv==='function' && window.K && K.U)sv(K.U,users);
-      else localStorage.setItem('fu_users',JSON.stringify(users));
-    }catch(e){}
-  }
-  function curSebas(){try{return window.CU||null}catch(e){return null}}
-  function mediaKey(id){return 'fu_media_persist_'+id}
-  function albumKey(id,type){return 'fu_album_'+type+'_'+id}
-  function allowedKey(owner,viewer){return 'fu_album_private_allowed_'+owner+'_'+viewer}
-
-  function getPersistMedia(id){
-    try{return JSON.parse(localStorage.getItem(mediaKey(id))||'{}')}catch(e){return{}}
-  }
-  function setPersistMedia(id,media){
-    try{localStorage.setItem(mediaKey(id),JSON.stringify(media||{}))}catch(e){}
-  }
-  function mergeMedia(u){
-    if(!u||!u.id)return u;
-    var m=getPersistMedia(u.id);
-    if(m.photo)u.photo=m.photo;
-    if(m.video)u.video=m.video;
-    return u;
-  }
-  function getAlbum(id,type){
-    try{return JSON.parse(localStorage.getItem(albumKey(id,type))||'[]')}catch(e){return[]}
-  }
-  function setAlbum(id,type,arr){
-    try{localStorage.setItem(albumKey(id,type),JSON.stringify(arr||[]))}catch(e){}
-  }
-  function canViewPrivate(owner){
-    var cu=curSebas();
-    if(!cu)return false;
-    if(cu.id===owner.id)return true;
-    return localStorage.getItem(allowedKey(owner.id,cu.id))==='1';
-  }
-
-  function saveEditedMedia(){
-    try{
-      var cu=curSebas();
-      if(!cu||!cu.id)return;
-      var photo=window._photo || (document.getElementById('rP')&&document.getElementById('rP').value) || cu.photo || CU.photo || '';
-      var video=(window._video||'') || ((document.getElementById('rV')||{}).value||'') || cu.video || '';
-      var media=getPersistMedia(cu.id);
-      if(photo)media.photo=photo;
-      if(video)media.video=video;
-      setPersistMedia(cu.id,media);
-      var users=usersSebas().map(function(u){
-        if(u.id!==cu.id)return u;
-        var nu=Object.assign({},u);
-        if(media.photo)nu.photo=media.photo;
-        if(media.video)nu.video=media.video;
-        window.CU=nu;
-        return nu;
-      });
-      saveUsersSebas(users);
-      if(typeof upNav==='function')upNav();
-      if(typeof rProfiles==='function')rProfiles();
-      if(typeof rMyP==='function' && document.getElementById('page-myprofile') && document.getElementById('page-myprofile').classList.contains('active'))rMyP();
-    }catch(err){console.warn('save media final',err)}
-  }
-
-  var oldSave=window.saveProfile;
-  if(typeof oldSave==='function'){
-    window.saveProfile=function(){
-      oldSave();
-      setTimeout(saveEditedMedia,150);
-      setTimeout(saveEditedMedia,600);
-    };
-  }
-
-  var oldRProf=window.rProfiles;
-  if(typeof oldRProf==='function'){
-    window.rProfiles=function(){
-      try{
-        var us=usersSebas().map(function(u){return mergeMedia(Object.assign({},u))});
-        saveUsersSebas(us);
-        if(window.CU){
-          var me=us.find(function(u){return u.id===CU.id});
-          if(me)window.CU=me;
-        }
-      }catch(e){}
-      oldRProf();
-      setTimeout(fixSearchUIFinal,80);
-    };
-  }
-
-  function renderAlbumItems(items){
-    if(!items.length)return '<div class="album-empty-sebas">Todavía no hay contenido cargado.</div>';
-    return '<div class="album-grid-sebas">'+items.map(function(it,idx){
-      var src=it.src||'';
-      var type=it.type==='video'?'video':'image';
-      if(type==='video')return '<div class="album-item-sebas" onclick="window.open(\''+src.replace(/'/g,"\\'")+'\',\'_blank\')"><video src="'+eSebas(src)+'" controls playsinline></video></div>';
-      return '<div class="album-item-sebas" onclick="window.open(\''+src.replace(/'/g,"\\'")+'\',\'_blank\')"><img src="'+eSebas(src)+'"></div>';
-    }).join('')+'</div>';
-  }
-
-  function ownerAlbumControls(owner,type){
-    var cu=curSebas();
-    if(!cu||cu.id!==owner.id)return '';
-    return '<div class="album-add-sebas">'
-      +'<label>＋ Foto '+(type==='public'?'pública':'privada')+'<input type="file" accept="image/*" onchange="sebasAddAlbumFile(\''+owner.id+'\',\''+type+'\',this,\'image\')"></label>'
-      +'<label>＋ Video '+(type==='public'?'público':'privado')+'<input type="file" accept="video/*" onchange="sebasAddAlbumFile(\''+owner.id+'\',\''+type+'\',this,\'video\')"></label>'
-      +'</div>';
-  }
-
-  window.sebasAddAlbumFile=function(ownerId,type,input,kind){
-    var file=input.files&&input.files[0];if(!file)return;
-    if(file.size>4*1024*1024){
-      if(typeof toast==='function')toast('Archivo pesado. Usá uno corto o más chico.','w');
-      input.value='';return;
-    }
-    var r=new FileReader();
-    r.onload=function(ev){
-      var arr=getAlbum(ownerId,type);
-      arr.push({src:ev.target.result,type:kind==='video'?'video':'image',at:new Date().toISOString()});
-      setAlbum(ownerId,type,arr);
-      if(typeof toast==='function')toast('Contenido agregado al álbum.','ok');
-      input.value='';
-      window.openAlbumSebas(ownerId,type);
-    };
-    r.readAsDataURL(file);
-  };
-
-  window.openAlbumSebas=function(ownerId,type){
-    var u=usersSebas().map(function(x){return mergeMedia(Object.assign({},x))}).find(function(x){return x.id===ownerId});
-    if(!u)return;
-    type=type||'public';
-    var isPrivate=type==='private';
-    var allowed=!isPrivate||canViewPrivate(u);
-    var html='<div class="album-panel-sebas">'
-      +'<div class="album-head-sebas"><button class="album-back-sebas" onclick="openMod(\''+ownerId+'\')">← Volver</button><div class="album-title-sebas">Fotos y videos</div></div>'
-      +'<div class="album-tabs-sebas"><button class="'+(type==='public'?'active':'')+'" onclick="openAlbumSebas(\''+ownerId+'\',\'public\')">Álbum público</button><button class="'+(type==='private'?'active':'')+'" onclick="openAlbumSebas(\''+ownerId+'\',\'private\')">Álbum privado</button></div>';
-    if(!allowed){
-      html+='<div class="album-lock-sebas"><strong>🔒 Álbum privado</strong><br>Este usuario todavía no te autorizó a ver su álbum privado.</div>';
-    }else{
-      var items=[];
-      if(type==='public'){
-        if(u.photo)items.push({src:u.photo,type:'image'});
-        if(u.video)items.push({src:u.video,type:'video'});
-      }
-      items=items.concat(getAlbum(ownerId,type));
-      html+=ownerAlbumControls(u,type)+renderAlbumItems(items);
-    }
-    html+='</div>';
-    document.getElementById('mCont').innerHTML=html;
-    document.getElementById('mOv').classList.add('open');
-    document.body.style.overflow='hidden';
-  };
-
-  var oldOpen=window.openMod;
-  if(typeof oldOpen==='function'){
-    window.openMod=function(id){
-      // Merge photo/video before opening profile modal
-      try{
-        var us=usersSebas().map(function(u){return mergeMedia(Object.assign({},u))});
-        saveUsersSebas(us);
-      }catch(e){}
-      oldOpen(id);
-      setTimeout(function(){
-        try{
-          var body=document.querySelector('#mCont .m-body');
-          if(!body||body.querySelector('.media-btn-sebas'))return;
-          var acts=body.querySelector('.m-acts');
-          var btn=document.createElement('button');
-          btn.className='btn btn-o media-btn-sebas';
-          btn.textContent='📸 Fotos y videos';
-          btn.onclick=function(){window.openAlbumSebas(id,'public')};
-          if(acts)body.insertBefore(btn,acts); else body.appendChild(btn);
-        }catch(e){console.warn('album button',e)}
-      },80);
-    };
-  }
-
-  function fixSearchUIFinal(){
-    var bar=document.getElementById('locationSearchBar')||document.querySelector('.pfilters')||document.querySelector('.filters')||document.querySelector('.search-row')||document.querySelector('.map-search')||document.querySelector('.radar-controls');
-    if(!bar)return;
-    var buttons=Array.from(bar.querySelectorAll('button'));
-    var inputs=Array.from(bar.querySelectorAll('input'));
-    var input=inputs.find(function(i){var ph=(i.placeholder||'').toLowerCase();return ph.includes('buscar')||ph.includes('ciudad')})||inputs[0];
-    var loc=buttons.find(function(b){return (b.textContent||'').toLowerCase().includes('ubicación')});
-    var map=buttons.find(function(b){return (b.textContent||'').toLowerCase().includes('mapa')});
-    var search=bar.querySelector('.sebas-search-button-final')||buttons.find(function(b){return (b.textContent||'').trim().toLowerCase()==='buscar'});
-    if(!input||!loc||!map)return;
-
-    loc.innerHTML='📍<br>Mi ubicación';
-    map.innerHTML='🗺️<br>Elegir en mapa';
-    input.placeholder='Buscar';
-    input.value=(input.value||'').replace(/📍/g,'').trim();
-    input.style.backgroundImage='none';
-
-    if(!search){
-      search=document.createElement('button');
-      search.type='button';
-      search.className='sebas-search-button-final sebas-search-button';
-      search.textContent='Buscar';
-      bar.appendChild(search);
-    }else{
-      search.textContent='Buscar';
-      search.classList.add('sebas-search-button-final','sebas-search-button');
-    }
-
-    search.onclick=function(){
-      var v=(input.value||'').trim().replace(/📍/g,'').trim().toLowerCase();
-      try{
-        window._locFilter=v;
-        window._searchLat=null;
-        window._searchLng=null;
-      }catch(e){}
-      if(typeof rProfiles==='function')rProfiles();
-      if(typeof toast==='function')toast(v?'Buscando perfiles cerca de: '+input.value:'Mostrando perfiles cercanos','ok');
-    };
-
-    map.onclick=function(){
-      var v=prompt('Escribí ciudad o zona para buscar:');
-      if(v!==null){
-        input.value=v;
-        search.click();
-      }
-    };
-
-    loc.onclick=function(){
-      try{window._locFilter='';window._searchLat=null;window._searchLng=null}catch(e){}
-      if(typeof getMyLoc==='function')getMyLoc();
-      setTimeout(function(){if(typeof rProfiles==='function')rProfiles()},500);
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded',fixSearchUIFinal);
-  setTimeout(fixSearchUIFinal,300);
-  setTimeout(fixSearchUIFinal,1000);
-  setInterval(fixSearchUIFinal,1600);
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FIX: SUBIR VARIAS FOTOS Y VIDEOS POR ÁLBUM ===== */
-(function(){
-  function albumKey(id,type){return 'fu_album_'+type+'_'+id}
-  function getAlbum(id,type){
-    try{return JSON.parse(localStorage.getItem(albumKey(id,type))||'[]')}catch(e){return[]}
-  }
-  function setAlbum(id,type,arr){
-    try{localStorage.setItem(albumKey(id,type),JSON.stringify(arr||[]))}catch(e){}
-  }
-
-  // Reemplaza/crea controles múltiples en el panel de álbum
-  window.sebasMultiAlbumControls=function(ownerId,type){
-    var fotosLabel = type==='public'?'públicas':'privadas';
-    var videosLabel = type==='public'?'públicos':'privados';
-    var div = document.createElement('div');
-    div.className = 'album-add-sebas';
-    var lbF = document.createElement('label');
-    lbF.textContent = '＋ Fotos '+fotosLabel;
-    var inpF = document.createElement('input');
-    inpF.type='file';inpF.accept='image/*';inpF.multiple=true;
-    inpF.onchange=function(){sebasAddAlbumFiles(ownerId,type,this,'image')};
-    lbF.appendChild(inpF);
-    var lbV = document.createElement('label');
-    lbV.textContent = '＋ Videos '+videosLabel;
-    var inpV = document.createElement('input');
-    inpV.type='file';inpV.accept='video/*';inpV.multiple=true;
-    inpV.onchange=function(){sebasAddAlbumFiles(ownerId,type,this,'video')};
-    lbV.appendChild(inpV);
-    div.appendChild(lbF);div.appendChild(lbV);
-    return div.outerHTML;
-  };
-
-  window.sebasAddAlbumFiles=function(ownerId,type,input,kind){
-    var files=Array.from(input.files||[]);
-    if(!files.length)return;
-
-    var maxSize=4*1024*1024;
-    var valid=files.filter(function(file){
-      if(file.size>maxSize){
-        if(typeof toast==='function')toast('Algunos archivos son pesados. Usá fotos/videos más chicos.','w');
-        return false;
-      }
-      return true;
-    });
-
-    if(!valid.length){
-      input.value='';
-      return;
-    }
-
-    var arr=getAlbum(ownerId,type);
-    var pending=valid.length;
-
-    valid.forEach(function(file){
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        arr.push({
-          src:ev.target.result,
-          type:(kind==='video' || file.type.indexOf('video/')===0)?'video':'image',
-          name:file.name||'archivo',
-          at:new Date().toISOString()
-        });
-
-        pending--;
-        if(pending===0){
-          setAlbum(ownerId,type,arr);
-          input.value='';
-          if(typeof toast==='function'){
-            toast(valid.length+' archivo'+(valid.length>1?'s':'')+' agregado'+(valid.length>1?'s':'')+' al álbum.','ok');
-          }
-          if(typeof openAlbumSebas==='function')openAlbumSebas(ownerId,type);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Si la función openAlbumSebas usa controles viejos, los reemplazamos visualmente después de abrir.
-  function upgradeAlbumInputs(){
-    document.querySelectorAll('.album-add-sebas input[type="file"]').forEach(function(inp){
-      inp.setAttribute('multiple','multiple');
-    });
-
-    document.querySelectorAll('.album-add-sebas label').forEach(function(label){
-      var txt=(label.textContent||'').trim();
-      if(txt.startsWith('＋ Foto pública'))label.childNodes[0].nodeValue='＋ Fotos públicas';
-      if(txt.startsWith('＋ Foto privada'))label.childNodes[0].nodeValue='＋ Fotos privadas';
-      if(txt.startsWith('＋ Video público'))label.childNodes[0].nodeValue='＋ Videos públicos';
-      if(txt.startsWith('＋ Video privado'))label.childNodes[0].nodeValue='＋ Videos privados';
-    });
-  }
-
-  var oldOpenAlbum=window.openAlbumSebas;
-  if(typeof oldOpenAlbum==='function'){
-    window.openAlbumSebas=function(ownerId,type){
-      oldOpenAlbum(ownerId,type);
-      setTimeout(upgradeAlbumInputs,80);
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded',upgradeAlbumInputs);
-  setTimeout(upgradeAlbumInputs,400);
-  setInterval(upgradeAlbumInputs,1500);
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FIX: PRIVACIDAD MUESTRA BLOQUEADOS ===== */
-(function(){
-  function usersSebas(){
-    try{return typeof normalizeUsers==='function'?normalizeUsers():JSON.parse(localStorage.getItem('fu_users')||localStorage.getItem('fu_u')||'[]')}catch(e){return[]}
-  }
-  function saveUsersSebas(users){
-    try{
-      if(typeof sv==='function' && window.K && K.U)sv(K.U,users);
-      else localStorage.setItem('fu_users',JSON.stringify(users));
-    }catch(e){}
-  }
-  function curSebas(){try{return window.CU||null}catch(e){return null}}
-
-  function blockedIdsSebas(){
-    var cu=curSebas();
-    if(!cu)return [];
-    var ids=[];
-    if(Array.isArray(cu.blocked))ids=ids.concat(cu.blocked);
-    if(Array.isArray(cu.blocks))ids=ids.concat(cu.blocks);
-    if(cu.blockedUsers && typeof cu.blockedUsers==='object'){
-      ids=ids.concat(Object.keys(cu.blockedUsers).filter(function(k){return cu.blockedUsers[k]}));
-    }
-    try{
-      var extra=JSON.parse(localStorage.getItem('fu_blocked_'+cu.id)||'[]');
-      if(Array.isArray(extra))ids=ids.concat(extra);
-    }catch(e){}
-    return Array.from(new Set(ids.map(String)));
-  }
-
-  function saveBlockedIdsSebas(ids){
-    var cu=curSebas();
-    if(!cu)return;
-    ids=Array.from(new Set((ids||[]).map(String)));
-    localStorage.setItem('fu_blocked_'+cu.id,JSON.stringify(ids));
-    var users=usersSebas().map(function(u){
-      if(String(u.id)!==String(cu.id))return u;
-      var nu=Object.assign({},u,{blocked:ids,blocks:ids});
-      window.CU=nu;
-      return nu;
-    });
-    saveUsersSebas(users);
-    if(typeof refreshCU==='function')refreshCU();
-  }
-
-  window.openPrivacySebas=function(){
-    var cu=curSebas();
-    var users=usersSebas();
-    var ids=blockedIdsSebas();
-    var blocked=ids.map(function(id){return users.find(function(u){return String(u.id)===String(id)})||{id:id,name:'Usuario bloqueado',city:''}});
-
-    var html='<div class="privacy-panel-sebas">'
-      +'<button class="privacy-back-sebas" onclick="closeMod()">← Volver</button>'
-      +'<div class="privacy-title-sebas">Privacidad</div>'
-      +'<div class="privacy-sub-sebas">Usuarios bloqueados. No podrán interactuar con vos desde FortyUp.</div>';
-
-    if(!cu){
-      html+='<div class="blocked-empty-sebas">Iniciá sesión para ver tu privacidad.</div>';
-    }else if(!blocked.length){
-      html+='<div class="blocked-empty-sebas">No tenés usuarios bloqueados.</div>';
-    }else{
-      html+='<div class="blocked-list-sebas">';
-      blocked.forEach(function(u){
-        var av=u.photo?'<img src="'+u.photo+'">':(u.name||'?').charAt(0).toUpperCase();
-        html+='<div class="blocked-item-sebas">'
-          +'<div class="blocked-av-sebas">'+av+'</div>'
-          +'<div class="blocked-info-sebas"><div class="blocked-name-sebas">'+(u.name||'Usuario')+'</div><div class="blocked-city-sebas">'+(u.city||'')+'</div></div>'
-          +'<button class="unblock-btn-sebas" onclick="unblockUserSebas(\''+u.id+'\')">Desbloquear</button>'
-          +'</div>';
-      });
-      html+='</div>';
-    }
-    html+='</div>';
-
-    var m=document.getElementById('mCont');
-    var ov=document.getElementById('mOv');
-    if(m&&ov){
-      m.innerHTML=html;
-      ov.classList.add('open');
-      document.body.style.overflow='hidden';
-    }else{
-      alert(blocked.length?blocked.map(function(u){return u.name||u.id}).join('\\n'):'No tenés usuarios bloqueados.');
-    }
-  };
-
-  window.unblockUserSebas=function(id){
-    var ids=blockedIdsSebas().filter(function(x){return String(x)!==String(id)});
-    saveBlockedIdsSebas(ids);
-    if(typeof toast==='function')toast('Usuario desbloqueado.','ok');
-    openPrivacySebas();
-    if(typeof rProfiles==='function')rProfiles();
-  };
-
-  // Asegura que bloquear guarde en una lista legible por privacidad.
-  var oldBlk=window.blkU;
-  if(typeof oldBlk==='function'){
-    window.blkU=function(id){
-      oldBlk(id);
-      setTimeout(function(){
-        var ids=blockedIdsSebas();
-        if(ids.indexOf(String(id))<0)ids.push(String(id));
-        saveBlockedIdsSebas(ids);
-      },80);
-    };
-  }
-
-  // Redirige cualquier opción llamada Privacidad / Usuarios bloqueados a esta pantalla.
-  document.addEventListener('click',function(ev){
-    var el=ev.target.closest('button,.cfg-item,.drbtn,.nl');
-    if(!el)return;
-    var t=(el.textContent||'').toLowerCase();
-    if(t.includes('privacidad') || t.includes('bloquead')){
-      ev.preventDefault();
-      ev.stopPropagation();
-      openPrivacySebas();
-      return false;
-    }
-  },true);
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FIX: POPUP +40 RESTAURADO ===== */
-(function(){
-  window.acceptAgeFortySebasV2=function(){
-    try{localStorage.setItem('fortyup_age_ok_v2','1')}catch(e){}
-    var el=document.getElementById('ageFortyPopupSebasV2');
-    if(el)el.classList.remove('open');
-  };
-
-  function showAgeFortySebasV2(){
-    var el=document.getElementById('ageFortyPopupSebasV2');
-    if(!el)return;
-    try{
-      if(localStorage.getItem('fortyup_age_ok_v2')==='1')return;
-    }catch(e){}
-    el.classList.add('open');
-  }
-
-  document.addEventListener('DOMContentLoaded',showAgeFortySebasV2);
-  setTimeout(showAgeFortySebasV2,250);
-  setTimeout(showAgeFortySebasV2,900);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX: PERFILES SEGÚN SESIÓN + FOTO GUARDA E IMPACTA
-   ========================================================= */
-(function(){
-  function getStore(k,d){
-    try{
-      if(typeof g === "function") return g(k,d);
-      const raw = localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){ return d; }
-  }
-
-  function setStore(k,v){
-    try{
-      if(typeof sv === "function") sv(k,v);
-      else localStorage.setItem(k,JSON.stringify(v));
-    }catch(e){}
-  }
-
-  function getUsersRaw(){
-    try{
-      if(window.K && K.U) return getStore(K.U,[]);
-      return getStore("fu_u",[]);
-    }catch(e){ return getStore("fu_u",[]); }
-  }
-
-  function setUsersRaw(users){
-    try{
-      if(window.K && K.U) setStore(K.U,users);
-      else setStore("fu_u",users);
-    }catch(e){}
-  }
-
   function isLogged(){
-    return !!(window.CU && CU.id);
+    try{if(typeof refreshCU==="function")refreshCU();}catch(e){}
+    return !!(window.CU&&CU.id);
   }
 
-  function mediaKey(id){
-    return "fortyup_profile_media_final_" + id;
+  function applyState(){
+    const ok=isLogged();
+    document.body.classList.toggle("fu-logged",ok);
+    document.body.classList.toggle("fu-guest",!ok);
+    const nav=document.querySelector(".bnav");
+    if(nav) nav.style.display=ok?"flex":"none";
+    lockPlus();
+    lockPhoto();
+    fixHome();
+    fixChat();
   }
 
-  function getMedia(id){
-    try{ return JSON.parse(localStorage.getItem(mediaKey(id)) || "{}"); }
-    catch(e){ return {}; }
-  }
-
-  function setMedia(id,media){
-    try{ localStorage.setItem(mediaKey(id), JSON.stringify(media || {})); }
-    catch(e){
-      if(typeof toast === "function") toast("La foto es pesada. Probá con una imagen más chica.","w");
-    }
-  }
-
-  function mergeMedia(user){
-    if(!user || !user.id) return user;
-    const media = getMedia(user.id);
-    const u = Object.assign({}, user);
-    if(media.photo) u.photo = media.photo;
-    if(media.video) u.video = media.video;
-    return u;
-  }
-
-  function allUsersMerged(){
-    let users = [];
-    try{
-      users = typeof normalizeUsers === "function" ? normalizeUsers() : getUsersRaw();
-    }catch(e){
-      users = getUsersRaw();
-    }
-    return (users || []).map(u => mergeMedia(Object.assign({},u)));
-  }
-
-  function persistProfileMedia(id, photo, video){
-    if(!id) return;
-
-    const media = getMedia(id);
-    if(photo) media.photo = photo;
-    if(video) media.video = video;
-    setMedia(id, media);
-
-    const users = getUsersRaw().map(u => {
-      if(String(u.id) !== String(id)) return u;
-      const nu = Object.assign({}, u);
-      if(media.photo) nu.photo = media.photo;
-      if(media.video) nu.video = media.video;
-      return nu;
-    });
-    setUsersRaw(users);
-
-    if(window.CU && String(CU.id) === String(id)){
-      if(media.photo) CU.photo = media.photo;
-      if(media.video) CU.video = media.video;
-    }
-  }
-
-  function resizeImage(file, cb){
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
-        const max = 900;
-        if(w > h && w > max){ h = Math.round(h * max / w); w = max; }
-        else if(h >= w && h > max){ w = Math.round(w * max / h); h = max; }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext("2d").drawImage(img,0,0,w,h);
-        cb(canvas.toDataURL("image/jpeg",0.82));
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  /* Reemplaza handler de foto: guarda comprimido y lo propaga */
-  const originalHandleFile = window.handleFile;
-  window.handleFile = function(input){
-    const file = input.files && input.files[0];
-    if(!file) return;
-
-    resizeImage(file, data => {
-      window._photo = data;
-
-      const prevWrap = document.getElementById("phprev");
-      const prevImg = document.getElementById("phimg");
-      if(prevImg) prevImg.src = data;
-      if(prevWrap) prevWrap.style.display = "block";
-
-      if(isLogged()) persistProfileMedia(CU.id, data, null);
-
-      forcePhotoEverywhere();
-      if(typeof toast === "function") toast("Foto cargada y guardada ✓","ok");
-    });
-  };
-
-  /* Video: lo conserva si es liviano */
-  const originalHandleVideo = window.handleVideoFile;
-  window.handleVideoFile = function(input){
-    const file = input.files && input.files[0];
-    if(!file) return;
-
-    if(file.size > 4 * 1024 * 1024){
-      if(typeof toast === "function") toast("Video muy pesado para guardar en esta versión.","w");
-      input.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = ev => {
-      window._video = ev.target.result;
-      if(isLogged()) persistProfileMedia(CU.id, null, ev.target.result);
-      const st = document.getElementById("vidSt");
-      if(st) st.textContent = "✓ Video cargado";
-      if(typeof toast === "function") toast("Video cargado y guardado ✓","ok");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  /* normalizeUsers y findUserById devuelven usuarios con foto persistida */
-  const originalNormalizeUsers = window.normalizeUsers;
-  if(typeof originalNormalizeUsers === "function"){
-    window.normalizeUsers = function(){
-      return originalNormalizeUsers().map(u => mergeMedia(Object.assign({},u)));
-    };
-  }
-
-  const originalFindUserById = window.findUserById;
-  if(typeof originalFindUserById === "function"){
-    window.findUserById = function(id){
-      const u = originalFindUserById(id);
-      return u ? mergeMedia(Object.assign({},u)) : u;
-    };
-  }
-
-  const originalRefreshCU = window.refreshCU;
-  if(typeof originalRefreshCU === "function"){
-    window.refreshCU = function(){
-      const r = originalRefreshCU();
-      if(window.CU) window.CU = mergeMedia(Object.assign({},CU));
-      return window.CU || r;
-    };
-  }
-
-  /* Al guardar perfil, reinyecta la foto/video en usuario y sesión */
-  const originalSaveProfile = window.saveProfile;
-  if(typeof originalSaveProfile === "function"){
-    window.saveProfile = function(){
-      originalSaveProfile();
-
-      setTimeout(() => {
-        if(!isLogged()) return;
-
-        const photo = window._photo || ((document.getElementById("rP") || {}).value || "") || CU.photo || "";
-        const video = window._video || ((document.getElementById("rV") || {}).value || "") || CU.video || "";
-
-        persistProfileMedia(CU.id, photo, video);
-        forcePhotoEverywhere();
-
-        if(typeof upNav === "function") upNav();
-        if(typeof rMyP === "function" && document.getElementById("page-myprofile")?.classList.contains("active")) rMyP();
-        if(typeof rProfiles === "function" && document.getElementById("page-profiles")?.classList.contains("active")) rProfiles();
-        if(typeof rChatList === "function" && document.getElementById("page-chats")?.classList.contains("active")) rChatList();
-      },160);
-    };
-  }
-
-  function setAvatar(el, photo){
-    if(!el || !photo) return;
-    el.innerHTML = '<img class="sebas-img-cover" src="' + photo + '">';
-  }
-
-  function forcePhotoEverywhere(){
-    const users = allUsersMerged();
-
-    users.forEach(u => {
-      if(!u.photo) return;
-      const name = String(u.name || "").toLowerCase();
-
-      document.querySelectorAll(".pcard").forEach(card => {
-        const txt = String(card.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          const ph = card.querySelector(".pcard-ph");
-          setAvatar(ph, u.photo);
-        }
-      });
-
-      document.querySelectorAll(".chat-item").forEach(item => {
-        const txt = String(item.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(item.querySelector(".chat-av"), u.photo);
-        }
-      });
-
-      document.querySelectorAll(".chat-hdr").forEach(item => {
-        const txt = String(item.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(item.querySelector(".chat-hav"), u.photo);
-        }
-      });
-
-      document.querySelectorAll(".fav-card").forEach(card => {
-        const txt = String(card.textContent || "").toLowerCase();
-        if(name && txt.includes(name)){
-          setAvatar(card.querySelector(".fav-ph"), u.photo);
-        }
-      });
-    });
-
-    if(isLogged() && CU.photo){
-      setAvatar(document.querySelector(".myp-av"), CU.photo);
-      setAvatar(document.querySelector(".nav-av .av-c"), CU.photo);
-    }
-  }
-
-  function updateProfileViewMode(){
-    const guest = !isLogged();
-    document.body.classList.toggle("sebas-guest", guest);
-
-    const chats = document.getElementById("bn-chats");
-    const me = document.getElementById("bn-me");
-    if(chats) chats.style.display = guest ? "none" : "flex";
-    if(me) me.style.display = guest ? "none" : "flex";
-  }
-
-  function simplifyGuestCards(){
-    if(isLogged()) return;
-
-    document.querySelectorAll(".pcard").forEach(card => {
-      const meta = card.querySelector(".pcard-meta");
-      if(meta){
-        const text = meta.textContent || "";
-        const dist = (text.match(/[\\d,.]+\\s?km/i) || text.match(/[^·]+$/) || ["Cerca de vos"])[0];
-        meta.textContent = dist.trim();
-      }
-    });
-  }
-
-  /* Mantiene todo completo logueado, y mini tarjetas invitado */
-  const originalRProfiles = window.rProfiles;
-  if(typeof originalRProfiles === "function"){
-    window.rProfiles = function(){
-      originalRProfiles();
-      setTimeout(() => {
-        updateProfileViewMode();
-        simplifyGuestCards();
-        forcePhotoEverywhere();
-      },90);
-    };
-  }
-
-  const originalRMyP = window.rMyP;
-  if(typeof originalRMyP === "function"){
-    window.rMyP = function(){
-      originalRMyP();
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  const originalRChatList = window.rChatList;
-  if(typeof originalRChatList === "function"){
-    window.rChatList = function(){
-      originalRChatList();
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  const originalOpenChat = window.openChat;
-  if(typeof originalOpenChat === "function"){
-    window.openChat = function(){
-      originalOpenChat.apply(this, arguments);
-      setTimeout(forcePhotoEverywhere,80);
-    };
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  });
-
-  setTimeout(() => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  },350);
-
-  setInterval(() => {
-    updateProfileViewMode();
-    simplifyGuestCards();
-    forcePhotoEverywhere();
-  },1500);
-})();
-</script>
-
-
-<script>
-/* ===== SEBAS FINAL HOME/NAV/FOTO ===== */
-(function(){
-  const get=(k,d)=>{try{if(typeof g==="function")return g(k,d);const r=localStorage.getItem(k);return r?JSON.parse(r):d}catch(e){return d}};
-  const set=(k,v)=>{try{if(typeof sv==="function")sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-  const uKey=()=>{try{return (window.K&&K.U)?K.U:"fu_u"}catch(e){return"fu_u"}};
-  const logged=()=>!!(window.CU&&CU.id);
-  const mKey=id=>"fortyup_profile_media_FINAL_HOME_"+id;
-  function getMedia(id){
-    const keys=[mKey(id),"fortyup_profile_media_final_FIX_"+id,"fortyup_profile_media_final_"+id,"fu_profile_media_final_"+id,"fu_profile_media_"+id];
-    for(const k of keys){try{const m=JSON.parse(localStorage.getItem(k)||"{}");if(m&&(m.photo||m.video))return m}catch(e){}}
-    return {};
-  }
-  function setMedia(id,m){try{localStorage.setItem(mKey(id),JSON.stringify(m||{}))}catch(e){if(typeof toast==="function")toast("La foto es muy pesada. Probá con una más chica.","w")}}
-  function merge(u){if(!u||!u.id)return u;const m=getMedia(u.id),nu=Object.assign({},u);if(m.photo)nu.photo=m.photo;if(m.video)nu.video=m.video;return nu}
-  function persist(id,photo,video){
-    if(!id)return;const m=getMedia(id);if(photo)m.photo=photo;if(video)m.video=video;setMedia(id,m);
-    set(uKey(),get(uKey(),[]).map(u=>String(u.id)!==String(id)?u:Object.assign({},u,{photo:m.photo||u.photo,video:m.video||u.video})));
-    if(window.CU&&String(CU.id)===String(id)){if(m.photo)CU.photo=m.photo;if(m.video)CU.video=m.video}
-  }
-  function resize(file,cb){
-    const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height,max=900;if(w>h&&w>max){h=Math.round(h*max/w);w=max}else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);cb(c.toDataURL("image/jpeg",.82))};img.src=e.target.result};r.readAsDataURL(file)
-  }
-  window.handleFile=function(input){
-    const file=input.files&&input.files[0];if(!file)return;
-    resize(file,data=>{window._photo=data;const pi=document.getElementById("phimg"),pw=document.getElementById("phprev");if(pi)pi.src=data;if(pw)pw.style.display="block";if(logged())persist(CU.id,data,null);applyPhotos();if(typeof toast==="function")toast("Foto cargada y guardada ✓","ok")})
-  };
-  window.handleVideoFile=function(input){
-    const file=input.files&&input.files[0];if(!file)return;
-    if(file.size>4*1024*1024){if(typeof toast==="function")toast("Video muy pesado para guardar en esta versión.","w");input.value="";return}
-    const r=new FileReader();r.onload=e=>{window._video=e.target.result;if(logged())persist(CU.id,null,e.target.result);const st=document.getElementById("vidSt");if(st)st.textContent="✓ Video cargado";if(typeof toast==="function")toast("Video cargado y guardado ✓","ok")};r.readAsDataURL(file)
-  };
-  const oldNorm=window.normalizeUsers;if(typeof oldNorm==="function")window.normalizeUsers=function(){return oldNorm().map(u=>merge(Object.assign({},u)))};
-  const oldFind=window.findUserById;if(typeof oldFind==="function")window.findUserById=function(id){const u=oldFind(id);return u?merge(Object.assign({},u)):u};
-  const oldRef=window.refreshCU;if(typeof oldRef==="function")window.refreshCU=function(){const r=oldRef();if(window.CU)window.CU=merge(Object.assign({},CU));return window.CU||r};
-  const oldSave=window.saveProfile;if(typeof oldSave==="function")window.saveProfile=function(){oldSave();setTimeout(()=>{if(!logged())return;persist(CU.id,window._photo||((document.getElementById("rP")||{}).value||"")||CU.photo||"",window._video||((document.getElementById("rV")||{}).value||"")||CU.video||"");applyPhotos();if(typeof upNav==="function")upNav();if(typeof rMyP==="function"&&document.getElementById("page-myprofile")?.classList.contains("active"))rMyP();if(typeof rProfiles==="function"&&document.getElementById("page-profiles")?.classList.contains("active"))rProfiles();if(typeof rChatList==="function"&&document.getElementById("page-chats")?.classList.contains("active"))rChatList()},180)};
-  function setImg(el,src){if(el&&src)el.innerHTML='<img class="sebas-profile-img" src="'+src+'">'}
-  function users(){let a=[];try{a=typeof normalizeUsers==="function"?normalizeUsers():get(uKey(),[])}catch(e){a=get(uKey(),[])}return(a||[]).map(u=>merge(Object.assign({},u)))}
-  function applyPhotos(){
-    users().forEach(u=>{if(!u.photo)return;const n=String(u.name||"").toLowerCase();
-      document.querySelectorAll(".pcard,.chat-item,.chat-hdr,.fav-card").forEach(card=>{const t=String(card.textContent||"").toLowerCase();if(n&&t.includes(n))setImg(card.querySelector(".pcard-ph,.chat-av,.chat-hav,.fav-ph"),u.photo)})
-    });
-    if(logged()){window.CU=merge(Object.assign({},CU));if(CU.photo){setImg(document.querySelector(".nav-av .av-c"),CU.photo);setImg(document.querySelector(".myp-av"),CU.photo)}}
-  }
-  function ui(){
-    const guest=!logged();document.body.classList.toggle("sebas-guest",guest);
-    document.querySelectorAll(".hbg,.drawer").forEach(el=>el.style.display="none");
-    const bnav=document.querySelector(".bnav");if(bnav)bnav.style.display=guest?"none":"";
-    if(guest){["bn-home","bn-profiles","bn-plus","bn-chats","bn-me"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="none"})}
-    else{
-      ["bn-home","bn-profiles","bn-plus","bn-chats"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=""});
-      const plus=document.getElementById("bn-plus");if(plus){const lab=plus.querySelector(".bn-l");if(lab)lab.textContent="Perfil"}
-      const me=document.getElementById("bn-me");if(me){me.style.display="";const ico=me.querySelector(".bn-ico"),lab=me.querySelector(".bn-l");if(ico)ico.textContent="💎";if(lab)lab.innerHTML="FortyUp+<br><span style='font-size:.48rem;color:#6B7C76'>Próximamente</span>";me.onclick=e=>{e.preventDefault();e.stopPropagation();if(typeof toast==="function")toast("FortyUp+ próximamente 💎","gd");else alert("FortyUp+ próximamente");return false}}
-    }
-    const btns=document.querySelector(".h-btns");if(btns){const p=btns.querySelector(".btn-p"),s=btns.querySelector(".btn-o");if(p)p.onclick=e=>{e.preventDefault();if(typeof openAuth==="function")openAuth("register");else if(typeof go==="function")go("register");return false};if(s)s.onclick=e=>{e.preventDefault();if(typeof openAuth==="function")openAuth("login");else if(typeof go==="function")go("login");return false}}
-  }
-  [["upNav",60],["rMyP",80],["rProfiles",90],["rChatList",90]].forEach(([name,ms])=>{const old=window[name];if(typeof old==="function")window[name]=function(){old.apply(this,arguments);setTimeout(()=>{ui();applyPhotos()},ms)}});
-  const oldChat=window.openChat;if(typeof oldChat==="function")window.openChat=function(){oldChat.apply(this,arguments);setTimeout(applyPhotos,90)};
-  document.addEventListener("DOMContentLoaded",()=>{ui();applyPhotos()});
-  setTimeout(()=>{ui();applyPhotos()},350);
-  setInterval(()=>{ui();applyPhotos()},1500);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX NAV: FortyUp+ centro / Mi perfil derecha
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function getMedia(id){
-    const keys=[
-      "fortyup_profile_media_FINAL_HOME_"+id,
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id
-    ];
-    for(const k of keys){
-      try{
-        const m=JSON.parse(localStorage.getItem(k)||"{}");
-        if(m && (m.photo || m.video)) return m;
-      }catch(e){}
-    }
-    return {};
-  }
-
-  function profilePhoto(){
-    if(!isLogged()) return "";
-    if(CU.photo) return CU.photo;
-    const m=getMedia(CU.id);
-    return m.photo || "";
-  }
-
-  function applyBottomNavSebasFinal(){
-    if(!isLogged()) return;
-
+  function lockPlus(){
     const plus=document.getElementById("bn-plus");
-    if(plus){
-      const lab=plus.querySelector(".bn-l");
-      if(lab) lab.innerHTML="FortyUp+<br><span style='font-size:.48rem;color:#6B7C76'>Próximamente</span>";
+    if(!plus)return;
+    const ico=document.getElementById("bnPlusIco")||plus.querySelector(".bn-plus");
+    const lab=document.getElementById("bnPlusLbl")||plus.querySelector(".bn-l");
+    if(ico){ico.innerHTML="";ico.textContent="";}
+    if(lab){lab.innerHTML="";lab.textContent="";}
+  }
 
-      plus.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        if(typeof toast==="function") toast("FortyUp+ próximamente 💎","gd");
-        else alert("FortyUp+ próximamente 💎");
-        return false;
-      };
-    }
-
-    const me=document.getElementById("bn-me");
-    if(me){
-      const ico=me.querySelector(".bn-ico");
-      const lab=me.querySelector(".bn-l");
-      const photo=profilePhoto();
-
-      if(ico){
-        if(photo){
-          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
-        }else{
-          const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
-          ico.textContent=initial;
+  function lockPhoto(){
+    const ico=document.getElementById("bn-me-ico");
+    const lab=document.getElementById("bn-me-lbl");
+    if(lab){lab.innerHTML="";lab.textContent="";}
+    if(ico&&isLogged()){
+      if(CU.photo){
+        const img=ico.querySelector("img");
+        if(!img||img.getAttribute("src")!==CU.photo){
+          ico.innerHTML='<img src="'+CU.photo+'" alt="Mi perfil">';
         }
+      }else{
+        const nm=(CU.name||CU.email||"S").charAt(0).toUpperCase();
+        ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+nm+'</span>';
       }
-
-      if(lab) lab.textContent="Mi perfil";
-
-      me.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        if(typeof go==="function") go("myprofile");
-        else if(typeof goTo==="function") goTo("myprofile");
-        return false;
-      };
     }
   }
 
-  const oldUpNav=window.upNav;
-  if(typeof oldUpNav==="function" && !oldUpNav.__sebasHeroNavWrapped){
-    const wrapped=function(){
-      oldUpNav.apply(this,arguments);
-      setTimeout(applyBottomNavSebasFinal,80);
-    };
-    wrapped.__sebasHeroNavWrapped=true;
-    window.upNav=wrapped;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(applyBottomNavSebasFinal,120);
-  });
-
-  setTimeout(applyBottomNavSebasFinal,350);
-  setInterval(applyBottomNavSebasFinal,1500);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FINAL: NAV + FORTYUP+
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function getMedia(id){
-    const keys=[
-      "fortyup_profile_media_FINAL_HOME_"+id,
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id
-    ];
-    for(const k of keys){
-      try{
-        const m=JSON.parse(localStorage.getItem(k)||"{}");
-        if(m && (m.photo || m.video)) return m;
-      }catch(e){}
-    }
-    return {};
-  }
-
-  function profilePhoto(){
-    if(!isLogged()) return "";
-    if(CU.photo) return CU.photo;
-    const m=getMedia(CU.id);
-    return m.photo || "";
-  }
-
-  function userHasProfile(){
-    if(!isLogged()) return false;
-    return !!(CU.name && CU.age && CU.city);
-  }
-
-  function goProfileOrCreate(){
-    if(!isLogged()){
-      if(typeof openAuth==="function") openAuth("login");
-      return;
-    }
-    if(userHasProfile()){
-      if(typeof go==="function") go("myprofile");
-      else if(typeof goTo==="function") goTo("myprofile");
-    }else{
-      if(typeof go==="function") go("register");
-      else if(typeof goTo==="function") goTo("register");
+  function fixHome(){
+    const home=document.getElementById("page-home");
+    if(!home||!home.classList.contains("active")||isLogged())return;
+    home.style.height="100dvh";
+    home.style.maxHeight="100dvh";
+    home.style.overflow="hidden";
+    const inner=home.querySelector(".inner");
+    if(inner){
+      inner.style.height="100%";
+      inner.style.maxHeight="100%";
+      inner.style.overflow="hidden";
+      inner.style.display="flex";
+      inner.style.flexDirection="column";
+      inner.style.justifyContent="space-between";
     }
   }
 
-  function applyFinalNav(){
-    if(!isLogged()) return;
-
-    const plus=document.getElementById("bn-plus");
-    if(plus){
-      const lab=plus.querySelector(".bn-l");
-      if(lab) lab.textContent="FortyUp+";
-
-      plus.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        if(typeof go==="function") go("fortyplus");
-        else if(typeof goTo==="function") goTo("fortyplus");
-        else if(typeof toast==="function") toast("FortyUp+ próximamente 💎","gd");
-        return false;
-      };
+  function ensurePlus(){
+    let page=document.getElementById("page-fortyplus");
+    if(!page){
+      page=document.createElement("section");
+      page.id="page-fortyplus";
+      page.className="page";
+      const nav=document.querySelector(".bnav");
+      if(nav&&nav.parentNode)nav.parentNode.insertBefore(page,nav);
+      else document.body.appendChild(page);
     }
 
-    const me=document.getElementById("bn-me");
-    if(me){
-      const ico=me.querySelector(".bn-ico");
-      const lab=me.querySelector(".bn-l");
-      const photo=profilePhoto();
-
-      if(ico){
-        if(photo){
-          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
-        }else{
-          const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
-          ico.textContent=initial;
-        }
-      }
-
-      if(lab) lab.textContent="Mi perfil";
-
-      me.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        goProfileOrCreate();
-        return false;
-      };
-    }
-  }
-
-  const oldGo=window.go;
-  if(typeof oldGo==="function" && !oldGo.__fortyPlusWrapped){
-    const wrapped=function(page){
-      oldGo.apply(this,arguments);
-      if(page==="fortyplus"){
-        document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-        const fp=document.getElementById("page-fortyplus");
-        if(fp) fp.classList.add("active");
-        window.scrollTo({top:0,behavior:"smooth"});
-      }
-      setTimeout(applyFinalNav,80);
-    };
-    wrapped.__fortyPlusWrapped=true;
-    window.go=wrapped;
-  }
-
-  const oldUpNav=window.upNav;
-  if(typeof oldUpNav==="function" && !oldUpNav.__sebasPlusNavWrapped){
-    const wrapped=function(){
-      oldUpNav.apply(this,arguments);
-      setTimeout(applyFinalNav,80);
-    };
-    wrapped.__sebasPlusNavWrapped=true;
-    window.upNav=wrapped;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(applyFinalNav,120);
-  });
-
-  setTimeout(applyFinalNav,350);
-  setInterval(applyFinalNav,1500);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   FIX FINAL SEBAS: DIAMANTE NO VA A PERFIL + FOTOS CERCANOS
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function getStore(k,d){
-    try{
-      if(typeof g==="function") return g(k,d);
-      const raw=localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){ return d; }
-  }
-
-  function usersKey(){
-    try{ return (window.K && K.U) ? K.U : "fu_u"; }catch(e){ return "fu_u"; }
-  }
-
-  function mediaKeys(id){
-    return [
-      "fortyup_profile_media_FINAL_HOME_"+id,
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fortyup_profile_media_final_" + id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id
-    ];
-  }
-
-  function getMedia(id){
-    for(const k of mediaKeys(id)){
-      try{
-        const m=JSON.parse(localStorage.getItem(k)||"{}");
-        if(m && (m.photo || m.video)) return m;
-      }catch(e){}
-    }
-    return {};
-  }
-
-  function allUsers(){
-    let arr=[];
-    try{
-      arr = typeof normalizeUsers==="function" ? normalizeUsers() : getStore(usersKey(),[]);
-    }catch(e){
-      arr = getStore(usersKey(),[]);
-    }
-    return (arr||[]).map(function(u){
-      const nu=Object.assign({},u);
-      const m=getMedia(nu.id);
-      if(m.photo) nu.photo=m.photo;
-      if(m.video) nu.video=m.video;
-      return nu;
-    });
-  }
-
-  function photoFor(u){
-    if(!u) return "";
-    if(u.photo) return u.photo;
-    const m=getMedia(u.id);
-    return m.photo || "";
-  }
-
-  function currentPhoto(){
-    if(!isLogged()) return "";
-    return CU.photo || photoFor(CU);
-  }
-
-  function ensureFortyPlusPage(){
-    if(document.getElementById("page-fortyplus")) return;
-
-    const page=document.createElement("section");
-    page.id="page-fortyplus";
-    page.className="page";
-    page.innerHTML = `
-      <div class="fup-wrap">
-        <button class="back-b" onclick="go('home')">← Volver</button>
-        <div class="fup-hero">
-          <div class="fup-diamond">💎</div>
-          <div class="fup-title">FortyUp<span>+</span></div>
-          <p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p>
-          <div class="fup-pill">✨ Próximamente disponible</div>
+    page.innerHTML=`
+      <div class="inner">
+        <div class="fup-final-hero">
+          <div class="fup-final-diamond"></div>
+          <div class="fup-final-title">Forty<span>Up+</span></div>
+          <div class="fup-final-copy">Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.</div>
+          <div class="fup-final-divider"></div>
+          <div class="fup-final-copy">Herramientas exclusivas para disfrutar tu mejor etapa.</div>
+          <div class="fup-final-soon">✨ Próximamente disponible</div>
         </div>
-        <h2 class="fup-section-title">¿Qué va a incluir?</h2>
-        <div class="fup-grid">
-          <div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div>
+        <div class="fup-final-list">
+          <div class="fup-final-item"><div class="fup-final-icon">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil aparece primero.</p></div><div class="fup-final-check">✓</div></div>
+          <div class="fup-final-item"><div class="fup-final-icon">⭐</div><div><h3>Perfiles destacados</h3><p>Accedé a perfiles premium.</p></div><div class="fup-final-check">✓</div></div>
+          <div class="fup-final-item"><div class="fup-final-icon">💬</div><div><h3>Más conexión</h3><p>Mejores chances de match.</p></div><div class="fup-final-check">✓</div></div>
         </div>
-        <div class="fup-plan">
-          <div class="fup-plan-head"><div class="fup-plan-name">Plan FortyUp+</div><div class="fup-soon">Próximamente</div></div>
-          <div class="fup-list">
-            <div>✓ Perfil destacado</div>
-            <div>✓ Súper Diamantes extra</div>
-            <div>✓ Álbumes privados mejorados</div>
-            <div>✓ Nuevas funciones sociales</div>
-          </div>
-          <button class="fup-main-btn" onclick="toast ? toast('FortyUp+ próximamente 💎','gd') : alert('FortyUp+ próximamente')">Avisarme cuando esté disponible</button>
-          <p class="fup-note">Todavía no se cobra nada. Esta pantalla queda preparada para activar más adelante.</p>
-        </div>
-      </div>
-    `;
-
-    const bnav=document.querySelector(".bnav");
-    if(bnav && bnav.parentNode) bnav.parentNode.insertBefore(page,bnav);
-    else document.body.appendChild(page);
+        <div class="fup-final-gradient"><b>✦ Próximamente disponible</b><span>Estamos preparando algo increíble para vos.</span></div>
+      </div>`;
   }
 
-  function openFortyPlus(){
-    ensureFortyPlusPage();
-    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  function openPlus(){
+    if(!isLogged())return;
+    ensurePlus();
+    document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
     const page=document.getElementById("page-fortyplus");
-    if(page) page.classList.add("active");
-    window.scrollTo({top:0,behavior:"smooth"});
-  }
-
-  function goProfileOrCreate(){
-    if(!isLogged()){
-      if(typeof openAuth==="function") openAuth("login");
-      return;
+    if(page){
+      page.classList.add("active");
+      page.style.height="calc(100dvh - 92px)";
+      page.style.maxHeight="calc(100dvh - 92px)";
+      page.style.overflow="hidden";
     }
-
-    const hasProfile = !!(CU.name && CU.age && CU.city);
-    if(hasProfile){
-      if(typeof go==="function") go("myprofile");
-      else if(typeof goTo==="function") goTo("myprofile");
-    }else{
-      if(typeof go==="function") go("register");
-      else if(typeof goTo==="function") goTo("register");
-    }
+    if(typeof setBn==="function"){try{setBn("plus");}catch(e){}}
+    applyState();
+    window.scrollTo(0,0);
   }
 
-  function setCardPhoto(card,u){
-    const ph=card.querySelector(".pcard-ph");
-    const photo=photoFor(u);
-    if(ph && photo){
-      ph.classList.add("has-photo");
-      ph.innerHTML='<img src="'+photo+'" alt="'+(u.name||"perfil")+'">';
-    }
-  }
-
-  function fixProfilePhotos(){
-    const users=allUsers();
-
-    document.querySelectorAll(".pcard").forEach(function(card){
-      const txt=(card.textContent||"").toLowerCase();
-
-      let found=users.find(function(u){
-        const name=(u.name||"").toLowerCase();
-        return name && txt.includes(name);
-      });
-
-      if(!found){
-        const initialEl=card.querySelector(".pcard-av");
-        const initial=(initialEl && initialEl.textContent || "").trim().toLowerCase();
-        found=users.find(function(u){
-          return photoFor(u) && (u.name||"").trim().charAt(0).toLowerCase()===initial;
-        });
-      }
-
-      if(found) setCardPhoto(card,found);
-    });
-  }
-
-  function applyNav(){
-    if(!isLogged()) return;
-
+  function bindPlus(){
     const plus=document.getElementById("bn-plus");
-    if(plus){
-      const lab=plus.querySelector(".bn-l");
-      if(lab){
-        lab.textContent="FortyUp+";
-        lab.innerHTML="FortyUp+";
-      }
-
-      plus.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        openFortyPlus();
-        return false;
-      };
-    }
-
-    const me=document.getElementById("bn-me");
-    if(me){
-      const ico=me.querySelector(".bn-ico");
-      const lab=me.querySelector(".bn-l");
-      const photo=currentPhoto();
-
-      if(ico){
-        if(photo) ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
-        else ico.textContent=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
-      }
-
-      if(lab) lab.textContent="Mi perfil";
-
-      me.onclick=function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        goProfileOrCreate();
-        return false;
-      };
-    }
-  }
-
-  /* Pisar go para que fortyplus no rebote a perfil */
-  const oldGo=window.go;
-  if(typeof oldGo==="function" && !oldGo.__sebasFinalPlusHard){
-    const wrapped=function(page){
-      if(page==="fortyplus"){
-        openFortyPlus();
-        setTimeout(function(){applyNav();fixProfilePhotos();},80);
-        return;
-      }
-      const res=oldGo.apply(this,arguments);
-      setTimeout(function(){applyNav();fixProfilePhotos();},100);
-      return res;
-    };
-    wrapped.__sebasFinalPlusHard=true;
-    window.go=wrapped;
-  }
-
-  const oldGoTo=window.goTo;
-  if(typeof oldGoTo==="function" && !oldGoTo.__sebasFinalPlusHard){
-    const wrapped=function(page){
-      if(page==="fortyplus"){
-        openFortyPlus();
-        setTimeout(function(){applyNav();fixProfilePhotos();},80);
-        return;
-      }
-      const res=oldGoTo.apply(this,arguments);
-      setTimeout(function(){applyNav();fixProfilePhotos();},100);
-      return res;
-    };
-    wrapped.__sebasFinalPlusHard=true;
-    window.goTo=wrapped;
-  }
-
-  const oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasPhotoFix){
-    const wrapped=function(){
-      const res=oldRProfiles.apply(this,arguments);
-      setTimeout(fixProfilePhotos,120);
-      setTimeout(fixProfilePhotos,450);
-      return res;
-    };
-    wrapped.__sebasPhotoFix=true;
-    window.rProfiles=wrapped;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    ensureFortyPlusPage();
-    applyNav();
-    fixProfilePhotos();
-  });
-
-  setTimeout(function(){ensureFortyPlusPage();applyNav();fixProfilePhotos();},350);
-  setInterval(function(){applyNav();fixProfilePhotos();},900);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX DEFINITIVO JS: CLICK DIAMANTE + PERFIL + FOTOS
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function getStore(k,d){
-    try{
-      if(typeof g==="function") return g(k,d);
-      const raw=localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){ return d; }
-  }
-
-  function usersKey(){
-    try{ return (window.K && K.U) ? K.U : "fu_u"; }catch(e){ return "fu_u"; }
-  }
-
-  function mediaKeys(id){
-    return [
-      "fortyup_profile_media_FINAL_HOME_"+id,
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id
-    ];
-  }
-
-  function getMedia(id){
-    for(const k of mediaKeys(id)){
-      try{
-        const m=JSON.parse(localStorage.getItem(k)||"{}");
-        if(m && (m.photo || m.video)) return m;
-      }catch(e){}
-    }
-    return {};
-  }
-
-  function photoOf(u){
-    if(!u) return "";
-    if(u.photo) return u.photo;
-    const m=getMedia(u.id);
-    return m.photo || "";
-  }
-
-  function allUsers(){
-    let arr=[];
-    try{
-      arr = typeof normalizeUsers==="function" ? normalizeUsers() : getStore(usersKey(),[]);
-    }catch(e){
-      arr = getStore(usersKey(),[]);
-    }
-
-    return (arr||[]).map(function(u){
-      const nu=Object.assign({},u);
-      const m=getMedia(nu.id);
-      if(m.photo) nu.photo=m.photo;
-      if(m.video) nu.video=m.video;
-      return nu;
-    });
-  }
-
-  function ensureFortyPlusPage(){
-    if(document.getElementById("page-fortyplus")) return;
-
-    const page=document.createElement("section");
-    page.id="page-fortyplus";
-    page.className="page";
-    page.innerHTML = `
-      <div class="fup-wrap">
-        <button class="back-b" onclick="goTo ? goTo('home') : go('home')">← Volver</button>
-        <div class="fup-hero">
-          <div class="fup-diamond">💎</div>
-          <div class="fup-title">FortyUp<span>+</span></div>
-          <p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p>
-          <div class="fup-pill">✨ Próximamente disponible</div>
-        </div>
-        <h2 class="fup-section-title">¿Qué va a incluir?</h2>
-        <div class="fup-grid">
-          <div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div>
-          <div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div>
-        </div>
-        <div class="fup-plan">
-          <div class="fup-plan-head"><div class="fup-plan-name">Plan FortyUp+</div><div class="fup-soon">Próximamente</div></div>
-          <div class="fup-list">
-            <div>✓ Perfil destacado</div>
-            <div>✓ Súper Diamantes extra</div>
-            <div>✓ Álbumes privados mejorados</div>
-            <div>✓ Nuevas funciones sociales</div>
-          </div>
-          <button class="fup-main-btn" onclick="toast ? toast('FortyUp+ próximamente 💎','gd') : alert('FortyUp+ próximamente')">Avisarme cuando esté disponible</button>
-          <p class="fup-note">Todavía no se cobra nada. Esta pantalla queda preparada para activar más adelante.</p>
-        </div>
-      </div>
-    `;
-    const bnav=document.querySelector(".bnav");
-    if(bnav && bnav.parentNode) bnav.parentNode.insertBefore(page,bnav);
-    else document.body.appendChild(page);
-  }
-
-  function openFortyPlus(){
-    ensureFortyPlusPage();
-    document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
-    const page=document.getElementById("page-fortyplus");
-    if(page) page.classList.add("active");
-    window.scrollTo({top:0,behavior:"smooth"});
-  }
-
-  function userHasProfile(){
-    if(!isLogged()) return false;
-    return !!(CU.name && CU.age && CU.city);
-  }
-
-  function openMyProfileOrCreate(){
-    if(!isLogged()){
-      if(typeof openAuth==="function") openAuth("login");
-      return;
-    }
-
-    if(userHasProfile()){
-      if(typeof goTo==="function") goTo("myprofile");
-      else if(typeof go==="function") go("myprofile");
-      if(typeof rMyP==="function") setTimeout(rMyP,80);
-    }else{
-      if(typeof goTo==="function") goTo("register");
-      else if(typeof go==="function") go("register");
-    }
-  }
-
-  function currentPhoto(){
-    if(!isLogged()) return "";
-    return CU.photo || photoOf(CU);
-  }
-
-  function applyNavHard(){
-    const plus=document.getElementById("bn-plus");
-    if(plus){
-      plus.removeAttribute("onclick");
-      plus.onclick=null;
-
-      const lab=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
-      if(lab){
-        lab.textContent="FortyUp+";
-        lab.innerHTML="FortyUp+";
-      }
-
-      plus.addEventListener("click", function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        ev.stopImmediatePropagation();
-        openFortyPlus();
-        return false;
-      }, true);
-    }
-
-    const plusIco=document.getElementById("bnPlusIco");
-    if(plusIco){
-      plusIco.textContent="";
-      plusIco.innerHTML="";
-    }
-
-    const me=document.getElementById("bn-me");
-    if(me){
-      me.removeAttribute("onclick");
-      me.onclick=null;
-
-      const ico=me.querySelector(".bn-ico") || document.getElementById("bn-me-ico");
-      const lab=me.querySelector(".bn-l") || document.getElementById("bn-me-lbl");
-      const photo=currentPhoto();
-
-      if(ico){
-        if(photo){
-          ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">';
-        }else if(isLogged()){
-          ico.textContent=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();
-        }else{
-          ico.textContent="👤";
-        }
-      }
-
-      if(lab) lab.textContent="Mi perfil";
-
-      me.addEventListener("click", function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        ev.stopImmediatePropagation();
-        openMyProfileOrCreate();
-        return false;
-      }, true);
-    }
-  }
-
-  function fixCardPhotosAndFormat(){
-    const users=allUsers();
-
-    document.querySelectorAll(".pcard").forEach(function(card){
-      const txt=(card.textContent||"").toLowerCase();
-
-      let found=users.find(function(u){
-        const name=(u.name||"").toLowerCase();
-        return name && txt.includes(name);
-      });
-
-      if(!found){
-        const init=(card.querySelector(".pcard-av")?.textContent || "").trim().toLowerCase();
-        found=users.find(function(u){
-          return photoOf(u) && (u.name||"").charAt(0).toLowerCase()===init;
-        });
-      }
-
-      const ph=card.querySelector(".pcard-ph");
-      if(found && ph && photoOf(found)){
-        ph.classList.add("has-photo");
-        ph.innerHTML='<img src="'+photoOf(found)+'" alt="'+(found.name||"perfil")+'">';
-      }
-
-      const name=card.querySelector(".pcard-name");
-      if(name){
-        name.innerHTML=name.textContent.replace(/,\s*/g,", ");
-      }
-
-      card.querySelectorAll(".pa-super").forEach(function(btn){
-        btn.textContent="";
-        btn.innerHTML="";
-      });
-    });
-  }
-
-  const oldGo=window.go;
-  if(typeof oldGo==="function" && !oldGo.__sebasHardFinal){
-    const wrapped=function(page){
-      if(page==="fortyplus"){
-        openFortyPlus();
-        setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},80);
-        return;
-      }
-      const res=oldGo.apply(this,arguments);
-      setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},120);
-      return res;
-    };
-    wrapped.__sebasHardFinal=true;
-    window.go=wrapped;
-  }
-
-  const oldGoTo=window.goTo;
-  if(typeof oldGoTo==="function" && !oldGoTo.__sebasHardFinal){
-    const wrapped=function(page){
-      if(page==="fortyplus"){
-        openFortyPlus();
-        setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},80);
-        return;
-      }
-      const res=oldGoTo.apply(this,arguments);
-      setTimeout(function(){applyNavHard();fixCardPhotosAndFormat();},120);
-      return res;
-    };
-    wrapped.__sebasHardFinal=true;
-    window.goTo=wrapped;
-  }
-
-  const oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasHardPhotos){
-    const wrapped=function(){
-      const res=oldRProfiles.apply(this,arguments);
-      setTimeout(fixCardPhotosAndFormat,120);
-      setTimeout(fixCardPhotosAndFormat,450);
-      return res;
-    };
-    wrapped.__sebasHardPhotos=true;
-    window.rProfiles=wrapped;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    ensureFortyPlusPage();
-    applyNavHard();
-    fixCardPhotosAndFormat();
-  });
-
-  setTimeout(function(){ensureFortyPlusPage();applyNavHard();fixCardPhotosAndFormat();},350);
-  setInterval(function(){applyNavHard();fixCardPhotosAndFormat();},500);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX JS: FORTYUP+ FIJO + STEPPER LIBRE
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function forceFortyPlusLabel(){
-    const plus=document.getElementById("bn-plus");
-    if(!plus) return;
-
-    const lab=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
-    if(lab){
-      lab.innerHTML="";
-      lab.textContent="";
-      lab.setAttribute("data-label","FortyUp+");
-    }
-
-    const ico=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
-    if(ico){
-      ico.innerHTML="";
-      ico.textContent="";
-    }
-
-    plus.removeAttribute("onclick");
-    plus.onclick=null;
-
-    plus.addEventListener("click",function(ev){
+    if(!plus)return;
+    plus.onclick=function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-      ev.stopImmediatePropagation();
-      if(typeof go==="function") go("fortyplus");
-      else if(typeof goTo==="function") goTo("fortyplus");
+      openPlus();
       return false;
-    },true);
-  }
-
-  function getStepNumber(el){
-    const direct=el.getAttribute("data-step") || el.dataset.step;
-    if(direct) return parseInt(direct,10);
-
-    const dot=el.querySelector(".reg-dot");
-    const txt=(dot ? dot.textContent : el.textContent || "").trim();
-    const n=parseInt(txt,10);
-    if(!isNaN(n)) return n;
-
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    return steps.indexOf(el)+1;
-  }
-
-  function currentStepNumber(){
-    const active=document.querySelector(".reg-step.active");
-    return active ? getStepNumber(active) : 1;
-  }
-
-  function markCompletedSteps(){
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    if(!steps.length) return;
-
-    const activeN=currentStepNumber();
-
-    steps.forEach(function(step){
-      const n=getStepNumber(step);
-      if(n < activeN){
-        step.classList.add("done","completed");
-      }
-    });
-
-    if(isLogged() && CU.name && CU.age && CU.city){
-      steps[0]?.classList.add("done","completed");
-    }
-  }
-
-  function goRegisterStep(n){
-    if(!n || n<1) return;
-
-    /* Intentar usar funciones existentes */
-    const possible=[
-      "goRegStep",
-      "setRegStep",
-      "showRegStep",
-      "renderRegStep",
-      "renderStep",
-      "goToStep"
-    ];
-
-    for(const fn of possible){
-      if(typeof window[fn]==="function"){
-        try{
-          window[fn](n);
-          setTimeout(function(){markCompletedSteps();bindStepper();},80);
-          return;
-        }catch(e){}
-      }
-    }
-
-    /* Fallback visual si el archivo usa clases */
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    steps.forEach(function(step){
-      const sn=getStepNumber(step);
-      step.classList.toggle("active",sn===n);
-      if(sn<n) step.classList.add("done","completed");
-    });
-
-    window.regStep=n;
-    window.currentStep=n;
-
-    document.querySelectorAll("[data-reg-step],[data-step-panel],.reg-panel,.step-panel").forEach(function(panel){
-      const pn=parseInt(panel.getAttribute("data-reg-step") || panel.getAttribute("data-step-panel") || panel.getAttribute("data-step") || "0",10);
-      if(pn){
-        panel.style.display = pn===n ? "" : "none";
-      }
-    });
-  }
-
-  function bindStepper(){
-    document.querySelectorAll(".reg-step").forEach(function(step){
-      if(step.__sebasStepBound) return;
-      step.__sebasStepBound=true;
-      step.addEventListener("click",function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        const n=getStepNumber(step);
-        goRegisterStep(n);
-      },true);
-    });
-    markCompletedSteps();
-  }
-
-  const oldUpNav=window.upNav;
-  if(typeof oldUpNav==="function" && !oldUpNav.__sebasPlusFixedAgain){
-    const wrapped=function(){
-      oldUpNav.apply(this,arguments);
-      setTimeout(forceFortyPlusLabel,80);
     };
-    wrapped.__sebasPlusFixedAgain=true;
-    window.upNav=wrapped;
   }
 
-  const oldSaveProfile=window.saveProfile;
-  if(typeof oldSaveProfile==="function" && !oldSaveProfile.__sebasStepperWrapped){
-    const wrapped=function(){
-      oldSaveProfile.apply(this,arguments);
-      setTimeout(function(){
-        markCompletedSteps();
-        bindStepper();
-        forceFortyPlusLabel();
-      },160);
-    };
-    wrapped.__sebasStepperWrapped=true;
-    window.saveProfile=wrapped;
-  }
-
-  const oldGo=window.go;
-  if(typeof oldGo==="function" && !oldGo.__sebasStepperGoWrapped){
-    const wrapped=function(){
-      const res=oldGo.apply(this,arguments);
-      setTimeout(function(){
-        bindStepper();
-        forceFortyPlusLabel();
-      },120);
-      return res;
-    };
-    wrapped.__sebasStepperGoWrapped=true;
-    window.go=wrapped;
-  }
-
-  document.addEventListener("DOMContentLoaded",function(){
-    forceFortyPlusLabel();
-    bindStepper();
-  });
-
-  setTimeout(function(){
-    forceFortyPlusLabel();
-    bindStepper();
-  },350);
-
-  setInterval(function(){
-    forceFortyPlusLabel();
-    bindStepper();
-  },500);
-})();
-</script>
-
-
-<script>
-/* =========================================================
-   SEBAS FIX FINAL JS: MENÚ FIJO + STEPPER + FOTOS CERCANOS
-   ========================================================= */
-(function(){
-  function isLogged(){ return !!(window.CU && CU.id); }
-
-  function getStore(k,d){
-    try{
-      if(typeof g==="function") return g(k,d);
-      const raw=localStorage.getItem(k);
-      return raw ? JSON.parse(raw) : d;
-    }catch(e){ return d; }
-  }
-
-  function usersKey(){
-    try{ return (window.K && K.U) ? K.U : "fu_u"; }catch(e){ return "fu_u"; }
-  }
-
-  function mediaKeys(id){
-    return [
-      "fortyup_profile_media_FINAL_HOME_"+id,
-      "fortyup_profile_media_final_FIX_"+id,
-      "fortyup_profile_media_final_"+id,
-      "fortyup_profile_media_final_" + id,
-      "fu_profile_media_final_"+id,
-      "fu_profile_media_"+id,
-      "fortyup_profile_media_final_" + id
-    ];
-  }
-
-  function getUserPhoto(id){
-    if(!id) return "";
-    for(const k of mediaKeys(id)){
-      try{
-        const data=JSON.parse(localStorage.getItem(k)||"{}");
-        if(data && data.photo) return data.photo;
-      }catch(e){}
+  function fixChat(){
+    const chat=document.getElementById("page-chatwindow")||document.getElementById("page-chat");
+    if(!chat||!chat.classList.contains("active"))return;
+    chat.style.height="calc(100dvh - 92px)";
+    chat.style.maxHeight="calc(100dvh - 92px)";
+    chat.style.overflow="hidden";
+    const inner=chat.querySelector(".inner");
+    if(inner){
+      inner.style.height="100%";
+      inner.style.maxHeight="100%";
+      inner.style.overflow="hidden";
+      inner.style.display="flex";
+      inner.style.flexDirection="column";
     }
-    return "";
-  }
-
-  function allUsers(){
-    let arr=[];
-    try{
-      arr = typeof normalizeUsers==="function" ? normalizeUsers() : getStore(usersKey(),[]);
-    }catch(e){
-      arr = getStore(usersKey(),[]);
+    const msgs=chat.querySelector(".chat-msgs,.messages-list,#chatMsgs");
+    if(msgs){
+      msgs.style.flex="1 1 auto";
+      msgs.style.minHeight="0";
+      msgs.style.overflowY="auto";
     }
-
-    return (arr||[]).map(function(u){
-      const nu=Object.assign({},u);
-      const photo=getUserPhoto(nu.id);
-      if(photo) nu.photo=photo;
-      return nu;
-    });
-  }
-
-  function fixBottomNav(){
-    const bnav=document.querySelector(".bnav");
-    if(bnav){
-      bnav.style.position="fixed";
-      bnav.style.bottom="0";
-      bnav.style.left="0";
-      bnav.style.right="0";
-      bnav.style.width="100%";
-      bnav.style.zIndex="9999";
-      bnav.style.transform="none";
-      bnav.style.transition="none";
+    const input=chat.querySelector(".chat-in-a,.chat-input,.msg-input,.send-row");
+    if(input){
+      input.style.flex="0 0 auto";
+      input.style.position="sticky";
+      input.style.bottom="0";
+      input.style.zIndex="50";
     }
-    if(!document.body.classList.contains("sebas-guest")){
-      document.body.style.paddingBottom="92px";
-    }
-  }
-
-  function forceFortyPlusLabel(){
-    const plus=document.getElementById("bn-plus");
-    if(!plus) return;
-
-    const lab=plus.querySelector(".bn-l") || document.getElementById("bnPlusLbl");
-    if(lab){
-      lab.innerHTML="";
-      lab.textContent="";
-      lab.setAttribute("data-label","FortyUp+");
-    }
-
-    const ico=plus.querySelector(".bn-plus") || document.getElementById("bnPlusIco");
-    if(ico){
-      ico.innerHTML="";
-      ico.textContent="";
-    }
-
-    plus.removeAttribute("onclick");
-    plus.onclick=null;
-  }
-
-  function setCardPhoto(card,u){
-    const ph=card.querySelector(".pcard-ph");
-    const photo=(u && (u.photo || getUserPhoto(u.id))) || "";
-    if(ph && photo){
-      ph.classList.add("has-photo");
-      ph.innerHTML='<img src="'+photo+'" alt="'+((u && u.name) || "perfil")+'">';
-    }
-  }
-
-  function fixNearbyPhotos(){
-    const users=allUsers();
-
-    document.querySelectorAll(".pcard").forEach(function(card){
-      const txt=(card.textContent||"").toLowerCase();
-
-      let found=users.find(function(u){
-        const name=(u.name||"").toLowerCase();
-        return name && txt.includes(name);
-      });
-
-      if(!found){
-        const initial=(card.querySelector(".pcard-av")?.textContent || "").trim().toLowerCase();
-        found=users.find(function(u){
-          return (u.photo || getUserPhoto(u.id)) && (u.name||"").charAt(0).toLowerCase()===initial;
-        });
-      }
-
-      if(found) setCardPhoto(card,found);
-    });
-  }
-
-  function getStepNumber(el){
-    const direct=el.getAttribute("data-step") || el.dataset.step;
-    if(direct) return parseInt(direct,10);
-
-    const dot=el.querySelector(".reg-dot");
-    const txt=(dot ? dot.textContent : el.textContent || "").trim();
-    const n=parseInt(txt,10);
-    if(!isNaN(n)) return n;
-
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    return steps.indexOf(el)+1;
-  }
-
-  function activeStepNumber(){
-    const active=document.querySelector(".reg-step.active");
-    return active ? getStepNumber(active) : 1;
-  }
-
-  function markCompletedSteps(){
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    if(!steps.length) return;
-
-    const active=activeStepNumber();
-
-    steps.forEach(function(step){
-      const n=getStepNumber(step);
-      step.classList.toggle("active",n===active);
-      if(n<active) step.classList.add("done","completed");
-    });
-
-    if(isLogged() && CU.name && CU.age && CU.city){
-      steps[0]?.classList.add("done","completed");
-    }
-  }
-
-  function forceRenderStep(n){
-    if(!n) return;
-
-    const fnNames=[
-      "goRegStep",
-      "setRegStep",
-      "showRegStep",
-      "renderRegStep",
-      "renderStep",
-      "goToStep"
-    ];
-
-    for(const name of fnNames){
-      if(typeof window[name]==="function"){
-        try{
-          window[name](n);
-          setTimeout(function(){bindStepper();markCompletedSteps();},120);
-          return;
-        }catch(e){}
-      }
-    }
-
-    window.regStep=n;
-    window.currentStep=n;
-
-    const steps=Array.from(document.querySelectorAll(".reg-step"));
-    steps.forEach(function(step){
-      const sn=getStepNumber(step);
-      step.classList.toggle("active",sn===n);
-      if(sn<n) step.classList.add("done","completed");
-    });
-
-    /* Fallback para paneles existentes */
-    document.querySelectorAll("[data-reg-step],[data-step-panel],.reg-panel,.step-panel,.rstep,.form-step").forEach(function(panel){
-      const pn=parseInt(
-        panel.getAttribute("data-reg-step") ||
-        panel.getAttribute("data-step-panel") ||
-        panel.getAttribute("data-step") ||
-        panel.getAttribute("data-rstep") ||
-        "0",
-        10
-      );
-
-      if(pn){
-        panel.style.display = pn===n ? "" : "none";
-      }
-    });
-
-    /* Si la app usa una función global de render del registro */
-    if(typeof rRegister==="function"){
-      try{ rRegister(); }catch(e){}
-      setTimeout(function(){bindStepper();markCompletedSteps();},120);
-    }
-  }
-
-  function bindStepper(){
-    document.querySelectorAll(".reg-step").forEach(function(step){
-      if(step.__sebasStepperBound) return;
-      step.__sebasStepperBound=true;
-
-      step.addEventListener("click",function(ev){
-        ev.preventDefault();
-        ev.stopPropagation();
-        const n=getStepNumber(step);
-        forceRenderStep(n);
-      },true);
-    });
-
-    markCompletedSteps();
-  }
-
-  /* Wrappers */
-  const oldRProfiles=window.rProfiles;
-  if(typeof oldRProfiles==="function" && !oldRProfiles.__sebasFinalPhotos){
-    const wrapped=function(){
-      const res=oldRProfiles.apply(this,arguments);
-      setTimeout(fixNearbyPhotos,120);
-      setTimeout(fixNearbyPhotos,500);
-      return res;
-    };
-    wrapped.__sebasFinalPhotos=true;
-    window.rProfiles=wrapped;
-  }
-
-  const oldGo=window.go;
-  if(typeof oldGo==="function" && !oldGo.__sebasFinalMenuStepper){
-    const wrapped=function(){
-      const res=oldGo.apply(this,arguments);
-      setTimeout(function(){
-        fixBottomNav();
-        forceFortyPlusLabel();
-        bindStepper();
-        fixNearbyPhotos();
-      },150);
-      return res;
-    };
-    wrapped.__sebasFinalMenuStepper=true;
-    window.go=wrapped;
   }
 
   const oldGoTo=window.goTo;
-  if(typeof oldGoTo==="function" && !oldGoTo.__sebasFinalMenuStepper){
-    const wrapped=function(){
-      const res=oldGoTo.apply(this,arguments);
-      setTimeout(function(){
-        fixBottomNav();
-        forceFortyPlusLabel();
-        bindStepper();
-        fixNearbyPhotos();
-      },150);
-      return res;
+  if(typeof oldGoTo==="function"&&!oldGoTo.__fortyFinalIntegrado){
+    window.goTo=function(page){
+      if(page==="plus"||page==="fortyplus"){
+        openPlus();
+        return;
+      }
+      const r=oldGoTo.apply(this,arguments);
+      setTimeout(applyState,40);
+      setTimeout(fixHome,60);
+      setTimeout(fixChat,80);
+      setTimeout(bindPlus,80);
+      return r;
     };
-    wrapped.__sebasFinalMenuStepper=true;
-    window.goTo=wrapped;
+    window.goTo.__fortyFinalIntegrado=true;
   }
 
-  const oldSaveProfile=window.saveProfile;
-  if(typeof oldSaveProfile==="function" && !oldSaveProfile.__sebasFinalStepSave){
-    const wrapped=function(){
-      const res=oldSaveProfile.apply(this,arguments);
-      setTimeout(function(){
-        bindStepper();
-        markCompletedSteps();
-        fixNearbyPhotos();
-      },180);
-      return res;
+  const oldUpNav=window.upNav;
+  if(typeof oldUpNav==="function"&&!oldUpNav.__fortyFinalIntegrado){
+    window.upNav=function(){
+      const r=oldUpNav.apply(this,arguments);
+      setTimeout(applyState,20);
+      setTimeout(bindPlus,40);
+      return r;
     };
-    wrapped.__sebasFinalStepSave=true;
-    window.saveProfile=wrapped;
+    window.upNav.__fortyFinalIntegrado=true;
   }
 
   document.addEventListener("DOMContentLoaded",function(){
-    fixBottomNav();
-    forceFortyPlusLabel();
-    bindStepper();
-    fixNearbyPhotos();
+    ensurePlus();
+    applyState();
+    fixHome();
+    fixChat();
+    bindPlus();
   });
 
   setTimeout(function(){
-    fixBottomNav();
-    forceFortyPlusLabel();
-    bindStepper();
-    fixNearbyPhotos();
-  },350);
+    ensurePlus();
+    applyState();
+    fixHome();
+    fixChat();
+    bindPlus();
+  },300);
 
   setInterval(function(){
-    fixBottomNav();
-    forceFortyPlusLabel();
-    bindStepper();
-    fixNearbyPhotos();
-  },700);
-})();
-</script>
-
-
-
-
-
-<script>
-/* ===== FIX LIMPIO SEBAS: NO CLONA BOTONES ===== */
-(function(){
-  function isLogged(){return !!(window.CU&&CU.id)}
-  function getStore(k,d){try{if(typeof g==="function")return g(k,d);const raw=localStorage.getItem(k);return raw?JSON.parse(raw):d}catch(e){return d}}
-  function usersKey(){try{return (window.K&&K.U)?K.U:"fu_u"}catch(e){return"fu_u"}}
-  function mediaKeys(id){return["fortyup_profile_media_FINAL_HOME_"+id,"fortyup_profile_media_final_FIX_"+id,"fortyup_profile_media_final_"+id,"fu_profile_media_final_"+id,"fu_profile_media_"+id,"profile_photo_"+id]}
-  function getUserPhoto(id){
-    if(!id)return"";
-    for(const k of mediaKeys(id)){
-      try{const data=JSON.parse(localStorage.getItem(k)||"{}");if(data&&data.photo)return data.photo}catch(e){
-        try{const raw=localStorage.getItem(k);if(raw&&raw.startsWith("data:image"))return raw}catch(_){}
-      }
-    }
-    return"";
-  }
-  function allUsers(){
-    let arr=[];try{arr=typeof normalizeUsers==="function"?normalizeUsers():getStore(usersKey(),[])}catch(e){arr=getStore(usersKey(),[])}
-    return(arr||[]).map(u=>{const nu=Object.assign({},u);const p=getUserPhoto(nu.id);if(p)nu.photo=p;return nu})
-  }
-  function currentPhoto(){if(!isLogged())return"";return CU.photo||getUserPhoto(CU.id)}
-  function ensureFortyPlusPage(){
-    if(document.getElementById("page-fortyplus"))return;
-    const page=document.createElement("section");
-    page.id="page-fortyplus";page.className="page";
-    page.innerHTML=`<div class="fup-wrap"><button class="back-b" onclick="go('home')">← Volver</button><div class="fup-hero"><div class="fup-diamond">💎</div><div class="fup-title">FortyUp<span>+</span></div><p class="fup-sub">Una experiencia premium pensada para destacar conexiones reales, planes reales y nuevas etapas.</p><div class="fup-pill">✨ Próximamente disponible</div></div><h2 class="fup-section-title">¿Qué va a incluir?</h2><div class="fup-grid"><div class="fup-card"><div class="fup-ico">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil podrá destacarse mejor frente a personas compatibles.</p></div></div><div class="fup-card"><div class="fup-ico">⭐</div><div><h3>Favoritos especiales</h3><p>Accesos rápidos a conexiones importantes y perfiles que te interesan.</p></div></div><div class="fup-card"><div class="fup-ico">💬</div><div><h3>Mejores conversaciones</h3><p>Herramientas extra para iniciar charlas con más contexto.</p></div></div><div class="fup-card"><div class="fup-ico">🔒</div><div><h3>Privacidad avanzada</h3><p>Más control sobre álbumes, fotos y datos sensibles.</p></div></div></div></div>`;
-    const bnav=document.querySelector(".bnav");if(bnav&&bnav.parentNode)bnav.parentNode.insertBefore(page,bnav);else document.body.appendChild(page);
-  }
-  function openFortyPlus(){
-    ensureFortyPlusPage();document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-    const fp=document.getElementById("page-fortyplus");if(fp)fp.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});
-  }
-  function userHasProfile(){return !!(isLogged()&&CU.name&&CU.age&&CU.city)}
-  function openMyProfileOrCreate(){
-    if(!isLogged()){if(typeof openAuth==="function")openAuth("login");return}
-    if(userHasProfile()){if(typeof go==="function")go("myprofile");if(typeof rMyP==="function")setTimeout(rMyP,80)}
-    else{if(typeof go==="function")go("register")}
-  }
-  function fixMenu(){
-    const nav=document.querySelector(".bnav");if(!nav)return;
-    nav.style.position="fixed";nav.style.left="0";nav.style.right="0";nav.style.bottom="0";nav.style.width="100%";nav.style.zIndex="99999";nav.style.transform="translateZ(0)";nav.style.transition="none";
-    if(!document.body.classList.contains("sebas-guest"))document.body.style.paddingBottom="94px";
-  }
-  function applyNav(){
-    const plus=document.getElementById("bn-plus");
-    if(plus){
-      const lab=plus.querySelector(".bn-l")||document.getElementById("bnPlusLbl");
-      const ico=plus.querySelector(".bn-plus")||document.getElementById("bnPlusIco");
-      if(lab){lab.innerHTML="";lab.textContent="";lab.setAttribute("data-label","FortyUp+")}
-      if(ico){ico.innerHTML="";ico.textContent=""}
-      plus.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openFortyPlus();return false}
-    }
-    const me=document.getElementById("bn-me");
-    if(me){
-      const ico=me.querySelector(".bn-ico")||document.getElementById("bn-me-ico");
-      const lab=me.querySelector(".bn-l")||document.getElementById("bn-me-lbl");
-      const photo=currentPhoto();
-      if(ico){
-        if(photo){const img=ico.querySelector("img");if(!img||img.getAttribute("src")!==photo)ico.innerHTML='<img src="'+photo+'" alt="Mi perfil">'}
-        else if(isLogged()){const initial=(CU.name||CU.email||"S").trim().charAt(0).toUpperCase();if(ico.textContent!==initial)ico.textContent=initial}
-        else ico.textContent="👤";
-      }
-      if(lab)lab.textContent="Mi perfil";
-      me.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openMyProfileOrCreate();return false}
-    }
-  }
-  function fixCards(){
-    const users=allUsers();
-    document.querySelectorAll(".pcard").forEach(card=>{
-      const text=(card.textContent||"").toLowerCase();
-      let found=users.find(u=>{const n=(u.name||"").toLowerCase();return n&&text.includes(n)});
-      if(!found){const init=(card.querySelector(".pcard-av")?.textContent||"").trim().toLowerCase();found=users.find(u=>(u.photo||getUserPhoto(u.id))&&(u.name||"").trim().charAt(0).toLowerCase()===init)}
-      const ph=card.querySelector(".pcard-ph");
-      if(found&&ph){const photo=found.photo||getUserPhoto(found.id);if(photo){ph.classList.add("has-photo");const img=ph.querySelector("img");if(!img||img.getAttribute("src")!==photo)ph.innerHTML='<img src="'+photo+'" alt="'+(found.name||"perfil")+'">'}}
-      card.querySelectorAll(".pa-super").forEach(btn=>{btn.textContent="";btn.innerHTML=""});
-    });
-  }
-  function updateLocationSoft(){
-    if(!navigator.geolocation||!isLogged())return;
-    navigator.geolocation.getCurrentPosition(pos=>{try{const loc={lat:pos.coords.latitude,lng:pos.coords.longitude,at:Date.now()};localStorage.setItem("fortyup_current_location",JSON.stringify(loc));localStorage.setItem("user_location",JSON.stringify(loc));if(window.CU){CU.lat=loc.lat;CU.lng=loc.lng;CU.locAt=loc.at}}catch(e){}},function(){},{enableHighAccuracy:true,maximumAge:60000,timeout:8000});
-  }
-  function run(){fixMenu();ensureFortyPlusPage();applyNav();fixCards()}
-  const oldRProfiles=window.rProfiles;if(typeof oldRProfiles==="function"&&!oldRProfiles.__sebasNoJump){window.rProfiles=function(){const r=oldRProfiles.apply(this,arguments);setTimeout(fixCards,120);setTimeout(fixCards,450);return r};window.rProfiles.__sebasNoJump=true}
-  const oldGo=window.go;if(typeof oldGo==="function"&&!oldGo.__sebasNoJump){window.go=function(page){if(page==="fortyplus"){openFortyPlus();setTimeout(run,80);return}const r=oldGo.apply(this,arguments);setTimeout(run,120);return r};window.go.__sebasNoJump=true}
-  document.addEventListener("DOMContentLoaded",()=>{updateLocationSoft();run()});
-  setTimeout(run,300);setTimeout(updateLocationSoft,700);setInterval(run,1500);
-})();
-</script>
-
-
-<script id="fortyup-final-user-request-js">
-(function(){
-function isLogged(){try{if(typeof refreshCU==="function")refreshCU();}catch(e){}return !!(window.CU&&CU.id)}
-function state(){var ok=isLogged();document.body.classList.toggle("fu-logged",ok);document.body.classList.toggle("fu-guest",!ok);var nav=document.querySelector(".bnav");if(nav)nav.style.display=ok?"flex":"none";lockPlus();lockPhoto()}
-function lockPlus(){var plus=document.getElementById("bn-plus");if(!plus)return;var ico=document.getElementById("bnPlusIco")||plus.querySelector(".bn-plus");var lab=document.getElementById("bnPlusLbl")||plus.querySelector(".bn-l");if(ico){ico.innerHTML="";ico.textContent=""}if(lab){lab.innerHTML="";lab.textContent=""}}
-function lockPhoto(){var ico=document.getElementById("bn-me-ico");var lab=document.getElementById("bn-me-lbl");if(lab){lab.innerHTML="";lab.textContent=""}if(ico&&isLogged()){if(CU.photo){var img=ico.querySelector("img");if(!img||img.getAttribute("src")!==CU.photo){ico.innerHTML='<img src="'+CU.photo+'" alt="Mi perfil">'}}else{var nm=(CU.name||CU.email||"S").charAt(0).toUpperCase();ico.innerHTML='<span style="font-size:1rem;color:#fff;font-weight:900">'+nm+"</span>"}}}
-function fixHome(){var home=document.getElementById("page-home");if(!home||!home.classList.contains("active")||isLogged())return;home.style.height="100dvh";home.style.maxHeight="100dvh";home.style.overflow="hidden";var inner=home.querySelector(".inner");if(inner){inner.style.height="100%";inner.style.maxHeight="100%";inner.style.overflow="hidden";inner.style.display="flex";inner.style.flexDirection="column";inner.style.justifyContent="space-between"}}
-function ensurePlus(){var page=document.getElementById("page-fortyplus");if(!page){page=document.createElement("section");page.id="page-fortyplus";page.className="page";var nav=document.querySelector(".bnav");if(nav&&nav.parentNode)nav.parentNode.insertBefore(page,nav);else document.body.appendChild(page)}page.innerHTML='<div class="inner"><div class="fup-final-hero"><div class="fup-final-diamond"></div><div class="fup-final-title">Forty<span>Up+</span></div><div class="fup-final-copy">Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.</div><div class="fup-final-divider"></div><div class="fup-final-copy">Descubrí herramientas exclusivas pensadas para disfrutar tu mejor etapa.</div><div class="fup-final-soon">✨ Próximamente disponible</div></div><div class="fup-final-list"><div class="fup-final-item"><div class="fup-final-icon">💎</div><div><h3>Más visibilidad</h3><p>Tu perfil aparece primero.</p></div><div class="fup-final-check">✓</div></div><div class="fup-final-item"><div class="fup-final-icon">⭐</div><div><h3>Perfiles destacados</h3><p>Accedé a perfiles premium.</p></div><div class="fup-final-check">✓</div></div><div class="fup-final-item"><div class="fup-final-icon">💬</div><div><h3>Más conexión</h3><p>Mejores chances de match.</p></div><div class="fup-final-check">✓</div></div></div><div class="fup-final-gradient"><b>✦ Próximamente disponible</b><span>Estamos preparando algo increíble para vos.</span></div></div>'}
-function openPlus(){if(!isLogged())return;ensurePlus();document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});var page=document.getElementById("page-fortyplus");if(page){page.classList.add("active");page.style.height="calc(100dvh - 92px)";page.style.maxHeight="calc(100dvh - 92px)";page.style.overflow="hidden"}if(typeof setBn==="function"){try{setBn("plus")}catch(e){}}state();window.scrollTo(0,0)}
-function bindPlus(){var plus=document.getElementById("bn-plus");if(!plus)return;plus.onclick=function(ev){ev.preventDefault();ev.stopPropagation();openPlus();return false}}
-var oldGoTo=window.goTo;if(typeof oldGoTo==="function"&&!oldGoTo.__finalUserRequest){window.goTo=function(page){if(page==="plus"||page==="fortyplus"){openPlus();return}var r=oldGoTo.apply(this,arguments);setTimeout(state,40);setTimeout(fixHome,60);setTimeout(bindPlus,60);return r};window.goTo.__finalUserRequest=true}
-var oldUpNav=window.upNav;if(typeof oldUpNav==="function"&&!oldUpNav.__finalUserRequest){window.upNav=function(){var r=oldUpNav.apply(this,arguments);setTimeout(state,20);setTimeout(bindPlus,40);return r};window.upNav.__finalUserRequest=true}
-document.addEventListener("DOMContentLoaded",function(){ensurePlus();state();fixHome();bindPlus()});setTimeout(function(){ensurePlus();state();fixHome();bindPlus()},300);setInterval(function(){state();fixHome();bindPlus()},1000)
+    applyState();
+    fixHome();
+    fixChat();
+    bindPlus();
+  },1000);
 })();
 </script>
 
