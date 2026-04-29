@@ -2075,6 +2075,57 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pa-super:before{content:"💎"!important;font-size:1.45rem!important;color:#fff!important;line-height:1!important}
 .pa-super:after{content:none!important}
 
+
+/* ── Mobile Home: no scroll, fits screen ── */
+@media (max-width: 700px) {
+  #page-home {
+    overflow: hidden;
+    height: 100dvh;
+    height: calc(var(--vh, 1vh) * 100);
+  }
+  .hero {
+    min-height: 0 !important;
+    height: 100dvh !important;
+    height: calc(var(--vh, 1vh) * 100) !important;
+    padding: 1.5rem 1.25rem 5rem !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+  .hero-in {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: .8rem !important;
+    width: 100% !important;
+  }
+  .hero-left {
+    width: 100% !important;
+  }
+  /* Hide the demo card on mobile - not needed */
+  .hcard { display: none !important; }
+  /* Compact text */
+  .h-title { font-size: 3.2rem !important; margin-bottom: .2rem !important; }
+  .h-sub { font-size: 1.1rem !important; margin-bottom: .5rem !important; }
+  .h-p { font-size: .82rem !important; margin-bottom: .5rem !important; line-height: 1.5 !important; }
+  .h-tag { font-size: .78rem !important; margin-bottom: .8rem !important; }
+  .h-pill { margin-bottom: .6rem !important; }
+  /* Big clear buttons */
+  .h-btns {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: .6rem !important;
+    width: 100% !important;
+    margin-bottom: .75rem !important;
+  }
+  .h-btns .btn {
+    width: 100% !important;
+    padding: .9rem !important;
+    font-size: 1rem !important;
+    border-radius: 50px !important;
+  }
+  .h-proof { justify-content: center !important; }
+}
 </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -3938,8 +3989,8 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
         <p class="h-p">Una comunidad para mayores de 40 donde podés conocer, conectar y compartir nuevas experiencias. Sin filtros. Sin superficialidades.</p>
         <p class="h-tag">✦ Nuevas etapas. Conexiones reales.</p>
         <div class="h-btns" id="heroBtns">
-          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Crear mi perfil gratis →</button>
-          <button class="btn btn-o btn-lg" onclick="goTo('profiles')">Explorar perfiles</button>
+          <button class="btn btn-p btn-lg" onclick="openAuth('register')">Registrate gratis</button>
+          <button class="btn btn-o btn-lg" onclick="openAuth('login')">Iniciá sesión</button>
         </div>
         <div class="h-proof">
           <div class="pavs"><div class="pav pav1">M</div><div class="pav pav2">R</div><div class="pav pav3">C</div><div class="pav pav4">G</div></div>
@@ -7596,5 +7647,12 @@ body{padding-bottom:110px!important;}
 })();
 </script>
 
+
+<script>
+// Fix 100vh on mobile browsers
+function setVh(){document.documentElement.style.setProperty('--vh', window.innerHeight*0.01+'px')}
+setVh();
+window.addEventListener('resize', setVh);
+</script>
 </body>
 </html>
