@@ -11362,6 +11362,263 @@ body{padding-bottom:110px!important;}
 }
 
 </style>
+
+<!-- FortyUp v10-final-69: ubicación dinámica + brillos de Forti/Súper Diamante -->
+<style id="fortyup-v69-location-rewards-css">
+.fu-reward-ov{
+  position:fixed!important;inset:0!important;z-index:2500!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:1.25rem!important;background:rgba(6,20,16,.62)!important;
+  backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important;
+  overflow:hidden!important;animation:fuRewardFadeIn .22s ease both!important;
+}
+.fu-reward-ov.fu-hide{animation:fuRewardFadeOut .28s ease both!important}
+.fu-reward-card{
+  position:relative!important;z-index:3!important;width:min(88vw,360px)!important;
+  border-radius:34px!important;padding:2rem 1.35rem!important;text-align:center!important;
+  color:#fff!important;box-shadow:0 28px 85px rgba(0,0,0,.34)!important;
+  overflow:hidden!important;animation:fuRewardPop .62s cubic-bezier(.2,1.25,.25,1) both!important;
+}
+.fu-reward-card.forti{
+  background:radial-gradient(circle at 24% 12%,rgba(255,255,255,.28),transparent 28%),
+             linear-gradient(145deg,#064E3B 0%,#0B7D5B 52%,#10B981 100%)!important;
+  border:2px solid rgba(167,243,208,.62)!important;
+}
+.fu-reward-card.super{
+  background:radial-gradient(circle at 28% 10%,rgba(255,255,255,.35),transparent 30%),
+             linear-gradient(145deg,#075985 0%,#2563EB 38%,#7C3AED 68%,#F2B705 100%)!important;
+  border:2px solid rgba(191,219,254,.75)!important;
+}
+.fu-reward-card:before{
+  content:''!important;position:absolute!important;inset:-50%!important;
+  background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.32),transparent,rgba(255,255,255,.18),transparent)!important;
+  animation:fuRewardSpin 3.2s linear infinite!important;z-index:-1!important;
+}
+.fu-reward-icon{
+  width:92px!important;height:92px!important;border-radius:50%!important;margin:0 auto .9rem!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:3rem!important;background:rgba(255,255,255,.18)!important;
+  border:7px solid rgba(255,255,255,.65)!important;box-shadow:0 12px 36px rgba(0,0,0,.22)!important;
+}
+.fu-reward-title{
+  font-family:'Playfair Display',serif!important;font-size:1.85rem!important;
+  line-height:1.08!important;font-weight:900!important;margin:0 0 .45rem!important;
+  text-shadow:0 3px 16px rgba(0,0,0,.18)!important;
+}
+.fu-reward-text{font-size:.96rem!important;line-height:1.5!important;color:rgba(255,255,255,.9)!important;margin:0 auto 1rem!important;max-width:280px!important}
+.fu-reward-name{font-weight:900!important;color:#FFF7C8!important}
+.fu-reward-btn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-width:150px!important;border-radius:999px!important;padding:.76rem 1.1rem!important;
+  background:#fff!important;color:#064E3B!important;font-family:'Nunito',sans-serif!important;
+  font-size:.9rem!important;font-weight:900!important;box-shadow:0 8px 24px rgba(0,0,0,.18)!important;
+}
+.fu-spark{
+  position:absolute!important;z-index:1!important;pointer-events:none!important;
+  width:8px!important;height:8px!important;border-radius:50%!important;
+  background:#fff!important;box-shadow:0 0 18px #fff,0 0 32px #FDE68A!important;
+  animation:fuSparkFly 1.35s ease-out forwards!important;
+}
+.fu-spark.diamond{width:12px!important;height:12px!important;border-radius:3px!important;transform:rotate(45deg);background:linear-gradient(135deg,#67E8F9,#A78BFA,#F9A8D4,#FDE68A)!important}
+@keyframes fuRewardFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fuRewardFadeOut{from{opacity:1}to{opacity:0}}
+@keyframes fuRewardPop{0%{opacity:0;transform:translateY(18px) scale(.82)}62%{opacity:1;transform:translateY(-4px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes fuRewardSpin{to{transform:rotate(360deg)}}
+@keyframes fuSparkFly{0%{opacity:0;transform:translate(0,20px) scale(.3) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.25) rotate(240deg)}}
+</style>
+
+<script id="fortyup-v69-location-rewards-js">
+(function(){
+  var lastUserId=null;
+  var locBusy=false;
+
+  function safeUsers(){try{return g(K.U,[])}catch(e){return []}}
+  function saveUserPatch(patch){
+    if(!window.CU||!CU.id)return;
+    var users=safeUsers();
+    users=users.map(function(u){
+      if(u.id!==CU.id)return u;
+      return Object.assign({},u,patch);
+    });
+    try{sv(K.U,users)}catch(e){}
+    try{refreshCU()}catch(e){}
+    try{upNav()}catch(e){}
+    try{if(typeof saveToFirestore==="function")saveToFirestore(Object.assign({},CU,patch))}catch(e){}
+    try{if(document.getElementById("page-myprofile")&&document.getElementById("page-myprofile").classList.contains("active"))rMyP()}catch(e){}
+    try{if(document.getElementById("page-profiles")&&document.getElementById("page-profiles").classList.contains("active"))rProfiles()}catch(e){}
+  }
+
+  function bestCityFromReverse(d){
+    var a=(d&&d.address)||{};
+    var city=a.city||a.town||a.village||a.municipality||a.suburb||a.county||"";
+    var state=a.state||a.province||"";
+    var country=a.country||"";
+    var parts=[];
+    if(city)parts.push(city);
+    if(country&&city.indexOf(country)===-1)parts.push(country);
+    return parts.join(", ") || state || country || "";
+  }
+
+  function reverseAndSave(lat,lng){
+    var patch={lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()};
+    fetch("https://nominatim.openstreetmap.org/reverse?lat="+encodeURIComponent(lat)+"&lon="+encodeURIComponent(lng)+"&format=json&accept-language=es")
+      .then(function(r){return r.json()})
+      .then(function(d){
+        var city=bestCityFromReverse(d);
+        if(city)patch.city=city;
+        saveUserPatch(patch);
+      })
+      .catch(function(){saveUserPatch(patch)});
+  }
+
+  window.updateFortyUpLiveLocation=function(force){
+    if(locBusy||!window.CU||!CU.id||!navigator.geolocation)return;
+    var key="fu_live_loc_last_"+CU.id;
+    var last=Number(localStorage.getItem(key)||0);
+    if(!force && Date.now()-last < 10*60*1000)return;
+    locBusy=true;
+    navigator.geolocation.getCurrentPosition(function(pos){
+      locBusy=false;
+      localStorage.setItem(key,String(Date.now()));
+      window.MLAT=pos.coords.latitude;
+      window.MLNG=pos.coords.longitude;
+      reverseAndSave(pos.coords.latitude,pos.coords.longitude);
+    },function(){
+      locBusy=false;
+    },{enableHighAccuracy:false,timeout:8000,maximumAge:10*60*1000});
+  };
+
+  var oldGetMyLoc=window.getMyLoc;
+  window.getMyLoc=function(){
+    try{if(typeof oldGetMyLoc==="function")oldGetMyLoc.apply(this,arguments)}catch(e){}
+    updateFortyUpLiveLocation(false);
+  };
+
+  function currentFromName(id,fallback){
+    try{
+      var u=safeUsers().filter(function(x){return x.id===id})[0];
+      if(u)return u.name||((u.email||"").split("@")[0])||fallback||"alguien";
+    }catch(e){}
+    return fallback||"alguien";
+  }
+
+  window.showRewardSparkle=function(kind,fromName,fromId){
+    var isSuper=kind==="super";
+    var ov=document.createElement("div");
+    ov.className="fu-reward-ov";
+    var card=document.createElement("div");
+    card.className="fu-reward-card "+(isSuper?"super":"forti");
+    card.innerHTML=
+      '<div class="fu-reward-icon">'+(isSuper?'💎':'◆')+'</div>'+
+      '<h2 class="fu-reward-title">'+(isSuper?'Recibiste un superdiamante':'Forti recibido')+'</h2>'+
+      '<p class="fu-reward-text">'+(fromName?'<span class="fu-reward-name">'+e(fromName)+'</span> te envió '+(isSuper?'un superdiamante especial.':'un Forti.'):'Tenés una nueva interacción en FortyUp.')+'</p>'+
+      '<button class="fu-reward-btn">'+(fromId?'Ver perfil':'Genial')+'</button>';
+    ov.appendChild(card);
+    document.body.appendChild(ov);
+
+    for(var i=0;i<30;i++){
+      var s=document.createElement("span");
+      s.className="fu-spark "+(isSuper&&i%3===0?"diamond":"");
+      s.style.left=(12+Math.random()*76)+"%";
+      s.style.top=(22+Math.random()*56)+"%";
+      s.style.setProperty("--x",(Math.random()*260-130)+"px");
+      s.style.setProperty("--y",(Math.random()*-260-60)+"px");
+      s.style.animationDelay=(Math.random()*.35)+"s";
+      ov.appendChild(s);
+    }
+
+    var close=function(){
+      ov.classList.add("fu-hide");
+      setTimeout(function(){if(ov&&ov.parentNode)ov.remove()},280);
+    };
+    card.querySelector("button").onclick=function(){
+      close();
+      if(fromId){setTimeout(function(){try{openMod(fromId)}catch(e){}},300)}
+    };
+    ov.onclick=function(ev){if(ev.target===ov)close()};
+    setTimeout(close,isSuper?5200:4200);
+  };
+
+  var oldShowSuper=window.showSuperDiamPop;
+  window.showSuperDiamPop=function(fromId){
+    var nm=currentFromName(fromId,"alguien");
+    showRewardSparkle("super",nm,fromId);
+  };
+
+  window.checkFirebaseNotifs=function(){
+    if(!window.DB||!window.CU)return;
+    DB.collection("notifications")
+      .where("to","==",CU.id)
+      .where("read","==",false)
+      .get()
+      .then(function(snap){
+        snap.forEach(function(doc){
+          var n=doc.data()||{};
+          doc.ref.update({read:true});
+          if(n.type==="forti"){
+            try{
+              var key=kF(n.from),fs=g(key,[]);
+              if(!fs.some(function(f){return f.t===CU.id})){
+                fs.push({t:CU.id,at:n.at||new Date().toISOString()});sv(key,fs);
+              }
+              var myF=g(kF(CU.id),[]);
+              if(myF.some(function(f){return f.t===n.from&&isNormalFortiActive(f)})){showMatch(n.from)}
+            }catch(e){}
+            showRewardSparkle("forti",n.fromName||currentFromName(n.from,"alguien"),n.from);
+          }else if(n.type==="superDiamond"){
+            showRewardSparkle("super",n.fromName||currentFromName(n.from,"alguien"),n.from);
+          }else if(n.type==="message"){
+            try{
+              var keyMsg=kMs(n.from,CU.id);
+              var msgs=g(keyMsg,[]);
+              var exists=msgs.some(function(m){return m.at===n.at&&m.from===n.from});
+              if(!exists){
+                msgs.push({from:n.from,to:CU.id,text:n.text||"",photo:n.photo||"",audio:n.audio||"",at:n.at||new Date().toISOString()});
+                sv(keyMsg,msgs);
+                var chats=g(kCh(CU.id),[]);
+                if(chats.indexOf(n.from)===-1){chats.push(n.from);sv(kCh(CU.id),chats)}
+              }
+              checkUnread();
+              if(window.CW&&CW.id===n.from)rChatMsgs();
+            }catch(e){}
+            toast((n.fromName||"Alguien")+" te envió un mensaje 💬","ok");
+          }
+        });
+      })
+      .catch(function(err){console.warn("Notif check error:",err)});
+  };
+
+  var oldCheckLocalSuper=window.checkSuperDiamNotif;
+  window.checkSuperDiamNotif=function(){
+    if(!window.CU)return;
+    var notifKey="fu_sdnotif_"+CU.id;
+    var notifs=[];
+    try{notifs=g(notifKey,[])}catch(e){}
+    if(notifs.length){
+      var n=notifs.shift();try{sv(notifKey,notifs)}catch(e){}
+      setTimeout(function(){showRewardSparkle("super",currentFromName(n.from,"alguien"),n.from)},700);
+      return;
+    }
+    try{if(typeof oldCheckLocalSuper==="function")oldCheckLocalSuper.apply(this,arguments)}catch(e){}
+  };
+
+  function watchLoginForLocation(){
+    try{
+      if(window.CU&&CU.id&&CU.id!==lastUserId){
+        lastUserId=CU.id;
+        setTimeout(function(){updateFortyUpLiveLocation(false)},1200);
+      }
+    }catch(e){}
+  }
+  setInterval(watchLoginForLocation,2000);
+  setInterval(function(){try{if(window.CU&&CU.id)updateFortyUpLiveLocation(false)}catch(e){}},5*60*1000);
+  document.addEventListener("visibilitychange",function(){
+    if(!document.hidden)watchLoginForLocation();
+  });
+  setTimeout(watchLoginForLocation,1200);
+})();
+</script>
+
 </body>
 </html>
 
