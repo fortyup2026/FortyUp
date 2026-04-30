@@ -7362,7 +7362,74 @@ function rMyP(){
 function rBlocked(){showBlocked()}
 
 function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
-function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);deleteFromFirestore(CU.id);logout();toast('Cuenta eliminada.','w')}}
+function delAccount(){
+  if(!confirm('¿Seguro querés eliminar tu cuenta? Esta acción no se puede deshacer.'))return;
+  var id = CU.id;
+  var email = CU.email;
+  
+  // 1. Remove from users array
+  var users = g(K.U,[]).filter(function(x){return x.id!==id});
+  sv(K.U, users);
+  
+  // 2. Delete ALL personal localStorage keys
+  var keysToDelete = [
+    // Session
+    'fu_s',
+    // Fortis, favorites, chats
+    'fu_f_'+id, 'fu_fv_'+id, 'fu_ch_'+id,
+    // Albums
+    'fu_albums_pub_'+id, 'fu_albums_priv_'+id,
+    // Photos (all possible keys)
+    'fu_pm_'+id,
+    'fu_profile_media_'+id,
+    'fu_profile_media_final_'+id,
+    'fu_profile_media_final_FIX_'+id,
+    'fortyup_profile_media_final_'+id,
+    'fortyup_profile_media_FINAL_HOME_'+id,
+    'fortyup_profile_media_final_FIX_'+id,
+    // Notifications
+    'fu_sd_notifs_'+id,
+    'fu_notifs_'+id,
+  ];
+  keysToDelete.forEach(function(k){
+    try{localStorage.removeItem(k)}catch(e){}
+  });
+  
+  // 3. Delete all message keys involving this user
+  var allKeys = [];
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      allKeys.push(localStorage.key(i));
+    }
+  }catch(e){}
+  allKeys.forEach(function(k){
+    if(k && (k.indexOf('fu_m_'+id)===0 || k.indexOf('_'+id)>0)){
+      try{localStorage.removeItem(k)}catch(e){}
+    }
+  });
+  
+  // 4. Delete from Firestore
+  deleteFromFirestore(id);
+  // Also delete notifications
+  if(DB){
+    try{
+      DB.collection('notifications').where('from','==',id).get()
+        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
+        .catch(function(){});
+      DB.collection('notifications').where('to','==',id).get()
+        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
+        .catch(function(){});
+    }catch(e){}
+  }
+  
+  // 5. Clear CU and session
+  CU = null;
+  
+  // 6. Go home
+  upNav();
+  goTo('home');
+  toast('Cuenta eliminada correctamente.','ok');
+}
 function ensureChatPair(uid){
   if(!CU||!uid)return;
   var mc=g(kCh(CU.id),[]);if(mc.indexOf(uid)===-1){mc.push(uid);sv(kCh(CU.id),mc)}
@@ -7831,7 +7898,74 @@ function saveSocial(){
 // ── BLOCKED USERS ──
 
 function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
-function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);deleteFromFirestore(CU.id);logout();toast('Cuenta eliminada.','w')}}
+function delAccount(){
+  if(!confirm('¿Seguro querés eliminar tu cuenta? Esta acción no se puede deshacer.'))return;
+  var id = CU.id;
+  var email = CU.email;
+  
+  // 1. Remove from users array
+  var users = g(K.U,[]).filter(function(x){return x.id!==id});
+  sv(K.U, users);
+  
+  // 2. Delete ALL personal localStorage keys
+  var keysToDelete = [
+    // Session
+    'fu_s',
+    // Fortis, favorites, chats
+    'fu_f_'+id, 'fu_fv_'+id, 'fu_ch_'+id,
+    // Albums
+    'fu_albums_pub_'+id, 'fu_albums_priv_'+id,
+    // Photos (all possible keys)
+    'fu_pm_'+id,
+    'fu_profile_media_'+id,
+    'fu_profile_media_final_'+id,
+    'fu_profile_media_final_FIX_'+id,
+    'fortyup_profile_media_final_'+id,
+    'fortyup_profile_media_FINAL_HOME_'+id,
+    'fortyup_profile_media_final_FIX_'+id,
+    // Notifications
+    'fu_sd_notifs_'+id,
+    'fu_notifs_'+id,
+  ];
+  keysToDelete.forEach(function(k){
+    try{localStorage.removeItem(k)}catch(e){}
+  });
+  
+  // 3. Delete all message keys involving this user
+  var allKeys = [];
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      allKeys.push(localStorage.key(i));
+    }
+  }catch(e){}
+  allKeys.forEach(function(k){
+    if(k && (k.indexOf('fu_m_'+id)===0 || k.indexOf('_'+id)>0)){
+      try{localStorage.removeItem(k)}catch(e){}
+    }
+  });
+  
+  // 4. Delete from Firestore
+  deleteFromFirestore(id);
+  // Also delete notifications
+  if(DB){
+    try{
+      DB.collection('notifications').where('from','==',id).get()
+        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
+        .catch(function(){});
+      DB.collection('notifications').where('to','==',id).get()
+        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
+        .catch(function(){});
+    }catch(e){}
+  }
+  
+  // 5. Clear CU and session
+  CU = null;
+  
+  // 6. Go home
+  upNav();
+  goTo('home');
+  toast('Cuenta eliminada correctamente.','ok');
+}
 function ensureChatPair(uid){
   if(!CU||!uid)return;
   var mc=g(kCh(CU.id),[]);if(mc.indexOf(uid)===-1){mc.push(uid);sv(kCh(CU.id),mc)}
