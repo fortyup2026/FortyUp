@@ -15477,3 +15477,119 @@ html,body{overflow-x:hidden!important;}
   color:#064E3B!important;
 }
 </style>
+
+<!-- === FortyUp v107 - guardar perfil por pasos sin perder datos === -->
+<style id="fu-v107-profile-wizard-fix-css">
+#page-register .fu-v87-panel{min-height:260px;}
+#page-register .fu-v87-step{touch-action:manipulation;}
+</style>
+<script id="fu-v107-profile-wizard-fix-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function safeParse(v,d){try{return v?JSON.parse(v):d}catch(_){return d}}
+  function sid(){try{return (window.CU&&CU.id)||((window.CU&&CU.email)||'guest')}catch(_){return 'guest'}}
+  function dkey(){return 'fu_profile_draft_'+sid()}
+  var ids=['rN','rA','rC','rG','rPref','rE','rD','rI','rV','rP','rLat','rLng','rBYear','rBMonth','rBDay'];
+  function readDraft(){return safeParse(localStorage.getItem(dkey()),{})||{}}
+  function writeDraft(d){try{localStorage.setItem(dkey(),JSON.stringify(d||{}))}catch(_){}}
+  function val(id){var el=document.getElementById(id);return el?String(el.value||'').trim():''}
+  function setv(id,v){var el=document.getElementById(id);if(el&&v!==undefined&&v!==null&&String(el.value||'').trim()==='')el.value=v}
+  function checked(name){return qa('input[name="'+name+'"]:checked').map(function(c){return c.value})}
+  function restoreChecked(name,arr){if(!arr||!arr.length)return;qa('input[name="'+name+'"]').forEach(function(c){if(arr.indexOf(c.value)>-1)c.checked=true})}
+  window.fuRegSyncDraft=function(){
+    var page=q('#page-register'); if(!page)return readDraft();
+    var d=readDraft();
+    ids.forEach(function(id){var el=document.getElementById(id);if(el){var v=String(el.value||'').trim();if(v!=='')d[id]=v}});
+    var lk=checked('lk'),pl=checked('pl'); if(lk.length)d.lk=lk; if(pl.length)d.pl=pl;
+    if(window._photo)d.rPhoto=window._photo; if(window._video)d.rVideo=window._video;
+    writeDraft(d);return d;
+  };
+  window.fuRegRestoreDraft=function(){
+    var d=readDraft();
+    ids.forEach(function(id){if(d[id])setv(id,d[id])});
+    restoreChecked('lk',d.lk); restoreChecked('pl',d.pl);
+    if(d.rPhoto&&!window._photo){window._photo=d.rPhoto;var pp=q('#phprev'),im=q('#phimg');if(pp&&im){im.src=d.rPhoto;pp.style.display='block'}}
+    if(d.rVideo&&!window._video)window._video=d.rVideo;
+  };
+  function showRegError(msg){var ee=q('#rErr');if(ee){ee.textContent=msg;ee.style.display='block';try{ee.scrollIntoView({behavior:'smooth',block:'center'})}catch(_){}}else if(typeof toast==='function')toast(msg,'w')}
+  function stepOk(n){
+    var d=window.fuRegSyncDraft();
+    var name=(val('rN')||d.rN||'').trim(), age=parseInt(val('rA')||d.rA||'',10), city=(val('rC')||d.rC||'').trim(), gender=(val('rG')||d.rG||'').trim();
+    if(n===1){
+      if(!name){showRegError('Completá tu nombre para seguir.');return false}
+      if(!age||isNaN(age)||age<40){showRegError('Completá una edad válida. FortyUp es para mayores de 40.');return false}
+      if(!city){showRegError('Completá tu ciudad o usá tu ubicación.');return false}
+      if(!gender){showRegError('Seleccioná tu género para seguir.');return false}
+    }
+    return true;
+  }
+  var oldFv=window.fv;
+  window.fv=function(id){
+    var v=oldFv?oldFv(id):val(id);
+    if(String(v||'').trim()===''){
+      var d=readDraft();
+      if(d&&d[id]!==undefined)return d[id];
+    }
+    return v;
+  };
+  var oldCv=window.cv;
+  window.cv=function(name){
+    var arr=oldCv?oldCv(name):checked(name);
+    if((!arr||!arr.length)){
+      var d=readDraft();
+      if(name==='lk'&&d.lk)return d.lk;
+      if(name==='pl'&&d.pl)return d.pl;
+    }
+    return arr||[];
+  };
+  var oldLoad=window.loadProfileForm;
+  if(typeof oldLoad==='function'&&!oldLoad.__fu107){
+    window.loadProfileForm=function(){var r=oldLoad.apply(this,arguments);setTimeout(window.fuRegRestoreDraft,40);setTimeout(window.fuRegRestoreDraft,180);return r};
+    window.loadProfileForm.__fu107=true;
+  }
+  var oldGo=window.fuRegGo;
+  if(typeof oldGo==='function'&&!oldGo.__fu107){
+    window.fuRegGo=function(n){
+      window.fuRegSyncDraft();
+      var cur=window.__fuRegStep||1;
+      if(n>cur && !stepOk(cur))return;
+      var r=oldGo.apply(this,arguments);setTimeout(window.fuRegRestoreDraft,30);return r;
+    };
+    window.fuRegGo.__fu107=true;
+  }
+  window.fuRegNext=function(){
+    window.fuRegSyncDraft();
+    var cur=window.__fuRegStep||1;
+    if(!stepOk(cur))return;
+    if(typeof window.fuRegGo==='function')window.fuRegGo(cur+1);
+  };
+  window.fuRegPrev=function(){window.fuRegSyncDraft();if(typeof window.fuRegGo==='function')window.fuRegGo((window.__fuRegStep||1)-1)};
+  var oldSave=window.saveProfile;
+  if(typeof oldSave==='function'&&!oldSave.__fu107){
+    window.saveProfile=function(){
+      window.fuRegSyncDraft();
+      window.fuRegRestoreDraft();
+      if(!stepOk(1))return;
+      var r=oldSave.apply(this,arguments);
+      setTimeout(function(){
+        try{
+          if(window.CU&&typeof fuProfileIsComplete==='function'&&fuProfileIsComplete(CU)){
+            try{localStorage.removeItem(dkey())}catch(_){}
+            if(typeof upNav==='function')upNav();
+            if(typeof rMyP==='function')rMyP();
+            if(typeof rProfiles==='function')rProfiles();
+            if(typeof checkUnread==='function')checkUnread();
+          }
+        }catch(_){ }
+      },320);
+      return r;
+    };
+    window.saveProfile.__fu107=true;
+  }
+  document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#page-register'))window.fuRegSyncDraft()},true);
+  document.addEventListener('change',function(e){if(e.target&&e.target.closest&&e.target.closest('#page-register'))window.fuRegSyncDraft()},true);
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(window.fuRegRestoreDraft,500)});
+  setInterval(function(){if(q('#page-register.active'))window.fuRegSyncDraft()},1000);
+})();
+</script>
