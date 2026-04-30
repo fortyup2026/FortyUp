@@ -14955,3 +14955,87 @@ html,body{overflow-x:hidden!important;}
   window.fu94RefreshPresence=refresh;
 })();
 </script>
+
+<!-- === FortyUp v95 - términos solo en registro + presencia estable === -->
+<style id="fu-v95-final-fixes-css">
+/* Términos: en login/auth no se muestra link suelto; solo checkbox en Crear cuenta */
+.auth-box > .fu-terms-link,
+.auth-box > .fu-reg-bottom-links{display:none!important;}
+#fu95AuthTerms{display:none;margin:.85rem 0 .2rem!important;padding:.78rem .85rem!important;border-radius:20px!important;background:#F0FDF8!important;border:1.5px solid #A7F3D0!important;color:#2D4A40!important;gap:.62rem!important;align-items:flex-start!important;font-size:.8rem!important;line-height:1.35!important;font-weight:800!important;}
+#fu95AuthTerms.show{display:flex!important;}
+#fu95AuthTerms input{width:20px!important;height:20px!important;accent-color:#059669!important;flex:0 0 20px!important;margin-top:.03rem!important;}
+#fu95AuthTerms button{color:#064E3B!important;text-decoration:underline!important;font-weight:900!important;background:none!important;border:0!important;padding:0!important;font-family:'Nunito',sans-serif!important;}
+
+/* Ocultar TODOS los estados previos para que no queden dobles ni titilen */
+.pcard .fu-v81-status,.pcard .fu-v82-dot-status,.pcard .fu-v84-dot-status,.pcard .fu-presence-pill,.pcard .fu-presence-slot,.pcard .fu-clean-dot-status,.pcard .fu-stable-card-status,.pcard .fu-v90-presence-badge,.pcard .fu-v90-modal-status,.pcard .fu91-card-presence,.pcard .fu92-card-dot-wrap,.pcard .fu93-card-dot,.pcard .fu94-card-dot,
+.m-body .fu-v81-status,.m-body .fu-v82-dot-status,.m-body .fu-v84-dot-status,.m-body .fu-presence-pill,.m-body .fu-presence-slot,.m-body .fu-clean-dot-status,.m-body .fu-stable-modal-status,.m-body .fu-v90-modal-status,.m-body .fu91-modal-presence,.m-body .fu92-modal-dot,.m-body .fu93-modal-dot,.m-body .fu94-modal-dot,
+.chat-hdr .fu-v81-status,.chat-hdr .fu-v82-dot-status,.chat-hdr .fu-v84-dot-status,.chat-hdr .fu-presence-pill,.chat-hdr .fu-presence-slot,.chat-hdr .fu-clean-chat-status,.chat-hdr .fu-stable-chat-status,.chat-hdr .fu-v90-chat-status,.chat-hdr .fu91-chat-presence,.chat-hdr .fu92-chat-presence,.chat-hdr .fu93-chat-status,.chat-hdr .fu94-chat-status{
+  display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;position:absolute!important;pointer-events:none!important;
+}
+.pcard{position:relative!important;transform:none!important;transition:box-shadow .18s ease!important;}
+.pcard:hover{transform:none!important;}
+.fu95-card-dot{position:absolute!important;top:.58rem!important;left:.58rem!important;z-index:15!important;width:20px!important;height:20px!important;border-radius:50%!important;background:#EF4444!important;border:3px solid rgba(255,255,255,.96)!important;box-shadow:0 5px 14px rgba(0,0,0,.18)!important;display:block!important;animation:none!important;transition:none!important;}
+.fu95-card-dot.on{background:#10B981!important;}
+.fu95-modal-dot{display:inline-block!important;width:14px!important;height:14px!important;border-radius:50%!important;background:#EF4444!important;border:3px solid rgba(255,255,255,.95)!important;box-shadow:0 3px 10px rgba(239,68,68,.20)!important;vertical-align:middle!important;margin:.28rem .45rem .42rem 0!important;animation:none!important;transition:none!important;}
+.fu95-modal-dot.on{background:#10B981!important;box-shadow:0 3px 10px rgba(16,185,129,.22)!important;}
+.fu95-chat-status{margin-left:auto!important;display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .62rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;font-size:.72rem!important;font-weight:900!important;white-space:nowrap!important;line-height:1!important;animation:none!important;transition:none!important;transform:none!important;flex:0 0 auto!important;}
+.fu95-chat-status.off{border-color:#FECACA!important;background:#FEF2F2!important;color:#B91C1C!important;}
+.fu95-chat-status .dot{width:8px!important;height:8px!important;border-radius:50%!important;background:#10B981!important;display:inline-block!important;flex:0 0 8px!important;}
+.fu95-chat-status.off .dot{background:#EF4444!important;}
+@media(max-width:520px){.fu95-card-dot{width:18px!important;height:18px!important;top:.5rem!important;left:.5rem!important}.fu95-chat-status{font-size:.65rem!important;padding:.24rem .48rem!important}}
+</style>
+<script id="fu-v95-final-fixes-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function keyC(){return (window.K&&K.S)||'fu_s'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function byId(id){return users().find(function(u){return u&&String(u.id)===String(id)})||(window.CU&&String(CU.id)===String(id)?CU:null)}
+  function isOn(u){if(!u)return false;if(window.CU&&String(u.id)===String(CU.id))return true;var t=Date.parse(u.lastSeen||u.lastActive||u.updatedAt||0);if(u.online===true&&(!t||Date.now()-t<3*60*1000))return true;return !!(t&&Date.now()-t<3*60*1000)}
+  var legacy='.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.fu-stable-card-status,.fu-stable-modal-status,.fu-stable-chat-status,.fu-v90-presence-badge,.fu-v90-modal-status,.fu-v90-chat-status,.fu91-card-presence,.fu91-modal-presence,.fu91-chat-presence,.fu92-card-dot-wrap,.fu92-modal-dot,.fu92-chat-presence,.fu93-card-dot,.fu93-modal-dot,.fu93-chat-status,.fu94-card-dot,.fu94-modal-dot,.fu94-chat-status';
+  function clean(root){qa(legacy,root||document).forEach(function(x){x.remove()})}
+  function currentModalUser(){var id=window._fuOpenProfileId||null;if(!id){var name=(q('#mCont .m-nm')||q('.m-box .m-nm')||{}).textContent||'';name=name.split(',')[0].trim();if(name){var u=users().find(function(x){return x&&String(x.name||'').trim()===name});if(u)id=u.id}}return id?byId(id):null}
+  function paintCards(){users().forEach(function(u){var card=q('#ca-'+CSS.escape(String(u.id)));if(!card)return;clean(card);qa('.fu95-card-dot',card).forEach(function(x,i){if(i>0)x.remove()});var d=q(':scope > .fu95-card-dot',card);if(!d){d=document.createElement('span');d.className='fu95-card-dot';card.appendChild(d)}d.className='fu95-card-dot '+(isOn(u)?'on':'off');d.title=isOn(u)?'Conectado':'Desconectado'})}
+  function paintModal(){var body=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('.m-box .m-body');if(!body)return;clean(body);qa('.fu95-modal-dot',body).forEach(function(x,i){if(i>0)x.remove()});var u=currentModalUser();if(!u)return;var d=q('.fu95-modal-dot',body);if(!d){d=document.createElement('span');d.className='fu95-modal-dot';var mt=q('.m-mt',body)||q('[class*=meta]',body)||q('.m-nm',body);if(mt&&mt.parentNode)mt.parentNode.insertBefore(d,mt.nextSibling);else body.insertBefore(d,body.firstChild)}d.className='fu95-modal-dot '+(isOn(u)?'on':'off');d.title=isOn(u)?'Conectado':'Desconectado'}
+  function paintChat(){var hdr=q('#page-chatwindow .chat-hdr')||q('.chat-hdr');if(!hdr||!window.CW)return;clean(hdr);qa('.fu95-chat-status',hdr).forEach(function(x,i){if(i>0)x.remove()});var u=byId(CW.id)||window.CW;var on=isOn(u);var el=q('.fu95-chat-status',hdr);if(!el){el=document.createElement('span');el.className='fu95-chat-status';el.innerHTML='<span class="dot"></span><span class="word"></span>';hdr.appendChild(el)}el.className='fu95-chat-status '+(on?'on':'off');var w=q('.word',el);if(w)w.textContent=on?'Conectado':'Desconectado'}
+  function markSelf(on){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;write(keyC(),{id:CU.id});saveUsers(users().map(function(u){return u&&String(u.id)===String(CU.id)?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts,photo:CU.photo||u.photo||''}):u}))}
+  function repaint(){clean(document);paintCards();paintModal();paintChat()}
+
+  function ensureAuthTerms(){
+    qa('.auth-box > .fu-terms-link,.auth-box > .fu-reg-bottom-links').forEach(function(x){x.remove()});
+    var box=q('.auth-box'); if(!box)return;
+    var lab=q('#fu95AuthTerms');
+    if(!lab){
+      lab=document.createElement('label');lab.id='fu95AuthTerms';lab.innerHTML='<input type="checkbox" id="fu95TermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull&&fuShowTermsFull()">Términos y Condiciones</button>. Declaro que soy mayor de 40 y entiendo que soy responsable de mis mensajes, fotos, videos y comportamiento dentro de FortyUp.</span>';
+      var btn=q('#aBtn',box);box.insertBefore(lab,btn||null);
+    }
+    var mode=(window.AM==='register'||(q('#tabR')&&q('#tabR').classList.contains('active')))?'register':'login';
+    lab.classList.toggle('show',mode==='register');
+  }
+  function wrapAuth(){
+    if(typeof window.switchTab==='function'&&!window.switchTab.__fu95){var old=window.switchTab;window.switchTab=function(mode){var r=old.apply(this,arguments);setTimeout(ensureAuthTerms,0);return r};window.switchTab.__fu95=true}
+    if(typeof window.openAuth==='function'&&!window.openAuth.__fu95){var oldO=window.openAuth;window.openAuth=function(mode){var r=oldO.apply(this,arguments);setTimeout(function(){ensureAuthTerms();var cb=q('#fu95TermsOk');if(cb)cb.checked=false},0);return r};window.openAuth.__fu95=true}
+    if(typeof window.doAuth==='function'&&!window.doAuth.__fu95){var oldD=window.doAuth;window.doAuth=function(){ensureAuthTerms();if(window.AM==='register'){var cb=q('#fu95TermsOk');if(!cb||!cb.checked){var ee=q('#aErr');if(ee){ee.textContent='Para crear tu cuenta tenés que aceptar los Términos y Condiciones.';ee.style.display='block'}return}}return oldD.apply(this,arguments)};window.doAuth.__fu95=true}
+  }
+  function termsFull(){
+    var old=q('.fu-terms-modal');if(old)old.remove();
+    var ov=document.createElement('div');ov.className='fu-terms-modal';ov.innerHTML='<div class="fu-terms-panel"><div class="fu-terms-head"><h3>Términos y condiciones</h3><button class="fu-terms-close" onclick="this.closest(\'.fu-terms-modal\').remove()">✕</button></div><div class="fu-terms-body"><p><strong>Bienvenido/a a FortyUp.</strong> Al usar la aplicación aceptás estas condiciones de uso, convivencia y seguridad.</p><h4>Uso responsable</h4><p>FortyUp está pensada para personas mayores de 40 que buscan conexiones reales. Cada usuario se compromete a brindar información verdadera y a usar la app con respeto.</p><h4>Contenido del usuario</h4><p>El usuario es responsable por los mensajes que envía, las fotos y videos que sube, los álbumes que crea y cualquier información que comparte. No se permite contenido ofensivo, violento, discriminatorio, sexual explícito no autorizado, engañoso ni imágenes de terceros sin permiso.</p><h4>Fotos, videos y álbumes</h4><p>La foto de perfil es pública. Los álbumes pueden ser públicos o privados según la configuración del usuario. El usuario es responsable de revisar qué contenido comparte y con quién.</p><h4>Interacciones y encuentros</h4><p>FortyUp facilita el contacto entre personas, pero no garantiza la identidad, intención o comportamiento de otros usuarios. Cada persona es responsable de sus conversaciones y de cualquier encuentro fuera de la app.</p><h4>Fortis y Súper Diamantes</h4><p>Los Fortis y Súper Diamantes son señales de interés dentro de la aplicación. No garantizan respuesta ni coincidencia. Los Súper Diamantes pueden ser limitados, promocionales o formar parte de futuras funciones premium.</p><h4>Ubicación</h4><p>La app puede usar ubicación aproximada para mostrar perfiles cercanos y distancias orientativas. Esta información puede no ser exacta.</p><h4>Moderación y seguridad</h4><p>FortyUp podrá limitar, suspender o eliminar cuentas y contenido que incumplan estas reglas o afecten la seguridad de otros usuarios.</p><h4>Cambios</h4><p>Estos términos pueden actualizarse. El uso continuo de la app implica aceptación de la versión vigente.</p><button class="btn btn-p btn-fw" onclick="this.closest(\'.fu-terms-modal\').remove()">Entendido</button></div></div>';
+    ov.onclick=function(e){if(e.target===ov)ov.remove()};document.body.appendChild(ov);
+  }
+  window.fuShowTermsFull=termsFull;
+
+  var oldRP=window.rProfiles;if(typeof oldRP==='function'&&!oldRP.__fu95){window.rProfiles=function(){var r=oldRP.apply(this,arguments);setTimeout(repaint,0);setTimeout(repaint,120);return r};window.rProfiles.__fu95=true}
+  var oldOpen=window.openMod;if(typeof oldOpen==='function'&&!oldOpen.__fu95){window.openMod=function(id){window._fuOpenProfileId=id;var r=oldOpen.apply(this,arguments);[0,80,180,420].forEach(function(ms){setTimeout(repaint,ms)});return r};window.openMod.__fu95=true}
+  var oldChat=window.startChat;if(typeof oldChat==='function'&&!oldChat.__fu95){window.startChat=function(){var r=oldChat.apply(this,arguments);[0,80,180,420].forEach(function(ms){setTimeout(repaint,ms)});return r};window.startChat.__fu95=true}
+  var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__fu95){window.goTo=function(){var r=oldGo.apply(this,arguments);setTimeout(function(){ensureAuthTerms();repaint()},80);return r};window.goTo.__fu95=true}
+  document.addEventListener('DOMContentLoaded',function(){wrapAuth();ensureAuthTerms();markSelf(true);setTimeout(repaint,120);setTimeout(repaint,600)});
+  document.addEventListener('click',function(){setTimeout(function(){ensureAuthTerms();repaint()},90)},true);
+  document.addEventListener('visibilitychange',function(){markSelf(document.visibilityState==='visible');setTimeout(repaint,80)});
+  window.addEventListener('beforeunload',function(){markSelf(false)});
+  setInterval(function(){markSelf(true);repaint()},12000);
+})();
+</script>
