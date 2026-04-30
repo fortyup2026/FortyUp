@@ -2557,6 +2557,7 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 </style>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -15188,3 +15189,138 @@ html,body{overflow-x:hidden!important;}
   color:#064E3B!important;
 }
 </style>
+
+<!-- === FortyUp v102 - verificación real de email antes de ingresar === -->
+<style id="fu-v102-email-verify-css">
+.fu-verify-card{background:linear-gradient(160deg,#FFFDF7,#F0FDF8);border:1.6px solid #D1E8DF;border-radius:22px;padding:1rem;margin:.85rem 0;box-shadow:0 10px 28px rgba(6,78,59,.08)}
+.fu-verify-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:#064E3B;font-weight:800;margin-bottom:.35rem}
+.fu-verify-text{font-size:.84rem;color:#2D4A40;line-height:1.55;margin-bottom:.8rem}
+.fu-verify-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.fu-verify-actions button{flex:1;min-width:130px;border-radius:999px;padding:.7rem .9rem;font-weight:900;font-family:'Nunito',sans-serif}
+.fu-verify-primary{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border:0;box-shadow:0 6px 18px rgba(6,78,59,.22)}
+.fu-verify-secondary{background:#fff;border:1.5px solid #A7F3D0;color:#064E3B}
+.fu-terms-inline{display:none;margin:.75rem 0 .35rem;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:16px;padding:.72rem .82rem;color:#064E3B;font-size:.8rem;font-weight:800;line-height:1.4}
+.fu-terms-inline input{width:18px;height:18px;accent-color:#064E3B;margin-right:.45rem;vertical-align:middle}
+.fu-terms-inline button{color:#064E3B;text-decoration:underline;font-weight:900;background:none;border:0;padding:0;font-size:.8rem}
+body.fu-email-pending .bnav{display:none!important}
+</style>
+<script id="fu-v102-email-verify-js">
+(function(){
+  if(window.__FU_EMAIL_VERIFY_V102__)return; window.__FU_EMAIL_VERIFY_V102__=true;
+  var PENDING_KEY='fu_pending_email_verify_v102';
+  function q(id){return document.getElementById(id)}
+  function msg(type,text){var el=q(type==='ok'?'aOk':'aErr'); if(!el)return; el.textContent=text; el.style.display='block'}
+  function clearMsgs(){['aOk','aErr'].forEach(function(id){var el=q(id); if(el)el.style.display='none'});}
+  function authReady(){return (typeof firebase!=='undefined' && firebase.auth);}
+  function getAuth(){try{return firebase.auth()}catch(e){return null}}
+  function usersArr(){try{return normalizeUsers()}catch(e){return g(K.U,[])}}
+  function saveUsers(u){try{sv(K.U,u)}catch(e){localStorage.setItem(K.U,JSON.stringify(u))}}
+  function findLocal(email){email=normEmail(email);return usersArr().filter(function(u){return !u.is && normEmail(u.email)===email})[0]||null}
+  function upsertLocal(email,pass,fbUser,verified){
+    var users=usersArr(), idx=users.findIndex(function(u){return !u.is&&normEmail(u.email)===normEmail(email)});
+    var u=idx>-1?users[idx]:{id:newId(),is:0,name:'',age:0,city:'',gender:'',email:normEmail(email),photo:'',desc:'',int:'',looking:[],plans:[],interestedIn:'todos',lat:null,lng:null,createdAt:new Date().toISOString(),superDiamonds:1};
+    u.email=normEmail(email); if(pass)u.pass=pass; if(fbUser&&fbUser.uid)u.fbUid=fbUser.uid; u.emailVerified=!!verified; u.pendingVerification=!verified;
+    if(idx>-1)users[idx]=u; else users.push(u); saveUsers(users); return u;
+  }
+  function acceptTermsOk(){var cb=q('fuTermsAccept'); return !!(cb&&cb.checked)}
+  function ensureTermsLine(){
+    var btn=q('aBtn'); if(!btn||q('fuTermsLine'))return;
+    var div=document.createElement('label'); div.id='fuTermsLine'; div.className='fu-terms-inline';
+    div.innerHTML='<input type="checkbox" id="fuTermsAccept"> Acepto los <button type="button" onclick="if(window.fuOpenTerms){fuOpenTerms()}else if(window.openTerms){openTerms()}else alert(\'Términos y condiciones de FortyUp.\')">Términos y Condiciones</button>';
+    btn.parentNode.insertBefore(div,btn);
+  }
+  function updateTermsVisibility(){ensureTermsLine(); var line=q('fuTermsLine'); if(line)line.style.display=(window.AM==='register')?'block':'none'}
+  function showVerify(email){
+    clearMsgs();
+    var box=q('authOv'); if(box)box.classList.add('open');
+    var authBox=document.querySelector('.auth-box'); if(!authBox)return;
+    var old=q('fuVerifyCard'); if(old)old.remove();
+    var card=document.createElement('div'); card.id='fuVerifyCard'; card.className='fu-verify-card';
+    card.innerHTML='<div class="fu-verify-title">Verificá tu email</div><div class="fu-verify-text">Te enviamos un correo a <strong>'+e(email)+'</strong>. Tocá el enlace de verificación y después volvé acá para activar tu cuenta.</div><div class="fu-verify-actions"><button class="fu-verify-primary" onclick="fuCheckEmailVerified()">Ya verifiqué</button><button class="fu-verify-secondary" onclick="fuResendVerifyEmail()">Reenviar correo</button></div>';
+    var err=q('aErr'); if(err)err.parentNode.insertBefore(card, err.nextSibling); else authBox.appendChild(card);
+    try{localStorage.setItem(PENDING_KEY, normEmail(email))}catch(e){}
+    document.body.classList.add('fu-email-pending');
+  }
+  window.fuResendVerifyEmail=function(){
+    var email=normEmail(q('aEmail')&&q('aEmail').value || localStorage.getItem(PENDING_KEY)||'');
+    var pass=q('aPass')?q('aPass').value:'';
+    clearMsgs();
+    if(!email){msg('err','Escribí tu email para reenviar la verificación.');return}
+    if(!authReady()){msg('err','Firebase Auth todavía no está disponible. Probá de nuevo.');return}
+    if(!pass){msg('err','Para reenviar, escribí tu contraseña y tocá de nuevo.');return}
+    getAuth().signInWithEmailAndPassword(email,pass).then(function(cred){return cred.user.sendEmailVerification().then(function(){return getAuth().signOut()})}).then(function(){msg('ok','Te reenviamos el correo de verificación. Revisá tu bandeja y spam.')}).catch(function(err){msg('err', friendlyAuthErr(err))});
+  };
+  window.fuCheckEmailVerified=function(){
+    var email=normEmail(q('aEmail')&&q('aEmail').value || localStorage.getItem(PENDING_KEY)||'');
+    var pass=q('aPass')?q('aPass').value:'';
+    clearMsgs();
+    if(!email||!pass){msg('err','Escribí email y contraseña para comprobar la verificación.');return}
+    if(!authReady()){msg('err','Firebase Auth todavía no está disponible. Probá de nuevo.');return}
+    getAuth().signInWithEmailAndPassword(email,pass).then(function(cred){return cred.user.reload().then(function(){return cred.user})}).then(function(user){
+      if(!user.emailVerified){showVerify(email); msg('err','Todavía no figura verificado. Abrí el link del correo y volvé a intentar.'); return getAuth().signOut();}
+      var u=upsertLocal(email,pass,user,true); CU=u; sv(K.S,{id:u.id}); localStorage.removeItem(PENDING_KEY); document.body.classList.remove('fu-email-pending'); var c=q('fuVerifyCard'); if(c)c.remove(); upNav(); closeAuth(); checkUnread(); clearReg(); toast('Email verificado. ¡Bienvenido/a!','ok'); if(!isCompleteProfile(u)) {goTo('register'); loadProfileForm();} else {goTo('home');}
+    }).catch(function(err){msg('err', friendlyAuthErr(err))});
+  };
+  function friendlyAuthErr(err){
+    var c=(err&&err.code)||'';
+    if(c.indexOf('wrong-password')>-1||c.indexOf('invalid-credential')>-1)return 'Email o contraseña incorrectos.';
+    if(c.indexOf('user-not-found')>-1)return 'No encontramos una cuenta con ese email.';
+    if(c.indexOf('email-already-in-use')>-1)return 'Ya existe una cuenta con ese email. Iniciá sesión.';
+    if(c.indexOf('too-many-requests')>-1)return 'Demasiados intentos. Probá de nuevo más tarde.';
+    if(c.indexOf('network')>-1)return 'Problema de conexión. Revisá internet y probá otra vez.';
+    return (err&&err.message)||'No se pudo completar la operación.';
+  }
+  var oldSwitch=window.switchTab;
+  window.switchTab=function(mode){ if(oldSwitch)oldSwitch(mode); updateTermsVisibility(); };
+  var oldOpen=window.openAuth;
+  window.openAuth=function(mode){ if(oldOpen)oldOpen(mode); ensureTermsLine(); updateTermsVisibility(); var vc=q('fuVerifyCard'); if(vc)vc.remove(); document.body.classList.remove('fu-email-pending'); };
+  var oldClose=window.closeAuth;
+  window.closeAuth=function(){ if(oldClose)oldClose(); document.body.classList.remove('fu-email-pending'); };
+  window.doAuth=function(){
+    var email=normEmail(fv('aEmail')), pass=q('aPass')?q('aPass').value:'';
+    var ee=q('aErr'),oe=q('aOk'); if(ee)ee.style.display='none'; if(oe)oe.style.display='none'; var vc=q('fuVerifyCard'); if(vc)vc.remove();
+    if(!email||!pass){msg('err','Completá email y contraseña.');return}
+    if(pass.length<6){msg('err','La contraseña debe tener al menos 6 caracteres.');return}
+    var users=usersArr();
+    if(window.AM==='register'){
+      var pc=q('aPassC')?q('aPassC').value:'';
+      if(pass!==pc){msg('err','Las contraseñas no coinciden.');return}
+      if(!acceptTermsOk()){msg('err','Tenés que aceptar los Términos y Condiciones para crear la cuenta.');return}
+      if(users.some(function(u){return !u.is&&normEmail(u.email)===email&&u.emailVerified===true})){msg('err','Ya existe una cuenta con ese email. Iniciá sesión.');return}
+      if(!authReady()){msg('err','Firebase Auth no está cargado todavía. Esperá unos segundos y probá otra vez.');return;}
+      getAuth().createUserWithEmailAndPassword(email,pass).then(function(cred){
+        upsertLocal(email,pass,cred.user,false);
+        return cred.user.sendEmailVerification().then(function(){return getAuth().signOut()});
+      }).then(function(){
+        showVerify(email); msg('ok','Cuenta creada. Te enviamos el correo de verificación. Hasta verificarlo no vas a poder entrar a la app.');
+      }).catch(function(err){
+        if((err.code||'').indexOf('email-already-in-use')>-1){showVerify(email); msg('err','Ese email ya fue registrado. Si todavía no lo verificaste, usá “Reenviar correo” o “Ya verifiqué”.');}
+        else msg('err', friendlyAuthErr(err));
+      });
+    }else{
+      if(authReady()){
+        getAuth().signInWithEmailAndPassword(email,pass).then(function(cred){return cred.user.reload().then(function(){return cred.user})}).then(function(user){
+          if(!user.emailVerified){upsertLocal(email,pass,user,false); showVerify(email); msg('err','Tu email todavía no está verificado. Revisá tu correo para entrar.'); return getAuth().signOut();}
+          var u=upsertLocal(email,pass,user,true); CU=u; sv(K.S,{id:u.id}); localStorage.removeItem(PENDING_KEY); document.body.classList.remove('fu-email-pending'); upNav(); closeAuth(); checkUnread(); clearReg(); if(!isCompleteProfile(u)){goTo('register');loadProfileForm();}else{goTo('home')} try{checkSuperDiamNotif()}catch(e){}
+        }).catch(function(err){
+          var local=findLocal(email);
+          if(local&&local.pass===pass&&local.emailVerified!==false){CU=local;sv(K.S,{id:local.id});upNav();closeAuth();checkUnread();clearReg();if(!isCompleteProfile(local)){goTo('register');loadProfileForm();}else{goTo('home')}}
+          else msg('err', friendlyAuthErr(err));
+        });
+      }else{
+        var found=users.filter(function(u){return !u.is&&normEmail(u.email)===email&&u.pass===pass})[0];
+        if(!found){msg('err','Email o contraseña incorrectos.');return}
+        if(found.emailVerified===false){showVerify(email); msg('err','Tu email todavía no está verificado.'); return}
+        CU=found;sv(K.S,{id:found.id});upNav();closeAuth();checkUnread();clearReg();if(!found.name)setTimeout(function(){goTo('register');loadProfileForm();},400);else goTo('home');
+      }
+    }
+  };
+  function guardUnverifiedSession(){
+    try{if(CU&&CU.emailVerified===false){var em=CU.email; CU=null; sv(K.S,null); upNav(); goTo('home'); openAuth('login'); var ae=q('aEmail'); if(ae)ae.value=em; showVerify(em); msg('err','Verificá tu email para ingresar.');}}
+    catch(e){}
+  }
+  var oldNeed=window.needLogin; window.needLogin=function(cb){guardUnverifiedSession(); if(CU&&CU.emailVerified!==false)cb(); else openAuth('login')};
+  document.addEventListener('DOMContentLoaded',function(){ensureTermsLine();updateTermsVisibility();setTimeout(guardUnverifiedSession,700)});
+  setTimeout(function(){ensureTermsLine();updateTermsVisibility();guardUnverifiedSession();},1200);
+})();
+</script>
