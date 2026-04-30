@@ -13788,3 +13788,57 @@ var oldR=window.rMyP;if(typeof oldR==='function')window.rMyP=function(){var o=ol
   document.addEventListener('click',function(){setTimeout(function(){beautifyLoc();fixAudio();injectOnlineCards();injectChatStatus()},80)},true);
 })();
 </script>
+
+<!-- FortyUp v10-final-82: ubicación limpia + diamantes persistentes + presencia real por actividad -->
+<style id="fortyup-v82-clean-location-presence">
+#locationSearchBar{padding:.45rem 0 .65rem!important;}
+#locationSearchBar > div:first-child{display:flex!important;align-items:center!important;gap:.58rem!important;justify-content:flex-start!important;flex-wrap:nowrap!important;}
+#locationSearchBar .fu-v81-loc-btn,#locationSearchBar > div:first-child button{min-height:54px!important;border-radius:22px!important;padding:.58rem .72rem!important;background:rgba(255,255,255,.82)!important;border:2px solid #10B981!important;color:#064E3B!important;box-shadow:0 8px 22px rgba(6,78,59,.06)!important;font-weight:900!important;line-height:1.05!important;}
+#locActiveLabel.fu-v82-loc-active{display:flex!important;align-items:center!important;gap:.55rem!important;margin:0!important;padding:.48rem .48rem .48rem .72rem!important;min-height:54px!important;width:auto!important;max-width:46vw!important;flex:1 1 auto!important;background:linear-gradient(135deg,#F0FDF8,#FFFFFF)!important;border:2px solid #A7F3D0!important;border-radius:22px!important;box-shadow:0 8px 22px rgba(6,78,59,.07)!important;color:#064E3B!important;}
+.fu-v82-loc-copy{display:flex!important;align-items:center!important;gap:.38rem!important;min-width:0!important;font-size:.78rem!important;font-weight:900!important;line-height:1.12!important;}
+.fu-v82-loc-copy strong{display:block!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#064E3B!important;}
+.fu-v82-clear{flex:0 0 auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:.25rem!important;min-height:38px!important;border-radius:18px!important;padding:.38rem .62rem!important;background:#FFF7F7!important;border:1.7px solid #FCA5A5!important;color:#B91C1C!important;font-size:.74rem!important;font-weight:900!important;box-shadow:0 4px 12px rgba(220,38,38,.08)!important;cursor:pointer!important;}
+.fu-v82-clear:hover{background:#FEE2E2!important;transform:translateY(-1px)!important;}
+@media(max-width:430px){#locationSearchBar > div:first-child{gap:.45rem!important;}#locationSearchBar > div:first-child button{min-width:0!important;flex:0 0 22%!important;font-size:.72rem!important;padding:.48rem .35rem!important;}#locActiveLabel.fu-v82-loc-active{max-width:none!important;flex:1 1 44%!important;padding:.42rem .42rem .42rem .58rem!important;}.fu-v82-loc-copy{font-size:.70rem!important;}.fu-v82-clear{font-size:.68rem!important;padding:.32rem .46rem!important;min-height:34px!important;}}
+.fu-v82-dot-status{display:inline-flex!important;align-items:center!important;gap:.28rem!important;margin-top:.34rem!important;font-size:.68rem!important;font-weight:900!important;letter-spacing:.01em!important;}
+.fu-v82-dot-status .orb{width:12px!important;height:12px!important;border-radius:50%!important;display:inline-block!important;}
+.fu-v82-dot-status.on{color:#047857!important;}.fu-v82-dot-status.on .orb{background:#10B981!important;box-shadow:0 0 0 4px rgba(16,185,129,.16),0 0 16px rgba(16,185,129,.55)!important;animation:fuV82PulseGreen 1.8s infinite!important;}
+.fu-v82-dot-status.off{color:#DC2626!important;}.fu-v82-dot-status.off .orb{background:#EF4444!important;box-shadow:0 0 0 4px rgba(239,68,68,.12),0 0 12px rgba(239,68,68,.35)!important;}
+.chat-hdr .fu-v82-dot-status{margin-left:auto!important;margin-top:0!important;font-size:.62rem!important;}.m-body .fu-v82-dot-status{margin:.42rem 0 .55rem!important;}
+@keyframes fuV82PulseGreen{0%,100%{transform:scale(1);box-shadow:0 0 0 4px rgba(16,185,129,.16),0 0 14px rgba(16,185,129,.48)}50%{transform:scale(1.08);box-shadow:0 0 0 7px rgba(16,185,129,.06),0 0 20px rgba(16,185,129,.68)}}
+</style>
+<script id="fortyup-v10-82-logic">
+(function(){
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]||c})}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_users'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function findUser(id){return users().find(function(u){return u&&u.id===id})||(window.CU&&CU.id===id?CU:null)}
+  function beautifyLoc(){var bar=document.getElementById('locationSearchBar');if(!bar)return;bar.classList.add('fu-v82-ready');bar.querySelectorAll('button').forEach(function(b){var t=(b.textContent||'').toLowerCase();if(t.indexOf('mi ubicación')>-1||t.indexOf('ver mapa')>-1){b.classList.add('fu-v81-loc-btn')}})}
+  window.showLocLabel=function(name){beautifyLoc();var lbl=document.getElementById('locActiveLabel');if(!lbl)return;lbl.className='fu-v82-loc-active';lbl.style.display='flex';lbl.innerHTML='<div class="fu-v82-loc-copy"><span>📍</span><span>Buscando en <strong>'+esc(name||'esta zona')+'</strong></span></div><button class="fu-v82-clear" onclick="clearLocationFilter()">✕ Limpiar</button>'};
+  window.clearLocationFilter=function(){try{window._locFilter='';window._searchLat=null;window._searchLng=null;window._searchCity=''}catch(_){}var lbl=document.getElementById('locActiveLabel');if(lbl){lbl.className='';lbl.style.display='none';lbl.innerHTML=''}if(typeof rProfiles==='function')rProfiles();if(window.toast)toast('Mostrando perfiles por tu ubicación 📍','ok')};
+  function normalizeDiamonds(){if(!window.CU||!CU.id)return 1;var arr=users(),changed=false,current=null;arr=arr.map(function(u){if(u&&u.id===CU.id){current=Object.assign({},u);if(typeof current.superDiamonds!=='number'||!isFinite(current.superDiamonds)){current.superDiamonds=1;changed=true}if(current.superDiamonds<0){current.superDiamonds=0;changed=true}return current}return u});if(current){CU=Object.assign(CU,current);window.CU=CU;if(changed)saveUsers(arr)}return typeof CU.superDiamonds==='number'?CU.superDiamonds:1}
+  function paintDiamondCounter(){var n=normalizeDiamonds();document.querySelectorAll('#page-fortyplus .fup-crystal-counter,.fup-crystal-counter').forEach(function(el){el.innerHTML='💎 '+n;el.setAttribute('data-crystals',String(n))})}
+  var oldSendSD=window.sendSuperDiamond;if(typeof oldSendSD==='function'&&!oldSendSD.__fuV82){window.sendSuperDiamond=function(id){var before=normalizeDiamonds();if(before<=0){if(window.toast)toast('Ya usaste tu Súper Diamante gratis 💎','w');paintDiamondCounter();return}var r=oldSendSD.apply(this,arguments);setTimeout(function(){normalizeDiamonds();paintDiamondCounter();try{if(typeof saveToFirestore==='function'&&window.CU)saveToFirestore(CU)}catch(_){ }},120);return r};window.sendSuperDiamond.__fuV82=true}
+  var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__fuV82){window.goTo=function(page){var r=oldGo.apply(this,arguments);setTimeout(function(){beautifyLoc();paintDiamondCounter()},80);setTimeout(paintDiamondCounter,350);return r};window.goTo.__fuV82=true}
+  function nowISO(){return new Date().toISOString()}
+  function updatePresence(online){if(!window.CU||!CU.id)return;var ts=nowISO();CU.lastSeen=ts;CU.lastActive=ts;CU.online=online!==false;var arr=users().map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lastSeen:ts,lastActive:ts,online:online!==false}):u});saveUsers(arr);try{if(typeof saveToFirestore==='function')saveToFirestore(CU)}catch(_){}}
+  window.fuV82IsOnline=function(u){if(!u)return false;if(window.CU&&u.id===CU.id)return true;var t=Date.parse(u.lastSeen||u.lastActive||0);return !!(t&&(Date.now()-t)<(2.5*60*1000))};
+  function statusHtml(u){var on=window.fuV82IsOnline(u);return '<span class="fu-v82-dot-status '+(on?'on':'off')+'"><span class="orb"></span>'+(on?'Conectado':'Desconectado')+'</span>'}
+  function injectCards(){users().forEach(function(u){var card=document.getElementById('ca-'+u.id);if(!card)return;card.querySelectorAll('.fu-v81-status,.fu-v82-dot-status').forEach(function(x){x.remove()});var info=card.querySelector('.pcard-info')||card.querySelector('.pcard-body');if(info){var d=document.createElement('div');d.innerHTML=statusHtml(u);info.appendChild(d.firstChild)}})}
+  function injectModal(id){var u=findUser(id),body=document.querySelector('#mCont .m-body')||document.querySelector('.m-box .m-body');if(!u||!body)return;body.querySelectorAll('.fu-v81-status,.fu-v82-dot-status').forEach(function(x){x.remove()});var mt=body.querySelector('.m-mt');var d=document.createElement('div');d.innerHTML=statusHtml(u);if(mt&&mt.nextSibling)body.insertBefore(d.firstChild,mt.nextSibling);else body.prepend(d.firstChild)}
+  function injectChat(){var h=document.querySelector('#page-chatwindow .chat-hdr');if(!h||!window.CW)return;h.querySelectorAll('.fu-v81-status,.fu-v82-dot-status').forEach(function(x){x.remove()});var d=document.createElement('div');d.innerHTML=statusHtml(CW);h.appendChild(d.firstChild)}
+  var oldRP=window.rProfiles;if(typeof oldRP==='function'&&!oldRP.__fuV82){window.rProfiles=function(){var r=oldRP.apply(this,arguments);setTimeout(injectCards,100);return r};window.rProfiles.__fuV82=true}
+  var oldOM=window.openMod;if(typeof oldOM==='function'&&!oldOM.__fuV82){window.openMod=function(id){var r=oldOM.apply(this,arguments);[120,360,800].forEach(function(ms){setTimeout(function(){injectModal(id)},ms)});return r};window.openMod.__fuV82=true}
+  var oldSC=window.startChat;if(typeof oldSC==='function'&&!oldSC.__fuV82){window.startChat=function(){var r=oldSC.apply(this,arguments);setTimeout(injectChat,100);return r};window.startChat.__fuV82=true}
+  var oldRCM=window.rChatMsgs;if(typeof oldRCM==='function'&&!oldRCM.__fuV82){window.rChatMsgs=function(){var r=oldRCM.apply(this,arguments);setTimeout(injectChat,80);return r};window.rChatMsgs.__fuV82=true}
+  function tick(){updatePresence(true);paintDiamondCounter();injectCards();injectChat()}
+  document.addEventListener('DOMContentLoaded',function(){beautifyLoc();setTimeout(tick,250);setTimeout(tick,1200)});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')tick();else updatePresence(false)});
+  window.addEventListener('beforeunload',function(){updatePresence(false)});
+  setInterval(tick,25000);
+  document.addEventListener('click',function(){setTimeout(function(){beautifyLoc();paintDiamondCounter();injectCards();injectChat()},120)},true);
+})();
+</script>
