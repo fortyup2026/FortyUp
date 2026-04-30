@@ -13396,6 +13396,50 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
 })();
 </script>
 
+
+<!-- === FortyUp v106 - perfil completo obligatorio + título perfiles + nav más aire === -->
+<style id="fu-v106-profile-gate-css">
+#page-profiles .pg-tit{transition:none!important;}
+.nav-right{gap:.78rem!important;min-width:0!important;}
+.nav-av{gap:.58rem!important;min-width:0!important;}
+.nav-av .av-c{flex:0 0 38px!important;width:38px!important;height:38px!important;overflow:hidden!important;}
+.nav-av .av-c img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;display:block!important;}
+.nav-av .av-nm{display:inline-block!important;max-width:112px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;line-height:1.1!important;}
+.fu-notif-wrap{margin-right:.28rem!important;flex:0 0 42px!important;}
+body.fu-profile-incomplete #page-profiles #pgrid{opacity:.35!important;pointer-events:none!important;}
+body.fu-profile-incomplete #locationSearchBar{display:none!important;}
+body.fu-profile-incomplete .bnav #bn-home,body.fu-profile-incomplete .bnav #bn-profiles,body.fu-profile-incomplete .bnav #bn-chats,body.fu-profile-incomplete .bnav #bn-plus{opacity:.5!important;}
+@media(max-width:750px){.nav-in{gap:.45rem!important;padding:0 .9rem!important;}.nav-logo{font-size:1.78rem!important;flex:0 0 auto!important;}.nav-right{gap:.5rem!important;}.fu-notif-wrap{width:40px!important;height:40px!important;flex-basis:40px!important;margin-right:.1rem!important;}.nav-av .av-c{width:40px!important;height:40px!important;flex-basis:40px!important;}.nav-av .av-nm{max-width:92px!important;font-size:.83rem!important;}.btn-out{padding:.25rem .35rem!important;}}
+@media(max-width:390px){.nav-logo{font-size:1.6rem!important;}.nav-right{gap:.38rem!important;}.nav-av{gap:.38rem!important;}.nav-av .av-nm{max-width:72px!important;}.fu-notif-wrap{width:38px!important;height:38px!important;flex-basis:38px!important;}.nav-av .av-c{width:38px!important;height:38px!important;flex-basis:38px!important;}}
+</style>
+<script id="fu-v106-profile-gate-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function trim(v){return String(v||'').trim()}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function complete(u){if(!u||u.is)return true;return !!(trim(u.email)&&trim(u.name)&&Number(u.age)>=40&&trim(u.city));}
+  window.fuProfileIsComplete=complete;
+  function currentPage(){var p=q('.page.active');return p?p.id.replace('page-',''):''}
+  function syncCU(){if(!window.CU||!CU.id)return null;var fresh=users().find(function(u){return u&&String(u.id)===String(CU.id)});if(fresh){window.CU=fresh;return fresh}return window.CU;}
+  function updateProfileTitle(){var t=q('#page-profiles .pg-tit');var s=q('#page-profiles .pg-sub');if(t)t.textContent=window.CU?'Explorar perfiles':'Iniciar sesión';if(s)s.textContent=window.CU?'Personas reales cerca tuyo para conectar por planes reales.':'Personas reales buscando conexiones reales.';}
+  function updateBodyState(){var u=syncCU();var inc=!!(u&&u.emailVerified!==false&&!complete(u));document.body.classList.toggle('fu-profile-incomplete',inc);return inc;}
+  function enforce(opts){opts=opts||{};updateProfileTitle();var inc=updateBodyState();if(!inc)return false;var pg=currentPage();var allowed={home:1,register:1};if(!allowed[pg]||opts.forceRegister){if(typeof toast==='function'&&!opts.silent)toast('Completá tu perfil para empezar a usar FortyUp 🌿','ok');if(typeof window.goTo==='function')setTimeout(function(){try{window.goTo('register');if(typeof loadProfileForm==='function')loadProfileForm()}catch(e){}},0);return true;}return false;}
+  function refreshNavName(){var nm=q('.nav-av .av-nm');if(nm){var txt=trim(nm.textContent);if(txt.indexOf('@')>-1)nm.textContent=txt.split('@')[0];}}
+  function after(){setTimeout(function(){updateProfileTitle();updateBodyState();refreshNavName()},0);setTimeout(function(){updateProfileTitle();updateBodyState();refreshNavName()},160)}
+  var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__fu106){window.goTo=function(pg){var u=syncCU();if(u&&u.emailVerified!==false&&!complete(u)&&['profiles','chats','favorites','fortyplus','admin','myprofile'].indexOf(pg)>-1){if(typeof toast==='function')toast('Primero completá tu perfil 🌿','ok');pg='register';}var r=oldGo.apply(this,[pg]);if(pg==='register'&&typeof loadProfileForm==='function')setTimeout(loadProfileForm,0);after();return r};window.goTo.__fu106=true;}
+  var oldUp=window.upNav;if(typeof oldUp==='function'&&!oldUp.__fu106){window.upNav=function(){var r=oldUp.apply(this,arguments);after();return r};window.upNav.__fu106=true;}
+  var oldDo=window.doAuth;if(typeof oldDo==='function'&&!oldDo.__fu106){window.doAuth=function(){var r=oldDo.apply(this,arguments);setTimeout(function(){enforce({silent:true,forceRegister:true})},450);setTimeout(function(){enforce({silent:true,forceRegister:true})},1200);return r};window.doAuth.__fu106=true;}
+  var oldClose=window.closeAuth;if(typeof oldClose==='function'&&!oldClose.__fu106){window.closeAuth=function(){var r=oldClose.apply(this,arguments);setTimeout(function(){enforce({silent:true,forceRegister:true})},150);return r};window.closeAuth.__fu106=true;}
+  var oldSave=window.saveProfile;if(typeof oldSave==='function'&&!oldSave.__fu106){window.saveProfile=function(){var r=oldSave.apply(this,arguments);setTimeout(function(){var u=syncCU();updateBodyState();if(u&&complete(u)){if(typeof toast==='function')toast('Perfil completo. Ya podés usar FortyUp 💚','ok');try{goTo('home')}catch(e){}}},250);return r};window.saveProfile.__fu106=true;}
+  ['rProfiles','rChatList','rFavs','rMyP'].forEach(function(fn){var old=window[fn];if(typeof old==='function'&&!old.__fu106){window[fn]=function(){enforce({silent:true});var r=old.apply(this,arguments);after();return r};window[fn].__fu106=true}});
+  document.addEventListener('DOMContentLoaded',function(){after();setTimeout(function(){enforce({silent:true,forceRegister:true})},700)});
+  document.addEventListener('click',function(){after()},true);
+  window.addEventListener('focus',function(){setTimeout(function(){enforce({silent:true,forceRegister:true})},150)});
+  setInterval(function(){enforce({silent:true});},1800);
+})();
+</script>
 </body>
 </html>
 
