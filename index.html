@@ -16569,3 +16569,132 @@ body .pa-super *{animation:none!important;}
   setInterval(paint,3000);
 })();
 </script>
+
+
+<!-- FortyUp v117: diamante en avisos + anti saltos/titileos -->
+<style id="fortyup-v117-diamond-empty-stable-css">
+/* Reemplaza la hojita por diamante y estabiliza tarjetas vacías */
+.fu116-empty-profiles,
+.fu93-empty-profiles{
+  width:100%!important;
+  grid-column:1/-1!important;
+  text-align:center!important;
+  background:linear-gradient(135deg,#fff,#F0FDF8)!important;
+  border:1.7px dashed #A7F3D0!important;
+  border-radius:28px!important;
+  padding:2.05rem 1.25rem!important;
+  color:#064E3B!important;
+  box-shadow:0 10px 30px rgba(6,78,59,.08)!important;
+  min-height:255px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+  will-change:auto!important;
+  contain:layout paint!important;
+  backface-visibility:hidden!important;
+}
+.fu116-empty-profiles .ico,
+.fu93-empty-profiles .ico{
+  width:92px!important;
+  height:82px!important;
+  margin:0 auto .72rem!important;
+  font-size:0!important;
+  line-height:0!important;
+  display:block!important;
+  background:none!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+  filter:drop-shadow(0 14px 20px rgba(6,78,59,.18));
+}
+.fu116-empty-profiles .ico::before,
+.fu93-empty-profiles .ico::before{
+  content:''!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 210'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23dff8ff'/%3E%3Cstop offset='.22' stop-color='%239fe4ff'/%3E%3Cstop offset='.48' stop-color='%235bb7f3'/%3E%3Cstop offset='.72' stop-color='%232b8fe0'/%3E%3Cstop offset='1' stop-color='%23e8fbff'/%3E%3C/linearGradient%3E%3ClinearGradient id='shine' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23ffffff' stop-opacity='.95'/%3E%3Cstop offset='1' stop-color='%23ffffff' stop-opacity='.12'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 45 L82 18 H158 L190 45 L120 198 Z' fill='url(%23g)' stroke='%2393d8ef' stroke-width='2'/%3E%3Cpath d='M50 45 H190 L160 82 H80 Z' fill='%23c9f3ff' opacity='.9'/%3E%3Cpath d='M82 18 L80 82 L120 198 L160 82 L158 18 Z' fill='%238fd7f6' opacity='.85'/%3E%3Cpath d='M80 82 H160 L120 198 Z' fill='%23e8fbff' opacity='.78'/%3E%3Cpath d='M50 45 L80 82 H120 L82 18 Z' fill='%235bb7f3' opacity='.9'/%3E%3Cpath d='M190 45 L160 82 H120 L158 18 Z' fill='%232b8fe0' opacity='.9'/%3E%3Cpath d='M80 82 L120 198 L50 45 Z' fill='%232b8fe0' opacity='.72'/%3E%3Cpath d='M160 82 L120 198 L190 45 Z' fill='%23bfefff' opacity='.82'/%3E%3Cpath d='M82 18 H158 M50 45 H190 M80 82 H160 M120 198 L80 82 M120 198 L160 82 M120 198 L50 45 M120 198 L190 45' fill='none' stroke='%23ffffff' stroke-opacity='.58' stroke-width='2'/%3E%3Cellipse cx='94' cy='48' rx='34' ry='11' fill='url(%23shine)' opacity='.72' transform='rotate(-12 94 48)'/%3E%3C/svg%3E")!important;
+}
+.fu116-empty-profiles strong,
+.fu93-empty-profiles strong{
+  display:block!important;
+  font-family:'Playfair Display',serif!important;
+  font-size:1.45rem!important;
+  color:#064E3B!important;
+  margin:.05rem 0 .35rem!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+.fu116-empty-profiles p,
+.fu93-empty-profiles p{
+  color:#6B7C76!important;
+  line-height:1.5!important;
+  font-weight:800!important;
+  font-size:.92rem!important;
+  max-width:430px!important;
+  margin:0 auto!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
+}
+/* El globito de perfil incompleto usa diamante y no salta */
+.toast{transform:translateX(-50%) translateZ(0)!important;will-change:opacity!important;backface-visibility:hidden!important;}
+.toast.t-ok,.toast.t-gd,.toast.t-w{transition:none!important;}
+/* Evita micro saltos de cards al refrescar perfiles */
+#pgrid{min-height:260px;}
+.pcard{transform:none!important;will-change:auto!important;}
+.pcard:hover{transform:none!important;}
+</style>
+<script id="fortyup-v117-diamond-empty-stable-js">
+(function(){
+  function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim()}
+  function cleanCity(v){return norm(String(v||'').split(',')[0])}
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]||c})}
+  function usersAll(){try{return (typeof visibleProfiles==='function'?visibleProfiles():g(K.U,[]))||[]}catch(_){return []}}
+  function blocked(){try{return g(K.BL,[])||[]}catch(_){return []}}
+  function prefOk(u){try{return typeof prefAllowsProfile==='function'?prefAllowsProfile(u):true}catch(_){return true}}
+  function distanceKm(a,b,c,d){try{return cDist(a,b,c,d)}catch(_){var R=6371,dLat=(c-a)*Math.PI/180,dLng=(d-b)*Math.PI/180;var x=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}}
+  function selectedCity(){return cleanCity(window._searchCity||window._locFilter||'')}
+  function userCity(u){return cleanCity((u&&(u.city||u.localidad||u.locationName||u.zone||u.location||u.town||u.barrio))||'')}
+  function matchCity(u,base){var uc=userCity(u); if(!base||!uc)return false; return uc===base || uc.indexOf(base)!==-1 || base.indexOf(uc)!==-1}
+  function areaMode(){if(window._fuLocationMode==='city'||selectedCity())return 'city'; if(window._fuLocationMode==='gps'||(window.MLAT&&window.MLNG))return 'gps'; return 'default'}
+  function filterUsers(list){var mode=areaMode(); if(mode==='city'){var base=selectedCity();return list.filter(function(u){return matchCity(u,base)})} var lat=window.MLAT||(window.CU&&CU.lat?CU.lat:null), lng=window.MLNG||(window.CU&&CU.lng?CU.lng:null); if(mode==='gps'&&lat&&lng){return list.filter(function(u){return u&&u.lat&&u.lng&&distanceKm(lat,lng,u.lat,u.lng)<=45}).sort(function(a,b){return distanceKm(lat,lng,a.lat,a.lng)-distanceKm(lat,lng,b.lat,b.lng)})} return list}
+  function emptyHtml(where,mode){var text=mode==='city'?'En '+esc(where||'esta zona')+' todavía no hay perfiles cargados. Volvé más tarde para conexiones reales ✨':'No hay perfiles cerca de tu ubicación actual por ahora. Volvé más tarde para conexiones reales ✨';return '<div class="fu116-empty-profiles fu117-stable-empty" data-fu117-empty="1"><div class="ico" aria-hidden="true"></div><strong>No hay perfiles cercanos por ahora</strong><p>'+text+'</p></div>'}
+  function renderCard(u,i){var sends=window.CU?g(kF(CU.id),[]):[], normal=sends.some(function(f){return f.t===u.id&&(typeof isNormalFortiActive==='function'?isNormalFortiActive(f):f.type!=='super')});var superSent=sends.some(function(f){return f.t===u.id&&f.type==='super'});var favs=window.CU?g(kFv(CU.id),[]):[];var fav=favs.indexOf(u.id)!==-1;var el=(typeof bCard==='function')?bCard(u,normal,fav,i,superSent):document.createElement('div');if(areaMode()==='city'){setTimeout(function(){try{var card=document.getElementById('ca-'+u.id); if(!card)return; card.querySelectorAll('.dist-b').forEach(function(x){x.remove()}); var inf=card.querySelector('.pcard-info,.pcard-body'); if(inf&&!inf.querySelector('.fu116-mode-note')){var note=document.createElement('div'); note.className='fu116-mode-note'; note.innerHTML='📍 '+esc(u.city||window._searchCity||'zona seleccionada'); inf.appendChild(note)}}catch(_){ }},0)}return el}
+  var lastSig='';
+  window.rProfiles=function(){
+    var grid=document.getElementById('pgrid'); if(!grid)return;
+    var locBar=document.getElementById('locationSearchBar'); if(locBar)locBar.style.display=window.CU?'flex':'none';
+    var bl=blocked();
+    var all=usersAll().filter(function(u){return u&&bl.indexOf(u.id)===-1&&prefOk(u)});
+    var users=filterUsers(all);
+    var mode=areaMode();
+    var sig=mode+'|'+(window._searchCity||window._locFilter||'')+'|'+users.map(function(u){return u.id}).join(',');
+    if(!users.length){
+      var emptySig='empty|'+mode+'|'+(window._searchCity||window._locFilter||'');
+      if(grid.dataset.fu117Sig===emptySig && grid.querySelector('[data-fu117-empty="1"]'))return;
+      grid.dataset.fu117Sig=emptySig;
+      grid.innerHTML=emptyHtml(window._searchCity||window._locFilter||'esta zona',mode);
+      return;
+    }
+    if(grid.dataset.fu117Sig===sig && grid.querySelector('.pcard')){try{if(typeof fixSuperDiamondButtons==='function')fixSuperDiamondButtons(); if(typeof injectOnlineCards==='function')injectOnlineCards()}catch(_){ } return;}
+    grid.dataset.fu117Sig=sig;
+    grid.innerHTML='';
+    users.forEach(function(u,i){grid.appendChild(renderCard(u,i))});
+    setTimeout(function(){try{if(typeof fixSuperDiamondButtons==='function')fixSuperDiamondButtons(); if(typeof injectOnlineCards==='function')injectOnlineCards()}catch(_){ }},60);
+  };
+  /* Reemplaza hojitas de avisos por diamante para mantener identidad visual */
+  if(typeof window.toast==='function'&&!window.toast.__fu117Diamond){var oldToast=window.toast;window.toast=function(msg,type){msg=String(msg||'').replace(/🌿|🌱/g,'💎');return oldToast.call(this,msg,type)};window.toast.__fu117Diamond=true;}
+  /* Si algún script viejo deja empty con hojita, lo normalizamos sin rehacer toda la tarjeta */
+  window.fu117NormalizeEmpty=function(){document.querySelectorAll('.fu116-empty-profiles .ico,.fu93-empty-profiles .ico').forEach(function(x){x.textContent='';});};
+  setTimeout(window.fu117NormalizeEmpty,80);
+})();
+</script>
