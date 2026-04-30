@@ -15189,3 +15189,71 @@ html,body{overflow-x:hidden!important;}
   setInterval(function(){markSelf(true);repaint()},12000);
 })();
 </script>
+<!-- === FortyUp v101 - cierre de ventanas centrado en todas las pantallas === -->
+<style>
+.m-cl,
+.auth-x,
+.fu-v76-close,
+.fu-notif-close,
+.fu-map-close,
+.fu-terms-head .fu-terms-close{
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  max-width:42px!important;
+  max-height:42px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:50%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:0!important;
+  font-size:0!important;
+  font-weight:900!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+  flex:0 0 42px!important;
+  transform:none!important;
+}
+.m-cl::before,
+.auth-x::before,
+.fu-v76-close::before,
+.fu-notif-close::before,
+.fu-map-close::before,
+.fu-terms-head .fu-terms-close::before{
+  content:'×'!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:100%!important;
+  font-family:'Nunito',Arial,sans-serif!important;
+  font-size:30px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  transform:translateY(-1px)!important;
+}
+.m-cl,
+.auth-x,
+.fu-map-close,
+.fu-terms-head .fu-terms-close{
+  background:rgba(255,255,255,.96)!important;
+  border:1.7px solid #D1E8DF!important;
+  color:#064E3B!important;
+  box-shadow:0 8px 18px rgba(6,78,59,.12)!important;
+}
+.fu-notif-close{
+  background:rgba(255,255,255,.18)!important;
+  border:1.5px solid rgba(255,255,255,.3)!important;
+  color:#fff!important;
+}
+.fu-v76-close{
+  background:#F0FDF8!important;
+  border:1.5px solid #CDE9DD!important;
+  color:#064E3B!important;
+}
+</style>
