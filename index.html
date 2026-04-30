@@ -13999,3 +13999,155 @@ function dataUrlBytes(s){return Math.ceil((String(s||'').length*3)/4)}function c
 window.fuShowTerms=function(){var old=document.querySelector('.fu-terms-box');if(old)old.remove();var ov=document.createElement('div');ov.className='fu-terms-box';ov.onclick=function(e){if(e.target===ov)ov.remove()};ov.innerHTML='<div class="fu-terms-card"><h3>Términos y condiciones</h3><p>Acá iría el texto legal de FortyUp: uso responsable, privacidad, seguridad, mayores de 40, política de fotos, reportes y bloqueo.</p><ul><li>La app es para personas mayores de 40.</li><li>Los usuarios son responsables del contenido que publican.</li><li>Las fotos de perfil son públicas; los álbumes privados solo se comparten con autorización.</li><li>Fortis y Súper Diamantes son señales dentro de la app y no garantizan respuesta.</li><li>La ubicación puede usarse para mostrar distancia aproximada.</li></ul><button class="fu-terms-close" onclick="this.closest(\'.fu-terms-box\').remove()">Entendido</button></div>';document.body.appendChild(ov)};function insertTermsLinks(){var reg=document.querySelector('#page-register .fcard');if(reg&&!reg.querySelector('.fu-terms-link')){var a=document.createElement('button');a.type='button';a.className='fu-terms-link';a.textContent='📄 Ver términos y condiciones';a.onclick=window.fuShowTerms;reg.appendChild(a)}var auth=document.querySelector('.auth-box');if(auth&&!auth.querySelector('.fu-terms-link')){var b=document.createElement('button');b.type='button';b.className='fu-terms-link';b.textContent='📄 Términos y condiciones';b.onclick=window.fuShowTerms;auth.appendChild(b)}}
 function presence(online){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.lastSeen=ts;CU.lastActive=ts;CU.online=online!==false;saveUsers(allUsers().map(function(u){return u&&u.id===CU.id?Object.assign({},u,{online:online!==false,lastSeen:ts,lastActive:ts}):u}))}function tick(){presence(true);beautifyLoc();paintDiamond();refreshStatusDots();insertTermsLinks()}document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.fup-crystal-counter').forEach(function(el){if(!el.dataset.crystals)el.innerHTML='💎 0'});setTimeout(tick,80);setTimeout(tick,800)});document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')tick();else presence(false)});window.addEventListener('beforeunload',function(){presence(false)});document.addEventListener('click',function(){setTimeout(tick,90)},true);setInterval(tick,18000)})();
 </script>
+
+<!-- FortyUp v10-final-85: seguridad con términos + estados sin duplicados + contador sin titilar -->
+<style id="fortyup-v85-final-fixes">
+/* Evita el flash 1→0 del contador hasta que JS pinte el valor real */
+#page-fortyplus .fup-crystal-counter{visibility:hidden!important;min-width:72px!important;justify-content:center!important;}
+#page-fortyplus .fup-crystal-counter.fu-counter-ready{visibility:visible!important;}
+
+/* Estado único: punto para tarjetas/modal, pill solo en chat */
+.fu-presence-dot{display:inline-flex!important;width:13px!important;height:13px!important;border-radius:999px!important;vertical-align:middle!important;box-shadow:0 0 0 5px rgba(16,185,129,.12),0 0 14px rgba(16,185,129,.55)!important;background:#10B981!important;flex:0 0 13px!important;}
+.fu-presence-dot.off{background:#EF4444!important;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 14px rgba(239,68,68,.45)!important;}
+.fu-presence-pill{display:inline-flex!important;align-items:center!important;gap:.36rem!important;border-radius:999px!important;border:1.5px solid rgba(16,185,129,.28)!important;background:#ECFDF5!important;color:#064E3B!important;padding:.18rem .56rem!important;font-size:.72rem!important;font-weight:900!important;white-space:nowrap!important;line-height:1!important;}
+.fu-presence-pill.off{border-color:rgba(239,68,68,.28)!important;background:#FEF2F2!important;color:#991B1B!important;}
+.fu-presence-pill .fu-presence-dot{width:9px!important;height:9px!important;flex-basis:9px!important;box-shadow:0 0 0 3px rgba(16,185,129,.12)!important;}
+.fu-presence-pill.off .fu-presence-dot{box-shadow:0 0 0 3px rgba(239,68,68,.12)!important;}
+.fu-presence-slot{display:inline-flex!important;align-items:center!important;margin-top:.35rem!important;}
+.chat-hdr .fu-presence-slot{margin-left:auto!important;margin-top:0!important;}
+.pcard .fu-presence-slot{position:absolute!important;top:.7rem!important;left:.7rem!important;background:rgba(255,255,255,.84)!important;border-radius:999px!important;padding:.34rem!important;backdrop-filter:blur(8px)!important;box-shadow:0 6px 18px rgba(6,78,59,.10)!important;}
+.pcard{position:relative!important;}
+
+/* Seguridad y términos */
+.fu-sec-row{display:flex;align-items:center;gap:.82rem;padding:.95rem 1.15rem;border-bottom:1px solid #ECFDF5;cursor:pointer;transition:.18s;background:#fff;}
+.fu-sec-row:hover{background:#F0FDF8;}
+.fu-sec-ico{width:38px;height:38px;border-radius:50%;background:#ECFDF5;display:flex;align-items:center;justify-content:center;flex:0 0 38px;font-size:1.05rem;}
+.fu-sec-t{font-weight:900;color:#064E3B;font-size:.92rem;}
+.fu-sec-d{font-size:.72rem;color:#6B7C76;margin-top:.05rem;line-height:1.25;}
+.fu-terms-modal{position:fixed;inset:0;z-index:1600;background:rgba(6,20,16,.76);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;}
+.fu-terms-panel{width:min(92vw,520px);max-height:86vh;overflow:auto;background:#fff;border-radius:26px;box-shadow:0 32px 80px rgba(0,0,0,.26);border:1.5px solid #D1E8DF;}
+.fu-terms-head{position:sticky;top:0;background:#fff;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.15rem;border-bottom:1px solid #ECFDF5;}
+.fu-terms-head h3{font-family:'Playfair Display',serif;font-size:1.35rem;color:#064E3B;margin:0;}
+.fu-terms-close{width:34px;height:34px;border-radius:50%;border:1.5px solid #D1E8DF;background:#F0FDF8;color:#064E3B;font-weight:900;cursor:pointer;}
+.fu-terms-body{padding:1rem 1.15rem 1.25rem;color:#2D4A40;font-size:.86rem;line-height:1.55;}
+.fu-terms-body h4{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#10B981;margin:1rem 0 .35rem;font-weight:900;}
+.fu-terms-body ul{padding-left:1.1rem;margin:.35rem 0;}
+.fu-terms-body li{margin:.32rem 0;}
+</style>
+<script id="fortyup-v85-final-fixes-js">
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
+  function users(){try{return typeof us==='function'?us():JSON.parse(localStorage.getItem('fu_users')||'[]')}catch(_){return []}}
+  function saveUsers(a){try{if(typeof sv==='function')sv('fu_users',a);else localStorage.setItem('fu_users',JSON.stringify(a))}catch(_){}}
+  function byId(id){return users().find(function(u){return u&&u.id===id})}
+  function me(){return window.CU&&CU.id?(byId(CU.id)||CU):null}
+  function isOnline(u){
+    if(!u)return false;
+    if(window.CU&&u.id===CU.id)return true;
+    if(u.online===true)return true;
+    var t=Date.parse(u.lastSeen||u.lastActive||0);
+    return !!(t && Date.now()-t<3*60*1000);
+  }
+  function dot(u){return '<span class="fu-presence-dot '+(isOnline(u)?'on':'off')+'"></span>'}
+  function pill(u){var on=isOnline(u);return '<span class="fu-presence-pill '+(on?'on':'off')+'"><span class="fu-presence-dot '+(on?'on':'off')+'"></span>'+(on?'Conectado':'Desconectado')+'</span>'}
+  function cleanupStatus(root){
+    root=root||document;
+    root.querySelectorAll('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-slot,.fu-presence-pill').forEach(function(x){x.remove()});
+  }
+  function currentModalUser(){
+    if(window._fuOpenProfileId)return byId(window._fuOpenProfileId);
+    var nm=document.querySelector('.m-body .m-nm, .m-nm');
+    if(nm){var n=(nm.textContent||'').split(',')[0].trim();return users().find(function(u){return (u.name||'').trim()===n})}
+    return null;
+  }
+  function paintPresence(){
+    /* Tarjetas: solo punto */
+    document.querySelectorAll('.pcard').forEach(function(card){
+      card.querySelectorAll('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-slot,.fu-presence-pill').forEach(function(x){x.remove()});
+      var id=(card.id||'').replace(/^ca-/,'');
+      var u=byId(id);
+      if(!u)return;
+      var slot=document.createElement('div');slot.className='fu-presence-slot';slot.innerHTML=dot(u);card.appendChild(slot);
+    });
+    /* Modal: un solo punto cerca de datos */
+    var body=document.querySelector('.m-box .m-body,#mCont .m-body');
+    if(body){
+      body.querySelectorAll('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-slot,.fu-presence-pill').forEach(function(x){x.remove()});
+      var u=currentModalUser();
+      if(u){var mt=body.querySelector('.m-mt')||body.querySelector('[class*=meta]');var slot=document.createElement('div');slot.className='fu-presence-slot';slot.innerHTML=dot(u);if(mt&&mt.parentNode)mt.parentNode.insertBefore(slot,mt.nextSibling);else body.insertBefore(slot,body.firstChild)}
+    }
+    /* Chat: una sola palabra/pill */
+    var hdr=document.querySelector('.chat-hdr');
+    if(hdr){
+      hdr.querySelectorAll('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-slot,.fu-presence-pill').forEach(function(x){x.remove()});
+      var u=window.CW || currentModalUser();
+      if(u){var slot=document.createElement('div');slot.className='fu-presence-slot';slot.innerHTML=pill(u);hdr.appendChild(slot)}
+    }
+  }
+
+  function diamondBalance(){
+    var u=me();
+    if(!u)return 0;
+    var n=(typeof u.superDiamonds==='number'&&isFinite(u.superDiamonds))?u.superDiamonds:1;
+    return Math.max(0,parseInt(n,10)||0);
+  }
+  function paintDiamond(){
+    var n=diamondBalance();
+    document.querySelectorAll('#page-fortyplus .fup-crystal-counter,.fup-crystal-counter').forEach(function(el){
+      el.innerHTML='💎 '+n;
+      el.dataset.crystals=String(n);
+      el.classList.add('fu-counter-ready');
+    });
+  }
+
+  function setPresence(on){
+    if(!window.CU||!CU.id)return;
+    var ts=new Date().toISOString();
+    CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;
+    var a=users().map(function(u){return u&&u.id===CU.id?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts}):u});
+    saveUsers(a);
+  }
+
+  window.fuShowTermsFull=function(){
+    var old=document.querySelector('.fu-terms-modal');if(old)old.remove();
+    var ov=document.createElement('div');ov.className='fu-terms-modal';
+    ov.innerHTML='<div class="fu-terms-panel">'
+      +'<div class="fu-terms-head"><h3>Términos y condiciones</h3><button class="fu-terms-close" onclick="this.closest(\'.fu-terms-modal\').remove()">✕</button></div>'
+      +'<div class="fu-terms-body">'
+      +'<p>Estos términos regulan el uso de FortyUp, una aplicación para personas mayores de 40 orientada a conectar por intereses, planes y afinidad.</p>'
+      +'<h4>Uso de la aplicación</h4><ul><li>El usuario declara que la información cargada en su perfil es real y actualizada.</li><li>No se permite suplantar identidad, acosar, amenazar ni publicar contenido ofensivo, ilegal o engañoso.</li><li>FortyUp puede limitar, suspender o eliminar cuentas que incumplan estas reglas.</li></ul>'
+      +'<h4>Edad mínima</h4><ul><li>La comunidad está pensada para mayores de 40. La app puede solicitar datos para validar edad y seguridad.</li></ul>'
+      +'<h4>Fotos, videos y álbumes</h4><ul><li>La foto de perfil es pública dentro de la app.</li><li>Los álbumes públicos pueden verse desde la tarjeta del usuario.</li><li>Los álbumes privados no se muestran públicamente; otros usuarios solo verán que existen y podrán pedir acceso por chat.</li><li>El usuario es responsable de las fotos y videos que sube.</li></ul>'
+      +'<h4>Ubicación y distancia</h4><ul><li>La app puede usar ubicación aproximada para mostrar perfiles cercanos y calcular distancias en metros o kilómetros.</li><li>La ubicación puede actualizarse según el lugar donde el usuario usa la app.</li></ul>'
+      +'<h4>Fortis y Súper Diamantes</h4><ul><li>Los Fortis son señales de interés. Se pueden enviar a distintos usuarios, pero no repetir al mismo usuario.</li><li>El Súper Diamante es una señal especial de mayor visibilidad. El usuario puede tener uno disponible, usarlo, comprar más o recibir uno mediante funciones futuras como publicidad o minijuegos.</li><li>Enviar Fortis o Súper Diamantes no garantiza respuesta ni match.</li></ul>'
+      +'<h4>Privacidad y seguridad</h4><ul><li>El usuario puede bloquear o reportar perfiles.</li><li>La app puede mostrar estado conectado/desconectado según actividad reciente dentro de la aplicación.</li><li>Las conversaciones y datos deben usarse con respeto y responsabilidad.</li></ul>'
+      +'<h4>Pagos y funciones premium</h4><ul><li>Las funciones premium, suscripciones, publicidad recompensada o minijuegos podrán habilitarse en futuras versiones.</li><li>Las condiciones comerciales se informarán antes de cualquier compra o activación.</li></ul>'
+      +'<h4>Responsabilidad</h4><ul><li>FortyUp facilita conexiones, pero cada usuario decide con quién hablar, encontrarse o compartir información.</li><li>Se recomienda no compartir datos sensibles y tomar precauciones en encuentros presenciales.</li></ul>'
+      +'<button class="btn btn-p btn-fw" onclick="this.closest(\'.fu-terms-modal\').remove()">Acepto</button>'
+      +'</div></div>';
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.remove()});
+    document.body.appendChild(ov);
+  };
+
+  window.showSecurityMenu=function(){
+    var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:1500;background:rgba(6,20,16,.75);display:flex;align-items:center;justify-content:center;padding:1.2rem;backdrop-filter:blur(8px)';
+    ov.innerHTML='<div style="background:#fff;border-radius:24px;max-width:390px;width:100%;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.25)">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.25rem;border-bottom:1px solid #ECFDF5"><strong style="font-family:Playfair Display,serif;font-size:1.18rem;color:#064E3B">🛡 Seguridad</strong><button style="background:#ECFDF5;border:0;border-radius:50%;width:32px;height:32px;color:#064E3B;font-weight:900" onclick="this.closest(\'div[style*=fixed]\').remove()">✕</button></div>'
+      +'<div class="fu-sec-row" onclick="this.closest(\'div[style*=fixed]\').remove(); if(window.changePass)changePass();"><div class="fu-sec-ico">🔑</div><div style="flex:1"><div class="fu-sec-t">Cambiar contraseña</div><div class="fu-sec-d">Actualizá tu acceso a la cuenta.</div></div><span>›</span></div>'
+      +'<div class="fu-sec-row" onclick="this.closest(\'div[style*=fixed]\').remove(); fuShowTermsFull();"><div class="fu-sec-ico">📄</div><div style="flex:1"><div class="fu-sec-t">Términos y condiciones</div><div class="fu-sec-d">Reglas legales, seguridad, privacidad, Fortis y Súper Diamantes.</div></div><span>›</span></div>'
+      +'</div>';
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.remove()});
+    document.body.appendChild(ov);
+  };
+
+  function wrap(name,fn){var old=window[name];if(typeof old==='function'&&!old.__fuV85){var nw=function(){var r=old.apply(this,arguments);setTimeout(fn,40);setTimeout(fn,180);return r};nw.__fuV85=true;window[name]=nw}}
+  function refresh(){paintDiamond();paintPresence();}
+  ['goTo','rProfiles','openMod','startChat','rChatMsgs','rMyP'].forEach(function(n){wrap(n,refresh)});
+  var oldSD=window.sendSuperDiamond;if(typeof oldSD==='function'&&!oldSD.__fuV85){window.sendSuperDiamond=function(id){var r=oldSD.apply(this,arguments);setTimeout(paintDiamond,30);setTimeout(paintDiamond,200);return r};window.sendSuperDiamond.__fuV85=true}
+  document.addEventListener('DOMContentLoaded',function(){setPresence(true);setTimeout(refresh,50);setTimeout(refresh,500);});
+  document.addEventListener('click',function(){setTimeout(refresh,80)},true);
+  document.addEventListener('visibilitychange',function(){setPresence(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(refresh,80)});
+  window.addEventListener('beforeunload',function(){setPresence(false)});
+  setInterval(function(){setPresence(true);refresh()},20000);
+})();
+</script>
