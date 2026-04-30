@@ -14151,3 +14151,97 @@ function presence(online){if(!window.CU||!CU.id)return;var ts=new Date().toISOSt
   setInterval(function(){setPresence(true);refresh()},20000);
 })();
 </script>
+
+
+<style id="fu-v86-create-profile-final">
+/* === FortyUp v86 - registro más simple + estabilidad visual === */
+#page-register .inner.inner-s{max-width:760px!important;padding-bottom:7.2rem!important;}
+#page-register .back-b{margin-bottom:.9rem!important;}
+#page-register .pg-tit{font-size:clamp(2.25rem,8vw,4rem)!important;line-height:.96!important;color:#063D33!important;letter-spacing:-.04em!important;}
+#page-register .pg-sub{font-size:1.02rem!important;color:#6B7C76!important;margin-top:.35rem!important;}
+#page-register .fcard{position:relative!important;border-radius:34px!important;border:1.5px solid rgba(167,243,208,.75)!important;box-shadow:0 22px 65px rgba(6,78,59,.12)!important;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(247,255,251,.98))!important;padding:1.25rem!important;overflow:hidden!important;}
+#page-register .fcard:before{content:''!important;display:block!important;position:absolute!important;right:-70px!important;top:-90px!important;width:210px!important;height:210px!important;border-radius:50%!important;background:radial-gradient(circle,rgba(16,185,129,.13),transparent 68%)!important;pointer-events:none!important;margin:0!important;filter:none!important;}
+#page-register .fcard:after{content:'💎'!important;position:absolute!important;right:1.2rem!important;top:1rem!important;font-size:2.8rem!important;opacity:.12!important;pointer-events:none!important;}
+#page-register .reg-steps,#page-register .reg-flow-live{display:none!important;}
+#page-register .fu-reg-welcome{position:relative;z-index:1;margin:.1rem 0 1rem;padding:1rem;border-radius:26px;background:linear-gradient(135deg,#064E3B,#059669);color:#fff;box-shadow:0 14px 34px rgba(6,78,59,.18);overflow:hidden;}
+#page-register .fu-reg-welcome:after{content:'FortyUp';position:absolute;right:-.4rem;bottom:-1.1rem;font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(255,255,255,.06);}
+#page-register .fu-reg-welcome strong{display:block;font-family:'Playfair Display',serif;font-size:1.6rem;line-height:1.05;margin-bottom:.25rem;}
+#page-register .fu-reg-welcome span{font-size:.9rem;color:rgba(236,253,245,.92);font-weight:800;}
+#page-register .fu-reg-guide{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin:0 0 1rem;position:relative;z-index:1;}
+#page-register .fu-reg-guide .g{background:#fff;border:1.5px solid #D1E8DF;border-radius:18px;padding:.62rem .45rem;text-align:center;color:#6B7C76;font-size:.67rem;font-weight:900;box-shadow:0 8px 22px rgba(6,78,59,.05)}
+#page-register .fu-reg-guide .g b{display:flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;margin:0 auto .22rem;background:#F0FDF8;color:#064E3B;border:1px solid #A7F3D0;font-size:.78rem;}
+#page-register .fsec{position:relative!important;z-index:1!important;background:linear-gradient(135deg,#ECFDF5,#fff)!important;border:1.5px solid #D1E8DF!important;border-radius:999px!important;padding:.55rem .85rem!important;margin:1.1rem 0 .85rem!important;color:#064E3B!important;font-size:.78rem!important;letter-spacing:.13em!important;display:inline-flex!important;align-items:center!important;gap:.4rem!important;}
+#page-register .fsec:nth-of-type(1):before{content:'👤';letter-spacing:0}
+#page-register .fsec:nth-of-type(2):before{content:'💚';letter-spacing:0}
+#page-register .fsec:nth-of-type(3):before{content:'🍷';letter-spacing:0}
+#page-register .fsec:nth-of-type(4):before{content:'✍️';letter-spacing:0}
+#page-register .fsec.reg-photos-sec:before{content:'📸'!important;letter-spacing:0!important;margin:0!important;}
+#page-register .frow{gap:.72rem!important;margin-bottom:.72rem!important;}
+#page-register .fld label{font-size:.76rem!important;color:#064E3B!important;letter-spacing:.02em!important;}
+#page-register .fld input,#page-register .fld select,#page-register .fld textarea{border-radius:22px!important;padding:.86rem 1rem!important;border:1.7px solid #CDE9DD!important;background:#F7FFFB!important;font-size:.95rem!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)!important;}
+#page-register .fld textarea{min-height:92px!important;}
+#page-register .gps-btn,#page-register .photo-btn{border-radius:999px!important;background:#fff!important;border:1.7px solid #10B981!important;color:#064E3B!important;box-shadow:0 8px 20px rgba(6,78,59,.06)!important;padding:.62rem 1rem!important;font-size:.82rem!important;}
+#page-register .chips{gap:.44rem!important;}
+#page-register .chip{border-radius:999px!important;background:#fff!important;border:1.5px solid #CDE9DD!important;padding:.6rem .86rem!important;box-shadow:0 5px 16px rgba(6,78,59,.04)!important;}
+#page-register .chip:has(input:checked){background:#E6F8EF!important;border-color:#10B981!important;color:#064E3B!important;box-shadow:0 0 0 3px rgba(16,185,129,.12)!important;}
+#page-register .chip-g:has(input:checked){background:#FFF8D8!important;border-color:#F2B705!important;color:#7c5500!important;}
+#page-register .ph-prev{width:86px!important;height:86px!important;border:4px solid #10B981!important;box-shadow:0 10px 24px rgba(6,78,59,.15)!important;}
+#page-register .f-sub{position:sticky!important;bottom:86px!important;z-index:120!important;background:linear-gradient(180deg,rgba(247,255,251,0),rgba(247,255,251,.98) 28%,rgba(247,255,251,.98))!important;margin:1.2rem -1.25rem -1.25rem!important;padding:1rem 1.25rem 1.15rem!important;}
+#page-register .f-sub .btn{width:100%!important;justify-content:center!important;border-radius:999px!important;box-shadow:0 12px 28px rgba(6,78,59,.24)!important;}
+#page-register .fu-accept-terms{margin:.95rem 0 0!important;padding:.8rem .9rem!important;border-radius:22px!important;background:#F0FDF8!important;border:1.5px solid #A7F3D0!important;color:#2D4A40!important;display:flex!important;gap:.65rem!important;align-items:flex-start!important;font-size:.82rem!important;line-height:1.35!important;font-weight:800!important;}
+#page-register .fu-accept-terms input{width:20px!important;height:20px!important;accent-color:#059669!important;flex:0 0 20px!important;margin-top:.05rem!important;}
+#page-register .fu-accept-terms button{color:#064E3B!important;text-decoration:underline!important;font-weight:900!important;background:none!important;border:0!important;padding:0!important;}
+.fu-clean-dot-status{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:14px!important;height:14px!important;border-radius:50%!important;margin:.25rem .35rem .25rem 0!important;vertical-align:middle!important;border:2px solid #fff!important;box-shadow:0 0 0 3px rgba(16,185,129,.16)!important;background:#10B981!important;animation:none!important;}
+.fu-clean-dot-status.off{background:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.13)!important;}
+.chat-hdr .fu-clean-chat-status{margin-left:auto!important;display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .58rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;font-size:.72rem!important;font-weight:900!important;white-space:nowrap!important;}
+.chat-hdr .fu-clean-chat-status.off{border-color:#fecaca!important;background:#fef2f2!important;color:#b91c1c!important;}
+.fu-clean-chat-status .dot{width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block}.fu-clean-chat-status.off .dot{background:#ef4444}
+.fup-crystal-counter{visibility:visible!important;}
+.fup-crystal-counter:not(.fu-v86-ready){opacity:0!important;}
+.fu-reg-bottom-links{text-align:center;margin:.8rem 0 .2rem;color:#6B7C76;font-size:.78rem;font-weight:800}.fu-reg-bottom-links button{color:#064E3B;text-decoration:underline;font-weight:900;background:none;border:0}
+@media(max-width:520px){#page-register .fu-reg-guide{grid-template-columns:repeat(2,1fr)}#page-register .fcard{padding:1rem!important}#page-register .f-sub{margin-left:-1rem!important;margin-right:-1rem!important;padding-left:1rem!important;padding-right:1rem!important}.chat-hdr .fu-clean-chat-status{font-size:.66rem!important;padding:.24rem .44rem!important}}
+</style>
+<script id="fu-v86-final-behavior">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function me(){return window.CU||read((window.K&&K.C)||'fu_c',null)}
+  function userById(id){return users().find(function(u){return u&&u.id===id})||(window.CU&&CU.id===id?CU:null)}
+  function currentModalUser(){var id=window._fuOpenProfileId||null;return id?userById(id):null}
+  function online(u){if(!u)return false;if(window.CU&&u.id===CU.id)return true;var t=Date.parse(u.lastSeen||u.lastActive||0);return !!(u.online===true && (!t || Date.now()-t<3*60*1000)) || !!(t&&Date.now()-t<3*60*1000)}
+  function dot(u){return '<span class="fu-clean-dot-status '+(online(u)?'on':'off')+'" title="'+(online(u)?'Conectado':'Desconectado')+'"></span>'}
+  function chatPill(u){var on=online(u);return '<span class="fu-clean-chat-status '+(on?'on':'off')+'"><span class="dot"></span>'+(on?'Conectado':'Desconectado')+'</span>'}
+  function cleanPresence(){
+    qa('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status').forEach(function(x){x.remove()});
+    users().forEach(function(u){var card=q('#ca-'+u.id);if(card){var body=q('.pcard-body',card)||card;var holder=q('.pcard-meta',card)||q('.pcard-name',card)||body; if(holder){var span=document.createElement('span');span.innerHTML=dot(u); if(holder.classList&&holder.classList.contains('pcard-meta')) holder.insertBefore(span.firstChild,holder.firstChild); else body.insertBefore(span.firstChild,body.firstChild)}}});
+    var mb=q('#mCont .m-body')||q('.m-box .m-body'); if(mb){var u=currentModalUser();if(u){var mt=q('.m-mt',mb)||q('[class*=meta]',mb);var el=document.createElement('span');el.innerHTML=dot(u); if(mt) mt.insertBefore(el.firstChild,mt.firstChild);}}
+    var hdr=q('.chat-hdr'); if(hdr&&window.CW){var el=document.createElement('span');el.innerHTML=chatPill(window.CW);hdr.appendChild(el.firstChild)}
+  }
+  function diamonds(){var u=me(); if(!u)return 0; var n=(typeof u.superDiamonds==='number')?u.superDiamonds:(u.superDiamondUsed?0:1); return Math.max(0,parseInt(n,10)||0)}
+  function paintDiamonds(){qa('.fup-crystal-counter,#page-fortyplus [class*=crystal][class*=counter]').forEach(function(el){el.innerHTML='💎 '+diamonds();el.dataset.crystals=String(diamonds());el.classList.add('fu-v86-ready')})}
+  function setPresence(on){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;saveUsers(users().map(function(u){return u&&u.id===CU.id?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts}):u}))}
+  function addRegisterTop(){var page=q('#page-register'); if(!page||page.dataset.v86Reg)return; page.dataset.v86Reg='1';
+    var title=q('#page-register .pg-tit'); if(title){title.textContent='Armá tu perfil'; var sub=q('#page-register .pg-sub'); if(sub)sub.textContent='Simple, rápido y con tus gustos reales.'}
+    var f=q('#page-register .fcard'); if(f){var welcome=document.createElement('div');welcome.className='fu-reg-welcome';welcome.innerHTML='<strong>Te presentamos como sos</strong><span>Completá estos datos para que FortyUp te muestre personas compatibles y cercanas.</span>';f.insertBefore(welcome,f.firstChild);var guide=document.createElement('div');guide.className='fu-reg-guide';guide.innerHTML='<div class="g"><b>1</b>Datos</div><div class="g"><b>2</b>Gustos</div><div class="g"><b>3</b>Sobre vos</div><div class="g"><b>4</b>Foto</div>';f.insertBefore(guide,welcome.nextSibling);}
+  }
+  window.fuShowTermsFull=window.fuShowTermsFull||function(){alert('Términos y condiciones de FortyUp')};
+  function addTerms(){
+    var f=q('#page-register .fcard'); if(f&&!q('.fu-accept-terms',f)){var sub=q('#page-register .f-sub');var lab=document.createElement('label');lab.className='fu-accept-terms';lab.innerHTML='<input type="checkbox" id="fuTermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull()">Términos y Condiciones</button>. Soy responsable de lo que escribo, las fotos y videos que subo, y del uso respetuoso de la app.</span>';f.insertBefore(lab,sub||null);var links=document.createElement('div');links.className='fu-reg-bottom-links';links.innerHTML='<button type="button" onclick="fuShowTermsFull()">Términos</button> · <button type="button" onclick="fuShowTermsFull()">Privacidad</button>';f.appendChild(links)}
+    var oldSave=window.saveProfile; if(typeof oldSave==='function'&&!oldSave.__fuV86Terms){window.saveProfile=function(){var cb=q('#fuTermsOk'); if(cb&&!cb.checked){if(window.toast)toast('Aceptá los términos para continuar.','w'); else alert('Aceptá los términos para continuar.'); return;} return oldSave.apply(this,arguments)}; window.saveProfile.__fuV86Terms=true}
+  }
+  function removeAudio(){qa('#audioBtn,.chat-audio-btn').forEach(function(b){b.remove()});qa('.chat-in-a').forEach(function(x){x.style.gridTemplateColumns='42px 1fr 46px'})}
+  function refresh(){addRegisterTop();addTerms();removeAudio();paintDiamonds();cleanPresence()}
+  function wrap(name){var old=window[name];if(typeof old==='function'&&!old.__fuV86){var nw=function(){var r=old.apply(this,arguments);setTimeout(refresh,60);setTimeout(refresh,250);return r};nw.__fuV86=true;window[name]=nw}}
+  ['goTo','go','rProfiles','openMod','startChat','rChatMsgs','rMyP','rHome'].forEach(wrap);
+  document.addEventListener('DOMContentLoaded',function(){setPresence(true);refresh();setTimeout(refresh,600)});
+  document.addEventListener('click',function(){setTimeout(refresh,90)},true);
+  document.addEventListener('visibilitychange',function(){setPresence(document.visibilityState==='visible'); if(document.visibilityState==='visible')setTimeout(refresh,80)});
+  window.addEventListener('beforeunload',function(){setPresence(false)});
+  setInterval(function(){setPresence(true);refresh()},20000);
+})();
+</script>
