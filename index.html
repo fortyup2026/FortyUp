@@ -5724,7 +5724,7 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 
 <div class="page" id="page-profiles">
   <div class="inner"><div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
-  <div><h2 class="pg-tit">Iniciar sesión</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
+  <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
   <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
 <div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
@@ -7067,13 +7067,16 @@ function fuProfileDistanceFromBase(u,lat,lng){
   if(lat&&lng&&u&&u.lat&&u.lng)return cDist(lat,lng,u.lat,u.lng);
   return null;
 }
+function fuNormalizePlaceName(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/,.*$/,'').trim()}
 function fuProfileMatchesArea(u,lat,lng,cityBase,hasExplicitArea){
   if(!u)return false;
   var d=fuProfileDistanceFromBase(u,lat,lng);
   if(d!==null)return d<=FU_PROFILE_RADIUS_KM;
-  var uc=String(u.city||'').toLowerCase();
-  if(cityBase&&uc.indexOf(cityBase)!==-1)return true;
-  if(!hasExplicitArea&&!lat&&!lng&&!cityBase)return true;
+  var base=fuNormalizePlaceName(cityBase);
+  var uc=fuNormalizePlaceName(u.city||'');
+  var uz=fuNormalizePlaceName(u.zone||u.locationName||u.localidad||'');
+  if(base&&(uc.indexOf(base)!==-1||base.indexOf(uc)!==-1||uz.indexOf(base)!==-1))return true;
+  if(!hasExplicitArea&&!lat&&!lng&&!base)return true;
   return false;
 }
 function fuEmptyProfilesText(hasExplicitArea){
@@ -15105,6 +15108,10 @@ body.has-session #page-register .fu-terms-link{
 .fu-map-modal{position:fixed!important;inset:0!important;z-index:2500!important;display:none;align-items:center;justify-content:center;background:rgba(6,20,16,.64);backdrop-filter:blur(8px);padding:1rem;}
 .fu-map-box{width:min(94vw,720px);height:min(78vh,680px);background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;border:1.5px solid rgba(167,243,208,.8)}
 .fu-map-head{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;border-bottom:1px solid #D1E8DF;background:#F0FDF8;color:#064E3B;font-weight:900}
+.fu-map-search{display:grid;grid-template-columns:1fr auto;gap:.55rem;padding:.72rem .85rem;background:#FFFFFF;border-bottom:1px solid #D1E8DF}
+.fu-map-search input{width:100%;background:#F0FDF8;border:1.5px solid #A7F3D0;border-radius:999px;padding:.65rem .9rem;font-size:.86rem;font-weight:800;color:#064E3B;outline:none}
+.fu-map-search input:focus{background:#fff;border-color:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.fu-map-search button{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;border-radius:999px;padding:.65rem .9rem;font-size:.82rem;font-weight:900;box-shadow:0 6px 16px rgba(6,78,59,.18)}
 .fu-map-close{width:34px;height:34px;border-radius:50%;background:#fff;border:1.5px solid #D1E8DF;color:#064E3B;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #mapSearchContainer{flex:1;min-height:330px;width:100%;background:#EAFBF4;}
 .fu-map-foot{padding:.75rem 1rem;background:#fff;border-top:1px solid #D1E8DF;display:flex;flex-direction:column;gap:.55rem}
@@ -15121,7 +15128,7 @@ body.has-session #page-register .fu-terms-link{
     modal=document.createElement('div');
     modal.id='mapSearchModal';
     modal.className='fu-map-modal';
-    modal.innerHTML='<div class="fu-map-box"><div class="fu-map-head"><div>🗺 Elegí una zona</div><button class="fu-map-close" onclick="closeMapSearch()">×</button></div><div id="mapSearchContainer"></div><div class="fu-map-foot"><div id="mapSearchInfo">Tocá el mapa para elegir una zona.</div><button id="mapSearchBtn" onclick="applyMapSearch()">Ver perfiles en esta zona →</button></div></div>';
+    modal.innerHTML='<div class="fu-map-box"><div class="fu-map-head"><div>🗺 Elegí una zona</div><button class="fu-map-close" onclick="closeMapSearch()">×</button></div><div class="fu-map-search"><input id="mapPlaceSearch" type="text" placeholder="Buscar localidad, barrio o ciudad..." onkeydown="if(event.key===\'Enter\') searchPlaceOnMap()"><button onclick="searchPlaceOnMap()">Buscar</button></div><div id="mapSearchContainer"></div><div class="fu-map-foot"><div id="mapSearchInfo">Buscá un lugar o tocá el mapa para elegir una zona.</div><button id="mapSearchBtn" onclick="applyMapSearch()">Ver perfiles en esta zona →</button></div></div>';
     document.body.appendChild(modal);
     modal.addEventListener('click',function(e){if(e.target===modal)closeMapSearch()});
     return modal;
@@ -15164,6 +15171,31 @@ body.has-session #page-register .fu-terms-link{
         }catch(err){var c=document.getElementById('mapSearchContainer');if(c)c.innerHTML='<div class="fu-map-fallback">No se pudo abrir el mapa.<br>Usá “Mi ubicación” o intentá nuevamente.</div>';}
       },250);
     });
+  };
+  window.searchPlaceOnMap=function(){
+    var inp=document.getElementById('mapPlaceSearch');
+    var q=inp?String(inp.value||'').trim():'';
+    if(!q){if(window.toast)toast('Escribí una localidad para buscar','w');return;}
+    var info=document.getElementById('mapSearchInfo');
+    var btn=document.getElementById('mapSearchBtn');
+    if(info)info.textContent='Buscando '+q+'...';
+    if(btn)btn.style.display='none';
+    var url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q+', Argentina')+'&format=json&limit=1&accept-language=es&addressdetails=1';
+    fetch(url).then(function(r){return r.json()}).then(function(data){
+      if(!data||!data.length){if(info)info.textContent='No encontré ese lugar. Probá con ciudad, barrio o provincia.';return;}
+      var item=data[0];
+      var lat=parseFloat(item.lat), lng=parseFloat(item.lon);
+      window._mapLat=lat; window._mapLng=lng;
+      var a=item.address||{};
+      var place=a.city||a.town||a.village||a.suburb||a.county||a.state||q;
+      if(window._mapInstance&&window.L){
+        window._mapInstance.setView([lat,lng],12);
+        if(window._mapMarker)window._mapInstance.removeLayer(window._mapMarker);
+        window._mapMarker=L.marker([lat,lng]).addTo(window._mapInstance);
+      }
+      if(info)info.innerHTML='📍 <strong>'+place+'</strong>';
+      if(btn){btn.textContent='Ver perfiles cerca de '+place+' →';btn.style.display='block';btn.dataset.place=place;}
+    }).catch(function(){if(info)info.textContent='No se pudo buscar ahora. Probá de nuevo.';});
   };
   window.closeMapSearch=function(){var modal=document.getElementById('mapSearchModal');if(modal)modal.style.display='none';document.body.style.overflow=''};
   window.applyMapSearch=function(){
