@@ -14743,3 +14743,52 @@ function presence(online){if(!window.CU||!CU.id)return;var ts=new Date().toISOSt
   setInterval(function(){setPresence(true);refresh()},20000);
 })();
 </script>
+
+<style id="fu-v91-stable-presence-css">
+/* FortyUp v91 - presencia estable sin saltos ni duplicados */
+.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.fu-v90-modal-status,.fu-v90-chat-status{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;position:absolute!important;pointer-events:none!important;}
+.pcard{position:relative!important;transform:none!important;transition:box-shadow .18s ease, border-color .18s ease!important;will-change:auto!important;}
+.pcard:hover{transform:none!important;}
+.fu91-card-presence{position:absolute!important;top:.62rem!important;left:.62rem!important;z-index:25!important;display:flex!important;align-items:center!important;gap:.32rem!important;height:24px!important;padding:0 .52rem!important;border-radius:999px!important;background:rgba(255,255,255,.92)!important;border:1.5px solid rgba(255,255,255,.95)!important;box-shadow:0 6px 16px rgba(6,78,59,.13)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;animation:none!important;transition:none!important;}
+.fu91-card-presence .fu91-dot{width:9px!important;height:9px!important;border-radius:50%!important;display:block!important;background:#10B981!important;box-shadow:0 0 0 3px rgba(16,185,129,.16)!important;animation:none!important;transition:none!important;}
+.fu91-card-presence.off .fu91-dot{background:#EF4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.13)!important;}
+.fu91-modal-presence{display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .62rem!important;margin:.38rem 0 .55rem!important;font-size:.72rem!important;font-weight:900!important;line-height:1!important;white-space:nowrap!important;background:#ECFDF5!important;color:#064E3B!important;border:1.5px solid #A7F3D0!important;animation:none!important;transition:none!important;}
+.fu91-modal-presence.off{background:#FEF2F2!important;color:#991B1B!important;border-color:#FECACA!important;}
+.fu91-modal-presence .fu91-dot,.fu91-chat-presence .fu91-dot{width:8px!important;height:8px!important;border-radius:50%!important;background:#10B981!important;display:block!important;flex:0 0 8px!important;box-shadow:none!important;animation:none!important;transition:none!important;}
+.fu91-modal-presence.off .fu91-dot,.fu91-chat-presence.off .fu91-dot{background:#EF4444!important;}
+.chat-hdr{position:relative!important;min-height:60px!important;}
+.fu91-chat-presence{margin-left:auto!important;display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .62rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;font-size:.72rem!important;font-weight:900!important;line-height:1!important;white-space:nowrap!important;animation:none!important;transition:none!important;}
+.fu91-chat-presence.off{border-color:#FECACA!important;background:#FEF2F2!important;color:#991B1B!important;}
+html,body{overflow-x:hidden!important;touch-action:pan-y!important;}
+@media(max-width:520px){.fu91-card-presence{height:22px!important;padding:0 .44rem!important;top:.5rem!important;left:.5rem!important}.fu91-card-presence .fu91-dot{width:8px!important;height:8px!important}.fu91-chat-presence{font-size:.66rem!important;padding:.25rem .48rem!important}.fu91-modal-presence{font-size:.68rem!important}}
+</style>
+<script id="fu-v91-stable-presence-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function findUser(id){return users().find(function(u){return u&&String(u.id)===String(id)})||(window.CU&&String(CU.id)===String(id)?CU:null)}
+  function online(u){if(!u)return false;if(window.CU&&String(u.id)===String(CU.id))return true;var t=Date.parse(u.lastSeen||u.lastActive||0);if(u.online===true&&(!t||Date.now()-t<3*60*1000))return true;return !!(t&&Date.now()-t<3*60*1000)}
+  function removeOld(root){qa('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.fu-v90-modal-status,.fu-v90-chat-status',root||document).forEach(function(x){x.remove()})}
+  function cardStatus(u){var el=document.createElement('div');el.className='fu91-card-presence '+(online(u)?'on':'off');el.title=online(u)?'Conectado':'Desconectado';el.innerHTML='<span class="fu91-dot"></span>';return el}
+  function textPill(u,cls){var el=document.createElement('span');var on=online(u);el.className=cls+' '+(on?'on':'off');el.innerHTML='<span class="fu91-dot"></span>'+(on?'Conectado':'Desconectado');return el}
+  function paintCards(){users().forEach(function(u){var card=q('#ca-'+u.id);if(!card)return;removeOld(card);qa('.fu91-card-presence',card).forEach(function(x){x.remove()});card.appendChild(cardStatus(u))})}
+  function modalUser(){if(window._fuOpenProfileId)return findUser(window._fuOpenProfileId);var box=q('#mCont.open,.m-ov.open,.m-box');if(!box)return null;var id=(box.getAttribute&&box.getAttribute('data-id'))||box.dataset&&box.dataset.id;return id?findUser(id):null}
+  function paintModal(){var body=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('.m-box .m-body');if(!body)return;removeOld(body);qa('.fu91-modal-presence',body).forEach(function(x){x.remove()});var u=modalUser();if(!u)return;var mt=q('.m-mt',body)||q('[class*=meta]',body)||q('.m-nm',body);var pill=textPill(u,'fu91-modal-presence');if(mt&&mt.parentNode)mt.parentNode.insertBefore(pill,mt.nextSibling);else body.insertBefore(pill,body.firstChild)}
+  function paintChat(){var hdr=q('#page-chatwindow .chat-hdr')||q('.chat-hdr');if(!hdr||!window.CW)return;removeOld(hdr);qa('.fu91-chat-presence',hdr).forEach(function(x){x.remove()});hdr.appendChild(textPill(window.CW,'fu91-chat-presence'))}
+  function markSelf(on){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;saveUsers(users().map(function(u){return u&&String(u.id)===String(CU.id)?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts}):u}))}
+  var busy=false;function refresh(){if(busy)return;busy=true;requestAnimationFrame(function(){try{removeOld(document);paintCards();paintModal();paintChat()}finally{busy=false}})}
+  function wrap(name){var old=window[name];if(typeof old==='function'&&!old.__fu91){var nw=function(){var r=old.apply(this,arguments);setTimeout(refresh,0);setTimeout(refresh,120);setTimeout(refresh,350);return r};nw.__fu91=true;window[name]=nw}}
+  ['rProfiles','openMod','startChat','rChatMsgs','goTo','go','rHome','rMyP'].forEach(wrap);
+  document.addEventListener('DOMContentLoaded',function(){markSelf(true);refresh();setTimeout(refresh,500)});
+  document.addEventListener('click',function(){setTimeout(refresh,0);setTimeout(refresh,180)},true);
+  document.addEventListener('visibilitychange',function(){markSelf(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(refresh,80)});
+  window.addEventListener('beforeunload',function(){markSelf(false)});
+  setInterval(function(){markSelf(true);refresh()},22000);
+  window.fu91RefreshPresence=refresh;
+})();
+</script>
