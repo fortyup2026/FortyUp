@@ -13362,6 +13362,40 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
 })();
 </script>
 
+<!-- === FortyUp v105 - términos únicos + limpieza final auth === -->
+<style id="fu-v105-single-terms-css">
+.auth-box #fu95AuthTerms,.auth-box .fu-accept-terms,.auth-box .fu-reg-bottom-links,.auth-box .fu-terms-link{display:none!important}
+.auth-box #fuEmailTerms{display:none}
+.auth-box #fuEmailTerms.show{display:flex!important}
+</style>
+<script id="fu-v105-single-terms-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function cleanTerms(){
+    var box=q('.auth-box'); if(!box)return;
+    qa('#fu95AuthTerms,.fu102AuthTerms,.fu103AuthTerms,.fu-accept-terms,.fu-reg-bottom-links,.fu-terms-link',box).forEach(function(x){x.remove()});
+    var labels=qa('label',box).filter(function(l){return (l.textContent||'').toLowerCase().indexOf('términos')!==-1});
+    labels.forEach(function(l){if(l.id!=='fuEmailTerms')l.remove()});
+    var lab=q('#fuEmailTerms',box);
+    if(!lab){
+      lab=document.createElement('label');
+      lab.id='fuEmailTerms';
+      lab.innerHTML='<input type="checkbox" id="fuEmailTermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull&&fuShowTermsFull()">Términos y Condiciones</button>. Declaro que soy mayor de 40 y entiendo que soy responsable de mis mensajes, fotos, videos y comportamiento dentro de FortyUp.</span>';
+      var btn=q('#aBtn',box); box.insertBefore(lab,btn||null);
+    }
+    var isReg=(window.AM==='register')||(q('#tabR')&&q('#tabR').classList.contains('active'));
+    lab.classList.toggle('show',!!isReg);
+  }
+  var oldOpen=window.openAuth;
+  if(typeof oldOpen==='function'&&!oldOpen.__fu105){window.openAuth=function(){var r=oldOpen.apply(this,arguments);setTimeout(cleanTerms,0);setTimeout(cleanTerms,120);return r};window.openAuth.__fu105=true}
+  var oldSwitch=window.switchTab;
+  if(typeof oldSwitch==='function'&&!oldSwitch.__fu105){window.switchTab=function(){var r=oldSwitch.apply(this,arguments);setTimeout(cleanTerms,0);setTimeout(cleanTerms,120);return r};window.switchTab.__fu105=true}
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(cleanTerms,80);setTimeout(cleanTerms,500)});
+  document.addEventListener('click',function(){setTimeout(cleanTerms,80)},true);
+})();
+</script>
+
 </body>
 </html>
 
@@ -15298,20 +15332,20 @@ html,body{overflow-x:hidden!important;}
   function repaint(){clean(document);paintCards();paintModal();paintChat()}
 
   function ensureAuthTerms(){
-    qa('.auth-box > .fu-terms-link,.auth-box > .fu-reg-bottom-links').forEach(function(x){x.remove()});
     var box=q('.auth-box'); if(!box)return;
-    var lab=q('#fu95AuthTerms');
-    if(!lab){
-      lab=document.createElement('label');lab.id='fu95AuthTerms';lab.innerHTML='<input type="checkbox" id="fu95TermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull&&fuShowTermsFull()">Términos y Condiciones</button>. Declaro que soy mayor de 40 y entiendo que soy responsable de mis mensajes, fotos, videos y comportamiento dentro de FortyUp.</span>';
-      var btn=q('#aBtn',box);box.insertBefore(lab,btn||null);
-    }
+    qa('#fu95AuthTerms,.fu102AuthTerms,.fu103AuthTerms,.fu-accept-terms,.fu-terms-link,.fu-reg-bottom-links',box).forEach(function(x){x.remove()});
+    qa('label',box).forEach(function(l){
+      var txt=(l.textContent||'').toLowerCase();
+      if(txt.indexOf('términos')!==-1 && l.id!=='fuEmailTerms')l.remove();
+    });
     var mode=(window.AM==='register'||(q('#tabR')&&q('#tabR').classList.contains('active')))?'register':'login';
-    lab.classList.toggle('show',mode==='register');
+    var lab=q('#fuEmailTerms',box);
+    if(lab)lab.classList.toggle('show',mode==='register');
+    var cb=q('#fuEmailTermsOk',box);
+    if(cb&&mode!=='register')cb.checked=false;
   }
   function wrapAuth(){
-    if(typeof window.switchTab==='function'&&!window.switchTab.__fu95){var old=window.switchTab;window.switchTab=function(mode){var r=old.apply(this,arguments);setTimeout(ensureAuthTerms,0);return r};window.switchTab.__fu95=true}
-    if(typeof window.openAuth==='function'&&!window.openAuth.__fu95){var oldO=window.openAuth;window.openAuth=function(mode){var r=oldO.apply(this,arguments);setTimeout(function(){ensureAuthTerms();var cb=q('#fu95TermsOk');if(cb)cb.checked=false},0);return r};window.openAuth.__fu95=true}
-    if(typeof window.doAuth==='function'&&!window.doAuth.__fu95){var oldD=window.doAuth;window.doAuth=function(){ensureAuthTerms();if(window.AM==='register'){var cb=q('#fu95TermsOk');if(!cb||!cb.checked){var ee=q('#aErr');if(ee){ee.textContent='Para crear tu cuenta tenés que aceptar los Términos y Condiciones.';ee.style.display='block'}return}}return oldD.apply(this,arguments)};window.doAuth.__fu95=true}
+    ensureAuthTerms();
   }
   function termsFull(){
     var old=q('.fu-terms-modal');if(old)old.remove();
