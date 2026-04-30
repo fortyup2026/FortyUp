@@ -5812,7 +5812,6 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
   <button class="chat-photo-btn" onclick="document.getElementById('chatPhotoIn').click()" title="Enviar foto">📷</button>
   <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendPhoto(this)">
   <input type="text" class="chat-in" id="chatIn" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
-  <button class="chat-audio-btn" id="audioBtn" onclick="toggleAudio()" title="Grabar audio">🎤</button>
   <button class="chat-sd" onclick="sendMsg()">→</button>
 </div></div></div></div>
 <div class="page" id="page-admin">
@@ -12538,6 +12537,75 @@ var oldR=window.rMyP;if(typeof oldR==='function')window.rMyP=function(){var o=ol
     setInterval(function(){try{if(window.FB_READY&&!window.FB_SYNCING)syncFromFirestore()}catch(_){}},12000);
     document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){try{syncFromFirestore()}catch(_){}}});
   }
+})();
+</script>
+
+
+<!-- FortyUp v87 - Crear perfil por tarjetas + presencia estable sin titileo -->
+<style id="fu-v87-stability-and-register">
+.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status{display:none!important;visibility:hidden!important;opacity:0!important;animation:none!important;}
+.fu-v87-status-dot{display:inline-flex!important;width:12px!important;height:12px!important;min-width:12px!important;min-height:12px!important;border-radius:50%!important;border:2px solid #fff!important;box-shadow:0 0 0 3px rgba(16,185,129,.12),0 4px 10px rgba(6,78,59,.14)!important;background:#10B981!important;vertical-align:middle!important;animation:none!important;transform:none!important;}
+.fu-v87-status-dot.off{background:#EF4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.12),0 4px 10px rgba(127,29,29,.12)!important;}
+.pcard .fu-v87-status-dot{position:absolute!important;top:.66rem!important;left:.66rem!important;z-index:6!important;width:13px!important;height:13px!important;}
+.m-body .fu-v87-status-dot{margin:.15rem .45rem .15rem 0!important;}
+.chat-hdr .fu-v87-chat-status{margin-left:auto!important;display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .62rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;font-size:.72rem!important;font-weight:900!important;white-space:nowrap!important;line-height:1!important;animation:none!important;}
+.chat-hdr .fu-v87-chat-status.off{border-color:#FECACA!important;background:#FEF2F2!important;color:#B91C1C!important;}
+.chat-hdr .fu-v87-chat-status .dot{width:8px!important;height:8px!important;border-radius:50%!important;background:#10B981!important;display:inline-block!important;flex:0 0 8px!important;}
+.chat-hdr .fu-v87-chat-status.off .dot{background:#EF4444!important;}
+#audioBtn,.chat-audio-btn{display:none!important;}
+.chat-in-a{grid-template-columns:42px 1fr 46px!important;}
+@media(max-width:480px){.chat-in-a{grid-template-columns:40px minmax(0,1fr) 44px!important;}}
+#page-register .reg-steps,#page-register .reg-flow-live,#regStageHint{display:none!important;}
+#page-register .fu-reg-welcome,#page-register .fu-reg-guide{display:none!important;}
+#page-register .pg-tit{font-size:clamp(2.15rem,8vw,3.8rem)!important;color:#063D33!important;letter-spacing:-.04em!important;}
+#page-register .pg-sub{font-size:1rem!important;color:#6B7C76!important;}
+#page-register .fu-v87-wizard-head{position:relative;z-index:4;background:linear-gradient(135deg,#064E3B,#059669)!important;color:#fff!important;border-radius:28px!important;padding:1rem!important;margin:.15rem 0 1rem!important;box-shadow:0 14px 34px rgba(6,78,59,.18)!important;overflow:hidden!important;}
+#page-register .fu-v87-wizard-head:after{content:'FortyUp';position:absolute;right:-.35rem;bottom:-1rem;font-family:'Playfair Display',serif;font-size:3.8rem;font-weight:900;color:rgba(255,255,255,.06);pointer-events:none;}
+#page-register .fu-v87-wizard-head strong{display:block;font-family:'Playfair Display',serif;font-size:1.55rem;line-height:1.05;margin-bottom:.25rem;}
+#page-register .fu-v87-wizard-head span{display:block;font-size:.88rem;color:rgba(236,253,245,.92);font-weight:800;line-height:1.35;}
+#page-register .fu-v87-stepper{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:.45rem!important;margin:0 0 1rem!important;position:relative!important;z-index:5!important;}
+#page-register .fu-v87-step{background:#fff!important;border:1.5px solid #D1E8DF!important;border-radius:18px!important;padding:.58rem .35rem!important;text-align:center!important;color:#6B7C76!important;font-size:.66rem!important;font-weight:900!important;box-shadow:0 8px 22px rgba(6,78,59,.05)!important;cursor:pointer!important;transition:.18s!important;}
+#page-register .fu-v87-step b{display:flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;margin:0 auto .22rem;background:#F0FDF8;color:#064E3B;border:1px solid #A7F3D0;font-size:.78rem;}
+#page-register .fu-v87-step.active{border-color:#10B981!important;background:#ECFDF5!important;color:#064E3B!important;transform:translateY(-1px)!important;}
+#page-register .fu-v87-step.done b{background:#064E3B!important;color:#fff!important;border-color:#064E3B!important;}
+#page-register .fu-v87-panel{display:none!important;position:relative!important;z-index:3!important;animation:fuV87Panel .18s ease both!important;}
+#page-register .fu-v87-panel.active{display:block!important;}
+@keyframes fuV87Panel{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+#page-register .fu-v87-actions{display:flex!important;align-items:center!important;gap:.65rem!important;margin:1rem 0 0!important;position:relative!important;z-index:5!important;}
+#page-register .fu-v87-actions button{flex:1!important;border-radius:999px!important;padding:.76rem 1rem!important;font-weight:900!important;font-size:.9rem!important;}
+#page-register .fu-v87-prev{background:#fff!important;color:#064E3B!important;border:1.6px solid #CDE9DD!important;box-shadow:0 8px 20px rgba(6,78,59,.05)!important;}
+#page-register .fu-v87-next{background:linear-gradient(135deg,#064E3B,#059669)!important;color:#fff!important;box-shadow:0 12px 26px rgba(6,78,59,.2)!important;}
+#page-register .f-sub{position:static!important;background:transparent!important;margin:1rem 0 0!important;padding:0!important;display:none!important;}
+#page-register .f-sub.fu-v87-show-save{display:flex!important;}
+#page-register .f-sub .btn{width:100%!important;justify-content:center!important;border-radius:999px!important;}
+#page-register .fu-accept-terms{display:flex!important;}
+#page-register .fu-v87-mini-hint{font-size:.78rem!important;color:#6B7C76!important;font-weight:800!important;background:#F7FFFB!important;border:1px solid #D1E8DF!important;border-radius:18px!important;padding:.65rem .8rem!important;margin:.15rem 0 .8rem!important;}
+@media(max-width:520px){#page-register .fu-v87-stepper{grid-template-columns:repeat(2,1fr)!important}#page-register .fu-v87-actions{position:sticky!important;bottom:86px!important;background:linear-gradient(180deg,rgba(247,255,251,0),rgba(247,255,251,.98) 35%,rgba(247,255,251,.98))!important;padding:.85rem 0 0!important;margin-top:.8rem!important}.chat-hdr .fu-v87-chat-status{font-size:.66rem!important;padding:.24rem .46rem!important}}
+</style>
+<script id="fu-v87-final-behavior">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function userById(id){return users().find(function(u){return u&&u.id===id})||(window.CU&&CU.id===id?CU:null)}
+  function isOnline(u){if(!u)return false;if(window.CU&&u.id===CU.id)return true;var t=Date.parse(u.lastSeen||u.lastActive||0);return !!(t&&Date.now()-t<3*60*1000)}
+  function statusDot(u){var on=isOnline(u);return '<span class="fu-v87-status-dot '+(on?'on':'off')+'" title="'+(on?'Conectado':'Desconectado')+'"></span>'}
+  function chatStatus(u){var on=isOnline(u);return '<span class="fu-v87-chat-status '+(on?'on':'off')+'"><span class="dot"></span>'+(on?'Conectado':'Desconectado')+'</span>'}
+  function removeOldStatus(root){qa('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.fu-v87-status-dot,.fu-v87-chat-status',root||document).forEach(function(x){x.remove()})}
+  function stablePresence(){removeOldStatus(document);users().forEach(function(u){var card=document.getElementById('ca-'+u.id);if(!card)return;card.style.position=card.style.position||'relative';var tmp=document.createElement('div');tmp.innerHTML=statusDot(u);card.appendChild(tmp.firstChild)});var body=q('#mCont .m-body')||q('.m-box .m-body');if(body){var id=window._fuOpenProfileId||null;var u=id?userById(id):null;if(u){var mt=q('.m-mt',body)||q('.m-nm',body)||body;var tmp=document.createElement('div');tmp.innerHTML=statusDot(u);if(mt!==body&&mt.parentNode)mt.parentNode.insertBefore(tmp.firstChild,mt.nextSibling);else body.insertBefore(tmp.firstChild,body.firstChild)}}var hdr=q('#page-chatwindow .chat-hdr');if(hdr&&window.CW){var tmp=document.createElement('div');tmp.innerHTML=chatStatus(window.CW);hdr.appendChild(tmp.firstChild)}}
+  function setPresence(on){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;saveUsers(users().map(function(u){return u&&u.id===CU.id?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts}):u}))}
+  function removeAudio(){qa('#audioBtn,.chat-audio-btn').forEach(function(b){b.remove()});qa('.chat-in-a').forEach(function(x){x.style.gridTemplateColumns='42px 1fr 46px'})}
+  function mini(text){var d=document.createElement('div');d.className='fu-v87-mini-hint';d.textContent=text;return d}
+  function buildWizard(){var page=q('#page-register'), f=q('#page-register .fcard'); if(!page||!f||f.dataset.v87Wizard==='1')return; f.dataset.v87Wizard='1';var title=q('#page-register .pg-tit'); if(title)title.textContent='Armá tu perfil';var sub=q('#page-register .pg-sub'); if(sub)sub.textContent='Te guiamos paso a paso. Simple, claro y sin perderte.';qa('#page-register .fu-reg-welcome,#page-register .fu-reg-guide,#page-register .reg-steps,#regStageHint').forEach(function(x){x.remove()});var firstSec=q('.fsec',f);var head=document.createElement('div');head.className='fu-v87-wizard-head';head.innerHTML='<strong>Tu historia empieza acá</strong><span>Completá una tarjeta por vez. Después podés editar tus datos, fotos y preferencias desde Mi perfil.</span>';var stepper=document.createElement('div');stepper.className='fu-v87-stepper';stepper.innerHTML='<button type="button" class="fu-v87-step active" data-step="1"><b>1</b>Datos</button><button type="button" class="fu-v87-step" data-step="2"><b>2</b>Gustos</button><button type="button" class="fu-v87-step" data-step="3"><b>3</b>Sobre vos</button><button type="button" class="fu-v87-step" data-step="4"><b>4</b>Foto</button>';f.insertBefore(head, firstSec||f.firstChild); f.insertBefore(stepper, firstSec||head.nextSibling);var secs=qa('.fsec',f).filter(function(x){return !x.closest('.fu-v87-panel')}); if(secs.length<4)return;function moveRange(start,end,panel){var n=start;while(n&&n!==end){var nx=n.nextSibling;panel.appendChild(n);n=nx}}var panels=[document.createElement('div'),document.createElement('div'),document.createElement('div'),document.createElement('div')];panels.forEach(function(p,i){p.className='fu-v87-panel';p.dataset.step=String(i+1)});moveRange(secs[0],secs[1],panels[0]);moveRange(secs[1],secs[3],panels[1]);moveRange(secs[3],secs[4],panels[2]);var fsub=q('.f-sub',f);moveRange(secs[4],fsub,panels[3]);panels[0].insertBefore(mini('Primero completá tus datos básicos. La ubicación ayuda a mostrar personas cercanas.'),panels[0].firstChild);panels[1].insertBefore(mini('Elegí qué buscás y qué planes te gustaría compartir.'),panels[1].firstChild);panels[2].insertBefore(mini('Contá algo simple sobre vos. No hace falta escribir de más.'),panels[2].firstChild);panels[3].insertBefore(mini('Tu foto de perfil será pública y se verá en tus avatares. Los álbumes se manejan después desde Fotos y videos.'),panels[3].firstChild);var insertBefore=fsub||null;panels.forEach(function(p){f.insertBefore(p,insertBefore)});if(fsub)f.appendChild(fsub);var actions=document.createElement('div');actions.className='fu-v87-actions';actions.innerHTML='<button type="button" class="fu-v87-prev" onclick="fuRegPrev()">← Anterior</button><button type="button" class="fu-v87-next" onclick="fuRegNext()">Siguiente →</button>';if(fsub)f.insertBefore(actions,fsub);else f.appendChild(actions);stepper.addEventListener('click',function(e){var b=e.target.closest('.fu-v87-step');if(b)window.fuRegGo(parseInt(b.dataset.step,10)||1)});window.fuRegGo(1)}
+  window.fuRegGo=function(n){var page=q('#page-register'), f=q('#page-register .fcard');if(!page||!f)return;n=Math.max(1,Math.min(4,n||1));window.__fuRegStep=n;qa('#page-register .fu-v87-panel').forEach(function(p){p.classList.toggle('active',parseInt(p.dataset.step,10)===n)});qa('#page-register .fu-v87-step').forEach(function(s){var v=parseInt(s.dataset.step,10);s.classList.toggle('active',v===n);s.classList.toggle('done',v<n);var b=s.querySelector('b');if(b)b.textContent=v<n?'✓':String(v)});var prev=q('#page-register .fu-v87-prev'),next=q('#page-register .fu-v87-next'),sub=q('#page-register .f-sub');if(prev)prev.style.visibility=n===1?'hidden':'visible';if(next)next.style.display=n===4?'none':'inline-flex';if(sub)sub.classList.toggle('fu-v87-show-save',n===4);var top=q('#page-register .fcard');if(top&&page.classList.contains('active'))setTimeout(function(){try{top.scrollIntoView({behavior:'smooth',block:'start'})}catch(_){window.scrollTo(0,top.offsetTop-90)}},20)}
+  window.fuRegNext=function(){window.fuRegGo((window.__fuRegStep||1)+1)};window.fuRegPrev=function(){window.fuRegGo((window.__fuRegStep||1)-1)}
+  function stabilize(){removeAudio();buildWizard();stablePresence()}
+  function wrap(name){var old=window[name];if(typeof old==='function'&&!old.__fuV87){var nw=function(){var r=old.apply(this,arguments);setTimeout(stabilize,20);setTimeout(stabilize,160);return r};nw.__fuV87=true;window[name]=nw}}
+  ['goTo','go','rProfiles','openMod','startChat','rChatMsgs','rMyP','rHome'].forEach(wrap);document.addEventListener('DOMContentLoaded',function(){setPresence(true);stabilize();setTimeout(stabilize,500)});document.addEventListener('click',function(){setTimeout(stabilize,60)},true);document.addEventListener('visibilitychange',function(){setPresence(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(stabilize,60)});window.addEventListener('beforeunload',function(){setPresence(false)});setInterval(function(){setPresence(true);stabilize()},1200)
 })();
 </script>
 
