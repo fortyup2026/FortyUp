@@ -12640,6 +12640,237 @@ html,body{overflow-x:hidden!important;}
 .page.active{overflow-x:hidden!important;}
 </style>
 
+
+
+<style id="fu-v89-scroll-presence-stable-css">
+/* FortyUp v89: recupera scroll y elimina saltitos visuales de estados */
+html, body{
+  width:100%!important;
+  min-height:100%!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:auto!important;
+  position:static!important;
+  touch-action:pan-y!important;
+}
+body.fu-modal-open{
+  overflow:hidden!important;
+}
+.page.active{
+  min-height:auto!important;
+  overflow:visible!important;
+}
+.inner,
+#page-home,
+#page-profiles,
+#page-chat,
+#page-chatwindow,
+#page-register,
+#page-profile,
+#page-fortyplus{
+  overflow:visible!important;
+}
+.pgrid,.pcard,.m-box,.chat-hdr{
+  transform:none!important;
+}
+.pcard{
+  position:relative!important;
+  transition:box-shadow .22s ease,border-color .22s ease!important;
+}
+.pcard:hover{
+  transform:none!important;
+}
+/* Oculta todos los estados viejos que insertaban saltos o duplicados */
+.pcard .fu-v81-status,
+.pcard .fu-v82-dot-status,
+.pcard .fu-v84-dot-status,
+.pcard .fu-presence-slot,
+.pcard .fu-presence-pill,
+.pcard .fu-clean-dot-status,
+.m-box .fu-v81-status,
+.m-box .fu-v82-dot-status,
+.m-box .fu-v84-dot-status,
+.m-box .fu-presence-slot,
+.m-box .fu-presence-pill,
+.m-box .fu-clean-dot-status,
+.chat-hdr .fu-v81-status,
+.chat-hdr .fu-v82-dot-status,
+.chat-hdr .fu-v84-dot-status,
+.chat-hdr .fu-presence-slot,
+.chat-hdr .fu-presence-pill,
+.chat-hdr .fu-clean-chat-status{
+  display:none!important;
+  visibility:hidden!important;
+  width:0!important;
+  height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+.fu-stable-card-status{
+  position:absolute!important;
+  top:.62rem!important;
+  left:.62rem!important;
+  z-index:8!important;
+  width:16px!important;
+  height:16px!important;
+  border-radius:50%!important;
+  border:3px solid #fff!important;
+  background:#ef4444!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.18)!important;
+  pointer-events:none!important;
+  transform:none!important;
+  animation:none!important;
+}
+.fu-stable-card-status.on{
+  background:#10B981!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.18),0 0 0 4px rgba(16,185,129,.16)!important;
+}
+.fu-stable-modal-status{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:.35rem!important;
+  width:max-content!important;
+  margin:.35rem 0 .55rem!important;
+  padding:.28rem .65rem!important;
+  border-radius:999px!important;
+  font-size:.72rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  color:#047857!important;
+  background:#ECFDF5!important;
+  border:1.5px solid #A7F3D0!important;
+  animation:none!important;
+  transform:none!important;
+}
+.fu-stable-modal-status.off{
+  color:#b91c1c!important;
+  background:#FEF2F2!important;
+  border-color:#FECACA!important;
+}
+.fu-stable-modal-status:before{
+  content:'';
+  width:9px;height:9px;border-radius:50%;background:#10B981;display:inline-block;flex:0 0 auto;
+}
+.fu-stable-modal-status.off:before{background:#ef4444!important;}
+.fu-stable-chat-status{
+  margin-left:auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:.38rem!important;
+  border-radius:999px!important;
+  padding:.28rem .62rem!important;
+  border:1.5px solid #A7F3D0!important;
+  background:#ECFDF5!important;
+  color:#064E3B!important;
+  font-size:.72rem!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+  line-height:1!important;
+  animation:none!important;
+  transform:none!important;
+}
+.fu-stable-chat-status.off{
+  border-color:#FECACA!important;
+  background:#FEF2F2!important;
+  color:#B91C1C!important;
+}
+.fu-stable-chat-status:before{
+  content:'';
+  width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;flex:0 0 auto;
+}
+.fu-stable-chat-status.off:before{background:#ef4444!important;}
+</style>
+<script id="fu-v89-scroll-presence-stable-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function userById(id){return users().find(function(u){return u&&u.id===id})||(window.CU&&CU.id===id?CU:null)}
+  function online(u){
+    if(!u)return false;
+    if(window.CU&&u.id===CU.id)return true;
+    var t=Date.parse(u.lastSeen||u.lastActive||0);
+    if(u.online===true && (!t || Date.now()-t<3*60*1000))return true;
+    return !!(t&&Date.now()-t<3*60*1000);
+  }
+  function currentModalUser(){
+    if(window._fuOpenProfileId)return userById(window._fuOpenProfileId);
+    var nm=q('.m-body .m-nm,.m-nm');
+    if(nm){var name=(nm.textContent||'').split(',')[0].trim();return users().find(function(u){return (u.name||'').trim()===name})}
+    return null;
+  }
+  function removeOldStatuses(root){
+    qa('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-slot,.fu-presence-pill,.fu-clean-dot-status,.fu-clean-chat-status',root||document).forEach(function(x){x.remove()});
+  }
+  function unlockScroll(){
+    var modalOpen=!!q('.auth-ov.open,.m-ov.open,.fu-notif-panel.open,.fu-map-modal[style*="display: flex"],.fu-map-modal[style*="display:flex"],.fu-terms-modal,.fu-terms-box');
+    document.documentElement.style.overflowX='hidden';
+    document.documentElement.style.overflowY=modalOpen?'hidden':'auto';
+    document.body.classList.toggle('fu-modal-open',modalOpen);
+    if(!modalOpen){
+      document.body.style.overflow='auto';
+      document.body.style.overflowY='auto';
+      document.body.style.overflowX='hidden';
+      document.body.style.position='static';
+      document.body.style.height='auto';
+    }
+  }
+  function paintStable(){
+    removeOldStatuses(document);
+    qa('.fu-stable-card-status,.fu-stable-modal-status,.fu-stable-chat-status').forEach(function(x){x.remove()});
+    users().forEach(function(u){
+      var card=q('#ca-'+u.id);
+      if(card){
+        card.style.position='relative';
+        var dot=document.createElement('span');
+        dot.className='fu-stable-card-status '+(online(u)?'on':'off');
+        dot.title=online(u)?'Conectado':'Desconectado';
+        card.appendChild(dot);
+      }
+    });
+    var mb=q('#mCont .m-body')||q('.m-box .m-body');
+    if(mb){
+      var u=currentModalUser();
+      if(u){
+        var st=document.createElement('div');
+        st.className='fu-stable-modal-status '+(online(u)?'on':'off');
+        st.textContent=online(u)?'Conectado':'Desconectado';
+        var mt=q('.m-mt',mb)||q('[class*=meta]',mb);
+        if(mt&&mt.parentNode)mt.parentNode.insertBefore(st,mt.nextSibling);else mb.insertBefore(st,mb.firstChild);
+      }
+    }
+    var hdr=q('.chat-hdr');
+    if(hdr&&window.CW){
+      var cp=document.createElement('span');
+      cp.className='fu-stable-chat-status '+(online(window.CW)?'on':'off');
+      cp.textContent=online(window.CW)?'Conectado':'Desconectado';
+      hdr.appendChild(cp);
+    }
+    unlockScroll();
+  }
+  function schedule(){setTimeout(paintStable,0);setTimeout(paintStable,90);setTimeout(paintStable,260)}
+  ['goTo','go','rProfiles','openMod','startChat','rChatMsgs','rMyP','rHome','closeMod','closeModal','closeMapSearch'].forEach(function(name){
+    var old=window[name];
+    if(typeof old==='function'&&!old.__fuV89){
+      var nw=function(){var r=old.apply(this,arguments);schedule();return r};
+      nw.__fuV89=true;window[name]=nw;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',schedule);
+  document.addEventListener('click',function(){setTimeout(schedule,40)},true);
+  document.addEventListener('touchend',function(){setTimeout(schedule,40)},true);
+  document.addEventListener('visibilitychange',schedule);
+  window.addEventListener('resize',schedule);
+  setInterval(function(){paintStable()},5000);
+  schedule();
+})();
+</script>
+
 </body>
 </html>
 
