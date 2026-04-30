@@ -13124,6 +13124,59 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
 })();
 </script>
 
+
+
+<style id="fu-v97-fixes-css">
+/* V97: sección pública única y navegación estable */
+.fu97-public-sec{border-top:1px solid #ECFDF5;margin-top:1rem;padding-top:1rem;}
+.fu97-public-title{font-size:.76rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#10B981;margin-bottom:.7rem;}
+.fu97-public-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.fu97-public-item{aspect-ratio:1;border-radius:14px;overflow:hidden;background:#07382d;border:1px solid rgba(16,185,129,.22);position:relative;cursor:pointer;box-shadow:0 4px 12px rgba(6,78,59,.08)}
+.fu97-public-item img,.fu97-public-item video{width:100%;height:100%;object-fit:cover;display:block;}
+.fu97-public-ribbon{position:absolute;left:.38rem;bottom:.38rem;background:rgba(6,78,59,.88);color:#fff;border-radius:999px;padding:.14rem .48rem;font-size:.62rem;font-weight:900;}
+.fu97-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.55rem;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.fu97-private-note{margin-top:.72rem;background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:18px;padding:.72rem .82rem;font-size:.82rem;line-height:1.42;font-weight:800;}
+.fu97-empty-public{font-size:.82rem;color:var(--txt3);font-style:italic;padding:.4rem 0;}
+#pgrid .fu97-public-sec{display:none!important;}
+@media(max-width:520px){.fu97-public-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script id="fu-v97-fixes-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function userById(id){return users().find(function(u){return u&&String(u.id)===String(id)})||(window.CU&&String(CU.id)===String(id)?CU:null)}
+  function userByName(txt){var n=String(txt||'').split(',')[0].trim().toLowerCase();if(!n)return null;return users().find(function(u){return String(u.name||'').trim().toLowerCase()===n})||null}
+  function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
+  function photoOf(u){if(!u)return'';return u.photo||u.profilePhoto||u.photoURL||u.avatar||u.avatarUrl||u.image||u.picture||((u.profilePhotos||[])[0])||''}
+  function mediaKey(uid){return 'fu_media_albums_v76_'+uid}
+  function rawAlbums(uid){return read(mediaKey(uid),[]).filter(Boolean)}
+  function saveAlbums(uid,a){write(mediaKey(uid),a||[])}
+  function uniq(arr){var seen={};return (arr||[]).filter(function(it){if(!it||!it.src)return false;var k=(it.type||'photo')+'|'+it.src;if(seen[k])return false;seen[k]=1;return true})}
+  function profileItems(u){var out=[];(u&&u.profilePhotos||[]).forEach(function(src){if(src)out.push({type:'photo',src:src,profile:true})});var p=photoOf(u);if(p)out.push({type:'photo',src:p,profile:true});if(u&&u.video)out.push({type:'video',src:u.video,profile:true});return uniq(out)}
+  function albumsFor(uid){var u=userById(uid);var a=rawAlbums(uid);var prof={id:'profile',kind:'profile',name:'Fotos de perfil',private:false,items:profileItems(u)};var ix=a.findIndex(function(x){return x&&(x.id==='profile'||x.kind==='profile')});if(ix>=0)a[ix]=Object.assign({},a[ix],prof,{private:false});else a.unshift(prof);saveAlbums(uid,a);return a}
+  function publicItems(uid){var out=[];albumsFor(uid).forEach(function(al){if(!al)return;if(al.id==='profile'||al.kind==='profile'){(al.items||[]).forEach(function(it){out.push(Object.assign({},it,{album:'Fotos de perfil',profile:true}))});return}if(!al.private){(al.items||[]).forEach(function(it){out.push(Object.assign({},it,{album:al.name||'Fotos públicas'}))})}});return uniq(out)}
+  function privateCount(uid){return albumsFor(uid).filter(function(a){return a&&!(a.id==='profile'||a.kind==='profile')&&a.private&&(a.items||[]).length}).length}
+  function currentModalUser(){var id=window._fuOpenProfileId;if(id&&userById(id))return userById(id);var name=(q('#mCont .m-nm')||q('.m-ov.open .m-nm')||q('.m-box .m-nm')||{}).textContent||'';return userByName(name)}
+  var allPublicSelectors='.public-media-sebas,.fu-v79-public-sec,.fu-v80-public-sec,.fu-v81-public-sec,.fu93-public-sec,.fu97-public-sec';
+  function removePublicSections(cont){qa(allPublicSelectors,cont).forEach(function(x){x.remove()})}
+  window.fu97ViewPublicMedia=function(uid,i){var items=publicItems(uid),it=items[i];if(!it)return;var html='<div class="photo-view">'+(it.type==='video'?'<video src="'+esc(it.src)+'" controls playsinline></video>':'<img src="'+esc(it.src)+'">')+'<div class="photo-view-title">'+esc(it.album||'Fotos públicas')+'</div></div>';if(window.fuShowSimpleOverlay)fuShowSimpleOverlay(it.album||'Fotos públicas','',html);else if(typeof overlay==='function')overlay(it.album||'Fotos públicas','',html)};
+  function buildPublicSection(uid){var items=publicItems(uid), pc=privateCount(uid);var sec=document.createElement('div');sec.className='fu97-public-sec';var h='<div class="fu97-public-title">Fotos y videos públicos</div>';if(items.length){h+='<div class="fu97-public-grid">';items.slice(0,12).forEach(function(it,i){h+='<div class="fu97-public-item" onclick="fu97ViewPublicMedia(\''+esc(uid)+'\','+i+')">'+(it.type==='video'?'<video src="'+esc(it.src)+'"></video><span class="fu97-play">▶</span>':'<img src="'+esc(it.src)+'">')+(it.profile?'<span class="fu97-public-ribbon">Perfil</span>':'')+'</div>'});h+='</div>'}else{h+='<div class="fu97-empty-public">Esta persona todavía no tiene fotos públicas.</div>'}if(pc>0)h+='<div class="fu97-private-note">🔐 Este usuario tiene álbumes privados. Podés pedírselos por chat si quiere compartirlos con vos.</div>';sec.innerHTML=h;return sec}
+  var fixing=false;
+  function fixPublicModal(){if(fixing)return;var cont=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('.m-box .m-body');if(!cont)return;var u=currentModalUser();if(!u||!u.id)return;fixing=true;removePublicSections(cont);var acts=q('.m-acts',cont);var sec=buildPublicSection(u.id);if(acts)cont.insertBefore(sec,acts);else cont.appendChild(sec);setTimeout(function(){fixing=false},30)}
+  function activePage(){var p=q('.page.active');return p?p.id.replace('page-',''):''}
+  function syncBottomNav(){if(typeof setBn!=='function')return;var p=activePage();var map={home:'home',profiles:'profiles',chats:'chats',chatwindow:'chats',myprofile:'me',fortyplus:'plus'};var n=map[p];if(n)try{setBn(n)}catch(_){}}
+  function wrap(name,fn){var old=window[name];if(typeof old==='function'&&!old.__fu97){var nw=function(){if(name==='openMod')window._fuOpenProfileId=arguments[0];var r=old.apply(this,arguments);[40,160,420,900].forEach(function(ms){setTimeout(function(){fn&&fn();syncBottomNav()},ms)});return r};nw.__fu97=true;window[name]=nw}}
+  wrap('openMod',fixPublicModal);wrap('goTo',function(){fixPublicModal();syncBottomNav()});wrap('rProfiles',syncBottomNav);wrap('startChat',syncBottomNav);
+  var obs=new MutationObserver(function(){clearTimeout(window.__fu97t);window.__fu97t=setTimeout(function(){fixPublicModal();syncBottomNav()},80)});
+  document.addEventListener('DOMContentLoaded',function(){obs.observe(document.body,{childList:true,subtree:true});setTimeout(function(){fixPublicModal();syncBottomNav()},120);setTimeout(function(){fixPublicModal();syncBottomNav()},800)});
+  document.addEventListener('click',function(){setTimeout(function(){fixPublicModal();syncBottomNav()},120)},true);
+  setInterval(function(){fixPublicModal();syncBottomNav()},2500);
+})();
+</script>
 </body>
 </html>
 
