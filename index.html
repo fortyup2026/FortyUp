@@ -13177,6 +13177,49 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
   setInterval(function(){fixPublicModal();syncBottomNav()},2500);
 })();
 </script>
+
+
+<!-- FortyUp v100 - cierre de sesión estable y botones guest visibles -->
+<style id="fortyup-v100-logout-home-fix-css">
+  body.fu-guest #page-home .h-btns,
+  body:not(.fu-logged) #page-home .h-btns,
+  body.fu-guest #page-home .hz-btns,
+  body:not(.fu-logged) #page-home .hz-btns{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;}
+  body.fu-guest #page-home .h-btns .btn,
+  body:not(.fu-logged) #page-home .h-btns .btn,
+  body.fu-guest #page-home .h-btns button,
+  body:not(.fu-logged) #page-home .h-btns button,
+  body.fu-guest #page-home .hz-btns .hz-btn,
+  body:not(.fu-logged) #page-home .hz-btns .hz-btn,
+  body.fu-guest #page-home .hz-btns button,
+  body:not(.fu-logged) #page-home .hz-btns button{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;}
+  body.fu-guest .bnav,body:not(.fu-logged) .bnav{display:none!important;}
+</style>
+<script id="fortyup-v100-logout-home-fix-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function hasSession(){try{if(window.CU&&CU.id)return true;if(typeof K!=='undefined'&&K.S){var raw=localStorage.getItem(K.S);if(raw&&raw!=='null'&&raw!=='undefined'){var s=JSON.parse(raw);return !!(s&&s.id)}}}catch(e){}return false}
+  function forceGuestHome(){
+    var logged=hasSession();
+    document.body.classList.toggle('fu-logged',logged);document.body.classList.toggle('fu-guest',!logged);document.body.classList.toggle('sebas-guest',!logged);document.body.classList.toggle('has-session',logged);
+    var nav=q('.bnav');if(nav)nav.style.display=logged?'flex':'none';
+    if(logged)return;
+    var home=q('#page-home');if(!home)return;
+    if(!home.classList.contains('active')){qa('.page').forEach(function(p){p.classList.remove('active')});home.classList.add('active')}
+    qa('#page-home .h-btns,#page-home .hz-btns').forEach(function(btns){btns.style.display='flex';btns.style.visibility='visible';btns.style.opacity='1';btns.style.pointerEvents='auto';btns.style.removeProperty('height');btns.style.removeProperty('max-height');qa('.btn,button,a,.hz-btn',btns).forEach(function(b){b.style.display='flex';b.style.visibility='visible';b.style.opacity='1';b.style.pointerEvents='auto'})});
+    var nr=q('#nR');if(nr&&!nr.querySelector('.btn-join'))nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';
+    var lb=q('#locationSearchBar');if(lb)lb.style.display='none';
+    ['bn-home','bn-profiles','bn-plus','bn-chats','bn-me'].forEach(function(id){var el=q('#'+id);if(el)el.classList.remove('active')});var bh=q('#bn-home');if(bh)bh.classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function clearSessionStorage(){try{if(typeof K!=='undefined'&&K.S)localStorage.removeItem(K.S)}catch(e){}try{localStorage.removeItem('fortyup_session');localStorage.removeItem('fu_session')}catch(e){}}
+  window.logout=function(){try{if(window.CU&&CU.id&&typeof setPresence==='function')setPresence(false)}catch(e){}try{window.CU=null;window.CW=null}catch(e){}clearSessionStorage();try{if(typeof clearReg==='function')clearReg()}catch(e){}try{if(typeof checkUnread==='function')checkUnread()}catch(e){}try{if(typeof upNav==='function')upNav()}catch(e){}try{if(typeof goTo==='function')goTo('home')}catch(e){}[0,80,250,700].forEach(function(ms){setTimeout(forceGuestHome,ms)})};
+  var oldUpNav=window.upNav;if(typeof oldUpNav==='function'&&!oldUpNav.__fu100){window.upNav=function(){var r=oldUpNav.apply(this,arguments);setTimeout(forceGuestHome,0);return r};window.upNav.__fu100=true}
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(forceGuestHome,80)});document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('.btn-out,[onclick*="logout"]');if(t)setTimeout(forceGuestHome,120)},true);
+})();
+</script>
+
 </body>
 </html>
 
@@ -15144,58 +15187,5 @@ html,body{overflow-x:hidden!important;}
   document.addEventListener('visibilitychange',function(){markSelf(document.visibilityState==='visible');setTimeout(repaint,80)});
   window.addEventListener('beforeunload',function(){markSelf(false)});
   setInterval(function(){markSelf(true);repaint()},12000);
-})();
-</script>
-
-<!-- =========================================================
-     FORTYUP v10-99 - Registro obligatorio completo + logout home fix
-     ========================================================= -->
-<style id="fu-v99-profile-gate-css">
-@media(max-width:750px){
-  body.fu-profile-incomplete .bnav{display:none!important;}
-  .nav-in{gap:.55rem!important;}
-  .nav-logo{flex:0 0 auto!important;}
-  .nav-right{margin-left:auto!important;gap:.38rem!important;min-width:0!important;}
-  .nav-av{gap:.38rem!important;min-width:0!important;}
-  .nav-av .av-nm{max-width:118px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;display:inline-block!important;}
-  .notif-wrap{flex:0 0 38px!important;margin-right:.25rem!important;}
-}
-body.fu-guest #page-home .h-btns,
-body:not(.fu-logged) #page-home .h-btns{display:block!important;visibility:visible!important;opacity:1!important;}
-body.fu-guest #page-home #heroBtns,
-body:not(.fu-logged) #page-home #heroBtns{display:block!important;visibility:visible!important;opacity:1!important;}
-body.fu-profile-incomplete #page-home #heroBtns{display:none!important;}
-.fu-v99-profile-lock{margin:.9rem 0 1rem!important;padding:.85rem 1rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;border-radius:22px!important;font-weight:900!important;line-height:1.35!important;box-shadow:0 8px 22px rgba(6,78,59,.06)!important;}
-</style>
-<script id="fu-v99-profile-gate-js">
-(function(){
-  function q(s,r){return (r||document).querySelector(s)}
-  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
-  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
-  function keyUsers(){return (window.K&&K.U)||'fu_u'}
-  function keySession(){return (window.K&&K.S)||'fu_s'}
-  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]||c})}
-  function users(){return read(keyUsers(),[])}
-  function arrOk(v){return Array.isArray(v)&&v.filter(Boolean).length>0}
-  function strOk(v){return String(v||'').trim().length>0}
-  function refreshCurrent(){try{if(typeof refreshCU==='function')refreshCU()}catch(_){ }if(window.CU&&CU.id){var u=users().find(function(x){return x&&String(x.id)===String(CU.id)});if(u)window.CU=u}return window.CU||null}
-  function complete(u){if(!u||!u.id)return false;var age=parseInt(u.age,10)||0;var basic=strOk(u.name)&&age>=40&&strOk(u.city)&&strOk(u.gender);var prefs=strOk(u.interestedIn||u.pref||'')&&arrOk(u.looking)&&arrOk(u.plans);var photo=strOk(u.photo||u.profilePhoto||u.photoURL||u.avatar||'');return !!(basic&&prefs&&photo)}
-  window.fuProfileComplete=function(u){return complete(u||refreshCurrent())};
-  function activePage(){var p=q('.page.active');return p?p.id.replace(/^page-/,''):''}
-  function setStateClasses(){var u=refreshCurrent(),ok=!!(u&&u.id),done=ok&&complete(u);document.body.classList.toggle('fu-logged',ok);document.body.classList.toggle('fu-guest',!ok);document.body.classList.toggle('sebas-guest',!ok);document.body.classList.toggle('fu-profile-incomplete',ok&&!done);document.body.classList.toggle('fu-profile-complete',done);return {ok:ok,done:done,u:u}}
-  function makeHomeButtons(){var btns=q('#heroBtns');if(!btns)return;btns.style.display='block';btns.style.visibility='visible';btns.style.opacity='1';btns.innerHTML='';var b1=document.createElement('button');b1.className='hz-btn hz-btn-p';b1.style.cssText='width:100%';b1.textContent='Registrate gratis';b1.onclick=function(){if(typeof openAuth==='function')openAuth('register')};var b2=document.createElement('button');b2.className='hz-btn hz-btn-o';b2.style.cssText='width:100%';b2.textContent='Iniciá sesión';b2.onclick=function(){if(typeof openAuth==='function')openAuth('login')};btns.appendChild(b1);btns.appendChild(b2)}
-  function fixGuestHome(){var st=setStateClasses();if(st.ok)return;makeHomeButtons();var pill=q('#heroPill');if(pill)pill.innerHTML='<span class="pdot"></span>COMUNIDAD EXCLUSIVA · MAYORES DE 40';var nr=q('#navRight');if(nr)nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';var bn=q('.bnav');if(bn)bn.style.display='none'}
-  function showProfileLock(){var page=q('#page-register .fcard');if(!page)return;if(q('.fu-v99-profile-lock',page))return;var box=document.createElement('div');box.className='fu-v99-profile-lock';box.textContent='Completá tu perfil para poder ver personas cercanas, chatear y usar FortyUp. Cuando termines, guardás y listo.';page.insertBefore(box,page.firstChild)}
-  function goRegister(){if(typeof goTo==='function'){var p=activePage();if(p!=='register')goTo('register')}setTimeout(function(){try{if(typeof loadProfileForm==='function')loadProfileForm()}catch(_){}showProfileLock()},80)}
-  function enforceGate(){var st=setStateClasses();if(!st.ok){fixGuestHome();return false}if(st.ok&&!st.done){var p=activePage();if(p!=='register')goRegister();else showProfileLock();return false}return true}
-  window.updateHeroLoggedIn=function(){var st=setStateClasses();var btns=q('#heroBtns'),pill=q('#heroPill');if(!st.ok){fixGuestHome();return}if(btns)btns.style.display='none';var nm=(st.u.name||String(st.u.email||'').split('@')[0]||'');if(pill)pill.innerHTML='<span class="pdot"></span>'+(st.done?'¡Hola, '+esc(nm)+'! 👋':'Completá tu perfil para empezar ✨');if(!st.done)setTimeout(enforceGate,30)};
-  var oldGo=window.goTo;if(typeof oldGo==='function'){window.goTo=function(page){var st=setStateClasses();var p=String(page||'');if(st.ok&&!st.done&&p!=='register'){var r=oldGo.call(this,'register');setTimeout(function(){try{if(typeof loadProfileForm==='function')loadProfileForm()}catch(_){}showProfileLock()},80);return r}var out=oldGo.apply(this,arguments);setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},60);return out}}
-  var oldLogout=window.logout;window.logout=function(){if(typeof oldLogout==='function'){try{oldLogout.apply(this,arguments)}catch(_){window.CU=null;window.CW=null;write(keySession(),null)}}else{window.CU=null;window.CW=null;write(keySession(),null)}window.CU=null;window.CW=null;write(keySession(),null);document.body.classList.remove('fu-logged','fu-profile-incomplete','fu-profile-complete','has-session');document.body.classList.add('fu-guest','sebas-guest');if(typeof goTo==='function')try{goTo('home')}catch(_){};[0,40,120,260].forEach(function(ms){setTimeout(fixGuestHome,ms)})};
-  var oldDo=window.doAuth;if(typeof oldDo==='function'){window.doAuth=function(){var r=oldDo.apply(this,arguments);setTimeout(function(){var st=setStateClasses();if(st.ok&&!st.done)goRegister()},120);return r}}
-  var oldSave=window.saveProfile;if(typeof oldSave==='function'){window.saveProfile=function(){var r=oldSave.apply(this,arguments);setTimeout(function(){var u=refreshCurrent();setStateClasses();if(u&&complete(u)){document.body.classList.remove('fu-profile-incomplete');document.body.classList.add('fu-profile-complete');if(typeof toast==='function')toast('Perfil completo. Ya podés usar FortyUp ✨','ok');if(typeof goTo==='function')goTo('home');if(typeof setBn==='function')setBn('home')}else if(u){showProfileLock();if(typeof toast==='function')toast('Todavía falta completar datos obligatorios del perfil.','w')}},160);return r}}
-  var oldUp=window.upNav;if(typeof oldUp==='function'){window.upNav=function(){var r=oldUp.apply(this,arguments);setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},60);return r}}
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){setStateClasses();enforceGate();if(!refreshCurrent())fixGuestHome()},120)});
-  window.addEventListener('load',function(){setTimeout(function(){setStateClasses();enforceGate();if(!refreshCurrent())fixGuestHome()},280)});
-  document.addEventListener('click',function(){setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},90)},true);
 })();
 </script>
