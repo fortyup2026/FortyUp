@@ -16071,3 +16071,90 @@ html,body{overflow-x:hidden!important;}
   setInterval(function(){if(q('#page-register.active'))window.fuRegSyncDraft()},1000);
 })();
 </script>
+
+<!-- === FortyUp v110 - súper diamante enviado unificado === -->
+<style id="fu-v110-super-check-unificado-css">
+/* Anulamos todos los tildes anteriores hechos con ::after para evitar posiciones distintas */
+.pa-super::after,
+.pa-super.super-sent::after,
+.pa-super.fu-super-sent::after,
+.pa-super.sent::after,
+.pa-super.used::after{
+  content:none!important;
+  display:none!important;
+}
+.pa-super{
+  position:relative!important;
+  overflow:visible!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+}
+.pa-super.fu-super-done{
+  opacity:1!important;
+  filter:none!important;
+}
+.pa-super .fu-super-check{
+  position:absolute!important;
+  top:-8px!important;
+  right:-8px!important;
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  min-height:22px!important;
+  border-radius:50%!important;
+  background:#10B981!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  box-shadow:0 5px 12px rgba(16,185,129,.38)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-family:'Nunito',Arial,sans-serif!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  z-index:30!important;
+  pointer-events:none!important;
+  transform:none!important;
+}
+.pa-super .fu-super-check::before{
+  content:'✓'!important;
+  display:block!important;
+  transform:translateY(-.5px)!important;
+}
+</style>
+<script id="fu-v110-super-check-unificado-js">
+(function(){
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function normalizeSuperChecks(){
+    qa('.pa-super').forEach(function(btn){
+      var tx=(btn.textContent||'').toLowerCase();
+      var sent=tx.indexOf('enviado')>-1 || btn.classList.contains('super-sent') || btn.classList.contains('fu-super-sent') || btn.classList.contains('sent');
+      qa('.fu-super-check',btn).forEach(function(x){x.remove()});
+      if(sent){
+        btn.classList.add('fu-super-done','super-sent','fu-super-sent');
+        btn.disabled=true;
+        var sp=document.createElement('span');
+        sp.className='fu-super-check';
+        btn.appendChild(sp);
+      }else{
+        btn.classList.remove('fu-super-done');
+      }
+    });
+  }
+  window.fuNormalizeSuperChecks=normalizeSuperChecks;
+  var oldMark=window.fuMarkSuperButtonsSafe || window.fuMarkSuperButtons;
+  window.fuMarkSuperButtonsSafe=function(){try{if(typeof oldMark==='function')oldMark.apply(this,arguments)}catch(_){} normalizeSuperChecks();};
+  window.fuMarkSuperButtons=window.fuMarkSuperButtonsSafe;
+  ['rProfiles','openMod','sendSuperDiamond','goTo'].forEach(function(fn){
+    var old=window[fn];
+    if(typeof old==='function'&&!old.__fu110SuperCheck){
+      window[fn]=function(){var r=old.apply(this,arguments);[0,80,180,420,900].forEach(function(ms){setTimeout(normalizeSuperChecks,ms)});return r};
+      window[fn].__fu110SuperCheck=true;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',function(){[100,400,900].forEach(function(ms){setTimeout(normalizeSuperChecks,ms)})});
+  document.addEventListener('click',function(){setTimeout(normalizeSuperChecks,80);setTimeout(normalizeSuperChecks,260)},true);
+  setInterval(normalizeSuperChecks,2500);
+})();
+</script>
