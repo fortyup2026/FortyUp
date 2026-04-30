@@ -14662,6 +14662,29 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+<style>
+.nav-logo{font-size:2rem!important;font-weight:900!important}
+.nav-right{min-width:80px!important}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  const btn=document.querySelector(".map-search-btn, .map-btn, #btnBuscarZona");
+  if(btn){
+    btn.style.zIndex="99999";
+    btn.onclick=()=>{
+      if(window.selectedCity){
+        if(window.closeMap) closeMap();
+        if(window.loadProfilesByCity) loadProfilesByCity(window.selectedCity);
+      } else {
+        alert("Elegí una zona primero");
+      }
+    }
+  }
+});
+</script>
+
 </body>
 </html>
 
