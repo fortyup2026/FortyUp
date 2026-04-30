@@ -13639,6 +13639,285 @@ body.fu-profile-incomplete .bnav #bn-home,body.fu-profile-incomplete .bnav #bn-p
 })();
 </script>
 
+
+<!-- === FortyUp v109 - foto única global + super diamante estable + términos solo en registro === -->
+<style id="fu-v109-photo-super-terms-css">
+/* En editar/completar perfil dentro de la app no se vuelven a pedir términos */
+body.has-session #page-register .fu-accept-terms,
+body.has-session #page-register .fu-reg-bottom-links,
+body.has-session #page-register .fu-terms-link{
+  display:none!important;
+}
+
+/* Súper diamante enviado: tilde verde siempre dentro del botón, sin correrse */
+.pa-super.super-sent,
+.pa-super.fu-super-sent,
+.pa-super.sent,
+.pa-super.used{
+  position:relative!important;
+  overflow:visible!important;
+}
+.pa-super.super-sent::after,
+.pa-super.fu-super-sent::after,
+.pa-super.sent::after{
+  content:'✓'!important;
+  position:absolute!important;
+  top:-3px!important;
+  right:-3px!important;
+  width:18px!important;
+  height:18px!important;
+  min-width:18px!important;
+  min-height:18px!important;
+  border-radius:50%!important;
+  background:#10B981!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  border:2px solid #fff!important;
+  box-shadow:0 4px 10px rgba(16,185,129,.35)!important;
+  z-index:5!important;
+  transform:none!important;
+}
+
+/* Avatares: que cualquier imagen de perfil llene bien el círculo */
+.av-c img,.bn-ico img,.myp-av img,.chat-av img,.chat-hav img,.profile-avatar img,.nav-avatar img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+</style>
+<script id="fu-v109-photo-super-terms-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function usersKey(){try{return K&&K.U?K.U:'fu_u'}catch(_){return 'fu_u'}}
+  function sessKey(){try{return K&&K.S?K.S:'fu_s'}catch(_){return 'fu_s'}}
+  function esc(s){try{return e(String(s||''))}catch(_){return String(s||'').replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}}
+  function photoOf(u){
+    if(!u)return '';
+    var candidates=[u.photo,u.photoURL,u.profilePhoto,u.avatar,u.profilePicture,u.image,u.picture];
+    if(u.photos&&u.photos.length){
+      if(typeof u.photos[0]==='string')candidates.push(u.photos[0]);
+      else candidates.push(u.photos[0].src||u.photos[0].url||u.photos[0].photo);
+    }
+    if(u.profilePhotos&&u.profilePhotos.length){
+      if(typeof u.profilePhotos[0]==='string')candidates.push(u.profilePhotos[0]);
+      else candidates.push(u.profilePhotos[0].src||u.profilePhotos[0].url||u.profilePhotos[0].photo);
+    }
+    for(var i=0;i<candidates.length;i++){
+      var p=candidates[i];
+      if(p&&String(p).trim())return String(p).trim();
+    }
+    return '';
+  }
+  window.fuPhotoOf=photoOf;
+
+  function users(){return read(usersKey(),[])}
+  function saveUsers(a){write(usersKey(),a)}
+  function normalizeAllPhotos(){
+    var arr=users(), changed=false;
+    arr=arr.map(function(u){
+      if(!u)return u;
+      var p=photoOf(u);
+      if(p && (u.photo!==p || u.photoURL!==p || u.profilePhoto!==p)){
+        changed=true;
+        return Object.assign({},u,{photo:p,photoURL:p,profilePhoto:p,avatar:p});
+      }
+      return u;
+    });
+    if(changed)saveUsers(arr);
+    if(window.CU&&CU.id){
+      var me=arr.find(function(u){return u&&u.id===CU.id});
+      if(me){window.CU=Object.assign(CU,me);try{write(sessKey(),{id:CU.id})}catch(_){}}
+    }
+    return arr;
+  }
+  window.fuNormalizeProfilePhotos=normalizeAllPhotos;
+
+  /* Normalizar antes de renderizar perfiles, chats, favoritos y perfil propio */
+  ['rProfiles','rChatList','rChatMsgs','rFavs','rMyP'].forEach(function(fn){
+    var old=window[fn];
+    if(typeof old==='function' && !old.__fu109Photo){
+      window[fn]=function(){normalizeAllPhotos();var r=old.apply(this,arguments);setTimeout(normalizeAllPhotos,60);setTimeout(fuMarkSuperButtonsSafe,80);return r};
+      window[fn].__fu109Photo=true;
+    }
+  });
+
+  var oldNormalize=window.normalizeUsers;
+  if(typeof oldNormalize==='function' && !oldNormalize.__fu109Photo){
+    window.normalizeUsers=function(){
+      var r=oldNormalize.apply(this,arguments)||[];
+      normalizeAllPhotos();
+      return read(usersKey(),r);
+    };
+    window.normalizeUsers.__fu109Photo=true;
+  }
+
+  var oldSync=window.syncFromFirestore;
+  if(typeof oldSync==='function' && !oldSync.__fu109Photo){
+    window.syncFromFirestore=function(){
+      var r=oldSync.apply(this,arguments);
+      setTimeout(function(){normalizeAllPhotos();try{if(q('#page-profiles.active')&&typeof rProfiles==='function')rProfiles()}catch(_){ }},900);
+      return r;
+    };
+    window.syncFromFirestore.__fu109Photo=true;
+  }
+
+  function compressProfileImage(file,cb){
+    if(!file||!/^image\//.test(file.type||'')){cb(null);return}
+    var fr=new FileReader();
+    fr.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var max=560,w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+        if(w>h&&w>max){h=Math.round(h*max/w);w=max}
+        else if(h>=w&&h>max){w=Math.round(w*max/h);h=max}
+        var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        try{ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high'}catch(_){ }
+        ctx.drawImage(img,0,0,w,h);
+        var quality=.70,data=canvas.toDataURL('image/jpeg',quality);
+        while(data.length>360000&&quality>.38){quality-=.07;data=canvas.toDataURL('image/jpeg',quality)}
+        cb(data);
+      };
+      img.onerror=function(){cb(ev.target.result)};
+      img.src=ev.target.result;
+    };
+    fr.onerror=function(){cb(null)};
+    fr.readAsDataURL(file);
+  }
+
+  function setDraftPhoto(src){
+    if(!src)return;
+    window._photo=src;
+    var pp=q('#phprev'),im=q('#phimg');
+    if(im)im.src=src;
+    if(pp)pp.style.display='block';
+    try{if(typeof fuRegSyncDraft==='function')fuRegSyncDraft()}catch(_){ }
+  }
+
+  window.handleFile=function(input){
+    var file=input&&input.files&&input.files[0];if(!file)return;
+    try{toast('Optimizando foto…','ok')}catch(_){ }
+    compressProfileImage(file,function(data){
+      if(!data){try{toast('No pude cargar esa foto.','w')}catch(_){ }return}
+      setDraftPhoto(data);
+      try{toast('Foto cargada ✓','ok')}catch(_){ }
+    });
+  };
+
+  var oldPrev=window.prevPhoto;
+  window.prevPhoto=function(url){
+    if(oldPrev)try{oldPrev.apply(this,arguments)}catch(_){ }
+    if(url&&/^https?:/i.test(String(url).trim()))setDraftPhoto(String(url).trim());
+  };
+
+  function syncCurrentPhoto(photo){
+    if(!photo||!window.CU||!CU.id)return;
+    var arr=users(), found=false;
+    arr=arr.map(function(u){
+      if(u&&u.id===CU.id){found=true;return Object.assign({},u,{photo:photo,photoURL:photo,profilePhoto:photo,avatar:photo})}
+      return u;
+    });
+    if(!found)arr.push(Object.assign({},CU,{photo:photo,photoURL:photo,profilePhoto:photo,avatar:photo,is:0}));
+    saveUsers(arr);
+    window.CU=arr.find(function(u){return u&&u.id===CU.id})||Object.assign({},CU,{photo:photo,photoURL:photo,profilePhoto:photo,avatar:photo});
+    try{write(sessKey(),{id:CU.id})}catch(_){ }
+    try{if(typeof saveToFirestore==='function')saveToFirestore(CU)}catch(_){ }
+    try{if(window.firebase&&firebase.auth&&firebase.auth().currentUser&&firebase.auth().currentUser.updateProfile){firebase.auth().currentUser.updateProfile({photoURL:photo})}}catch(_){ }
+    ['upNav','rMyP','rProfiles','rChatList','rChatMsgs','checkUnread'].forEach(function(fn){try{if(typeof window[fn]==='function')window[fn]()}catch(_){ }});
+  }
+  window.fuSyncCurrentPhotoEverywhere=syncCurrentPhoto;
+
+  var oldSaveProfile=window.saveProfile;
+  if(typeof oldSaveProfile==='function' && !oldSaveProfile.__fu109Photo){
+    window.saveProfile=function(){
+      var wanted=window._photo||'';
+      var r=oldSaveProfile.apply(this,arguments);
+      [150,450,900,1400].forEach(function(ms){setTimeout(function(){
+        var p=wanted||photoOf(window.CU)||'';
+        if(p)syncCurrentPhoto(p);
+        normalizeAllPhotos();
+      },ms)});
+      return r;
+    };
+    window.saveProfile.__fu109Photo=true;
+  }
+
+  var oldSaveFS=window.saveToFirestore;
+  if(typeof oldSaveFS==='function' && !oldSaveFS.__fu109Photo){
+    window.saveToFirestore=function(profile){
+      if(!profile)return oldSaveFS.apply(this,arguments);
+      var p=Object.assign({},profile);
+      var photo=photoOf(p);
+      if(photo){p.photo=photo;p.photoURL=photo;p.profilePhoto=photo;p.avatar=photo}
+      var res=oldSaveFS.call(this,p);
+      try{
+        if(window.DB&&p.id&&!p.is){
+          var extra={updatedAt:new Date().toISOString()};
+          ['photo','photoURL','profilePhoto','avatar'].forEach(function(k){if(p[k])extra[k]=p[k]});
+          if(Object.keys(extra).length>1)DB.collection('profiles').doc(p.id).set(extra,{merge:true});
+        }
+      }catch(_){ }
+      return res;
+    };
+    window.saveToFirestore.__fu109Photo=true;
+  }
+
+  /* Si se entra a editar perfil/fotos estando logueado, NO mostrar aceptación de términos */
+  function cleanProfileTerms(){
+    if(!window.CU)return;
+    var page=q('#page-register');if(!page)return;
+    qa('.fu-accept-terms,.fu-reg-bottom-links,.fu-terms-link',page).forEach(function(x){x.remove()});
+  }
+  var oldLoad=window.loadProfileForm;
+  if(typeof oldLoad==='function' && !oldLoad.__fu109Terms){
+    window.loadProfileForm=function(){var r=oldLoad.apply(this,arguments);setTimeout(cleanProfileTerms,50);setTimeout(cleanProfileTerms,250);return r};
+    window.loadProfileForm.__fu109Terms=true;
+  }
+  var oldGo=window.goTo;
+  if(typeof oldGo==='function' && !oldGo.__fu109Terms){
+    window.goTo=function(page){var r=oldGo.apply(this,arguments);setTimeout(function(){cleanProfileTerms();fuMarkSuperButtonsSafe()},80);return r};
+    window.goTo.__fu109Terms=true;
+  }
+
+  function fuMarkSuperButtonsSafe(){
+    qa('.pa-super').forEach(function(btn){
+      var tx=(btn.textContent||'').toLowerCase();
+      if(tx.indexOf('enviado')>-1||btn.classList.contains('sent')||btn.classList.contains('used')){
+        if(tx.indexOf('enviado')>-1){btn.classList.add('super-sent','fu-super-sent');btn.disabled=true;}
+      }
+    });
+  }
+  window.fuMarkSuperButtonsSafe=fuMarkSuperButtonsSafe;
+
+  var oldSendSuper=window.sendSuperDiamond;
+  if(typeof oldSendSuper==='function' && !oldSendSuper.__fu109Mark){
+    window.sendSuperDiamond=function(id){
+      var r=oldSendSuper.apply(this,arguments);
+      [80,180,450,900].forEach(function(ms){setTimeout(function(){
+        try{if(typeof rProfiles==='function'&&q('#page-profiles.active'))rProfiles()}catch(_){ }
+        fuMarkSuperButtonsSafe();
+      },ms)});
+      return r;
+    };
+    window.sendSuperDiamond.__fu109Mark=true;
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){normalizeAllPhotos();cleanProfileTerms();setTimeout(fuMarkSuperButtonsSafe,500)});
+  document.addEventListener('click',function(){setTimeout(function(){normalizeAllPhotos();cleanProfileTerms();fuMarkSuperButtonsSafe()},120)},true);
+  setInterval(function(){normalizeAllPhotos();fuMarkSuperButtonsSafe()},10000);
+})();
+</script>
+
 </body>
 </html>
 
