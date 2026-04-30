@@ -14664,24 +14664,69 @@ body.has-session #page-register .fu-terms-link{
 
 
 <style>
-.nav-logo{font-size:2rem!important;font-weight:900!important}
-.nav-right{min-width:80px!important}
+/* FIX: botón siempre tocable */
+#btnBuscarZona, .map-btn{
+  position:fixed !important;
+  bottom:20px !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  z-index:999999 !important;
+  pointer-events:auto !important;
+}
+
+/* evitar capas bloqueando */
+.map-modal, .map-overlay{
+  pointer-events:auto !important;
+}
+
+/* evitar freeze scroll */
+body.modal-open{
+  overflow:auto !important;
+}
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
-  const btn=document.querySelector(".map-search-btn, .map-btn, #btnBuscarZona");
+
+  // FIX: botón mapa funcionando SIEMPRE
+  const btn = document.getElementById("btnBuscarZona") || document.querySelector(".map-btn");
+
   if(btn){
-    btn.style.zIndex="99999";
-    btn.onclick=()=>{
-      if(window.selectedCity){
-        if(window.closeMap) closeMap();
-        if(window.loadProfilesByCity) loadProfilesByCity(window.selectedCity);
-      } else {
+    btn.addEventListener("click", ()=>{
+
+      if(!window.selectedCity){
         alert("Elegí una zona primero");
+        return;
       }
-    }
+
+      // cerrar mapa SIEMPRE
+      const modal = document.querySelector(".map-modal");
+      if(modal){
+        modal.style.display = "none";
+        modal.classList.remove("open");
+      }
+
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "auto";
+
+      // cargar perfiles
+      if(typeof loadProfilesByCity === "function"){
+        loadProfilesByCity(window.selectedCity);
+      }
+
+    });
   }
+
+  // FIX: evitar pantalla congelada al volver
+  window.addEventListener("pageshow", ()=>{
+    document.body.style.overflow = "auto";
+    const modal = document.querySelector(".map-modal");
+    if(modal){
+      modal.style.display = "none";
+      modal.classList.remove("open");
+    }
+  });
+
 });
 </script>
 
