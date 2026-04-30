@@ -14663,71 +14663,581 @@ body.has-session #page-register .fu-terms-link{
 </script>
 
 
-<style>
-/* FIX: botón siempre tocable */
-#btnBuscarZona, .map-btn{
-  position:fixed !important;
-  bottom:20px !important;
-  left:50% !important;
-  transform:translateX(-50%) !important;
-  z-index:999999 !important;
-  pointer-events:auto !important;
-}
+<!-- FortyUp v10-final-124 - fixes premium reales: mapa estable + header + fotos Firebase -->
+<style id="fortyup-v124-premium-fixes">
+  /* Header más premium y sin saltos */
+  .nav-in{
+    min-height:60px!important;
+    height:60px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:.7rem!important;
+  }
+  .nav-logo{
+    font-size:2.08rem!important;
+    font-weight:900!important;
+    line-height:1!important;
+    letter-spacing:-.03em!important;
+    flex:0 0 auto!important;
+    min-width:118px!important;
+  }
+  .nav-right{
+    min-width:122px!important;
+    flex:0 0 auto!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:.5rem!important;
+  }
+  .notif-wrap,.fu-notif-btn,.bell-btn,.notif-bell-wrap{
+    flex:0 0 auto!important;
+    transform:none!important;
+  }
+  .av-nm{
+    max-width:70px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
 
-/* evitar capas bloqueando */
-.map-modal, .map-overlay{
-  pointer-events:auto !important;
-}
+  /* Quitar micro saltos/titileos */
+  .pcard,
+  .pcard *,
+  .fu116-empty-profiles,
+  .fu116-empty-profiles *,
+  .fu-map-box,
+  #mapSearchModal,
+  #pgrid{
+    animation:none!important;
+  }
+  .pcard:hover{
+    transform:none!important;
+  }
+  .pcard-ph img{
+    transition:none!important;
+  }
 
-/* evitar freeze scroll */
-body.modal-open{
-  overflow:auto !important;
-}
+  /* Modal de mapa rehacido: simple, sólido, tocable */
+  #mapSearchModal.fu124-map{
+    position:fixed!important;
+    inset:0!important;
+    display:none;
+    align-items:center!important;
+    justify-content:center!important;
+    z-index:999999!important;
+    background:rgba(6,20,16,.70)!important;
+    backdrop-filter:blur(8px)!important;
+    -webkit-backdrop-filter:blur(8px)!important;
+    padding:1rem!important;
+    pointer-events:auto!important;
+  }
+  #mapSearchModal.fu124-map .fu-map-box{
+    width:min(94vw,460px)!important;
+    max-height:88vh!important;
+    overflow:auto!important;
+    background:#fff!important;
+    border-radius:28px!important;
+    box-shadow:0 32px 80px rgba(6,78,59,.30)!important;
+    border:1.5px solid rgba(209,232,223,.9)!important;
+    padding:1rem!important;
+    position:relative!important;
+    pointer-events:auto!important;
+  }
+  #mapSearchModal.fu124-map .fu-map-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:.7rem!important;
+    padding:.2rem .2rem .8rem!important;
+    font-family:'Playfair Display',serif!important;
+    font-size:1.35rem!important;
+    font-weight:800!important;
+    color:var(--g1)!important;
+  }
+  #mapSearchModal.fu124-map .fu-map-close{
+    width:34px!important;
+    height:34px!important;
+    border-radius:50%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    background:var(--bg3)!important;
+    border:1.5px solid var(--border)!important;
+    color:var(--g1)!important;
+    font-size:1.1rem!important;
+    font-weight:900!important;
+    line-height:1!important;
+    padding:0!important;
+    flex:0 0 34px!important;
+  }
+  #mapSearchModal.fu124-map .fu-map-search{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:.55rem!important;
+    margin:.3rem 0 .85rem!important;
+  }
+  #mapSearchModal.fu124-map #mapPlaceSearch{
+    height:52px!important;
+    border-radius:22px!important;
+    background:var(--bg)!important;
+    border:1.5px solid var(--border)!important;
+    padding:0 1rem!important;
+    color:var(--txt)!important;
+    font-size:.92rem!important;
+    min-width:0!important;
+  }
+  #mapSearchDoBtn,
+  #mapSearchBtn{
+    min-height:52px!important;
+    border-radius:22px!important;
+    background:linear-gradient(135deg,var(--g1),var(--g3))!important;
+    color:#fff!important;
+    font-weight:900!important;
+    padding:.75rem 1rem!important;
+    border:0!important;
+    box-shadow:0 8px 20px rgba(6,78,59,.22)!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    position:relative!important;
+    z-index:1000000!important;
+    cursor:pointer!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+  }
+  #mapSearchContainer{
+    display:none!important;
+  }
+  #mapSearchInfo{
+    background:linear-gradient(135deg,#F0FDF8,#FFFFFF)!important;
+    border:1.5px solid #A7F3D0!important;
+    border-radius:20px!important;
+    color:var(--g1)!important;
+    font-weight:800!important;
+    font-size:.86rem!important;
+    padding:.75rem .9rem!important;
+    margin:.45rem 0 .7rem!important;
+    line-height:1.35!important;
+  }
+  #mapSearchModal.fu124-map .fu-map-foot{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:.6rem!important;
+    position:relative!important;
+    z-index:999999!important;
+    pointer-events:auto!important;
+  }
+  #mapSearchBtn{
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  /* Empty state con diamante tipo emoji, sin saltos */
+  .fu116-empty-profiles .ico,
+  .fu93-empty-profiles .ico{
+    width:auto!important;
+    height:auto!important;
+    background:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    transform:none!important;
+    font-size:2.9rem!important;
+    line-height:1!important;
+    margin-bottom:.55rem!important;
+  }
+  .fu116-empty-profiles .ico:before,
+  .fu93-empty-profiles .ico:before{
+    content:'💎'!important;
+  }
 </style>
 
-<script>
-document.addEventListener("DOMContentLoaded",()=>{
+<script id="fortyup-v124-premium-fixes-js">
+(function(){
+  if(window.__fu124PremiumInstalled)return;
+  window.__fu124PremiumInstalled=true;
 
-  // FIX: botón mapa funcionando SIEMPRE
-  const btn = document.getElementById("btnBuscarZona") || document.querySelector(".map-btn");
+  function byId(id){return document.getElementById(id)}
+  function safe(v){return String(v==null?'':v).trim()}
+  function cleanCity(v){
+    return safe(v)
+      .replace(/^Ver perfiles\s+(cerca de|en|por)\s*/i,'')
+      .replace(/→/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function toastMsg(msg,type){
+    try{ if(typeof window.toast==='function') window.toast(msg,type||'ok'); else alert(msg); }
+    catch(_){ alert(msg); }
+  }
+  function normalizePhoto(u){
+    if(!u)return '';
+    var arr=[
+      u.photo,u.photoURL,u.profilePhoto,u.avatar,u.avatarUrl,u.avatarURL,
+      u.profilePicture,u.profilePictureUrl,u.image,u.imageUrl,u.mainPhoto,
+      u.picture,u.photoSmall
+    ];
+    if(Array.isArray(u.profilePhotos)) arr=arr.concat(u.profilePhotos);
+    if(Array.isArray(u.photos)) arr=arr.concat(u.photos);
+    for(var i=0;i<arr.length;i++){
+      var p=arr[i];
+      if(typeof p==='string' && p.trim()) return p.trim();
+      if(p && typeof p==='object' && typeof p.src==='string' && p.src.trim()) return p.src.trim();
+    }
+    return '';
+  }
+  function writeLocalUsers(list){
+    try{
+      if(typeof sv==='function' && window.K && K.U) sv(K.U,list);
+      else localStorage.setItem('fu_users',JSON.stringify(list));
+    }catch(_){}
+  }
+  function readLocalUsers(){
+    try{
+      if(typeof g==='function' && window.K && K.U) return g(K.U,[])||[];
+      var a=JSON.parse(localStorage.getItem('fu_users')||'[]');
+      return Array.isArray(a)?a:[];
+    }catch(_){return []}
+  }
+  function refreshAll(){
+    try{ if(typeof upCount==='function') upCount(); }catch(_){}
+    try{ if(typeof rProfiles==='function') rProfiles(); }catch(_){}
+    try{ if(typeof rMine==='function') rMine(); }catch(_){}
+    try{ if(typeof rChats==='function') rChats(); }catch(_){}
+    try{ if(typeof syncAllAvatars==='function') syncAllAvatars(); }catch(_){}
+  }
 
-  if(btn){
-    btn.addEventListener("click", ()=>{
+  /* ═════════ MAPA PREMIUM: reemplazo robusto, sin overlays zombie ═════════ */
+  function ensureMap(){
+    var old=byId('mapSearchModal');
+    if(old) old.remove();
 
-      if(!window.selectedCity){
-        alert("Elegí una zona primero");
-        return;
+    var modal=document.createElement('div');
+    modal.id='mapSearchModal';
+    modal.className='fu124-map';
+    modal.innerHTML =
+      '<div class="fu-map-box" role="dialog" aria-modal="true">'+
+        '<div class="fu-map-head">'+
+          '<div>🗺 Elegí una zona</div>'+
+          '<button class="fu-map-close" type="button" aria-label="Cerrar">×</button>'+
+        '</div>'+
+        '<div class="fu-map-search">'+
+          '<input id="mapPlaceSearch" type="text" autocomplete="off" placeholder="Buscar localidad, barrio o ciudad...">'+
+          '<button id="mapSearchDoBtn" type="button">Buscar</button>'+
+        '</div>'+
+        '<div id="mapSearchContainer"></div>'+
+        '<div class="fu-map-foot">'+
+          '<div id="mapSearchInfo">Escribí una ciudad o barrio. Ejemplo: Tandil, Mar del Plata, Villa Bosch.</div>'+
+          '<button id="mapSearchBtn" type="button">Ver perfiles en esta zona →</button>'+
+        '</div>'+
+      '</div>';
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener('click',function(e){
+      if(e.target===modal) closeMap();
+    },true);
+
+    modal.querySelector('.fu-map-close').addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation(); closeMap();
+    });
+
+    var input=byId('mapPlaceSearch');
+    var doBtn=byId('mapSearchDoBtn');
+    var searchBtn=byId('mapSearchBtn');
+
+    function setPlaceFromInput(){
+      var q=cleanCity(input.value);
+      if(!q){
+        toastMsg('Escribí una localidad para buscar','w');
+        input.focus();
+        return false;
       }
+      window._fuLocationMode='city';
+      window._searchCity=q;
+      window._locFilter=q;
+      window._searchLat=null;
+      window._searchLng=null;
+      var info=byId('mapSearchInfo');
+      if(info) info.innerHTML='📍 Zona seleccionada: <strong>'+q.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})+'</strong>';
+      searchBtn.textContent='Ver perfiles cerca de '+q+' →';
+      return true;
+    }
 
-      // cerrar mapa SIEMPRE
-      const modal = document.querySelector(".map-modal");
-      if(modal){
-        modal.style.display = "none";
-        modal.classList.remove("open");
+    doBtn.addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation(); setPlaceFromInput();
+    },true);
+
+    input.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){
+        e.preventDefault();
+        setPlaceFromInput();
       }
+    });
 
-      document.body.classList.remove("modal-open");
-      document.body.style.overflow = "auto";
+    searchBtn.addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation();
+      if(!window._searchCity && !setPlaceFromInput()) return false;
+      applyCitySearch();
+      return false;
+    },true);
 
-      // cargar perfiles
-      if(typeof loadProfilesByCity === "function"){
-        loadProfilesByCity(window.selectedCity);
+    searchBtn.addEventListener('touchend',function(e){
+      e.preventDefault(); e.stopPropagation();
+      if(!window._searchCity && !setPlaceFromInput()) return false;
+      applyCitySearch();
+      return false;
+    },{capture:true,passive:false});
+
+    return modal;
+  }
+
+  function closeMap(){
+    var modal=byId('mapSearchModal');
+    if(modal) modal.style.display='none';
+    document.body.style.overflow='';
+    document.documentElement.style.overflow='';
+    document.body.classList.remove('modal-open');
+  }
+
+  function applyCitySearch(){
+    var place=cleanCity(window._searchCity || window._locFilter || (byId('mapPlaceSearch')?byId('mapPlaceSearch').value:''));
+    if(!place){
+      toastMsg('Elegí una zona primero','w');
+      return;
+    }
+    window._fuLocationMode='city';
+    window._searchCity=place;
+    window._locFilter=place;
+    window._searchLat=null;
+    window._searchLng=null;
+    window.MLAT=null;
+    window.MLNG=null;
+
+    try{ if(typeof showLocLabel==='function') showLocLabel(place); }catch(_){}
+    closeMap();
+
+    try{ if(typeof showPage==='function') showPage('profiles'); }catch(_){}
+    setTimeout(function(){ try{ if(typeof rProfiles==='function') rProfiles(); }catch(_){} },20);
+    setTimeout(function(){ try{ if(typeof rProfiles==='function') rProfiles(); }catch(_){} },160);
+
+    toastMsg('Mostrando perfiles de '+place+' 📍','ok');
+  }
+
+  window.closeMapSearch=closeMap;
+  window.applyMapSearch=applyCitySearch;
+  window.searchPlaceOnMap=function(){
+    var input=byId('mapPlaceSearch');
+    if(!input || !cleanCity(input.value)){
+      toastMsg('Escribí una localidad para buscar','w');
+      return false;
+    }
+    window._searchCity=cleanCity(input.value);
+    window._locFilter=window._searchCity;
+    var info=byId('mapSearchInfo');
+    var btn=byId('mapSearchBtn');
+    if(info) info.innerHTML='📍 Zona seleccionada: <strong>'+window._searchCity+'</strong>';
+    if(btn) btn.textContent='Ver perfiles cerca de '+window._searchCity+' →';
+    return false;
+  };
+  window.openMapSearch=function(){
+    var modal=ensureMap();
+    modal.style.display='flex';
+    document.body.style.overflow='hidden';
+    setTimeout(function(){
+      var input=byId('mapPlaceSearch');
+      if(input){
+        input.value=cleanCity(window._searchCity||window._locFilter||'');
+        input.focus();
       }
+    },80);
+    return false;
+  };
 
+  window.addEventListener('pageshow',function(){
+    closeMap();
+  });
+  document.addEventListener('DOMContentLoaded',function(){
+    document.body.style.overflow='';
+    document.documentElement.style.overflow='';
+  });
+
+  /* ═════════ FIREBASE REAL: perfiles + fotos compartidas entre usuarios ═════════ */
+  function compressDataUrl(dataUrl,maxSide,quality){
+    return new Promise(function(resolve){
+      if(!dataUrl || typeof dataUrl!=='string' || dataUrl.indexOf('data:image')!==0){resolve(dataUrl||'');return;}
+      var img=new Image();
+      img.onload=function(){
+        try{
+          var w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+          var scale=Math.min(1,(maxSide||720)/Math.max(w,h));
+          var cw=Math.max(1,Math.round(w*scale)), ch=Math.max(1,Math.round(h*scale));
+          var canvas=document.createElement('canvas');
+          canvas.width=cw; canvas.height=ch;
+          var ctx=canvas.getContext('2d');
+          ctx.drawImage(img,0,0,cw,ch);
+          var out=canvas.toDataURL('image/jpeg',quality||0.72);
+          resolve(out);
+        }catch(e){resolve(dataUrl);}
+      };
+      img.onerror=function(){resolve(dataUrl);};
+      img.src=dataUrl;
     });
   }
 
-  // FIX: evitar pantalla congelada al volver
-  window.addEventListener("pageshow", ()=>{
-    document.body.style.overflow = "auto";
-    const modal = document.querySelector(".map-modal");
-    if(modal){
-      modal.style.display = "none";
-      modal.classList.remove("open");
+  async function savePhotoSafe(profile,toSave){
+    var p=normalizePhoto(profile);
+    if(!p) return toSave;
+    if(p.indexOf('data:image')===0){
+      var small=await compressDataUrl(p,620,0.68);
+      if(small && small.length < 900000){
+        toSave.photo=small;
+        toSave.photoURL=small;
+        toSave.profilePhoto=small;
+        toSave.avatar=small;
+        toSave.photoSmall=small;
+      }
+    }else{
+      toSave.photo=p;
+      toSave.photoURL=p;
+      toSave.profilePhoto=p;
+      toSave.avatar=p;
+      toSave.photoSmall=p;
     }
-  });
+    return toSave;
+  }
 
-});
+  window.saveToFirestore=function(profile){
+    try{
+      if(!window.DB || !profile || !profile.id || profile.is) return Promise.resolve();
+      var fields=['id','name','age','city','gender','email','desc','int','looking','plans','lat','lng','zodiac','birthdate','interestedIn','pref','social','createdAt','updatedAt','localidad','locationName','zone','town','barrio'];
+      var toSave={};
+      fields.forEach(function(f){ if(profile[f]!==undefined) toSave[f]=profile[f]; });
+      toSave.updatedAt=new Date().toISOString();
+
+      return savePhotoSafe(profile,toSave).then(function(finalDoc){
+        return DB.collection('profiles').doc(profile.id).set(finalDoc,{merge:true}).then(function(){
+          return finalDoc;
+        });
+      }).catch(function(err){
+        console.warn('Firestore save error:',err);
+      });
+    }catch(e){
+      console.warn('saveToFirestore fatal:',e);
+      return Promise.resolve();
+    }
+  };
+
+  window.syncFromFirestore=function(){
+    try{
+      if(!window.DB || window.FB_SYNCING) return;
+      window.FB_SYNCING=true;
+
+      DB.collection('profiles').get().then(function(snap){
+        var fb=[];
+        snap.forEach(function(doc){
+          var d=doc.data()||{};
+          d.id=d.id||doc.id;
+          d.is=0;
+          d._fb=true;
+          var p=normalizePhoto(d);
+          if(p){
+            d.photo=p; d.photoURL=p; d.profilePhoto=p; d.avatar=p; d.photoSmall=p;
+          }
+          fb.push(d);
+        });
+
+        var local=readLocalUsers();
+        var samples=local.filter(function(u){return u && u.is});
+        var real=local.filter(function(u){return u && !u.is});
+        var byId={};
+
+        real.forEach(function(u){
+          if(!u || !u.id) return;
+          var p=normalizePhoto(u);
+          if(p){u.photo=p;u.photoURL=p;u.profilePhoto=p;u.avatar=p;u.photoSmall=p;}
+          byId[u.id]=Object.assign({},u);
+        });
+
+        fb.forEach(function(f){
+          if(!f || !f.id) return;
+          var old=byId[f.id]||{};
+          var merged=Object.assign({},old,f);
+          var p=normalizePhoto(f) || normalizePhoto(old);
+          if(p){merged.photo=p;merged.photoURL=p;merged.profilePhoto=p;merged.avatar=p;merged.photoSmall=p;}
+          /* mantener password local si existiera, no pisar sesión */
+          if(old.pass && !merged.pass) merged.pass=old.pass;
+          byId[f.id]=merged;
+        });
+
+        var final=samples.concat(Object.keys(byId).map(function(id){return byId[id]}));
+        writeLocalUsers(final);
+
+        if(window.CU && CU.id && byId[CU.id]){
+          var oldPass=CU.pass;
+          window.CU=Object.assign({},CU,byId[CU.id]);
+          if(oldPass && !CU.pass) CU.pass=oldPass;
+          try{ if(typeof sv==='function' && typeof sessKey==='function') sv(sessKey(),{id:CU.id}); }catch(_){}
+        }
+
+        window.FB_SYNCING=false;
+        refreshAll();
+      }).catch(function(err){
+        window.FB_SYNCING=false;
+        console.warn('Firestore sync error:',err);
+      });
+    }catch(e){
+      window.FB_SYNCING=false;
+      console.warn('syncFromFirestore fatal:',e);
+    }
+  };
+
+  /* sincronización más viva para pruebas reales */
+  setTimeout(function(){try{syncFromFirestore();}catch(_){}},900);
+  setInterval(function(){try{syncFromFirestore();}catch(_){}},12000);
+
+  /* cuando cambia la foto local, guardar y refrescar todos los avatares */
+  window.fu124SaveCurrentUserPhoto=function(){
+    try{
+      if(!window.CU || !CU.id) return;
+      var p=normalizePhoto(CU);
+      if(!p)return;
+      CU.photo=p; CU.photoURL=p; CU.profilePhoto=p; CU.avatar=p; CU.photoSmall=p;
+      var users=readLocalUsers();
+      var found=false;
+      users=users.map(function(u){
+        if(u && u.id===CU.id){
+          found=true;
+          return Object.assign({},u,CU,{photo:p,photoURL:p,profilePhoto:p,avatar:p,photoSmall:p});
+        }
+        return u;
+      });
+      if(!found) users.push(Object.assign({},CU,{photo:p,photoURL:p,profilePhoto:p,avatar:p,photoSmall:p}));
+      writeLocalUsers(users);
+      saveToFirestore(CU);
+      refreshAll();
+    }catch(e){console.warn(e)}
+  };
+
+  /* Normalizar avatares visibles ya renderizados */
+  window.syncAllAvatars=function(){
+    try{
+      if(window.CU){
+        var p=normalizePhoto(CU);
+        if(p){
+          document.querySelectorAll('.av-c,.myp-av').forEach(function(el){
+            if(el.querySelector('img')) el.querySelector('img').src=p;
+            else el.innerHTML='<img src="'+p+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+          });
+        }
+      }
+    }catch(_){}
+  };
+
+  /* Header fino tras render async */
+  setTimeout(refreshAll,300);
+  setTimeout(refreshAll,1100);
+})();
 </script>
 
 </body>
