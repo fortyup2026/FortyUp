@@ -13616,3 +13616,175 @@ var oldR=window.rMyP;if(typeof oldR==='function')window.rMyP=function(){var o=ol
   document.addEventListener('DOMContentLoaded',function(){setTimeout(syncUserPhotoHistory,500)});
 })();
 </script>
+
+<style id="fortyup-v10-81-final-ajustes">
+/* FortyUp v81 - ubicación prolija + álbumes públicos únicos + estado online */
+#locationSearchBar{
+  display:none;
+  padding:.85rem 0 1rem!important;
+}
+#locationSearchBar.fu-v81-ready{
+  display:flex!important;
+  align-items:center;
+  gap:.58rem;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#locationSearchBar.fu-v81-ready>div:first-child{
+  display:flex!important;
+  grid-template-columns:none!important;
+  gap:.5rem!important;
+  flex:0 0 auto;
+}
+.fu-v81-loc-btn{
+  min-width:112px!important;
+  min-height:54px!important;
+  border:2px solid #10B981!important;
+  border-radius:26px!important;
+  background:rgba(255,255,255,.86)!important;
+  color:#064E3B!important;
+  box-shadow:0 8px 22px rgba(6,78,59,.06)!important;
+  font-size:.88rem!important;
+  line-height:1.08!important;
+  font-weight:900!important;
+  padding:.56rem .72rem!important;
+}
+.fu-v81-loc-active{
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:.68rem;
+  min-height:58px;
+  max-width:250px;
+  margin:0!important;
+  padding:.48rem .55rem .48rem .75rem!important;
+  border:2px solid #A7F3D0;
+  background:rgba(255,255,255,.75)!important;
+  border-radius:28px!important;
+  color:#064E3B!important;
+  box-shadow:0 8px 22px rgba(6,78,59,.06)!important;
+  text-align:left!important;
+  flex:1 1 auto;
+  min-width:190px;
+}
+.fu-v81-loc-active .fu-v81-loc-copy{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  font-weight:900;
+  font-size:.82rem;
+  line-height:1.12;
+  min-width:0;
+}
+.fu-v81-loc-active .fu-v81-loc-copy strong{
+  display:block;
+  max-width:116px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#064E3B;
+}
+.fu-v81-clear{
+  flex:0 0 auto;
+  height:42px;
+  padding:0 .88rem!important;
+  border-radius:999px!important;
+  background:#fff!important;
+  border:2px solid #FCA5A5!important;
+  color:#dc2626!important;
+  font-size:.82rem!important;
+  font-weight:900!important;
+}
+@media(max-width:430px){
+  #locationSearchBar.fu-v81-ready{gap:.42rem}
+  .fu-v81-loc-btn{min-width:96px!important;font-size:.78rem!important;padding:.5rem .5rem!important}
+  .fu-v81-loc-active{min-width:170px;max-width:230px;padding:.42rem .5rem!important}
+  .fu-v81-loc-active .fu-v81-loc-copy{font-size:.76rem}
+  .fu-v81-clear{height:38px;font-size:.76rem!important;padding:0 .65rem!important}
+}
+
+/* Evita duplicados de galerías públicas */
+#pgrid .fu-v79-public-sec,#pgrid .fu-v80-public-sec{display:none!important}
+.fu-v81-public-sec{margin-top:1rem;padding-top:1rem;border-top:1px solid #E5F3EE}
+.fu-v81-public-title{font-size:.72rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#10B981;margin-bottom:.55rem}
+.fu-v81-public-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.fu-v81-public-item{position:relative;aspect-ratio:1;border-radius:15px;overflow:hidden;background:#07382d;border:1px solid rgba(16,185,129,.22);box-shadow:0 4px 12px rgba(6,78,59,.08);cursor:pointer}
+.fu-v81-public-item img,.fu-v81-public-item video{width:100%;height:100%;object-fit:cover;display:block}
+.fu-v81-profile-ribbon{position:absolute;left:.35rem;bottom:.35rem;background:rgba(6,78,59,.88);color:#fff;border-radius:999px;font-size:.58rem;font-weight:900;padding:.12rem .38rem}
+.fu-v81-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;text-shadow:0 3px 12px rgba(0,0,0,.75);background:rgba(0,0,0,.08)}
+.fu-v81-empty-public{font-size:.82rem;color:#6B7C76;font-style:italic;padding:.4rem 0}
+.fu-v81-private-note{margin-top:.7rem;background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:16px;padding:.65rem .78rem;font-size:.8rem;font-weight:800;line-height:1.35}
+
+/* Fotos de perfil siempre públicas: sin clip */
+.fu-v81-profile-fixed{display:inline-flex;align-items:center;gap:.25rem;background:#ECFDF5;border:1px solid #A7F3D0;color:#064E3B;border-radius:999px;padding:.2rem .55rem;font-size:.68rem;font-weight:900;margin-top:.3rem}
+
+/* Estado conectado/desconectado */
+.fu-v81-status{display:inline-flex;align-items:center;gap:.28rem;border-radius:999px;padding:.22rem .56rem;font-size:.69rem;font-weight:900;margin-top:.42rem;border:1.5px solid transparent;width:max-content}
+.fu-v81-status .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.fu-v81-status.on{background:#ECFDF5;border-color:#A7F3D0;color:#047857}
+.fu-v81-status.on .dot{background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.14)}
+.fu-v81-status.off{background:#FEF2F2;border-color:#FCA5A5;color:#dc2626}
+.fu-v81-status.off .dot{background:#EF4444;box-shadow:0 0 0 4px rgba(239,68,68,.12)}
+.chat-hdr .fu-v81-status{margin-top:0;margin-left:auto;font-size:.66rem;padding:.18rem .48rem}
+.m-body .fu-v81-status{margin:.45rem 0 .55rem}
+
+/* Chat sin audio */
+.chat-audio-btn,#audioBtn{display:none!important}
+.chat-in-a{grid-template-columns:42px minmax(0,1fr) 46px!important}
+@media(max-width:480px){.chat-in-a{grid-template-columns:40px minmax(0,1fr) 44px!important}}
+</style>
+
+<script id="fortyup-v10-81-final-ajustes">
+(function(){
+  function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function users(){try{return read((window.K&&K.U)||'fu_u',[])}catch(_){return []}}
+  function saveUsers(a){try{write((window.K&&K.U)||'fu_u',a)}catch(_){}}
+  function mediaKey(id){return 'fu_media_albums_v76_'+id}
+  function getAlbumsRaw(id){return read(mediaKey(id),[]).filter(Boolean)}
+  function setAlbums(id,a){write(mediaKey(id),a||[])}
+  function userById(id){return users().find(function(u){return u&&u.id===id})||(window.CU&&CU.id===id?CU:null)}
+  function uniq(arr){var seen={};return (arr||[]).filter(function(it){if(!it||!it.src)return false;var k=(it.type||'photo')+'|'+it.src;if(seen[k])return false;seen[k]=1;return true})}
+  function profileItems(u){var out=[];if(!u)return out;(u.profilePhotos||[]).forEach(function(src){if(src)out.push({type:'photo',src:src,profile:true,album:'Fotos de perfil'})});if(u.photo)out.push({type:'photo',src:u.photo,profile:true,album:'Fotos de perfil'});return uniq(out)}
+  function albumsFor(id){var u=userById(id),raw=getAlbumsRaw(id),base={id:'profile',kind:'profile',name:'Fotos de perfil',private:false,items:profileItems(u)};var ix=raw.findIndex(function(a){return a&&(a.id==='profile'||a.kind==='profile')});if(ix>=0){raw[ix]=base}else raw.unshift(base);setAlbums(id,raw);return raw}
+  function publicItems(id){var out=[];albumsFor(id).forEach(function(a){if(a.id==='profile'||a.kind==='profile'){(a.items||[]).forEach(function(it){out.push(Object.assign({},it,{album:'Fotos de perfil',profile:true}))});return}if(!a.private){(a.items||[]).forEach(function(it){out.push(Object.assign({},it,{album:a.name||'Fotos públicas'}))})}});return uniq(out)}
+  function privateCount(id){return albumsFor(id).filter(function(a){return !(a.id==='profile'||a.kind==='profile')&&a.private}).length}
+  function overlay(t,s,h){if(typeof fuV76Close==='function')fuV76Close();var old=document.querySelector('.fu-v76-ov');if(old)old.remove();var ov=document.createElement('div');ov.className='fu-v76-ov';ov.onclick=function(ev){if(ev.target===ov)ov.remove();document.body.style.overflow=''};var box=document.createElement('div');box.className='fu-v76-box';box.innerHTML='<div class="fu-v76-head"><div><div class="fu-v76-title">'+esc(t)+'</div>'+(s?'<div class="fu-v76-sub">'+esc(s)+'</div>':'')+'</div><button class="fu-v76-close" onclick="this.closest(\'.fu-v76-ov\').remove();document.body.style.overflow=\'\'">×</button></div><div class="fu-v76-body">'+h+'</div>';ov.appendChild(box);document.body.appendChild(ov);document.body.style.overflow='hidden'}
+  window.fuV81ViewPublicMedia=function(id,i){var it=publicItems(id)[i];if(!it)return;overlay(it.album||'Fotos públicas','', '<div class="photo-view">'+(it.type==='video'?'<video src="'+esc(it.src)+'" controls playsinline></video>':'<img src="'+esc(it.src)+'">')+'<div class="photo-view-title">'+esc(it.album||'Fotos públicas')+'</div></div>')}
+  function publicSection(id){var items=publicItems(id),pc=privateCount(id),h='<div class="fu-v81-public-sec"><div class="fu-v81-public-title">Fotos y videos públicos</div>';if(items.length){h+='<div class="fu-v81-public-grid">';items.slice(0,12).forEach(function(it,i){h+='<div class="fu-v81-public-item" onclick="fuV81ViewPublicMedia(\''+esc(id)+'\','+i+')">'+(it.type==='video'?'<video src="'+esc(it.src)+'"></video><span class="fu-v81-play">▶</span>':'<img src="'+esc(it.src)+'">')+(it.profile?'<span class="fu-v81-profile-ribbon">Perfil</span>':'')+'</div>'});h+='</div>'}else h+='<div class="fu-v81-empty-public">Esta persona todavía no tiene fotos públicas.</div>';if(pc>0)h+='<div class="fu-v81-private-note">🔐 Este usuario tiene álbumes privados. Podés pedírselos por chat si quiere compartirlos con vos.</div>';return h+'</div>'}
+  function injectPublic(id){var cont=document.querySelector('#mCont .m-body')||document.querySelector('.m-box .m-body');if(!cont)return;cont.querySelectorAll('.fu-v79-public-sec,.fu-v80-public-sec,.fu-v81-public-sec').forEach(function(x){x.remove()});var acts=cont.querySelector('.m-acts');var wrap=document.createElement('div');wrap.innerHTML=publicSection(id);if(acts)cont.insertBefore(wrap.firstChild,acts);else cont.appendChild(wrap.firstChild)}
+
+  var prevOpen=window.openMod;if(typeof prevOpen==='function'&&!prevOpen.__fuV81){window.openMod=function(id){var r=prevOpen.apply(this,arguments);[120,360,760,1100].forEach(function(ms){setTimeout(function(){injectPublic(id);injectOnlineInModal(id)},ms)});return r};window.openMod.__fuV81=true}
+
+  function isOnline(u){if(!u)return false;if(window.CU&&u.id===CU.id)return true;if(u.online===true)return true;var t=Date.parse(u.lastSeen||u.lastActive||0);return !!(t&&Date.now()-t<3*60*1000)}
+  function statusHtml(u){var on=isOnline(u);return '<span class="fu-v81-status '+(on?'on':'off')+'"><span class="dot"></span>'+(on?'Conectado':'Desconectado')+'</span>'}
+  function markSeen(){if(!window.CU||!CU.id)return;CU.lastSeen=new Date().toISOString();var us=users().map(function(u){return u.id===CU.id?Object.assign({},u,{lastSeen:CU.lastSeen,online:true}):u});saveUsers(us)}
+  function injectOnlineCards(){users().forEach(function(u){var card=document.getElementById('ca-'+u.id);if(!card)return;if(card.querySelector('.fu-v81-status'))return;var info=card.querySelector('.pcard-info')||card.querySelector('.pcard-body');if(info){var d=document.createElement('div');d.innerHTML=statusHtml(u);info.appendChild(d.firstChild)}})}
+  function injectOnlineInModal(id){var u=userById(id),body=document.querySelector('#mCont .m-body');if(!u||!body)return;body.querySelectorAll('.fu-v81-status').forEach(function(x){x.remove()});var mt=body.querySelector('.m-mt');var d=document.createElement('div');d.innerHTML=statusHtml(u);if(mt&&mt.nextSibling)body.insertBefore(d.firstChild,mt.nextSibling);else body.prepend(d.firstChild)}
+  function injectChatStatus(){var h=document.querySelector('#page-chatwindow .chat-hdr');if(!h||!window.CW)return;h.querySelectorAll('.fu-v81-status').forEach(function(x){x.remove()});var d=document.createElement('div');d.innerHTML=statusHtml(CW);h.appendChild(d.firstChild)}
+  var oldRProfiles=window.rProfiles;if(typeof oldRProfiles==='function'&&!oldRProfiles.__fuV81){window.rProfiles=function(){var r=oldRProfiles.apply(this,arguments);setTimeout(injectOnlineCards,80);return r};window.rProfiles.__fuV81=true}
+  var oldStartChat=window.startChat;if(typeof oldStartChat==='function'&&!oldStartChat.__fuV81){window.startChat=function(){var r=oldStartChat.apply(this,arguments);setTimeout(injectChatStatus,80);return r};window.startChat.__fuV81=true}
+  var oldRChatMsgs=window.rChatMsgs;if(typeof oldRChatMsgs==='function'&&!oldRChatMsgs.__fuV81){window.rChatMsgs=function(){var r=oldRChatMsgs.apply(this,arguments);setTimeout(injectChatStatus,50);return r};window.rChatMsgs.__fuV81=true}
+
+  function beautifyLoc(){var bar=document.getElementById('locationSearchBar');if(!bar)return;bar.classList.add('fu-v81-ready');bar.querySelectorAll('button').forEach(function(b){var txt=(b.textContent||'').toLowerCase();if(txt.indexOf('mi ubicación')>=0||txt.indexOf('ver mapa')>=0)b.classList.add('fu-v81-loc-btn')});}
+  window.showLocLabel=function(name){beautifyLoc();var lbl=document.getElementById('locActiveLabel');if(!lbl)return;lbl.className='fu-v81-loc-active';lbl.style.display='flex';lbl.innerHTML='<div class="fu-v81-loc-copy"><span>📍</span><span>Buscando en <strong>'+esc(name||'esta zona')+'</strong></span></div><button class="fu-v81-clear" onclick="clearLocationFilter()">× Limpiar</button>'}
+  var oldClear=window.clearLocationFilter;if(typeof oldClear==='function'){window.clearLocationFilter=function(){var r=oldClear.apply(this,arguments);var lbl=document.getElementById('locActiveLabel');if(lbl){lbl.className='';lbl.style.display='none';lbl.innerHTML=''}return r}}
+
+  function fixAudio(){var a=document.getElementById('audioBtn');if(a)a.remove();document.querySelectorAll('.chat-audio-btn').forEach(function(x){x.remove()})}
+
+  function patchMyAlbums(){
+    var oldShow=window.showMyAlbums;
+    if(typeof oldShow==='function'&&!oldShow.__fuV81){
+      window.showMyAlbums=function(){var r=oldShow.apply(this,arguments);setTimeout(function(){
+        document.querySelectorAll('.fu-v76-album').forEach(function(alb){var name=alb.querySelector('.fu-v76-alb-name');if(name&&/fotos de perfil/i.test(name.textContent||'')){var p=alb.querySelector('.fu-v76-privacy');if(p){p.outerHTML='<span class="fu-v81-profile-fixed">Siempre público</span>'}}});
+      },80);return r};window.showMyAlbums.__fuV81=true;
+    }
+  }
+
+  setInterval(markSeen,60000);markSeen();patchMyAlbums();
+  document.addEventListener('DOMContentLoaded',function(){beautifyLoc();fixAudio();markSeen();setTimeout(injectOnlineCards,500);});
+  document.addEventListener('click',function(){setTimeout(function(){beautifyLoc();fixAudio();injectOnlineCards();injectChatStatus()},80)},true);
+})();
+</script>
