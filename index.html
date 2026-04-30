@@ -12399,6 +12399,148 @@ var oldR=window.rMyP;if(typeof oldR==='function')window.rMyP=function(){var o=ol
   document.addEventListener('DOMContentLoaded',function(){setTimeout(syncUserPhotoHistory,500);setTimeout(function(){document.querySelectorAll('#page-chatwindow .chat-audio-btn,#page-chat .chat-audio-btn,#audioBtn').forEach(function(b){b.remove()})},600)});
 })();
 </script>
+
+<style id="fortyup-v10-83-media-sync-fixes">
+/* FortyUp v83 - carga de fotos más liviana y sincronización real de avatar */
+.fu-v83-uploading{opacity:.72;pointer-events:none}
+.fu-v76-upload-row label,.fu-v80-upload-row label{position:relative;overflow:hidden}
+.fu-v76-upload-row label:after,.fu-v80-upload-row label:after{content:'Optimiza fotos automáticamente';display:block;font-size:.66rem;color:#6B7C76;font-weight:800;margin-top:.18rem}
+</style>
+<script id="fortyup-v10-83-media-sync-logic">
+(function(){
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(e){if(window.toast)toast('El almacenamiento está lleno. Probá con menos fotos.','w')}}
+  function keyU(){return (window.K&&K.U)||'fu_users'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(arr){write(keyU(),arr)}
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]||c})}
+  function dataSize(s){return s?String(s).length:0}
+  function compressImageFile(file,opts){opts=opts||{};var maxDim=opts.maxDim||1200;var quality=opts.quality||0.74;return new Promise(function(resolve,reject){
+    if(!file||!file.type||file.type.indexOf('image/')!==0){reject(new Error('No es imagen'));return}
+    var reader=new FileReader();
+    reader.onerror=function(){reject(new Error('No se pudo leer'))};
+    reader.onload=function(ev){
+      var img=new Image();
+      img.onerror=function(){reject(new Error('No se pudo abrir imagen'))};
+      img.onload=function(){
+        var w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+        var scale=Math.min(1,maxDim/Math.max(w,h));
+        var cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
+        var canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;
+        var ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,cw,ch);
+        var q=quality,out=canvas.toDataURL('image/jpeg',q);
+        while(out.length>760000&&q>0.42){q-=0.08;out=canvas.toDataURL('image/jpeg',q)}
+        if(out.length>900000){
+          var canvas2=document.createElement('canvas');
+          var scale2=Math.sqrt(820000/out.length)*0.9;
+          canvas2.width=Math.max(1,Math.round(cw*scale2));canvas2.height=Math.max(1,Math.round(ch*scale2));
+          canvas2.getContext('2d').drawImage(img,0,0,canvas2.width,canvas2.height);
+          out=canvas2.toDataURL('image/jpeg',0.58);
+        }
+        resolve(out);
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  })}
+  function readFileData(file){return new Promise(function(resolve,reject){var r=new FileReader();r.onerror=function(){reject(new Error('No se pudo leer'))};r.onload=function(ev){resolve(ev.target.result)};r.readAsDataURL(file)})}
+  window.fuV83CompressImageFile=compressImageFile;
+
+  /* Foto de perfil: se comprime para que pueda viajar a Firebase y la vean otros usuarios */
+  window.handleFile=function(input){
+    var file=input&&input.files&&input.files[0];if(!file)return;
+    var btn=input.closest&&input.closest('.photo-wrap')?input.closest('.photo-wrap').querySelector('.photo-btn'):null;
+    if(btn)btn.classList.add('fu-v83-uploading');
+    if(window.toast)toast('Optimizando foto…','ok');
+    compressImageFile(file,{maxDim:900,quality:.76}).then(function(data){
+      window._photo=data;
+      var w=document.getElementById('phprev'),img=document.getElementById('phimg');
+      if(img)img.src=data;if(w)w.style.display='block';
+      if(window.toast)toast('Foto cargada ✓','ok');
+    }).catch(function(){
+      if(window.toast)toast('No se pudo cargar la foto.','w');
+    }).finally(function(){if(btn)btn.classList.remove('fu-v83-uploading')});
+  };
+
+  /* Guardado Firebase: permite foto comprimida en vez de borrarla siempre */
+  var oldSaveToFirestore=window.saveToFirestore;
+  window.saveToFirestore=function(profile){
+    if(!window.DB||!profile||!profile.id||profile.is){if(typeof oldSaveToFirestore==='function')return oldSaveToFirestore(profile);return}
+    var toSave={};
+    ['id','name','age','city','gender','email','photo','desc','int','looking','plans','lat','lng','zodiac','birthdate','interestedIn','pref','social','createdAt','video','lastSeen','lastActive','online','superDiamonds','profilePhotos'].forEach(function(f){if(profile[f]!==undefined)toSave[f]=profile[f]});
+    if(toSave.photo&&String(toSave.photo).indexOf('data:')===0&&dataSize(toSave.photo)>850000){
+      delete toSave.photo;
+      if(window.toast)toast('Tu foto es muy grande para sincronizar. Volvé a subirla y la optimizamos.','w');
+    }
+    if(toSave.video&&String(toSave.video).indexOf('data:')===0&&dataSize(toSave.video)>650000){delete toSave.video}
+    toSave.updatedAt=new Date().toISOString();
+    return DB.collection('profiles').doc(profile.id).set(toSave,{merge:true}).then(function(){console.log('Profile saved to Firebase v83')}).catch(function(err){console.warn('Firestore save error v83:',err)});
+  };
+
+  function getAlbums(){return (typeof myAlbums==='function')?myAlbums():read('fu_albums_v76_'+(window.CU&&CU.id||''),[])}
+  function setAlbums(a){if(typeof saveMyAlbums==='function')saveMyAlbums(a);else write('fu_albums_v76_'+(window.CU&&CU.id||''),a)}
+  function openAlbumAgain(id){if(typeof fuV76OpenAlbum==='function')fuV76OpenAlbum(id)}
+
+  /* Álbumes: permite seleccionar muchas fotos, las comprime y ya no salta “archivo muy grande” con cualquier foto */
+  window.fuV80AddMedia=function(id,inp,type){
+    var files=Array.prototype.slice.call((inp&&inp.files)||[]);if(!files.length)return;
+    var albums=getAlbums(),al=albums.find(function(x){return x.id===id});if(!al)return;al.items=al.items||[];
+    if(window.toast)toast('Cargando '+files.length+' archivo'+(files.length===1?'':'s')+'…','ok');
+    var added=0,skipped=0;
+    var chain=Promise.resolve();
+    files.forEach(function(f){
+      chain=chain.then(function(){
+        if(type==='photo'||(f.type&&f.type.indexOf('image/')===0)){
+          return compressImageFile(f,{maxDim:1150,quality:.72}).then(function(data){al.items.push({type:'photo',src:data,name:f.name||'',at:new Date().toISOString()});added++}).catch(function(){skipped++});
+        }
+        if(f.size>10*1024*1024){skipped++;if(window.toast)toast('Un video supera 10MB. Usá uno más corto.','w');return Promise.resolve()}
+        return readFileData(f).then(function(data){al.items.push({type:'video',src:data,name:f.name||'',at:new Date().toISOString()});added++}).catch(function(){skipped++});
+      });
+    });
+    chain.then(function(){
+      setAlbums(albums);
+      openAlbumAgain(id);
+      if(window.toast)toast(added+' archivo'+(added===1?'':'s')+' agregado'+(added===1?'':'s')+(skipped?' · '+skipped+' no se pudieron cargar':''),'ok');
+    });
+  };
+  window.fuV79AddMedia=window.fuV80AddMedia;window.fuV76AddMedia=window.fuV80AddMedia;
+
+  /* Botones de detalle de álbum: acepta selección múltiple también en versiones viejas */
+  var oldOpenAlbumDetail=window.showAlbumDetail;
+  if(typeof oldOpenAlbumDetail==='function'){
+    window.showAlbumDetail=function(key,idx,type){
+      var r=oldOpenAlbumDetail.apply(this,arguments);
+      setTimeout(function(){document.querySelectorAll('input[type=file]').forEach(function(i){if(i.accept&&i.accept.indexOf('image')>=0)i.multiple=true;if(i.accept&&i.accept.indexOf('video')>=0)i.multiple=true})},80);
+      return r;
+    };
+  }
+
+  /* Después de guardar perfil, actualiza usuario local y sincroniza foto optimizada a Firebase */
+  var oldSaveProfile=window.saveProfile;
+  if(typeof oldSaveProfile==='function'){
+    window.saveProfile=function(){
+      var r=oldSaveProfile.apply(this,arguments);
+      setTimeout(function(){
+        try{
+          var arr=users();
+          var me=arr.find(function(u){return window.CU&&u.id===CU.id});
+          if(me){window.CU=Object.assign(CU,me);if(typeof saveToFirestore==='function')saveToFirestore(CU)}
+          if(typeof upNav==='function')upNav();
+          if(typeof rProfiles==='function')rProfiles();
+        }catch(e){}
+      },250);
+      return r;
+    };
+  }
+
+  /* Sincronización algo más rápida para ver cambios de foto de otro usuario sin esperar tanto */
+  if(typeof syncFromFirestore==='function'){
+    setInterval(function(){try{if(window.FB_READY&&!window.FB_SYNCING)syncFromFirestore()}catch(_){}},12000);
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){try{syncFromFirestore()}catch(_){}}});
+  }
+})();
+</script>
+
 </body>
 </html>
 
