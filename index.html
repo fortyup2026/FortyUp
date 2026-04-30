@@ -16301,3 +16301,93 @@ html,body{overflow-x:hidden!important;}
   setInterval(window.fuPaintSuperGlobal,900);
 })();
 </script>
+
+<!-- === FortyUp v113 - súper diamante tilde estable sin parpadeo === -->
+<style id="fu-v113-super-stable-final-css">
+/* El tilde ya no depende de spans que otros scripts agregan/sacan: queda fijo por CSS */
+.pa-super .fu-super-check{display:none!important;opacity:0!important;visibility:hidden!important;}
+body .pa-super.used::after,
+body .pa-super.sent::after,
+body .pa-super.super-sent::after,
+body .pa-super.fu-super-sent::after,
+body .pa-super.fu-super-done::after,
+body .pa-super.fu-super-locked::after{
+  content:"✓"!important;
+  position:absolute!important;
+  top:-7px!important;
+  right:-7px!important;
+  bottom:auto!important;
+  left:auto!important;
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  min-height:22px!important;
+  border-radius:50%!important;
+  background:#10B981!important;
+  color:#fff!important;
+  border:3px solid #fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-family:'Nunito',Arial,sans-serif!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  box-shadow:0 5px 12px rgba(16,185,129,.38)!important;
+  z-index:999!important;
+  pointer-events:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  animation:none!important;
+}
+body .pa-super{
+  position:relative!important;
+  overflow:visible!important;
+  transform:none!important;
+  animation:none!important;
+}
+body .pa-super *{animation:none!important;}
+@media(max-width:480px){
+  body .pa-super.used::after,
+  body .pa-super.sent::after,
+  body .pa-super.super-sent::after,
+  body .pa-super.fu-super-sent::after,
+  body .pa-super.fu-super-done::after,
+  body .pa-super.fu-super-locked::after{width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;top:-7px!important;right:-7px!important;font-size:13px!important;}
+}
+</style>
+<script id="fu-v113-super-stable-final-js">
+(function(){
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function balance(){try{if(!window.CU||!CU.id)return 0;var arr=read((window.K&&K.U)||'fu_users',[]);var u=(arr||[]).find(function(x){return x&&x.id===CU.id})||CU;var n=(typeof u.superDiamonds==='number'&&isFinite(u.superDiamonds))?u.superDiamonds:(u.superDiamondUsed?0:1);return Math.max(0,parseInt(n,10)||0)}catch(_){return 0}}
+  function sentTo(id){try{if(!window.CU||!CU.id)return false;var fs=(typeof kF==='function'?read(kF(CU.id),[]):read('fu_fortis_'+CU.id,[]));return (fs||[]).some(function(f){return f&&f.t===id&&f.type==='super'})}catch(_){return false}}
+  function paint(){
+    try{
+      var n=balance();
+      Array.prototype.slice.call(document.querySelectorAll('.pa-super[id^="sp-"]')).forEach(function(btn){
+        var id=btn.id.replace('sp-','');
+        var locked=(n<=0)||sentTo(id);
+        btn.classList.toggle('used',locked);
+        btn.classList.toggle('fu-super-done',locked);
+        btn.classList.toggle('fu-super-locked',locked);
+        btn.classList.toggle('sent',sentTo(id));
+        btn.disabled=false;
+        btn.title=locked?'No tenés Súper Diamantes disponibles':'Súper Diamante';
+        /* no tocamos innerHTML: así evitamos el parpadeo */
+        if(!btn.__fu113Click){
+          btn.__fu113Click=true;
+          btn.addEventListener('click',function(ev){
+            if(balance()<=0){ev.preventDefault();ev.stopImmediatePropagation();if(window.toast)toast('No tenés Súper Diamantes disponibles. Próximamente vas a poder obtener más en FortyUp+ 💎','w');paint();return false;}
+          },true);
+        }
+      });
+    }catch(_){ }
+  }
+  window.fuStableSuperPaint=paint;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){paint();setTimeout(paint,200);setTimeout(paint,800)});else{paint();setTimeout(paint,200);setTimeout(paint,800)}
+  document.addEventListener('click',function(){setTimeout(paint,60);setTimeout(paint,250);},true);
+  ['goTo','rProfiles','openMod','sendSuperDiamond'].forEach(function(fn){var old=window[fn];if(typeof old==='function'&&!old.__fu113Stable){window[fn]=function(){var r=old.apply(this,arguments);setTimeout(paint,30);setTimeout(paint,180);setTimeout(paint,600);return r};window[fn].__fu113Stable=true;}});
+  setInterval(paint,3000);
+})();
+</script>
