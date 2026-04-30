@@ -7362,74 +7362,7 @@ function rMyP(){
 function rBlocked(){showBlocked()}
 
 function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
-function delAccount(){
-  if(!confirm('¿Seguro querés eliminar tu cuenta? Esta acción no se puede deshacer.'))return;
-  var id = CU.id;
-  var email = CU.email;
-  
-  // 1. Remove from users array
-  var users = g(K.U,[]).filter(function(x){return x.id!==id});
-  sv(K.U, users);
-  
-  // 2. Delete ALL personal localStorage keys
-  var keysToDelete = [
-    // Session
-    'fu_s',
-    // Fortis, favorites, chats
-    'fu_f_'+id, 'fu_fv_'+id, 'fu_ch_'+id,
-    // Albums
-    'fu_albums_pub_'+id, 'fu_albums_priv_'+id,
-    // Photos (all possible keys)
-    'fu_pm_'+id,
-    'fu_profile_media_'+id,
-    'fu_profile_media_final_'+id,
-    'fu_profile_media_final_FIX_'+id,
-    'fortyup_profile_media_final_'+id,
-    'fortyup_profile_media_FINAL_HOME_'+id,
-    'fortyup_profile_media_final_FIX_'+id,
-    // Notifications
-    'fu_sd_notifs_'+id,
-    'fu_notifs_'+id,
-  ];
-  keysToDelete.forEach(function(k){
-    try{localStorage.removeItem(k)}catch(e){}
-  });
-  
-  // 3. Delete all message keys involving this user
-  var allKeys = [];
-  try{
-    for(var i=0;i<localStorage.length;i++){
-      allKeys.push(localStorage.key(i));
-    }
-  }catch(e){}
-  allKeys.forEach(function(k){
-    if(k && (k.indexOf('fu_m_'+id)===0 || k.indexOf('_'+id)>0)){
-      try{localStorage.removeItem(k)}catch(e){}
-    }
-  });
-  
-  // 4. Delete from Firestore
-  deleteFromFirestore(id);
-  // Also delete notifications
-  if(DB){
-    try{
-      DB.collection('notifications').where('from','==',id).get()
-        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
-        .catch(function(){});
-      DB.collection('notifications').where('to','==',id).get()
-        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
-        .catch(function(){});
-    }catch(e){}
-  }
-  
-  // 5. Clear CU and session
-  CU = null;
-  
-  // 6. Go home
-  upNav();
-  goTo('home');
-  toast('Cuenta eliminada correctamente.','ok');
-}
+function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);deleteFromFirestore(CU.id);logout();toast('Cuenta eliminada.','w')}}
 function ensureChatPair(uid){
   if(!CU||!uid)return;
   var mc=g(kCh(CU.id),[]);if(mc.indexOf(uid)===-1){mc.push(uid);sv(kCh(CU.id),mc)}
@@ -7898,74 +7831,7 @@ function saveSocial(){
 // ── BLOCKED USERS ──
 
 function unblockU(id){var bl=g(K.BL,[]).filter(function(x){return x!==id});sv(K.BL,bl);toast('Usuario desbloqueado','ok');rBlocked();rProfiles();}
-function delAccount(){
-  if(!confirm('¿Seguro querés eliminar tu cuenta? Esta acción no se puede deshacer.'))return;
-  var id = CU.id;
-  var email = CU.email;
-  
-  // 1. Remove from users array
-  var users = g(K.U,[]).filter(function(x){return x.id!==id});
-  sv(K.U, users);
-  
-  // 2. Delete ALL personal localStorage keys
-  var keysToDelete = [
-    // Session
-    'fu_s',
-    // Fortis, favorites, chats
-    'fu_f_'+id, 'fu_fv_'+id, 'fu_ch_'+id,
-    // Albums
-    'fu_albums_pub_'+id, 'fu_albums_priv_'+id,
-    // Photos (all possible keys)
-    'fu_pm_'+id,
-    'fu_profile_media_'+id,
-    'fu_profile_media_final_'+id,
-    'fu_profile_media_final_FIX_'+id,
-    'fortyup_profile_media_final_'+id,
-    'fortyup_profile_media_FINAL_HOME_'+id,
-    'fortyup_profile_media_final_FIX_'+id,
-    // Notifications
-    'fu_sd_notifs_'+id,
-    'fu_notifs_'+id,
-  ];
-  keysToDelete.forEach(function(k){
-    try{localStorage.removeItem(k)}catch(e){}
-  });
-  
-  // 3. Delete all message keys involving this user
-  var allKeys = [];
-  try{
-    for(var i=0;i<localStorage.length;i++){
-      allKeys.push(localStorage.key(i));
-    }
-  }catch(e){}
-  allKeys.forEach(function(k){
-    if(k && (k.indexOf('fu_m_'+id)===0 || k.indexOf('_'+id)>0)){
-      try{localStorage.removeItem(k)}catch(e){}
-    }
-  });
-  
-  // 4. Delete from Firestore
-  deleteFromFirestore(id);
-  // Also delete notifications
-  if(DB){
-    try{
-      DB.collection('notifications').where('from','==',id).get()
-        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
-        .catch(function(){});
-      DB.collection('notifications').where('to','==',id).get()
-        .then(function(snap){snap.forEach(function(d){d.ref.delete()})})
-        .catch(function(){});
-    }catch(e){}
-  }
-  
-  // 5. Clear CU and session
-  CU = null;
-  
-  // 6. Go home
-  upNav();
-  goTo('home');
-  toast('Cuenta eliminada correctamente.','ok');
-}
+function delAccount(){if(confirm('¿Seguro querés eliminar tu cuenta? No se puede deshacer.')){var u=g(K.U,[]).filter(function(x){return x.id!==CU.id});sv(K.U,u);deleteFromFirestore(CU.id);logout();toast('Cuenta eliminada.','w')}}
 function ensureChatPair(uid){
   if(!CU||!uid)return;
   var mc=g(kCh(CU.id),[]);if(mc.indexOf(uid)===-1){mc.push(uid);sv(kCh(CU.id),mc)}
@@ -15281,18 +15147,55 @@ html,body{overflow-x:hidden!important;}
 })();
 </script>
 
-<!-- FortyUp v10-final-98: fix salida de sesión / botones guest -->
-<style id="fortyup-v98-logout-buttons-fix">
-body:not(.fu-logged) #page-home .h-btns,
+<!-- =========================================================
+     FORTYUP v10-99 - Registro obligatorio completo + logout home fix
+     ========================================================= -->
+<style id="fu-v99-profile-gate-css">
+@media(max-width:750px){
+  body.fu-profile-incomplete .bnav{display:none!important;}
+  .nav-in{gap:.55rem!important;}
+  .nav-logo{flex:0 0 auto!important;}
+  .nav-right{margin-left:auto!important;gap:.38rem!important;min-width:0!important;}
+  .nav-av{gap:.38rem!important;min-width:0!important;}
+  .nav-av .av-nm{max-width:118px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;display:inline-block!important;}
+  .notif-wrap{flex:0 0 38px!important;margin-right:.25rem!important;}
+}
 body.fu-guest #page-home .h-btns,
-body.sebas-guest #page-home .h-btns{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;flex-direction:column!important;gap:.72rem!important;width:min(92vw,640px)!important;margin:1.4rem auto 0!important;padding:0!important;position:relative!important;z-index:20!important}
-body:not(.fu-logged) #page-home .h-btns .btn,body:not(.fu-logged) #page-home .h-btns button,body:not(.fu-logged) #page-home .h-btns a,body.fu-guest #page-home .h-btns .btn,body.fu-guest #page-home .h-btns button,body.fu-guest #page-home .h-btns a,body.sebas-guest #page-home .h-btns .btn,body.sebas-guest #page-home .h-btns button,body.sebas-guest #page-home .h-btns a{display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:100%!important;min-height:54px!important;border-radius:999px!important;position:relative!important;z-index:21!important}
-body:not(.fu-logged) #page-home .h-btns:before,body:not(.fu-logged) #page-home .h-btns:after,body.fu-guest #page-home .h-btns:before,body.fu-guest #page-home .h-btns:after,body.sebas-guest #page-home .h-btns:before,body.sebas-guest #page-home .h-btns:after{display:none!important;content:none!important}
-body.fu-logged #page-home .h-btns{display:none!important}
-body:not(.fu-logged) .bnav,body.fu-guest .bnav,body.sebas-guest .bnav{display:none!important}
-body:not(.fu-logged){padding-bottom:0!important}
-@media(max-width:750px){body:not(.fu-logged) #page-home .h-btns,body.fu-guest #page-home .h-btns,body.sebas-guest #page-home .h-btns{margin-top:1.25rem!important;gap:.62rem!important}}
+body:not(.fu-logged) #page-home .h-btns{display:block!important;visibility:visible!important;opacity:1!important;}
+body.fu-guest #page-home #heroBtns,
+body:not(.fu-logged) #page-home #heroBtns{display:block!important;visibility:visible!important;opacity:1!important;}
+body.fu-profile-incomplete #page-home #heroBtns{display:none!important;}
+.fu-v99-profile-lock{margin:.9rem 0 1rem!important;padding:.85rem 1rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;border-radius:22px!important;font-weight:900!important;line-height:1.35!important;box-shadow:0 8px 22px rgba(6,78,59,.06)!important;}
 </style>
-<script id="fortyup-v98-logout-buttons-fix-js">
-(function(){function logged(){return !!(window.CU&&CU.id)}function setGuestButtons(){var isLog=logged();document.body.classList.toggle('fu-logged',isLog);document.body.classList.toggle('fu-guest',!isLog);document.body.classList.toggle('sebas-guest',!isLog);var nav=document.querySelector('.bnav');if(nav)nav.style.display=isLog?'flex':'none';if(!isLog){var nr=document.getElementById('nR');if(nr&&!nr.querySelector('.btn-join'))nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';var home=document.getElementById('page-home');if(home){var hb=home.querySelector('.h-btns');if(hb){hb.style.display='flex';hb.style.visibility='visible';hb.style.opacity='1';hb.style.pointerEvents='auto';hb.querySelectorAll('button,a,.btn').forEach(function(b){b.style.display='flex';b.style.visibility='visible';b.style.opacity='1';b.style.pointerEvents='auto'})}}}}function later(){setGuestButtons();setTimeout(setGuestButtons,60);setTimeout(setGuestButtons,180)}var oldUp=window.upNav;if(typeof oldUp==='function'&&!oldUp.__v98_guest_fix){window.upNav=function(){var r=oldUp.apply(this,arguments);later();return r};window.upNav.__v98_guest_fix=true}var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__v98_guest_fix){window.goTo=function(pg){var r=oldGo.apply(this,arguments);later();return r};window.goTo.__v98_guest_fix=true}var oldLogout=window.logout;if(typeof oldLogout==='function'&&!oldLogout.__v98_guest_fix){window.logout=function(){var r=oldLogout.apply(this,arguments);window.CU=null;window.CW=null;try{if(typeof sv==='function'&&window.K)sv(K.S,null)}catch(e){}try{if(typeof goTo==='function')goTo('home')}catch(e){}later();return r};window.logout.__v98_guest_fix=true}document.addEventListener('DOMContentLoaded',later);window.addEventListener('load',later);setInterval(setGuestButtons,500)})();
+<script id="fu-v99-profile-gate-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyUsers(){return (window.K&&K.U)||'fu_u'}
+  function keySession(){return (window.K&&K.S)||'fu_s'}
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]||c})}
+  function users(){return read(keyUsers(),[])}
+  function arrOk(v){return Array.isArray(v)&&v.filter(Boolean).length>0}
+  function strOk(v){return String(v||'').trim().length>0}
+  function refreshCurrent(){try{if(typeof refreshCU==='function')refreshCU()}catch(_){ }if(window.CU&&CU.id){var u=users().find(function(x){return x&&String(x.id)===String(CU.id)});if(u)window.CU=u}return window.CU||null}
+  function complete(u){if(!u||!u.id)return false;var age=parseInt(u.age,10)||0;var basic=strOk(u.name)&&age>=40&&strOk(u.city)&&strOk(u.gender);var prefs=strOk(u.interestedIn||u.pref||'')&&arrOk(u.looking)&&arrOk(u.plans);var photo=strOk(u.photo||u.profilePhoto||u.photoURL||u.avatar||'');return !!(basic&&prefs&&photo)}
+  window.fuProfileComplete=function(u){return complete(u||refreshCurrent())};
+  function activePage(){var p=q('.page.active');return p?p.id.replace(/^page-/,''):''}
+  function setStateClasses(){var u=refreshCurrent(),ok=!!(u&&u.id),done=ok&&complete(u);document.body.classList.toggle('fu-logged',ok);document.body.classList.toggle('fu-guest',!ok);document.body.classList.toggle('sebas-guest',!ok);document.body.classList.toggle('fu-profile-incomplete',ok&&!done);document.body.classList.toggle('fu-profile-complete',done);return {ok:ok,done:done,u:u}}
+  function makeHomeButtons(){var btns=q('#heroBtns');if(!btns)return;btns.style.display='block';btns.style.visibility='visible';btns.style.opacity='1';btns.innerHTML='';var b1=document.createElement('button');b1.className='hz-btn hz-btn-p';b1.style.cssText='width:100%';b1.textContent='Registrate gratis';b1.onclick=function(){if(typeof openAuth==='function')openAuth('register')};var b2=document.createElement('button');b2.className='hz-btn hz-btn-o';b2.style.cssText='width:100%';b2.textContent='Iniciá sesión';b2.onclick=function(){if(typeof openAuth==='function')openAuth('login')};btns.appendChild(b1);btns.appendChild(b2)}
+  function fixGuestHome(){var st=setStateClasses();if(st.ok)return;makeHomeButtons();var pill=q('#heroPill');if(pill)pill.innerHTML='<span class="pdot"></span>COMUNIDAD EXCLUSIVA · MAYORES DE 40';var nr=q('#navRight');if(nr)nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';var bn=q('.bnav');if(bn)bn.style.display='none'}
+  function showProfileLock(){var page=q('#page-register .fcard');if(!page)return;if(q('.fu-v99-profile-lock',page))return;var box=document.createElement('div');box.className='fu-v99-profile-lock';box.textContent='Completá tu perfil para poder ver personas cercanas, chatear y usar FortyUp. Cuando termines, guardás y listo.';page.insertBefore(box,page.firstChild)}
+  function goRegister(){if(typeof goTo==='function'){var p=activePage();if(p!=='register')goTo('register')}setTimeout(function(){try{if(typeof loadProfileForm==='function')loadProfileForm()}catch(_){}showProfileLock()},80)}
+  function enforceGate(){var st=setStateClasses();if(!st.ok){fixGuestHome();return false}if(st.ok&&!st.done){var p=activePage();if(p!=='register')goRegister();else showProfileLock();return false}return true}
+  window.updateHeroLoggedIn=function(){var st=setStateClasses();var btns=q('#heroBtns'),pill=q('#heroPill');if(!st.ok){fixGuestHome();return}if(btns)btns.style.display='none';var nm=(st.u.name||String(st.u.email||'').split('@')[0]||'');if(pill)pill.innerHTML='<span class="pdot"></span>'+(st.done?'¡Hola, '+esc(nm)+'! 👋':'Completá tu perfil para empezar ✨');if(!st.done)setTimeout(enforceGate,30)};
+  var oldGo=window.goTo;if(typeof oldGo==='function'){window.goTo=function(page){var st=setStateClasses();var p=String(page||'');if(st.ok&&!st.done&&p!=='register'){var r=oldGo.call(this,'register');setTimeout(function(){try{if(typeof loadProfileForm==='function')loadProfileForm()}catch(_){}showProfileLock()},80);return r}var out=oldGo.apply(this,arguments);setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},60);return out}}
+  var oldLogout=window.logout;window.logout=function(){if(typeof oldLogout==='function'){try{oldLogout.apply(this,arguments)}catch(_){window.CU=null;window.CW=null;write(keySession(),null)}}else{window.CU=null;window.CW=null;write(keySession(),null)}window.CU=null;window.CW=null;write(keySession(),null);document.body.classList.remove('fu-logged','fu-profile-incomplete','fu-profile-complete','has-session');document.body.classList.add('fu-guest','sebas-guest');if(typeof goTo==='function')try{goTo('home')}catch(_){};[0,40,120,260].forEach(function(ms){setTimeout(fixGuestHome,ms)})};
+  var oldDo=window.doAuth;if(typeof oldDo==='function'){window.doAuth=function(){var r=oldDo.apply(this,arguments);setTimeout(function(){var st=setStateClasses();if(st.ok&&!st.done)goRegister()},120);return r}}
+  var oldSave=window.saveProfile;if(typeof oldSave==='function'){window.saveProfile=function(){var r=oldSave.apply(this,arguments);setTimeout(function(){var u=refreshCurrent();setStateClasses();if(u&&complete(u)){document.body.classList.remove('fu-profile-incomplete');document.body.classList.add('fu-profile-complete');if(typeof toast==='function')toast('Perfil completo. Ya podés usar FortyUp ✨','ok');if(typeof goTo==='function')goTo('home');if(typeof setBn==='function')setBn('home')}else if(u){showProfileLock();if(typeof toast==='function')toast('Todavía falta completar datos obligatorios del perfil.','w')}},160);return r}}
+  var oldUp=window.upNav;if(typeof oldUp==='function'){window.upNav=function(){var r=oldUp.apply(this,arguments);setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},60);return r}}
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){setStateClasses();enforceGate();if(!refreshCurrent())fixGuestHome()},120)});
+  window.addEventListener('load',function(){setTimeout(function(){setStateClasses();enforceGate();if(!refreshCurrent())fixGuestHome()},280)});
+  document.addEventListener('click',function(){setTimeout(function(){setStateClasses();if(!refreshCurrent())fixGuestHome()},90)},true);
+})();
 </script>
