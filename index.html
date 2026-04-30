@@ -7137,7 +7137,7 @@ function bCard(u,forti,fav,idx,superSent){
     ac.appendChild(editBtn);ac.appendChild(viewBtn);
   } else {
     // LOGGED IN: full actions
-    var noSuper=CU&&((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
+    var noSuper=CU&&((typeof window.fuSuperBalance==='function'?window.fuSuperBalance():(typeof CU.superDiamonds==='number'?CU.superDiamonds:1))<=0);
 
     var bF=document.createElement('button');
     bF.className='pa-forti'+(forti?' sent':'');
@@ -7982,7 +7982,7 @@ function openMod(id){
   var myF=CU?g(kF(CU.id),[]):[];
   var forti=myF.some(function(f){return f.t===id&&f.type!=='super'&&isNormalFortiActive(f)});
   var superSent=CU?myF.some(function(f){return f.t===id&&f.type==='super'}):false;
-  var noSuper=CU&&((typeof CU.superDiamonds==='number'?CU.superDiamonds:1)<=0);
+  var noSuper=CU&&((typeof window.fuSuperBalance==='function'?window.fuSuperBalance():(typeof CU.superDiamonds==='number'?CU.superDiamonds:1))<=0);
   var fav=CU?g(kFv(CU.id),[]).indexOf(id)!==-1:false;
   var lt=(u.looking||[]).map(function(l){return'<span class="pt">'+e(l)+'</span>'}).join('');
   var pt=(u.plans||[]).map(function(p){return'<span class="pt ptg">'+e(p)+'</span>'}).join('');
@@ -16203,7 +16203,7 @@ html,body{overflow-x:hidden!important;}
   function normalizeSuperChecks(){
     qa('.pa-super').forEach(function(btn){
       var tx=(btn.textContent||'').toLowerCase();
-      var sent=tx.indexOf('enviado')>-1 || btn.classList.contains('super-sent') || btn.classList.contains('fu-super-sent') || btn.classList.contains('sent');
+      var sent=tx.indexOf('enviado')>-1 || btn.classList.contains('used') || btn.classList.contains('fu-super-done') || btn.classList.contains('super-sent') || btn.classList.contains('fu-super-sent') || btn.classList.contains('sent');
       qa('.fu-super-check',btn).forEach(function(x){x.remove()});
       if(sent){
         btn.classList.add('fu-super-done','super-sent','fu-super-sent');
@@ -16230,5 +16230,74 @@ html,body{overflow-x:hidden!important;}
   document.addEventListener('DOMContentLoaded',function(){[100,400,900].forEach(function(ms){setTimeout(normalizeSuperChecks,ms)})});
   document.addEventListener('click',function(){setTimeout(normalizeSuperChecks,80);setTimeout(normalizeSuperChecks,260)},true);
   setInterval(normalizeSuperChecks,2500);
+})();
+</script>
+
+<!-- === FortyUp v112 - súper diamante global estable, sin titileo === -->
+<style id="fu-v112-super-global-css">
+.pa-super::after,.pa-super.used::after,.pa-super.sent::after,.pa-super.super-sent::after,.pa-super.fu-super-sent::after,.pa-super.fu-super-done::after{content:none!important;display:none!important;}
+.pa-super{position:relative!important;overflow:visible!important;transform:none!important;}
+.pa-super .fu-super-check{position:absolute!important;top:-8px!important;right:-8px!important;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;border-radius:50%!important;background:#10B981!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 5px 12px rgba(16,185,129,.38)!important;display:flex!important;align-items:center!important;justify-content:center!important;font-family:'Nunito',Arial,sans-serif!important;font-size:14px!important;font-weight:900!important;line-height:1!important;z-index:99!important;pointer-events:none!important;}
+.pa-super .fu-super-check::before{content:'✓'!important;display:block!important;transform:translateY(-.5px)!important;}
+</style>
+<script id="fu-v112-super-balance-helper">
+(function(){
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function keyUsers(){return (window.K&&K.U)||'fu_users'}
+  function users(){return read(keyUsers(),[])}
+  function saveUsers(a){write(keyUsers(),a)}
+  window.fuSuperBalance=function(){
+    try{
+      if(!window.CU||!CU.id)return 0;
+      var arr=users();
+      var u=arr.find(function(x){return x&&x.id===CU.id})||CU;
+      var n=(typeof u.superDiamonds==='number'&&isFinite(u.superDiamonds))?u.superDiamonds:(u.superDiamondUsed?0:1);
+      n=Math.max(0,parseInt(n,10)||0);
+      CU.superDiamonds=n;window.CU=CU;
+      return n;
+    }catch(_){return 0}
+  };
+  function sentTo(id){
+    try{if(!window.CU||!CU.id)return false;var fs=(typeof kF==='function'?read(kF(CU.id),[]):read('fu_fortis_'+CU.id,[]));return fs.some(function(f){return f&&f.t===id&&f.type==='super'})}catch(_){return false}
+  }
+  function addCheck(btn){
+    Array.prototype.slice.call(btn.querySelectorAll('.fu-super-check')).forEach(function(x){x.remove()});
+    var sp=document.createElement('span');sp.className='fu-super-check';btn.appendChild(sp);
+    btn.classList.add('used','fu-super-done');
+  }
+  function removeCheck(btn){Array.prototype.slice.call(btn.querySelectorAll('.fu-super-check')).forEach(function(x){x.remove()});btn.classList.remove('used','fu-super-done','super-sent','fu-super-sent','sent')}
+  window.fuPaintSuperGlobal=function(){
+    var n=window.fuSuperBalance();
+    Array.prototype.slice.call(document.querySelectorAll('.pa-super[id^="sp-"]')).forEach(function(btn){
+      var id=btn.id.replace('sp-','');
+      var isSent=sentTo(id);
+      var noSuper=n<=0;
+      btn.disabled=false;
+      btn.innerHTML='💎';
+      if(isSent||noSuper){addCheck(btn)}else{removeCheck(btn)}
+      btn.title=noSuper?'No tenés Súper Diamantes disponibles':'Súper Diamante';
+      btn.onclick=function(ev){
+        if(ev)ev.preventDefault();
+        if(window.fuSuperBalance()<=0){if(window.toast)toast('No tenés Súper Diamantes disponibles. Próximamente vas a poder obtener más en FortyUp+ 💎','w');window.fuPaintSuperGlobal();return false;}
+        if(typeof window.sendSuperDiamond==='function')window.sendSuperDiamond(id);
+        setTimeout(window.fuPaintSuperGlobal,40);setTimeout(window.fuPaintSuperGlobal,220);return false;
+      };
+    });
+  };
+  var oldSend=window.sendSuperDiamond;
+  if(typeof oldSend==='function'&&!oldSend.__fu112){
+    window.sendSuperDiamond=function(id){
+      if(window.fuSuperBalance()<=0){if(window.toast)toast('No tenés Súper Diamantes disponibles. Próximamente vas a poder obtener más en FortyUp+ 💎','w');window.fuPaintSuperGlobal();return;}
+      var r=oldSend.apply(this,arguments);
+      [0,60,180,420,900].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)});
+      return r;
+    };
+    window.sendSuperDiamond.__fu112=true;
+  }
+  ['rProfiles','goTo','openMod'].forEach(function(fn){var old=window[fn];if(typeof old==='function'&&!old.__fu112){window[fn]=function(){var r=old.apply(this,arguments);[0,80,220,500].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)});return r};window[fn].__fu112=true}});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){[80,300,800].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)})});else [0,120,500].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)});
+  document.addEventListener('click',function(){setTimeout(window.fuPaintSuperGlobal,80);setTimeout(window.fuPaintSuperGlobal,260)},true);
+  setInterval(window.fuPaintSuperGlobal,900);
 })();
 </script>
