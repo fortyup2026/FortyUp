@@ -7055,22 +7055,60 @@ function profileDistanceBadge(u){
   }
   return '';
 }
+/* FortyUp v114: filtro real por zona elegida / ubicación actual */
+var FU_PROFILE_RADIUS_KM = 45;
+function fuProfileCityBase(){
+  if(_searchCity)return String(_searchCity).split(',')[0].trim().toLowerCase();
+  if(_locFilter)return String(_locFilter).trim().toLowerCase();
+  if(CU&&CU.city)return String(CU.city).split(',')[0].trim().toLowerCase();
+  return '';
+}
+function fuProfileDistanceFromBase(u,lat,lng){
+  if(lat&&lng&&u&&u.lat&&u.lng)return cDist(lat,lng,u.lat,u.lng);
+  return null;
+}
+function fuProfileMatchesArea(u,lat,lng,cityBase,hasExplicitArea){
+  if(!u)return false;
+  var d=fuProfileDistanceFromBase(u,lat,lng);
+  if(d!==null)return d<=FU_PROFILE_RADIUS_KM;
+  var uc=String(u.city||'').toLowerCase();
+  if(cityBase&&uc.indexOf(cityBase)!==-1)return true;
+  if(!hasExplicitArea&&!lat&&!lng&&!cityBase)return true;
+  return false;
+}
+function fuEmptyProfilesText(hasExplicitArea){
+  var where=_searchCity||_locFilter||((CU&&CU.city)?CU.city:'tu zona');
+  if(hasExplicitArea){
+    return '<div class="fu93-empty-profiles"><div class="ico">🌿</div><strong>No hay perfiles cercanos por ahora</strong><p>En '+e(where)+' todavía no hay personas cerca. Volvé más tarde para conexiones reales ✨</p></div>';
+  }
+  return '<div class="fu93-empty-profiles"><div class="ico">🌿</div><strong>No hay nadie cerca por ahora</strong><p>Volvé más tarde para encontrar conexiones reales cerca tuyo.</p></div>';
+}
 function rProfiles(){
-  var grid=document.getElementById('pgrid');grid.innerHTML='';
-  // Show location bar only when logged in
+  var grid=document.getElementById('pgrid');if(!grid)return;grid.innerHTML='';
   var locBar=document.getElementById('locationSearchBar');
   if(locBar)locBar.style.display=CU?'flex':'none';
-  // Guest mode - show profiles but simplified
+
   var bl=g(K.BL,[]);
-  var users=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&prefAllowsProfile(u)});
-  var baseLat=_searchLat||MLAT||(CU&&CU.lat?CU.lat:null), baseLng=_searchLng||MLNG||(CU&&CU.lng?CU.lng:null);
-  // Add location name filter when no coords set
-  if(_locFilter&&!_searchLat){
-    users=users.filter(function(u){return (u.city||'').toLowerCase().indexOf(_locFilter)!==-1});
+  var all=visibleProfiles().filter(function(u){return bl.indexOf(u.id)===-1&&prefAllowsProfile(u)});
+  var baseLat=_searchLat||MLAT||(CU&&CU.lat?CU.lat:null);
+  var baseLng=_searchLng||MLNG||(CU&&CU.lng?CU.lng:null);
+  var cityBase=fuProfileCityBase();
+  var hasExplicitArea=!!(_searchLat&&_searchLng)||!!_locFilter||!!_searchCity;
+  var hasAnyArea=!!(baseLat&&baseLng)||!!cityBase;
+  var users=all;
+
+  // Antes solo ordenaba por distancia y por eso seguían apareciendo perfiles de otra zona.
+  // Ahora, si hay zona elegida, mapa o ubicación actual, filtramos de verdad por cercanía.
+  if(hasAnyArea){
+    users=all.filter(function(u){return fuProfileMatchesArea(u,baseLat,baseLng,cityBase,hasExplicitArea)});
+    users.sort(function(a,b){
+      var da=fuProfileDistanceFromBase(a,baseLat,baseLng); if(da===null)da=9999;
+      var db=fuProfileDistanceFromBase(b,baseLat,baseLng); if(db===null)db=9999;
+      return da-db;
+    });
   }
-  if(baseLat&&baseLng){users.sort(function(a,b){var da=a.lat&&a.lng?cDist(baseLat,baseLng,a.lat,a.lng):9999;var db=b.lat&&b.lng?cDist(baseLat,baseLng,b.lat,b.lng):9999;return da-db})}
-  else if(CU&&CU.city){users.sort(function(a,b){var cc=String(CU.city).split(',')[0].trim().toLowerCase();var aa=String(a.city||'').toLowerCase().indexOf(cc)!==-1?0:1;var bb=String(b.city||'').toLowerCase().indexOf(cc)!==-1?0:1;return aa-bb})}
-  if(!users.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--txt3)"><div style="font-size:2.5rem;margin-bottom:.7rem">🌿</div><p>Todavía no hay perfiles según tu búsqueda cerca tuyo.</p></div>';return}
+
+  if(!users.length){grid.innerHTML=fuEmptyProfilesText(hasExplicitArea);return}
   users.forEach(function(u,i){
     var sends=CU?g(kF(CU.id),[]):[], normal=sends.some(function(f){return f.t===u.id&&isNormalFortiActive(f)});
     var superSent=sends.some(function(f){return f.t===u.id&&f.type==='super'});
@@ -7078,6 +7116,7 @@ function rProfiles(){
     grid.appendChild(bCard(u,normal,fav,i,superSent));
   });
 }
+
 function bCard(u,forti,fav,idx,superSent){
   var c=document.createElement('div');
   c.className='pcard'+((CU&&u.id===CU.id)?' self-profile':'');
