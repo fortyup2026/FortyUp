@@ -15146,3 +15146,19 @@ html,body{overflow-x:hidden!important;}
   setInterval(function(){markSelf(true);repaint()},12000);
 })();
 </script>
+
+<!-- FortyUp v10-final-98: fix salida de sesión / botones guest -->
+<style id="fortyup-v98-logout-buttons-fix">
+body:not(.fu-logged) #page-home .h-btns,
+body.fu-guest #page-home .h-btns,
+body.sebas-guest #page-home .h-btns{display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;flex-direction:column!important;gap:.72rem!important;width:min(92vw,640px)!important;margin:1.4rem auto 0!important;padding:0!important;position:relative!important;z-index:20!important}
+body:not(.fu-logged) #page-home .h-btns .btn,body:not(.fu-logged) #page-home .h-btns button,body:not(.fu-logged) #page-home .h-btns a,body.fu-guest #page-home .h-btns .btn,body.fu-guest #page-home .h-btns button,body.fu-guest #page-home .h-btns a,body.sebas-guest #page-home .h-btns .btn,body.sebas-guest #page-home .h-btns button,body.sebas-guest #page-home .h-btns a{display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:100%!important;min-height:54px!important;border-radius:999px!important;position:relative!important;z-index:21!important}
+body:not(.fu-logged) #page-home .h-btns:before,body:not(.fu-logged) #page-home .h-btns:after,body.fu-guest #page-home .h-btns:before,body.fu-guest #page-home .h-btns:after,body.sebas-guest #page-home .h-btns:before,body.sebas-guest #page-home .h-btns:after{display:none!important;content:none!important}
+body.fu-logged #page-home .h-btns{display:none!important}
+body:not(.fu-logged) .bnav,body.fu-guest .bnav,body.sebas-guest .bnav{display:none!important}
+body:not(.fu-logged){padding-bottom:0!important}
+@media(max-width:750px){body:not(.fu-logged) #page-home .h-btns,body.fu-guest #page-home .h-btns,body.sebas-guest #page-home .h-btns{margin-top:1.25rem!important;gap:.62rem!important}}
+</style>
+<script id="fortyup-v98-logout-buttons-fix-js">
+(function(){function logged(){return !!(window.CU&&CU.id)}function setGuestButtons(){var isLog=logged();document.body.classList.toggle('fu-logged',isLog);document.body.classList.toggle('fu-guest',!isLog);document.body.classList.toggle('sebas-guest',!isLog);var nav=document.querySelector('.bnav');if(nav)nav.style.display=isLog?'flex':'none';if(!isLog){var nr=document.getElementById('nR');if(nr&&!nr.querySelector('.btn-join'))nr.innerHTML='<button class="btn-join" onclick="openAuth(\'register\')">Unirme gratis</button>';var home=document.getElementById('page-home');if(home){var hb=home.querySelector('.h-btns');if(hb){hb.style.display='flex';hb.style.visibility='visible';hb.style.opacity='1';hb.style.pointerEvents='auto';hb.querySelectorAll('button,a,.btn').forEach(function(b){b.style.display='flex';b.style.visibility='visible';b.style.opacity='1';b.style.pointerEvents='auto'})}}}}function later(){setGuestButtons();setTimeout(setGuestButtons,60);setTimeout(setGuestButtons,180)}var oldUp=window.upNav;if(typeof oldUp==='function'&&!oldUp.__v98_guest_fix){window.upNav=function(){var r=oldUp.apply(this,arguments);later();return r};window.upNav.__v98_guest_fix=true}var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__v98_guest_fix){window.goTo=function(pg){var r=oldGo.apply(this,arguments);later();return r};window.goTo.__v98_guest_fix=true}var oldLogout=window.logout;if(typeof oldLogout==='function'&&!oldLogout.__v98_guest_fix){window.logout=function(){var r=oldLogout.apply(this,arguments);window.CU=null;window.CW=null;try{if(typeof sv==='function'&&window.K)sv(K.S,null)}catch(e){}try{if(typeof goTo==='function')goTo('home')}catch(e){}later();return r};window.logout.__v98_guest_fix=true}document.addEventListener('DOMContentLoaded',later);window.addEventListener('load',later);setInterval(setGuestButtons,500)})();
+</script>
