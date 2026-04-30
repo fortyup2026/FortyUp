@@ -14034,6 +14034,113 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+
+<!-- FortyUp v116: modo ubicación separado GPS vs ciudad buscada -->
+<style id="fortyup-v116-location-mode-css">
+.fu116-empty-profiles{width:100%;grid-column:1/-1;text-align:center;background:linear-gradient(135deg,#fff,#F0FDF8);border:1.7px dashed #A7F3D0;border-radius:28px;padding:2rem 1.25rem;color:#064E3B;box-shadow:0 10px 30px rgba(6,78,59,.08)}
+.fu116-empty-profiles .ico{font-size:2.8rem;margin-bottom:.5rem}.fu116-empty-profiles strong{display:block;font-family:'Playfair Display',serif;font-size:1.45rem;margin-bottom:.28rem}.fu116-empty-profiles p{font-size:.9rem;color:#2D4A40;line-height:1.55;max-width:420px;margin:0 auto}.fu116-mode-note{display:inline-flex;align-items:center;gap:.34rem;background:#F0FDF8;border:1px solid #A7F3D0;border-radius:999px;color:#064E3B;font-size:.68rem;font-weight:900;padding:.16rem .5rem;margin-top:.28rem}
+</style>
+<script id="fortyup-v116-location-mode-js">
+(function(){
+  function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim()}
+  function cleanCity(v){return norm(String(v||'').split(',')[0])}
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]||c})}
+  function usersAll(){try{return (typeof visibleProfiles==='function'?visibleProfiles():g(K.U,[]))||[]}catch(_){return []}}
+  function blocked(){try{return g(K.BL,[])||[]}catch(_){return []}}
+  function prefOk(u){try{return typeof prefAllowsProfile==='function'?prefAllowsProfile(u):true}catch(_){return true}}
+  function distanceKm(a,b,c,d){try{return cDist(a,b,c,d)}catch(_){var R=6371, dLat=(c-a)*Math.PI/180, dLng=(d-b)*Math.PI/180;var x=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}}
+  function selectedCity(){return cleanCity(window._searchCity||window._locFilter||'')}
+  function userCity(u){return cleanCity((u&&(u.city||u.localidad||u.locationName||u.zone||u.location||u.town||u.barrio))||'')}
+  function matchCity(u,base){var uc=userCity(u); if(!base||!uc)return false; return uc===base || uc.indexOf(base)!==-1 || base.indexOf(uc)!==-1}
+  function empty(where,mode){
+    var text=mode==='city'?'En '+esc(where||'esta zona')+' todavía no hay perfiles cargados. Volvé más tarde para conexiones reales ✨':'No hay perfiles cerca de tu ubicación actual por ahora. Volvé más tarde para conexiones reales ✨';
+    return '<div class="fu116-empty-profiles"><div class="ico">🌿</div><strong>No hay perfiles cercanos por ahora</strong><p>'+text+'</p></div>'
+  }
+  function areaMode(){
+    if(window._fuLocationMode==='city'||selectedCity())return 'city';
+    if(window._fuLocationMode==='gps'||(window.MLAT&&window.MLNG))return 'gps';
+    return 'default';
+  }
+  function filterUsers(list){
+    var mode=areaMode();
+    if(mode==='city'){
+      var base=selectedCity();
+      return list.filter(function(u){return matchCity(u,base)});
+    }
+    var lat=window.MLAT||(window.CU&&CU.lat?CU.lat:null), lng=window.MLNG||(window.CU&&CU.lng?CU.lng:null);
+    if(mode==='gps'&&lat&&lng){
+      return list.filter(function(u){return u&&u.lat&&u.lng&&distanceKm(lat,lng,u.lat,u.lng)<=45}).sort(function(a,b){return distanceKm(lat,lng,a.lat,a.lng)-distanceKm(lat,lng,b.lat,b.lng)});
+    }
+    return list;
+  }
+  function renderCard(u,i){
+    var sends=window.CU?g(kF(CU.id),[]):[], normal=sends.some(function(f){return f.t===u.id&&(typeof isNormalFortiActive==='function'?isNormalFortiActive(f):f.type!=='super')});
+    var superSent=sends.some(function(f){return f.t===u.id&&f.type==='super'});
+    var favs=window.CU?g(kFv(CU.id),[]):[]; var fav=favs.indexOf(u.id)!==-1;
+    var el=(typeof bCard==='function')?bCard(u,normal,fav,i,superSent):document.createElement('div');
+    if(areaMode()==='city'){
+      setTimeout(function(){
+        try{var card=document.getElementById('ca-'+u.id); if(!card)return; card.querySelectorAll('.dist-b').forEach(function(x){x.remove()}); var inf=card.querySelector('.pcard-info,.pcard-body'); if(inf&&!inf.querySelector('.fu116-mode-note')){var note=document.createElement('div'); note.className='fu116-mode-note'; note.innerHTML='📍 '+esc(u.city||window._searchCity||'zona seleccionada'); inf.appendChild(note)}}catch(_){ }
+      },0);
+    }
+    return el;
+  }
+  window.rProfiles=function(){
+    var grid=document.getElementById('pgrid'); if(!grid)return; grid.innerHTML='';
+    var locBar=document.getElementById('locationSearchBar'); if(locBar)locBar.style.display=window.CU?'flex':'none';
+    var bl=blocked();
+    var all=usersAll().filter(function(u){return u&&bl.indexOf(u.id)===-1&&prefOk(u)});
+    var users=filterUsers(all);
+    var mode=areaMode();
+    if(!users.length){grid.innerHTML=empty(window._searchCity||window._locFilter||'esta zona',mode);return;}
+    users.forEach(function(u,i){grid.appendChild(renderCard(u,i));});
+    setTimeout(function(){try{if(typeof fixSuperDiamondButtons==='function')fixSuperDiamondButtons(); if(typeof injectOnlineCards==='function')injectOnlineCards();}catch(_){ }},80);
+  };
+  window.searchByCity=function(cityName){
+    var name=String(cityName||'').trim();
+    if(!name){window.clearLocationFilter();return;}
+    window._fuLocationMode='city'; window._searchCity=name; window._locFilter=name; window._searchLat=null; window._searchLng=null;
+    if(typeof showLocLabel==='function')showLocLabel(name);
+    window.rProfiles(); if(window.toast)toast('Mostrando perfiles de '+name+' 📍','ok');
+  };
+  window.applyMapSearch=function(){
+    var btn=document.getElementById('mapSearchBtn'); var inp=document.getElementById('mapPlaceSearch');
+    var place=(btn&&(btn.dataset.place||btn.textContent||'')).replace(/^Ver perfiles (cerca de|en)\s*/i,'').replace(/→/g,'').trim() || (inp&&inp.value?inp.value.trim():'zona seleccionada');
+    if(!place||place==='zona seleccionada'){ if(window.toast)toast('Buscá o elegí una localidad','w'); return; }
+    window._fuLocationMode='city'; window._searchCity=place; window._locFilter=place; window._searchLat=null; window._searchLng=null;
+    if(typeof showLocLabel==='function')showLocLabel(place);
+    if(typeof closeMapSearch==='function')closeMapSearch();
+    window.rProfiles(); if(window.toast)toast('Mostrando perfiles de '+place+' 📍','ok');
+  };
+  var oldSearch=window.searchPlaceOnMap;
+  window.searchPlaceOnMap=function(){
+    var inp=document.getElementById('mapPlaceSearch'); var q=inp?String(inp.value||'').trim():'';
+    if(!q){if(window.toast)toast('Escribí una localidad para buscar','w');return;}
+    var info=document.getElementById('mapSearchInfo'), btn=document.getElementById('mapSearchBtn'); if(info)info.textContent='Buscando '+q+'...'; if(btn)btn.style.display='none';
+    var url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q+', Argentina')+'&format=json&limit=1&accept-language=es&addressdetails=1';
+    fetch(url).then(function(r){return r.json()}).then(function(data){
+      var place=q, lat=null, lng=null;
+      if(data&&data.length){var item=data[0], a=item.address||{}; place=a.city||a.town||a.village||a.suburb||a.county||a.state||q; lat=parseFloat(item.lat); lng=parseFloat(item.lon);}
+      window._mapLat=lat; window._mapLng=lng;
+      if(lat&&lng&&window._mapInstance&&window.L){window._mapInstance.setView([lat,lng],12); if(window._mapMarker)window._mapInstance.removeLayer(window._mapMarker); window._mapMarker=L.marker([lat,lng]).addTo(window._mapInstance);}
+      if(info)info.innerHTML='📍 <strong>'+esc(place)+'</strong>'; if(btn){btn.textContent='Ver perfiles en '+place+' →';btn.style.display='block';btn.dataset.place=place;}
+    }).catch(function(){if(info)info.textContent='No se pudo buscar ahora. Igual podés usar el nombre escrito.'; if(btn){btn.textContent='Ver perfiles en '+q+' →';btn.style.display='block';btn.dataset.place=q;}});
+  };
+  window.useMyLocation=function(){
+    window._fuLocationMode='gps'; window._searchCity=''; window._locFilter=''; window._searchLat=null; window._searchLng=null;
+    var lbl=document.getElementById('locActiveLabel'); if(lbl){lbl.style.display='none'; lbl.innerHTML='';}
+    if(!navigator.geolocation){if(window.toast)toast('GPS no disponible','w'); window.rProfiles(); return;}
+    if(window.toast)toast('Obteniendo tu ubicación...','ok');
+    navigator.geolocation.getCurrentPosition(function(pos){window.MLAT=pos.coords.latitude; window.MLNG=pos.coords.longitude; if(window.CU){CU.lat=window.MLAT; CU.lng=window.MLNG; try{sv(K.C,CU); var us=g(K.U,[]).map(function(u){return u.id===CU.id?Object.assign({},u,{lat:CU.lat,lng:CU.lng,lastActive:new Date().toISOString()}):u}); sv(K.U,us);}catch(_){ }} window.rProfiles(); if(window.toast)toast('Mostrando perfiles cercanos a vos 📍','ok');},function(){window.rProfiles(); if(window.toast)toast('No se pudo obtener tu ubicación','w');},{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+  };
+  window.clearLocationFilter=function(){
+    window._fuLocationMode='gps'; window._searchCity=''; window._locFilter=''; window._searchLat=null; window._searchLng=null;
+    var lbl=document.getElementById('locActiveLabel'); if(lbl){lbl.className='';lbl.style.display='none';lbl.innerHTML='';}
+    window.rProfiles(); if(window.toast)toast('Mostrando perfiles por tu ubicación 📍','ok');
+  };
+})();
+</script>
 </body>
 </html>
 
