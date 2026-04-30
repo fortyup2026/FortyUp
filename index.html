@@ -13153,51 +13153,212 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
 </script>
 
 
-<!-- === FortyUp v103 - email verificado + términos únicos en registro === -->
-<style id="fu-v103-email-verify-css">
-#fu95AuthTerms,.auth-box > .fu-terms-link,.auth-box > .fu-reg-bottom-links{display:none!important;}
-#fu103AuthTerms{display:none;margin:.85rem 0 .25rem!important;padding:.82rem .9rem!important;border-radius:20px!important;background:#F0FDF8!important;border:1.6px solid #A7F3D0!important;color:#2D4A40!important;gap:.64rem!important;align-items:flex-start!important;font-size:.8rem!important;line-height:1.38!important;font-weight:800!important;}
-#fu103AuthTerms.show{display:flex!important;}
-#fu103AuthTerms input{width:21px!important;height:21px!important;accent-color:#059669!important;flex:0 0 21px!important;margin-top:.05rem!important;}
-#fu103AuthTerms button{color:#064E3B!important;text-decoration:underline!important;font-weight:900!important;background:none!important;border:0!important;padding:0!important;font-family:'Nunito',sans-serif!important;font-size:inherit!important;}
-.fu103-verify-box{display:none;margin-top:.9rem;padding:1.05rem;border-radius:24px;background:linear-gradient(160deg,#ECFDF5,#FFFDF7);border:1.7px solid #A7F3D0;box-shadow:0 12px 26px rgba(6,78,59,.08);}
-.fu103-verify-box.show{display:block;}
-.fu103-verify-ico{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:.1rem auto .7rem;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-size:1.7rem;box-shadow:0 10px 22px rgba(6,78,59,.22);}
-.fu103-verify-box h3{font-family:'Playfair Display',serif;color:#064E3B;font-size:1.35rem;text-align:center;margin:.1rem 0 .35rem;}
-.fu103-verify-box p{font-size:.86rem;line-height:1.55;color:#2D4A40;text-align:center;margin-bottom:.75rem;}
-.fu103-verify-email{font-weight:900;color:#064E3B;word-break:break-word;}
-.fu103-verify-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;}
-.fu103-verify-actions .btn{flex:1;justify-content:center;min-width:130px;padding:.62rem .85rem!important;font-size:.82rem!important;}
-.fu103-verify-help{font-size:.72rem!important;color:#6B7C76!important;margin:.7rem 0 0!important;}
-.auth-box.fu103-verifying .auth-tabs,.auth-box.fu103-verifying .afld,.auth-box.fu103-verifying #aBtn,.auth-box.fu103-verifying #forgotBtn,.auth-box.fu103-verifying #resetTestBtn,.auth-box.fu103-verifying #fu103AuthTerms{display:none!important;}
+
+<!-- FortyUp v104 - Email verificado sin duplicar términos -->
+<style id="fu-v104-email-verify-css">
+/* Dejar un solo checkbox de términos en el modal de Crear cuenta */
+.auth-box > #fu95AuthTerms,
+.auth-box > .fu-terms-link,
+.auth-box > .fu-reg-bottom-links{display:none!important;}
+#fuEmailTerms{
+  display:none;
+  margin:.9rem 0 .25rem!important;
+  padding:.85rem .9rem!important;
+  border-radius:22px!important;
+  background:#F0FDF8!important;
+  border:1.5px solid #A7F3D0!important;
+  color:#2D4A40!important;
+  gap:.65rem!important;
+  align-items:flex-start!important;
+  font-size:.82rem!important;
+  line-height:1.38!important;
+  font-weight:800!important;
+}
+#fuEmailTerms.show{display:flex!important;}
+#fuEmailTerms input{width:22px!important;height:22px!important;accent-color:#059669!important;flex:0 0 22px!important;margin-top:.02rem!important;}
+#fuEmailTerms button{color:#064E3B!important;text-decoration:underline!important;font-weight:900!important;background:none!important;border:0!important;padding:0!important;font-family:'Nunito',sans-serif!important;}
+.fu-verify-card{
+  display:none;
+  margin:.95rem 0 0;
+  padding:1rem;
+  border-radius:22px;
+  background:linear-gradient(135deg,#F0FDF8,#FFFFFF);
+  border:1.5px solid #A7F3D0;
+  color:#064E3B;
+  box-shadow:0 8px 22px rgba(6,78,59,.08);
+}
+.fu-verify-card.show{display:block;}
+.fu-verify-card h4{font-family:'Playfair Display',serif;font-size:1.25rem;margin:0 0 .35rem;color:#064E3B;}
+.fu-verify-card p{font-size:.86rem;line-height:1.5;color:#2D4A40;margin:.25rem 0 .75rem;}
+.fu-verify-actions{display:flex;gap:.55rem;flex-wrap:wrap;}
+.fu-verify-actions button{border-radius:999px;padding:.62rem .9rem;font-weight:900;font-size:.82rem;}
+.fu-verify-primary{background:linear-gradient(135deg,#064E3B,#059669);color:#fff;}
+.fu-verify-secondary{background:#fff;border:1.5px solid #A7F3D0;color:#064E3B;}
 </style>
-<script id="fu-v103-email-verify-js">
+<script id="fu-v104-email-verify-js">
 (function(){
-function q(s,r){return (r||document).querySelector(s)}
-function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
-function fv(id){var el=document.getElementById(id);return el?String(el.value||'').trim():''}
-function normEmail(v){return String(v||'').trim().toLowerCase()}
-function showErr(msg){var ee=q('#aErr'), ok=q('#aOk'); if(ok)ok.style.display='none'; if(ee){ee.textContent=msg;ee.style.display='block'}}
-function showOk(msg){var ee=q('#aErr'), ok=q('#aOk'); if(ee)ee.style.display='none'; if(ok){ok.textContent=msg;ok.style.display='block'}}
-function clearMsgs(){var ee=q('#aErr'), ok=q('#aOk'); if(ee)ee.style.display='none'; if(ok)ok.style.display='none'}
-function auth(){try{return (window.firebase&&firebase.auth)?firebase.auth():null}catch(_){return null}}
-function users(){try{return typeof g==='function'?g(K.U,[]):JSON.parse(localStorage.getItem((window.K&&K.U)||'fu_u')||'[]')}catch(_){return []}}
-function saveUsers(a){try{if(typeof sv==='function')sv(K.U,a);else localStorage.setItem((window.K&&K.U)||'fu_u',JSON.stringify(a))}catch(_){}}
-function saveSess(id){try{if(typeof sv==='function')sv(K.S,{id:id});else localStorage.setItem((window.K&&K.S)||'fu_s',JSON.stringify({id:id}))}catch(_){}}
-function newLocalId(){try{return typeof newId==='function'?newId():'u'+Date.now()+Math.random().toString(16).slice(2)}catch(_){return 'u'+Date.now()+Math.random().toString(16).slice(2)}}
-function ensureLocalUser(email,pass){email=normEmail(email); var arr=users(); var u=arr.find(function(x){return x&&!x.is&&normEmail(x.email)===email}); if(!u){u={id:newLocalId(),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass||'',photo:'',desc:'',int:'',looking:[],plans:[],interestedIn:'todos',lat:null,lng:null,createdAt:new Date().toISOString(),emailVerified:true,superDiamonds:1};arr.push(u)}else{u.emailVerified=true;if(pass)u.pass=pass} saveUsers(arr); return u}
-function actionSettings(){return {url:location.origin+location.pathname,handleCodeInApp:false}}
-function mapErr(err){var c=(err&&err.code)||''; if(c.indexOf('email-already-in-use')>-1)return 'Ese email ya está registrado. Probá iniciar sesión.'; if(c.indexOf('invalid-email')>-1)return 'El email no parece válido.'; if(c.indexOf('weak-password')>-1)return 'La contraseña debe tener al menos 6 caracteres.'; if(c.indexOf('user-not-found')>-1)return 'No encontramos una cuenta con ese email. Creá una cuenta primero.'; if(c.indexOf('wrong-password')>-1||c.indexOf('invalid-credential')>-1)return 'Email o contraseña incorrectos.'; if(c.indexOf('operation-not-allowed')>-1)return 'Falta activar Email/Password en Firebase Authentication.'; if(c.indexOf('network')>-1)return 'Problema de conexión. Probá de nuevo.'; return (err&&err.message)||'No se pudo completar la operación.'}
-function ensureTerms(){var box=q('.auth-box'); if(!box)return; qa('#fu95AuthTerms,.auth-box > .fu-terms-link,.auth-box > .fu-reg-bottom-links').forEach(function(x){x.remove()}); var lab=q('#fu103AuthTerms'); if(!lab){lab=document.createElement('label'); lab.id='fu103AuthTerms'; lab.innerHTML='<input type="checkbox" id="fu103TermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull&&fuShowTermsFull()">Términos y Condiciones</button>. Declaro que soy mayor de 40 y entiendo que soy responsable de mis mensajes, fotos, videos y comportamiento dentro de FortyUp.</span>'; var btn=q('#aBtn',box); box.insertBefore(lab,btn||null)} var mode=(window.AM==='register'||(q('#tabR')&&q('#tabR').classList.contains('active')))?'register':'login'; lab.classList.toggle('show',mode==='register')}
-function verifyBox(){var box=q('.auth-box'); if(!box)return null; var vb=q('#fu103VerifyBox'); if(!vb){vb=document.createElement('div'); vb.id='fu103VerifyBox'; vb.className='fu103-verify-box'; vb.innerHTML='<div class="fu103-verify-ico">✉️</div><h3>Verificá tu correo</h3><p>Te enviamos un email a <span class="fu103-verify-email" id="fu103VerifyEmail"></span>. Tocá el enlace del correo para activar tu cuenta.</p><div class="fu103-verify-actions"><button type="button" class="btn btn-p" id="fu103CheckBtn">Ya verifiqué</button><button type="button" class="btn btn-o" id="fu103ResendBtn">Reenviar correo</button></div><p class="fu103-verify-help">Cuando lo verifiques, volvé acá y tocá “Ya verifiqué”. Si no lo ves, revisá spam o correo no deseado.</p>'; box.appendChild(vb); q('#fu103CheckBtn',vb).onclick=checkVerified; q('#fu103ResendBtn',vb).onclick=resend} return vb}
-function showVerify(email){clearMsgs(); ensureTerms(); var vb=verifyBox(); var box=q('.auth-box'); if(box)box.classList.add('fu103-verifying'); if(vb){vb.classList.add('show'); var em=q('#fu103VerifyEmail'); if(em)em.textContent=email||fv('aEmail')||''}}
-function hideVerify(){var vb=q('#fu103VerifyBox'); if(vb)vb.classList.remove('show'); var box=q('.auth-box'); if(box)box.classList.remove('fu103-verifying')}
-function finish(user,pass){var local=ensureLocalUser(user.email,pass); window.CU=local; saveSess(local.id); try{if(typeof upNav==='function')upNav(); if(typeof upCount==='function')upCount(); if(typeof closeAuth==='function')closeAuth(); if(typeof checkUnread==='function')checkUnread(); if(typeof clearReg==='function')clearReg()}catch(_){ } if(!local.name){setTimeout(function(){if(typeof goTo==='function'){goTo('register'); if(typeof loadProfileForm==='function')loadProfileForm()}},250)}else{setTimeout(function(){if(typeof goTo==='function')goTo('home')},120)}}
-window.fu103DoAuth=function(){clearMsgs(); ensureTerms(); hideVerify(); var email=normEmail(fv('aEmail')), pass=(q('#aPass')||{}).value||'', pc=(q('#aPassC')||{}).value||''; if(!email||!pass){showErr('Completá email y contraseña.');return} if(pass.length<6){showErr('La contraseña debe tener al menos 6 caracteres.');return} var a=auth(); if(!a){showErr('Firebase Authentication no está cargado.');return} var btn=q('#aBtn'); if(window.AM==='register'){if(pass!==pc){showErr('Las contraseñas no coinciden.');return} var cb=q('#fu103TermsOk'); if(!cb||!cb.checked){showErr('Para crear tu cuenta tenés que aceptar los Términos y Condiciones.');return} if(btn)btn.disabled=true; a.createUserWithEmailAndPassword(email,pass).then(function(cred){return cred.user.sendEmailVerification(actionSettings()).then(function(){showVerify(email); showOk('Te enviamos un correo de verificación. Activá tu cuenta para ingresar.')})}).catch(function(err){showErr(mapErr(err))}).finally(function(){if(btn)btn.disabled=false}); return} if(btn)btn.disabled=true; a.signInWithEmailAndPassword(email,pass).then(function(cred){return cred.user.reload().then(function(){return cred.user})}).then(function(user){if(!user.emailVerified){showVerify(email); showErr('Tu correo todavía no está verificado. Verificalo para ingresar.'); return} finish(user,pass)}).catch(function(err){showErr(mapErr(err))}).finally(function(){if(btn)btn.disabled=false})}
-function checkVerified(){clearMsgs(); var a=auth(), email=normEmail(fv('aEmail')), pass=(q('#aPass')||{}).value||''; if(!a){showErr('Firebase Authentication no está cargado.');return} function evalUser(user){return user.reload().then(function(){if(!user.emailVerified){showErr('Todavía no figura verificado. Esperá unos segundos o volvé a tocar el enlace del correo.');return}finish(user,pass)})} if(a.currentUser){evalUser(a.currentUser).catch(function(err){showErr(mapErr(err))});return} if(!email||!pass){showErr('Dejá escrito tu email y contraseña para verificar el acceso.');return} a.signInWithEmailAndPassword(email,pass).then(function(cred){return evalUser(cred.user)}).catch(function(err){showErr(mapErr(err))})}
-function resend(){clearMsgs(); var a=auth(), email=normEmail(fv('aEmail')), pass=(q('#aPass')||{}).value||''; if(!a){showErr('Firebase Authentication no está cargado.');return} function send(user){return user.sendEmailVerification(actionSettings()).then(function(){showOk('Correo reenviado. Revisá tu casilla y spam.')})} if(a.currentUser){send(a.currentUser).catch(function(err){showErr(mapErr(err))});return} if(!email||!pass){showErr('Ingresá email y contraseña para reenviar el correo.');return} a.signInWithEmailAndPassword(email,pass).then(function(cred){return send(cred.user)}).catch(function(err){showErr(mapErr(err))})}
-function hook(){ensureTerms(); verifyBox(); hideVerify(); if(typeof window.switchTab==='function'&&!window.switchTab.__fu103){var old=window.switchTab;window.switchTab=function(mode){hideVerify();var r=old.apply(this,arguments);setTimeout(ensureTerms,0);return r};window.switchTab.__fu103=true} if(typeof window.openAuth==='function'&&!window.openAuth.__fu103){var oldO=window.openAuth;window.openAuth=function(mode){var r=oldO.apply(this,arguments);setTimeout(function(){hideVerify();ensureTerms();var cb=q('#fu103TermsOk');if(cb)cb.checked=false},0);return r};window.openAuth.__fu103=true} window.doAuth=window.fu103DoAuth}
-document.addEventListener('DOMContentLoaded',function(){setTimeout(hook,80);setTimeout(hook,500)}); document.addEventListener('click',function(){setTimeout(ensureTerms,40)},true);
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function norm(v){return String(v||'').trim().toLowerCase()}
+  function safeShow(el,msg,ok){if(!el)return;el.textContent=msg;el.style.display='block';}
+  function hide(el){if(el)el.style.display='none'}
+  function getUsers(){try{return (typeof g==='function')?g(K.U,[]):JSON.parse(localStorage.getItem('fu_u')||'[]')}catch(_){return []}}
+  function setUsers(u){try{if(typeof sv==='function')sv(K.U,u);else localStorage.setItem('fu_u',JSON.stringify(u))}catch(_){}}
+  function getSessionKey(){try{return (window.K&&K.S)||'fu_s'}catch(_){return 'fu_s'}}
+  function setSession(id){try{if(typeof sv==='function')sv(getSessionKey(),{id:id});else localStorage.setItem(getSessionKey(),JSON.stringify({id:id}))}catch(_){}}
+  var pendingEmail='';
+
+  function ensureFirebaseAuthReady(){
+    try{
+      if(typeof firebase==='undefined')return null;
+      if(!firebase.apps || !firebase.apps.length){
+        if(typeof FB_CFG!=='undefined')firebase.initializeApp(FB_CFG);
+      }
+      if(typeof firebase.auth!=='function')return null;
+      window.FU_AUTH=firebase.auth();
+      if(!window.DB && typeof firebase.firestore==='function'){
+        window.DB=firebase.firestore();
+        window.FB_READY=true;
+      }
+      return window.FU_AUTH;
+    }catch(err){console.warn('FU auth init error',err);return null;}
+  }
+
+  function cleanupDuplicateAuthTerms(){
+    var box=q('.auth-box'); if(!box)return;
+    // Borra cualquier checkbox de términos viejo dentro del modal de login/registro.
+    qa('label',box).forEach(function(l){
+      var txt=(l.textContent||'').toLowerCase();
+      if(txt.indexOf('términos')!==-1 && l.id!=='fuEmailTerms')l.remove();
+    });
+    qa('#fu95AuthTerms,.fu102AuthTerms,.fu103AuthTerms,.fu-terms-link,.fu-reg-bottom-links',box).forEach(function(x){x.remove()});
+    var lab=q('#fuEmailTerms',box);
+    if(!lab){
+      lab=document.createElement('label');
+      lab.id='fuEmailTerms';
+      lab.innerHTML='<input type="checkbox" id="fuEmailTermsOk"><span>Acepto los <button type="button" onclick="fuShowTermsFull&&fuShowTermsFull()">Términos y Condiciones</button>. Declaro que soy mayor de 40 y entiendo que soy responsable de mis mensajes, fotos, videos y comportamiento dentro de FortyUp.</span>';
+      var btn=q('#aBtn',box); box.insertBefore(lab,btn||null);
+    }
+    var card=q('#fuVerifyCard',box);
+    if(!card){
+      card=document.createElement('div');
+      card.id='fuVerifyCard';
+      card.className='fu-verify-card';
+      card.innerHTML='<h4>Verificá tu correo</h4><p id="fuVerifyText">Te enviamos un email de verificación. Tocá el link del correo y después volvé acá.</p><div class="fu-verify-actions"><button type="button" class="fu-verify-primary" onclick="fuCheckEmailVerified()">Ya verifiqué</button><button type="button" class="fu-verify-secondary" onclick="fuResendVerification()">Reenviar correo</button></div>';
+      var reset=q('#resetTestBtn',box); box.insertBefore(card,reset||null);
+    }
+    updateAuthTermsVisibility();
+  }
+
+  function updateAuthTermsVisibility(){
+    var box=q('.auth-box'); if(!box)return;
+    var isReg=(window.AM==='register') || (q('#tabR')&&q('#tabR').classList.contains('active'));
+    var lab=q('#fuEmailTerms',box); if(lab)lab.classList.toggle('show',!!isReg);
+    var forgot=q('#forgotBtn',box); if(forgot)forgot.style.display=isReg?'none':'block';
+  }
+
+  function showVerify(email){
+    pendingEmail=norm(email||pendingEmail||q('#aEmail')&&q('#aEmail').value);
+    var card=q('#fuVerifyCard'); if(card)card.classList.add('show');
+    var t=q('#fuVerifyText'); if(t)t.innerHTML='Te enviamos un correo a <strong>'+pendingEmail+'</strong>. Abrilo, tocá el link de verificación y después volvé acá.';
+    var ok=q('#aOk'),err=q('#aErr'); hide(err); safeShow(ok,'Correo de verificación enviado. Revisá tu mail para activar la cuenta.');
+  }
+
+  function ensureLocalUserFromFirebase(fbUser, pass){
+    var users=getUsers();
+    var email=norm(fbUser.email);
+    var u=users.find(function(x){return !x.is && norm(x.email)===email});
+    if(!u){
+      u={id:(typeof newId==='function'?newId():('u'+Date.now())),is:0,name:'',age:0,city:'',gender:'',email:email,pass:pass||'',photo:'',desc:'',int:'',looking:[],plans:[],interestedIn:'todos',lat:null,lng:null,createdAt:new Date().toISOString(),superDiamonds:1,emailVerified:true,fbUid:fbUser.uid};
+      users.push(u);
+    }else{
+      u.emailVerified=true;u.fbUid=fbUser.uid;if(pass)u.pass=pass;
+    }
+    setUsers(users);
+    window.CU=u; setSession(u.id);
+    try{if(typeof upNav==='function')upNav(); if(typeof upCount==='function')upCount(); if(typeof checkUnread==='function')checkUnread(); if(typeof clearReg==='function')clearReg();}catch(_){ }
+    return u;
+  }
+
+  window.fuCheckEmailVerified=function(){
+    var auth=ensureFirebaseAuthReady();
+    var err=q('#aErr'),ok=q('#aOk'); hide(err); hide(ok);
+    if(!auth){safeShow(err,'Firebase Authentication todavía no cargó. Esperá unos segundos y probá otra vez.');return;}
+    var user=auth.currentUser;
+    if(!user){safeShow(err,'Primero iniciá sesión con el email y contraseña que registraste.');return;}
+    user.reload().then(function(){
+      if(!auth.currentUser.emailVerified){safeShow(err,'Todavía no figura verificado. Abrí el correo y tocá el link de verificación.');return;}
+      var pass=q('#aPass')?q('#aPass').value:'';
+      var u=ensureLocalUserFromFirebase(auth.currentUser,pass);
+      if(typeof closeAuth==='function')closeAuth();
+      if(typeof toast==='function')toast('Email verificado. Ahora completá tu perfil 🌿','ok');
+      if(!u.name){ if(typeof goTo==='function')goTo('register'); if(typeof loadProfileForm==='function')setTimeout(loadProfileForm,80); }
+      else{ if(typeof goTo==='function')goTo('home'); }
+    }).catch(function(e){safeShow(err,'No pude verificar todavía: '+(e&&e.message?e.message:e));});
+  };
+
+  window.fuResendVerification=function(){
+    var auth=ensureFirebaseAuthReady(); var err=q('#aErr'),ok=q('#aOk'); hide(err); hide(ok);
+    if(!auth||!auth.currentUser){safeShow(err,'Primero iniciá sesión con el email y contraseña que registraste.');return;}
+    auth.currentUser.sendEmailVerification({url:location.origin+location.pathname}).then(function(){showVerify(auth.currentUser.email);}).catch(function(e){safeShow(err,'No pude reenviar el correo: '+(e&&e.message?e.message:e));});
+  };
+
+  function overrideAuth(){
+    cleanupDuplicateAuthTerms();
+    var oldSwitch=window.switchTab;
+    window.switchTab=function(mode){
+      if(typeof oldSwitch==='function' && !oldSwitch.__fuV104Calling){oldSwitch.__fuV104Calling=true;try{oldSwitch(mode)}finally{oldSwitch.__fuV104Calling=false}}
+      window.AM=mode;
+      cleanupDuplicateAuthTerms();
+      var card=q('#fuVerifyCard'); if(card)card.classList.remove('show');
+      var cb=q('#fuEmailTermsOk'); if(cb&&mode==='register')cb.checked=false;
+    };
+    var oldOpen=window.openAuth;
+    window.openAuth=function(mode){
+      if(typeof oldOpen==='function' && !oldOpen.__fuV104Calling){oldOpen.__fuV104Calling=true;try{oldOpen(mode)}finally{oldOpen.__fuV104Calling=false}}
+      window.AM=mode||window.AM||'login';
+      setTimeout(function(){cleanupDuplicateAuthTerms();},0);
+    };
+    window.doAuth=function(){
+      cleanupDuplicateAuthTerms();
+      var email=norm(q('#aEmail')&&q('#aEmail').value), pass=(q('#aPass')&&q('#aPass').value)||'', pc=(q('#aPassC')&&q('#aPassC').value)||'';
+      var err=q('#aErr'), ok=q('#aOk'); hide(err); hide(ok);
+      if(!email||!pass){safeShow(err,'Completá email y contraseña.');return;}
+      if(pass.length<6){safeShow(err,'La contraseña debe tener al menos 6 caracteres.');return;}
+      var auth=ensureFirebaseAuthReady();
+      if(!auth){safeShow(err,'Firebase Authentication todavía no cargó. Esperá unos segundos y probá de nuevo.');return;}
+      if(window.AM==='register'){
+        if(pass!==pc){safeShow(err,'Las contraseñas no coinciden.');return;}
+        var cb=q('#fuEmailTermsOk'); if(!cb||!cb.checked){safeShow(err,'Para crear tu cuenta tenés que aceptar los Términos y Condiciones.');return;}
+        auth.createUserWithEmailAndPassword(email,pass).then(function(cred){
+          pendingEmail=email;
+          return cred.user.sendEmailVerification({url:location.origin+location.pathname}).then(function(){showVerify(email);});
+        }).catch(function(e){
+          if(e&&e.code==='auth/email-already-in-use')safeShow(err,'Ese email ya existe. Iniciá sesión y, si falta, verificá el correo.');
+          else safeShow(err,'No pude crear la cuenta: '+(e&&e.message?e.message:e));
+        });
+      }else{
+        auth.signInWithEmailAndPassword(email,pass).then(function(cred){
+          return cred.user.reload().then(function(){
+            if(!auth.currentUser.emailVerified){showVerify(email);return;}
+            var u=ensureLocalUserFromFirebase(auth.currentUser,pass);
+            if(typeof closeAuth==='function')closeAuth();
+            if(!u.name){ if(typeof goTo==='function')goTo('register'); if(typeof loadProfileForm==='function')setTimeout(loadProfileForm,80); }
+            else{ if(typeof goTo==='function')goTo('home'); }
+          });
+        }).catch(function(e){safeShow(err,'Email o contraseña incorrectos, o la cuenta todavía no existe.');});
+      }
+    };
+  }
+
+  function boot(){
+    ensureFirebaseAuthReady();
+    overrideAuth();
+    cleanupDuplicateAuthTerms();
+    setTimeout(function(){ensureFirebaseAuthReady();cleanupDuplicateAuthTerms();},600);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+  window.addEventListener('load',function(){setTimeout(boot,200)});
 })();
 </script>
 
