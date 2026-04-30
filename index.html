@@ -14823,3 +14823,85 @@ html,body{overflow-x:hidden!important;touch-action:pan-y!important;}
   window.fu91RefreshPresence=refresh;
 })();
 </script>
+
+<style id="fortyup-v93-final-fixes-css">
+/* FortyUp v93 - estado estable, modal limpio, albums públicos y UX final */
+html,body{overflow-x:hidden!important;}
+/* Ocultar cualquier estado viejo que agregaron versiones anteriores */
+.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,
+.fu-clean-dot-status,.fu-clean-chat-status,.fu-v90-modal-status,.fu-v90-chat-status,
+.fu91-card-presence,.fu91-modal-presence,.fu91-chat-presence{display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;position:absolute!important;pointer-events:none!important;}
+.pcard{position:relative!important;transform:none!important;transition:box-shadow .18s ease,border-color .18s ease!important;will-change:auto!important;contain:layout paint!important;}
+.pcard:hover{transform:none!important;}
+.fu93-card-dot{position:absolute!important;top:.58rem!important;left:.58rem!important;width:16px!important;height:16px!important;border-radius:50%!important;background:#10B981!important;border:3px solid rgba(255,255,255,.92)!important;box-shadow:0 4px 12px rgba(6,78,59,.18)!important;z-index:40!important;display:block!important;animation:none!important;}
+.fu93-card-dot.off{background:#ef4444!important;box-shadow:0 4px 12px rgba(239,68,68,.18)!important;}
+.fu93-modal-dot{display:inline-block!important;width:14px!important;height:14px!important;border-radius:50%!important;background:#10B981!important;border:3px solid #fff!important;box-shadow:0 0 0 3px rgba(16,185,129,.14)!important;margin:.45rem .45rem .45rem 0!important;vertical-align:middle!important;animation:none!important;}
+.fu93-modal-dot.off{background:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.13)!important;}
+.fu93-chat-status{margin-left:auto!important;display:inline-flex!important;align-items:center!important;gap:.38rem!important;border-radius:999px!important;padding:.28rem .58rem!important;border:1.5px solid #A7F3D0!important;background:#ECFDF5!important;color:#064E3B!important;font-size:.72rem!important;font-weight:900!important;white-space:nowrap!important;line-height:1!important;animation:none!important;}
+.fu93-chat-status.off{border-color:#fecaca!important;background:#fef2f2!important;color:#991b1b!important;}
+.fu93-chat-status .dot{width:8px!important;height:8px!important;border-radius:50%!important;background:#10B981!important;display:inline-block!important;flex:0 0 8px!important;}
+.fu93-chat-status.off .dot{background:#ef4444!important;}
+.fu93-public-sec{border-top:1px solid #ECFDF5;margin-top:1rem;padding-top:1rem;}
+.fu93-public-title{font-size:.76rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#10B981;margin-bottom:.7rem;}
+.fu93-public-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.fu93-public-item{aspect-ratio:1;border-radius:14px;overflow:hidden;background:#07382d;border:1px solid rgba(16,185,129,.2);position:relative;cursor:pointer;}
+.fu93-public-item img,.fu93-public-item video{width:100%;height:100%;object-fit:cover;display:block;}
+.fu93-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.45rem;text-shadow:0 3px 12px #000;background:rgba(0,0,0,.08);}
+.fu93-private-note{margin-top:.65rem;background:#FFFBEB;border:1.5px solid #FDE68A;color:#7c5500;border-radius:16px;padding:.62rem .75rem;font-size:.8rem;font-weight:800;line-height:1.35;}
+.fu93-empty-public{font-size:.82rem;color:var(--txt3);font-style:italic;padding:.4rem 0;}
+.fu93-empty-profiles{grid-column:1/-1;text-align:center;padding:3.2rem 1.4rem;color:var(--txt2);background:rgba(255,255,255,.75);border:1.5px dashed #A7F3D0;border-radius:28px;box-shadow:0 10px 30px rgba(6,78,59,.06)}
+.fu93-empty-profiles .ico{font-size:2.4rem;margin-bottom:.55rem}.fu93-empty-profiles strong{font-family:'Playfair Display',serif;font-size:1.35rem;color:#064E3B;display:block;margin-bottom:.35rem}.fu93-empty-profiles p{color:#6B7C76;line-height:1.45;font-weight:700}
+.chat-hdr{min-height:60px!important;}
+@media(max-width:520px){.fu93-chat-status{font-size:.66rem!important;padding:.24rem .44rem!important}.fu93-public-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script id="fortyup-v93-final-fixes-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function esc(v){return String(v==null?'':v).replace(/[&<>'\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]||c})}
+  function keyU(){return (window.K&&K.U)||'fu_u'}
+  function users(){return read(keyU(),[])}
+  function saveUsers(a){write(keyU(),a)}
+  function findUser(id){return users().find(function(u){return u&&String(u.id)===String(id)})||(window.CU&&String(CU.id)===String(id)?CU:null)}
+  function userByName(name){name=String(name||'').split(',')[0].trim().toLowerCase();if(!name)return null;return users().find(function(u){return String(u.name||'').trim().toLowerCase()===name})||null}
+  function photoOf(u){if(!u)return'';return u.photo||u.profilePhoto||u.photoURL||u.avatar||u.avatarUrl||u.image||u.picture||((u.profilePhotos||[])[0])||''}
+  function isOn(u){if(!u)return false;if(window.CU&&String(u.id)===String(CU.id))return true;var t=Date.parse(u.lastSeen||u.lastActive||u.updatedAt||0);if(u.online===true&&(!t||Date.now()-t<3*60*1000))return true;return !!(t&&Date.now()-t<3*60*1000)}
+  function removeOld(root){qa('.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.fu-v90-modal-status,.fu-v90-chat-status,.fu91-card-presence,.fu91-modal-presence,.fu91-chat-presence,.fu93-card-dot,.fu93-modal-dot,.fu93-chat-status',root||document).forEach(function(x){x.remove()})}
+  function normalizePhotos(){var changed=false, arr=users().map(function(u){if(!u)return u;var p=photoOf(u);if(p&&!u.photo){u=Object.assign({},u,{photo:p});changed=true}return u});if(changed)saveUsers(arr);if(window.CU){var p=photoOf(CU);if(p&&!CU.photo)CU.photo=p}}
+  function markSelf(on){if(!window.CU||!CU.id)return;var ts=new Date().toISOString();CU.online=on!==false;CU.lastSeen=ts;CU.lastActive=ts;saveUsers(users().map(function(u){return u&&String(u.id)===String(CU.id)?Object.assign({},u,{online:on!==false,lastSeen:ts,lastActive:ts,photo:photoOf(CU)||u.photo||''}):u}))}
+  function cardDot(u){var s=document.createElement('span');s.className='fu93-card-dot '+(isOn(u)?'on':'off');s.title=isOn(u)?'Conectado':'Desconectado';return s}
+  function modalDot(u){var s=document.createElement('span');s.className='fu93-modal-dot '+(isOn(u)?'on':'off');s.title=isOn(u)?'Conectado':'Desconectado';return s}
+  function chatPill(u){var s=document.createElement('span');var on=isOn(u);s.className='fu93-chat-status '+(on?'on':'off');s.innerHTML='<span class="dot"></span>'+(on?'Conectado':'Desconectado');return s}
+  function currentModalUser(){if(window._fuOpenProfileId)return findUser(window._fuOpenProfileId);var n=q('.m-body .m-nm,.m-nm');return n?userByName(n.textContent):null}
+  function paintPresence(){normalizePhotos();removeOld(document);
+    users().forEach(function(u){var card=q('#ca-'+u.id);if(card)card.appendChild(cardDot(u))});
+    var body=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('.m-box .m-body');if(body){var u=currentModalUser();if(u){var mt=q('.m-mt',body)||q('[class*=meta]',body)||q('.m-nm',body);var d=modalDot(u);if(mt&&mt.parentNode)mt.parentNode.insertBefore(d,mt.nextSibling);else body.insertBefore(d,body.firstChild)}}
+    var hdr=q('#page-chatwindow .chat-hdr')||q('.chat-hdr');if(hdr&&window.CW){hdr.appendChild(chatPill(window.CW))}
+  }
+  function mediaKey(uid){return 'fu_media_albums_v76_'+uid}
+  function rawAlbums(uid){return read(mediaKey(uid),[]).filter(Boolean)}
+  function saveAlbums(uid,a){write(mediaKey(uid),a||[])}
+  function uniq(a){var seen={};return (a||[]).filter(function(it){if(!it||!it.src)return false;var k=(it.type||'photo')+'|'+it.src;if(seen[k])return false;seen[k]=1;return true})}
+  function profileItemsFor(u){var a=[];var p=photoOf(u);(u&&u.profilePhotos||[]).forEach(function(src){if(src)a.push({type:'photo',src:src})});if(p)a.push({type:'photo',src:p});if(u&&u.video)a.push({type:'video',src:u.video});return uniq(a)}
+  function albumsFor(uid){var u=findUser(uid)||(window.CU&&String(CU.id)===String(uid)?CU:null);var a=rawAlbums(uid);var ix=a.findIndex(function(x){return x.kind==='profile'||x.id==='profile'});var prof={id:'profile',kind:'profile',name:'Fotos de perfil',private:false,items:profileItemsFor(u)};if(ix>=0){a[ix]=Object.assign({},a[ix],prof,{private:false})}else a.unshift(prof);saveAlbums(uid,a);return a}
+  function publicItems(uid){var out=[];albumsFor(uid).filter(function(a){return !a.private&&(a.items||[]).length}).forEach(function(al){(al.items||[]).forEach(function(it,i){out.push(Object.assign({},it,{album:al.name,idx:i}))})});return uniq(out)}
+  function privateCount(uid){return albumsFor(uid).filter(function(a){return a.private&&(a.items||[]).length}).length}
+  window.fu93ViewPublicMedia=function(uid,i){var items=publicItems(uid),it=items[i];if(!it)return;if(typeof fuV79ViewPublicMedia==='function')return fuV79ViewPublicMedia(uid,i);var html='<div class="photo-view">'+(it.type==='video'?'<video src="'+esc(it.src)+'" controls playsinline></video>':'<img src="'+esc(it.src)+'">')+'<div class="photo-view-title">'+esc(it.album||'Fotos públicas')+'</div></div>';if(window.fuShowSimpleOverlay)fuShowSimpleOverlay('Fotos públicas','',html)}
+  function injectPublicSection(uid){var cont=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('.m-box .m-body');if(!cont||!uid)return;qa('.fu-v79-public-sec,.fu93-public-sec',cont).forEach(function(x){x.remove()});var items=publicItems(uid), pc=privateCount(uid);var sec=document.createElement('div');sec.className='fu93-public-sec';var h='<div class="fu93-public-title">Fotos y videos públicos</div>';if(items.length){h+='<div class="fu93-public-grid">';items.slice(0,12).forEach(function(it,i){h+='<div class="fu93-public-item" onclick="fu93ViewPublicMedia(\''+esc(uid)+'\','+i+')">'+(it.type==='video'?'<video src="'+esc(it.src)+'"></video><span class="fu93-play">▶</span>':'<img src="'+esc(it.src)+'">')+'</div>'});h+='</div>'}else h+='<div class="fu93-empty-public">Esta persona todavía no tiene fotos públicas.</div>';if(pc>0)h+='<div class="fu93-private-note">🔐 Este usuario tiene álbumes privados. Podés pedírselos por chat si quiere compartirlos con vos.</div>';sec.innerHTML=h;var acts=q('.m-acts',cont);if(acts)cont.insertBefore(sec,acts);else cont.appendChild(sec)}
+  function fixEmptyProfiles(){var grid=q('#pgrid');if(!grid)return;var cards=qa('.pcard',grid);if(!cards.length){grid.innerHTML='<div class="fu93-empty-profiles"><div class="ico">🌿</div><strong>No hay nadie cerca por ahora</strong><p>Volvé más tarde para encontrar conexiones reales cerca tuyo.</p></div>'}}
+  function goHomeAfterLogin(){var old=window.doAuth;if(typeof old==='function'&&!old.__fu93Home){window.doAuth=function(){var was=window.AM;var r=old.apply(this,arguments);setTimeout(function(){if(window.CU&&was==='login'&&CU.name){if(typeof goTo==='function')goTo('home')}},220);return r};window.doAuth.__fu93Home=true}}
+  function clickAvatarsToProfile(){document.addEventListener('click',function(ev){var av=ev.target.closest&&ev.target.closest('.chat-hav,.chat-av');if(!av)return;var u=window.CW||userByName(av.textContent);if(u&&typeof openMod==='function'){ev.preventDefault();ev.stopPropagation();openMod(u.id)}},true)}
+  var pending=false;function refresh(){if(pending)return;pending=true;requestAnimationFrame(function(){pending=false;try{paintPresence();fixEmptyProfiles();if(window._fuOpenProfileId)injectPublicSection(window._fuOpenProfileId)}catch(e){}})}
+  function wrap(name,after){var old=window[name];if(typeof old==='function'&&!old.__fu93){var nw=function(){if(name==='openMod')window._fuOpenProfileId=arguments[0];var r=old.apply(this,arguments);setTimeout(function(){if(after)after.apply(null,arguments);refresh();if(name==='openMod')injectPublicSection(window._fuOpenProfileId)},60);setTimeout(function(){refresh();if(name==='openMod')injectPublicSection(window._fuOpenProfileId)},280);return r};nw.__fu93=true;window[name]=nw}}
+  ['rProfiles','startChat','rChatMsgs','goTo','go','rHome','rMyP'].forEach(function(n){wrap(n)});wrap('openMod');
+  goHomeAfterLogin();clickAvatarsToProfile();
+  document.addEventListener('DOMContentLoaded',function(){markSelf(true);setTimeout(refresh,80);setTimeout(refresh,700)});
+  document.addEventListener('click',function(){setTimeout(refresh,80)},true);
+  document.addEventListener('visibilitychange',function(){markSelf(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(refresh,120)});
+  window.addEventListener('beforeunload',function(){markSelf(false)});
+  setInterval(function(){markSelf(true);refresh()},25000);
+  window.fu93Refresh=refresh;
+})();
+</script>
