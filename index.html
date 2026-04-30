@@ -14201,6 +14201,210 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+
+<!-- FORTYUP v10-final-119 - diamante celeste unificado + mapa busca perfiles sin trabarse -->
+<style id="fortyup-v119-diamond-and-map-final">
+  /* Diamante celeste igual al usado en contador / cristales diarios */
+  .fu116-empty-profiles .ico,
+  .fu93-empty-profiles .ico,
+  .fu117-stable-empty .ico,
+  .empty .ico,
+  .empty-state .ico{
+    width:auto!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0 auto .65rem!important;
+    display:block!important;
+    background:none!important;
+    background-image:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    filter:drop-shadow(0 10px 18px rgba(8,119,183,.18))!important;
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+    line-height:1!important;
+    font-size:4.35rem!important;
+    color:inherit!important;
+    text-align:center!important;
+  }
+  .fu116-empty-profiles .ico::before,
+  .fu93-empty-profiles .ico::before,
+  .fu117-stable-empty .ico::before,
+  .empty .ico::before,
+  .empty-state .ico::before{
+    content:'💎'!important;
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    background:none!important;
+    background-image:none!important;
+    background-size:auto!important;
+    background-position:initial!important;
+    background-repeat:initial!important;
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+    will-change:auto!important;
+  }
+  .fu116-empty-profiles .ico::after,
+  .fu93-empty-profiles .ico::after,
+  .fu117-stable-empty .ico::after,
+  .empty .ico::after,
+  .empty-state .ico::after{
+    content:none!important;
+    display:none!important;
+  }
+
+  /* Evita saltitos visuales en vacío / filtros */
+  .fu116-empty-profiles,
+  .fu93-empty-profiles,
+  .fu117-stable-empty{
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+    will-change:auto!important;
+    contain:layout paint!important;
+    min-height:260px!important;
+  }
+  #pgrid{
+    min-height:320px!important;
+    overflow-anchor:none!important;
+  }
+  #locationSearchBar,
+  #locActiveLabel,
+  #mapSearchModal,
+  .fu-map-box,
+  .fu-map-foot{
+    overflow-anchor:none!important;
+  }
+</style>
+<script id="fortyup-v119-map-city-final">
+(function(){
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c});}
+  function cleanPlace(place){
+    place=String(place||'').replace(/^Ver perfiles\s+(cerca de|en)\s+/i,'').replace(/→/g,'').trim();
+    return place || 'zona seleccionada';
+  }
+  function closeMapHard(){
+    try{ if(typeof closeMapSearch==='function') closeMapSearch(); }catch(_){ }
+    var modal=document.getElementById('mapSearchModal');
+    if(modal) modal.style.display='none';
+    document.body.style.overflow='';
+  }
+  function applyCity(place){
+    place=cleanPlace(place);
+    window._fuLocationMode='city';
+    window._searchCity=place;
+    window._locFilter=place;
+    window._searchLat=null;
+    window._searchLng=null;
+    try{ if(typeof showLocLabel==='function') showLocLabel(place); }catch(_){ }
+    closeMapHard();
+    setTimeout(function(){
+      try{ if(typeof rProfiles==='function') rProfiles(); }catch(_){ }
+      try{ if(window.toast) toast('Mostrando perfiles de '+place+' 📍','ok'); }catch(_){ }
+      try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){ window.scrollTo(0,0); }
+    },40);
+  }
+
+  window.applyMapSearch=function(){
+    var btn=document.getElementById('mapSearchBtn');
+    var inp=document.getElementById('mapPlaceSearch');
+    var info=document.getElementById('mapSearchInfo');
+    var place='';
+    if(btn) place=btn.dataset.place || btn.getAttribute('data-place') || btn.textContent || '';
+    if(!place && inp) place=inp.value || '';
+    if(!place && info) place=info.textContent || '';
+    place=cleanPlace(place).replace(/^📍\s*/,'').trim();
+    if(!place || place==='zona seleccionada'){
+      try{ if(window.toast) toast('Buscá o tocá una zona del mapa','w'); }catch(_){ }
+      return;
+    }
+    applyCity(place);
+  };
+
+  /* Refuerzo: si el botón existe, queda conectado aunque se regenere el modal */
+  document.addEventListener('click',function(ev){
+    var btn=ev.target && ev.target.closest ? ev.target.closest('#mapSearchBtn') : null;
+    if(!btn) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    window.applyMapSearch();
+  },true);
+
+  /* Cuando se busca una ciudad, el botón queda listo para filtrar por texto/ciudad, no por distancia */
+  var oldSearch=window.searchPlaceOnMap;
+  window.searchPlaceOnMap=function(){
+    var inp=document.getElementById('mapPlaceSearch');
+    var q=inp?String(inp.value||'').trim():'';
+    if(!q){ try{ if(window.toast) toast('Escribí una localidad para buscar','w'); }catch(_){ } return; }
+    var info=document.getElementById('mapSearchInfo');
+    var btn=document.getElementById('mapSearchBtn');
+    if(info) info.textContent='Buscando '+q+'...';
+    if(btn) btn.style.display='none';
+    var url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q+', Argentina')+'&format=json&limit=1&accept-language=es&addressdetails=1';
+    fetch(url).then(function(r){return r.json();}).then(function(data){
+      var place=q, lat=null, lng=null;
+      if(data && data.length){
+        var item=data[0], a=item.address||{};
+        place=a.city||a.town||a.village||a.suburb||a.county||a.state||q;
+        lat=parseFloat(item.lat); lng=parseFloat(item.lon);
+      }
+      window._mapLat=lat; window._mapLng=lng;
+      try{
+        if(lat && lng && window._mapInstance && window.L){
+          window._mapInstance.setView([lat,lng],12);
+          if(window._mapMarker) window._mapInstance.removeLayer(window._mapMarker);
+          window._mapMarker=L.marker([lat,lng]).addTo(window._mapInstance);
+        }
+      }catch(_){ }
+      if(info) info.innerHTML='📍 <strong>'+esc(place)+'</strong>';
+      if(btn){
+        btn.textContent='Ver perfiles en '+place+' →';
+        btn.dataset.place=place;
+        btn.setAttribute('data-place',place);
+        btn.style.display='block';
+      }
+    }).catch(function(){
+      if(info) info.innerHTML='📍 <strong>'+esc(q)+'</strong>';
+      if(btn){
+        btn.textContent='Ver perfiles en '+q+' →';
+        btn.dataset.place=q;
+        btn.setAttribute('data-place',q);
+        btn.style.display='block';
+      }
+    });
+  };
+
+  /* Si se toca el mapa, el botón también filtra por ciudad/zona elegida */
+  var oldOpen=window.openMapSearch;
+  window.openMapSearch=function(){
+    if(typeof oldOpen==='function') oldOpen.apply(this,arguments);
+    setTimeout(function(){
+      try{
+        if(window._mapInstance && !window._mapInstance.__fu119CityClick){
+          window._mapInstance.__fu119CityClick=true;
+          window._mapInstance.on('click',function(){
+            setTimeout(function(){
+              var btn=document.getElementById('mapSearchBtn');
+              var info=document.getElementById('mapSearchInfo');
+              if(btn && info){
+                var txt=(info.textContent||'').replace(/^📍\s*/,'').trim();
+                txt=txt.replace(/^Buscando lugar\.\.\.$/,'').trim();
+                if(txt){btn.dataset.place=txt;btn.setAttribute('data-place',txt);btn.textContent='Ver perfiles en '+txt+' →';}
+              }
+            },450);
+          });
+        }
+      }catch(_){ }
+    },700);
+  };
+})();
+</script>
+
 </body>
 </html>
 
