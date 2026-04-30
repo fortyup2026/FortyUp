@@ -13440,6 +13440,205 @@ body.fu-profile-incomplete .bnav #bn-home,body.fu-profile-incomplete .bnav #bn-p
   setInterval(function(){enforce({silent:true});},1800);
 })();
 </script>
+
+
+<!-- === FortyUp v108 - foto global + súper diamante marcado === -->
+<style id="fu-v108-photo-super-css">
+/* Súper diamante enviado: tilde verde visible arriba */
+.pa-super.super-sent,
+.pa-super.fu-super-sent{
+  position:relative!important;
+  opacity:1!important;
+  filter:none!important;
+}
+.pa-super.super-sent::after,
+.pa-super.fu-super-sent::after{
+  content:'✓'!important;
+  position:absolute!important;
+  top:-7px!important;
+  right:-7px!important;
+  width:19px!important;
+  height:19px!important;
+  border-radius:50%!important;
+  background:#10B981!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  border:2px solid #fff!important;
+  box-shadow:0 4px 10px rgba(16,185,129,.35)!important;
+  line-height:1!important;
+}
+/* Mantener el avatar con imagen limpia en todos los redondeos */
+.av-c img,.bn .bn-ico img,.myp-av img,.chat-hav img,.chat-av img{
+  width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;display:block!important;
+}
+</style>
+<script id="fu-v108-photo-super-js">
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function safeGet(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d}catch(_){return d}}
+  function safeSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function usersKey(){try{return K&&K.U?K.U:'fu_users'}catch(_){return 'fu_users'}}
+  function sessKey(){try{return K&&K.S?K.S:'fu_session'}catch(_){return 'fu_session'}}
+  function currentId(){try{return CU&&CU.id}catch(_){return null}}
+  function esc(s){try{return e(String(s||''))}catch(_){return String(s||'').replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}}
+
+  function compressImageFile(file,cb){
+    if(!file || !/^image\//.test(file.type||'')){cb(null);return}
+    var fr=new FileReader();
+    fr.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var max=720,w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+        if(w>h && w>max){h=Math.round(h*max/w);w=max}
+        else if(h>=w && h>max){w=Math.round(w*max/h);h=max}
+        var canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        try{ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high'}catch(_){ }
+        ctx.drawImage(img,0,0,w,h);
+        var ql=.72, data=canvas.toDataURL('image/jpeg',ql);
+        while(data.length>420000 && ql>.42){ql-=.08;data=canvas.toDataURL('image/jpeg',ql)}
+        cb(data);
+      };
+      img.onerror=function(){cb(ev.target.result)};
+      img.src=ev.target.result;
+    };
+    fr.onerror=function(){cb(null)};
+    fr.readAsDataURL(file);
+  }
+
+  function setPreviewPhoto(src){
+    if(!src)return;
+    window._photo=src;
+    try{ if(typeof fuRegSyncDraft==='function')fuRegSyncDraft() }catch(_){ }
+    var pp=q('#phprev'),im=q('#phimg');
+    if(im)im.src=src;
+    if(pp)pp.style.display='block';
+  }
+
+  window.handleFile=function(input){
+    var file=input&&input.files&&input.files[0];if(!file)return;
+    compressImageFile(file,function(data){
+      if(!data){try{toast('No pude leer esa foto','w')}catch(_){ } return}
+      setPreviewPhoto(data);
+      try{toast('Foto cargada ✓','ok')}catch(_){ }
+    });
+  };
+
+  var oldPrev=window.prevPhoto;
+  window.prevPhoto=function(url){
+    if(oldPrev)try{oldPrev.apply(this,arguments)}catch(_){ }
+    if(url && /^https?:/i.test(url.trim())){setPreviewPhoto(url.trim())}
+  };
+
+  function getDraftPhoto(){
+    try{
+      var id=currentId() || (CU&&CU.email) || 'guest';
+      var d=safeGet('fu_profile_draft_'+id,{});
+      return window._photo || d.rPhoto || '';
+    }catch(_){return window._photo||''}
+  }
+
+  window.fuSyncCurrentPhotoEverywhere=function(photo){
+    if(!photo || !currentId())return;
+    var key=usersKey(), users=safeGet(key,[]), changed=false;
+    users=users.map(function(u){
+      if(u && u.id===CU.id){changed=true;return Object.assign({},u,{photo:photo})}
+      return u;
+    });
+    if(!changed && CU){users.push(Object.assign({},CU,{photo:photo,is:0}))}
+    safeSet(key,users);
+    try{CU=users.filter(function(u){return u.id===currentId()})[0] || Object.assign({},CU,{photo:photo});safeSet(sessKey(),{id:CU.id})}catch(_){ }
+    try{ if(typeof saveToFirestore==='function')saveToFirestore(CU) }catch(_){ }
+    try{ if(typeof upNav==='function')upNav() }catch(_){ }
+    try{ if(typeof rMyP==='function' && q('#page-myprofile.active'))rMyP() }catch(_){ }
+    try{ if(typeof rProfiles==='function' && q('#page-profiles.active'))rProfiles() }catch(_){ }
+    try{ if(typeof rChatList==='function' && q('#page-chat.active'))rChatList() }catch(_){ }
+    try{ if(typeof rChatMsgs==='function' && q('#page-chatwindow.active'))rChatMsgs() }catch(_){ }
+    try{ if(typeof checkUnread==='function')checkUnread() }catch(_){ }
+  };
+
+  var oldSave=window.saveProfile;
+  if(typeof oldSave==='function' && !oldSave.__fu108){
+    window.saveProfile=function(){
+      var wantedPhoto=getDraftPhoto();
+      if(wantedPhoto)window._photo=wantedPhoto;
+      var r=oldSave.apply(this,arguments);
+      [120,450,900].forEach(function(ms){setTimeout(function(){
+        var p=getDraftPhoto() || (CU&&CU.photo) || '';
+        if(p)fuSyncCurrentPhotoEverywhere(p);
+      },ms)});
+      return r;
+    };
+    window.saveProfile.__fu108=true;
+  }
+
+  var oldSaveFS=window.saveToFirestore;
+  if(typeof oldSaveFS==='function' && !oldSaveFS.__fu108){
+    window.saveToFirestore=function(profile){
+      if(!profile)return oldSaveFS.apply(this,arguments);
+      var p=Object.assign({},profile);
+      // En esta versión guardamos la foto comprimida si entra cómoda en Firestore.
+      // Si es enorme, no la subimos para evitar romper el documento.
+      if(p.photo && /^data:image\//.test(p.photo) && p.photo.length>850000){
+        var keep=p.photo; delete p.photo;
+        var res=oldSaveFS.call(this,p);
+        p.photo=keep;
+        return res;
+      }
+      return oldSaveFS.apply(this,arguments);
+    };
+    window.saveToFirestore.__fu108=true;
+  }
+
+  function markSuperButtons(){
+    qa('.pa-super').forEach(function(btn){
+      var tx=(btn.textContent||'').toLowerCase();
+      if(tx.indexOf('enviado')>-1 || tx.indexOf('super enviado')>-1 || tx.indexOf('súper enviado')>-1){
+        btn.classList.add('super-sent','fu-super-sent');
+        btn.disabled=true;
+      }
+    });
+  }
+  window.fuMarkSuperButtons=markSuperButtons;
+
+  var oldSendSuper=window.sendSuperDiamond;
+  if(typeof oldSendSuper==='function' && !oldSendSuper.__fu108){
+    window.sendSuperDiamond=function(id){
+      var before=CU?(typeof CU.superDiamonds==='number'?CU.superDiamonds:1):0;
+      var r=oldSendSuper.apply(this,arguments);
+      setTimeout(function(){
+        try{ if(typeof refreshCU==='function')refreshCU() }catch(_){ }
+        try{ if(typeof upNav==='function')upNav() }catch(_){ }
+        try{ if(typeof rProfiles==='function' && q('#page-profiles.active'))rProfiles() }catch(_){ }
+        try{ if(window._fuOpenProfileId===id && typeof openMod==='function')openMod(id) }catch(_){ }
+        markSuperButtons();
+      },120);
+      setTimeout(markSuperButtons,450);
+      return r;
+    };
+    window.sendSuperDiamond.__fu108=true;
+  }
+
+  var oldRP=window.rProfiles;
+  if(typeof oldRP==='function' && !oldRP.__fu108){
+    window.rProfiles=function(){var r=oldRP.apply(this,arguments);setTimeout(markSuperButtons,0);setTimeout(markSuperButtons,150);return r};
+    window.rProfiles.__fu108=true;
+  }
+  var oldOpen=window.openMod;
+  if(typeof oldOpen==='function' && !oldOpen.__fu108){
+    window.openMod=function(id){window._fuOpenProfileId=id;var r=oldOpen.apply(this,arguments);setTimeout(markSuperButtons,0);setTimeout(markSuperButtons,150);return r};
+    window.openMod.__fu108=true;
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(markSuperButtons,500)});
+  document.addEventListener('click',function(){setTimeout(markSuperButtons,100)},true);
+})();
+</script>
+
 </body>
 </html>
 
