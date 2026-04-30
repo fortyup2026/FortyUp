@@ -2554,8 +2554,17 @@ body:not(.sebas-guest){padding-bottom:94px!important}
 .pcard{will-change:transform}
 .page{will-change:opacity}
 .bnav{will-change:transform}
+
+/* Prevent layout shifts and flickering */
+.pcard { contain: layout style; }
+.page { will-change: auto; }
+.bnav { transform: translateZ(0); }
+img { image-rendering: auto; }
+* { -webkit-tap-highlight-color: transparent; }
+
 </style>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -6066,6 +6075,7 @@ function initFirebase(){
     if(typeof firebase === 'undefined'){console.warn('Firebase not loaded');return}
     firebase.initializeApp(FB_CFG);
     DB = firebase.firestore();
+    try{STORAGE=firebase.storage();}catch(e){}
     FB_READY = true;
     console.log('Firebase ready');
     syncFromFirestore();
@@ -6125,6 +6135,47 @@ function syncFromFirestore(){
 }
 
 // ── Save profile to Firestore ──
+
+// ── Upload photo to Firebase Storage and save URL ──
+function uploadPhotoAndSave(base64data, userId, onDone){
+  if(!STORAGE || !base64data || !userId){
+    if(onDone) onDone(null);
+    return;
+  }
+  try{
+    // Convert base64 to blob
+    var parts = base64data.split(',');
+    var mime = parts[0].match(/:(.*?);/)[1];
+    var bytes = atob(parts[1]);
+    var arr = new Uint8Array(bytes.length);
+    for(var i=0;i<bytes.length;i++) arr[i]=bytes.charCodeAt(i);
+    var blob = new Blob([arr], {type:mime});
+    
+    var ref = STORAGE.ref('photos/' + userId + '.jpg');
+    ref.put(blob).then(function(){
+      return ref.getDownloadURL();
+    }).then(function(url){
+      // Update CU with URL
+      if(CU && CU.id === userId){
+        CU.photo = url;
+        var users = g(K.U,[]);
+        var idx = users.findIndex(function(u){return u.id===userId});
+        if(idx>=0){users[idx].photo=url;sv(K.U,users);}
+        saveToFirestore(CU);
+        upNav();
+      }
+      if(onDone) onDone(url);
+      toast('Foto subida y visible para todos ✓','ok');
+    }).catch(function(err){
+      console.warn('Upload error:', err);
+      if(onDone) onDone(null);
+    });
+  }catch(err){
+    console.warn('uploadPhoto error:', err);
+    if(onDone) onDone(null);
+  }
+}
+
 function saveToFirestore(profile){
   if(!DB||!profile||!profile.id||profile.is)return;
   var toSave = {};
@@ -7486,7 +7537,13 @@ function saveProfile(){
       return Object.assign({},u,{name:name,age:age,city:city,gender:gender,interestedIn:pref,photo:photo||CU.photo||u.photo||'',video:video||u.video||'',desc:desc,int:int,looking:looking,plans:plans,email:u.email,lat:lat?parseFloat(lat):u.lat,lng:lng?parseFloat(lng):u.lng});
     });
     sv(K.U,users);CU=users.filter(function(u){return u.id===CU.id})[0];sv(K.S,{id:CU.id});upNav();
-    oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';toast('¡Perfil actualizado! 🌿','ok');saveToFirestore(CU);refreshAllUI();
+    oe.textContent='✦ ¡Perfil guardado!';oe.style.display='block';// If photo is base64, upload to Storage
+if(CU.photo && CU.photo.indexOf('data:')===0 && STORAGE){
+  uploadPhotoAndSave(CU.photo, CU.id, null);
+}else{
+  saveToFirestore(CU);
+}
+toast('¡Perfil actualizado! 🌿','ok');refreshAllUI();
   }else{
     var email=normEmail(fv('rE'));
     if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showE('Ingresá un email válido.');return}
@@ -9563,7 +9620,7 @@ body{padding-bottom:110px!important;}
     fixHome();
     fixChat();
     bindPlus();
-  },1000);
+  },30000);
 })();
 </script>
 
@@ -9710,7 +9767,7 @@ body{padding-bottom:110px!important;}
   setInterval(function(){
     fixGuestHomeButtons();
     bindPlus();
-  },1000);
+  },30000);
 })();
 </script>
 
@@ -9858,7 +9915,7 @@ body{padding-bottom:110px!important;}
     bindPlus();
     fixChat();
     fixGuestHome();
-  },1000);
+  },30000);
 })();
 </script>
 
@@ -11875,7 +11932,7 @@ body{padding-bottom:110px!important;}
       }
     }catch(e){}
   }
-  setInterval(watchLoginForLocation,2000);
+  setInterval(watchLoginForLocation,30000);
   setInterval(function(){try{if(window.CU&&CU.id)updateFortyUpLiveLocation(false)}catch(e){}},5*60*1000);
   document.addEventListener("visibilitychange",function(){
     if(!document.hidden)watchLoginForLocation();
@@ -12301,7 +12358,7 @@ var oldR=window.rMyP;if(typeof oldR==='function')window.rMyP=function(){var o=ol
   setInterval(function(){
     var p=document.getElementById('page-fortyplus');
     if(p && p.classList.contains('active'))fixPlusPage();
-  },700);
+  },30000);
 })();
 </script>
 
@@ -13094,7 +13151,7 @@ function paintModal(){var body=q('#mCont .m-body')||q('.m-ov.open .m-body')||q('
 function paintChat(){var hdr=q('#page-chatwindow .chat-hdr')||q('.chat-hdr');if(!hdr||!window.CW)return;nuke(hdr);qa('.fu92-chat-presence',hdr).forEach(function(x,i){if(i>0)x.remove()});var el=q('.fu92-chat-presence',hdr);var on=online(window.CW);if(!el){el=document.createElement('span');el.className='fu92-chat-presence';el.innerHTML='<span class="fu92-dot"></span><span class="fu92-chat-word"></span>';hdr.appendChild(el)}el.className='fu92-chat-presence '+(on?'on':'off');var d=q('.fu92-dot',el);if(d)d.className='fu92-dot '+(on?'on':'off');var w=q('.fu92-chat-word',el);if(w)w.textContent=on?'Conectado':'Desconectado'}
 var busy=false;function refresh(){if(busy)return;busy=true;requestAnimationFrame(function(){try{paintCards();paintModal();paintChat()}finally{busy=false}})}
 function wrap(name){var old=window[name];if(typeof old==='function'&&!old.__fu92){var nw=function(){var r=old.apply(this,arguments);setTimeout(refresh,0);setTimeout(refresh,80);setTimeout(refresh,220);return r};nw.__fu92=true;window[name]=nw}}['rProfiles','openMod','startChat','rChatMsgs','goTo','go','rHome','rMyP'].forEach(wrap);
-document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();setTimeout(refresh,400)});document.addEventListener('click',function(){setTimeout(refresh,0);setTimeout(refresh,140)},true);document.addEventListener('visibilitychange',function(){setSelf(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(refresh,80)});window.addEventListener('beforeunload',function(){setSelf(false)});setInterval(function(){setSelf(true);refresh()},2500);window.fu92RefreshPresence=refresh;
+document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();setTimeout(refresh,400)});document.addEventListener('click',function(){setTimeout(refresh,0);setTimeout(refresh,140)},true);document.addEventListener('visibilitychange',function(){setSelf(document.visibilityState==='visible');if(document.visibilityState==='visible')setTimeout(refresh,80)});window.addEventListener('beforeunload',function(){setSelf(false)});setInterval(function(){setSelf(true);refresh()},30000);window.fu92RefreshPresence=refresh;
 })();
 </script>
 
@@ -13148,7 +13205,7 @@ document.addEventListener('DOMContentLoaded',function(){setSelf(true);refresh();
   var obs=new MutationObserver(function(){clearTimeout(window.__fu97t);window.__fu97t=setTimeout(function(){fixPublicModal();syncBottomNav()},80)});
   document.addEventListener('DOMContentLoaded',function(){obs.observe(document.body,{childList:true,subtree:true});setTimeout(function(){fixPublicModal();syncBottomNav()},120);setTimeout(function(){fixPublicModal();syncBottomNav()},800)});
   document.addEventListener('click',function(){setTimeout(function(){fixPublicModal();syncBottomNav()},120)},true);
-  setInterval(function(){fixPublicModal();syncBottomNav()},2500);
+  setInterval(function(){fixPublicModal();syncBottomNav()},30000);
 })();
 </script>
 
@@ -13479,7 +13536,7 @@ body.fu-profile-incomplete .bnav #bn-home,body.fu-profile-incomplete .bnav #bn-p
   document.addEventListener('DOMContentLoaded',function(){after();setTimeout(function(){enforce({silent:true,forceRegister:true})},700)});
   document.addEventListener('click',function(){after()},true);
   window.addEventListener('focus',function(){setTimeout(function(){enforce({silent:true,forceRegister:true})},150)});
-  setInterval(function(){enforce({silent:true});},1800);
+  setInterval(function(){enforce({silent:true});},30000);
 })();
 </script>
 
@@ -14030,7 +14087,7 @@ body.has-session #page-register .fu-terms-link{
     setTimeout(fixSuperDiamondButtons,0);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else hook();
-  setInterval(fixSuperDiamondButtons,1200);
+  setInterval(fixSuperDiamondButtons,30000);
 })();
 </script>
 
@@ -16841,7 +16898,7 @@ html,body{overflow-x:hidden!important;}
   document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#page-register'))window.fuRegSyncDraft()},true);
   document.addEventListener('change',function(e){if(e.target&&e.target.closest&&e.target.closest('#page-register'))window.fuRegSyncDraft()},true);
   document.addEventListener('DOMContentLoaded',function(){setTimeout(window.fuRegRestoreDraft,500)});
-  setInterval(function(){if(q('#page-register.active'))window.fuRegSyncDraft()},1000);
+  setInterval(function(){if(q('#page-register.active'))window.fuRegSyncDraft()},30000);
 })();
 </script>
 
@@ -16928,7 +16985,7 @@ html,body{overflow-x:hidden!important;}
   });
   document.addEventListener('DOMContentLoaded',function(){[100,400,900].forEach(function(ms){setTimeout(normalizeSuperChecks,ms)})});
   document.addEventListener('click',function(){setTimeout(normalizeSuperChecks,80);setTimeout(normalizeSuperChecks,260)},true);
-  setInterval(normalizeSuperChecks,2500);
+  setInterval(normalizeSuperChecks,30000);
 })();
 </script>
 
@@ -16997,7 +17054,7 @@ html,body{overflow-x:hidden!important;}
   ['rProfiles','goTo','openMod'].forEach(function(fn){var old=window[fn];if(typeof old==='function'&&!old.__fu112){window[fn]=function(){var r=old.apply(this,arguments);[0,80,220,500].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)});return r};window[fn].__fu112=true}});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){[80,300,800].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)})});else [0,120,500].forEach(function(ms){setTimeout(window.fuPaintSuperGlobal,ms)});
   document.addEventListener('click',function(){setTimeout(window.fuPaintSuperGlobal,80);setTimeout(window.fuPaintSuperGlobal,260)},true);
-  setInterval(window.fuPaintSuperGlobal,900);
+  setInterval(window.fuPaintSuperGlobal,30000);
 })();
 </script>
 
@@ -17087,7 +17144,7 @@ body .pa-super *{animation:none!important;}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){paint();setTimeout(paint,200);setTimeout(paint,800)});else{paint();setTimeout(paint,200);setTimeout(paint,800)}
   document.addEventListener('click',function(){setTimeout(paint,60);setTimeout(paint,250);},true);
   ['goTo','rProfiles','openMod','sendSuperDiamond'].forEach(function(fn){var old=window[fn];if(typeof old==='function'&&!old.__fu113Stable){window[fn]=function(){var r=old.apply(this,arguments);setTimeout(paint,30);setTimeout(paint,180);setTimeout(paint,600);return r};window[fn].__fu113Stable=true;}});
-  setInterval(paint,3000);
+  setInterval(paint,30000);
 })();
 </script>
 
