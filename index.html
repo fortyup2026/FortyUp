@@ -15241,499 +15241,158 @@ body.has-session #page-register .fu-terms-link{
 </script>
 
 
-
-
-<!-- FortyUp v127 - corrección integral Sebas: notificaciones, ubicación automática, diamante inicio, presencia estable -->
-<style id="fortyup-v127-sebas-integral-css">
-  /* Ubicación: se usa automática, sin buscador manual que trabe la app */
-  #locationSearchBar,#locActiveLabel,#mapSearchModal,.location-search,.fu-map-box,.fu-map-foot,#mapSearchContainer{display:none!important;visibility:hidden!important;pointer-events:none!important;}
-
-  /* Inicio: diamante celeste tipo Completa tu perfil, sin tocar el botón/panel multicolor de FortyUp+ */
-  #page-home .fu127-home-diamond{
-    width:158px!important;height:142px!important;margin:1.55rem auto 1.25rem!important;display:block!important;
-    background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 410'%3E%3Cdefs%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='18' stdDeviation='14' flood-color='%23064E3B' flood-opacity='.18'/%3E%3C/filter%3E%3CradialGradient id='g' cx='50%25' cy='42%25' r='60%25'%3E%3Cstop offset='0' stop-color='%23FFF7CC' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%23FFF7CC' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='230' cy='200' r='205' fill='url(%23g)'/%3E%3Cg filter='url(%23s)'%3E%3Cpolygon points='140,18 320,18 455,135 230,395 5,135' fill='%2378C9EA'/%3E%3Cpolygon points='140,18 230,18 205,132 92,118' fill='%23B5E3F5'/%3E%3Cpolygon points='230,18 320,18 365,116 205,132' fill='%23A8DAF0'/%3E%3Cpolygon points='320,18 455,135 365,116' fill='%230787D5'/%3E%3Cpolygon points='5,135 92,118 205,132 140,18' fill='%23E9FAFF'/%3E%3Cpolygon points='5,135 92,118 135,224' fill='%2375C8EA'/%3E%3Cpolygon points='92,118 205,132 135,224' fill='%235EB1E7'/%3E%3Cpolygon points='205,132 275,224 135,224' fill='%23AEEAF2'/%3E%3Cpolygon points='205,132 365,116 275,224' fill='%23E9FAFF'/%3E%3Cpolygon points='365,116 455,135 275,224' fill='%236EC4E8'/%3E%3Cpolygon points='5,135 135,224 230,395' fill='%232389DD'/%3E%3Cpolygon points='135,224 275,224 230,395' fill='%23E7FAFF'/%3E%3Cpolygon points='275,224 455,135 230,395' fill='%23B9E9F7'/%3E%3Cpath d='M140 18H320L455 135L230 395L5 135Z' fill='none' stroke='%237ec9e9' stroke-width='2' opacity='.75'/%3E%3Cpath d='M5 135H455M92 118L135 224M365 116L275 224M205 132L135 224M205 132L275 224M135 224H275M230 395L135 224M230 395L275 224' fill='none' stroke='%231F6281' stroke-width='1.2' opacity='.20'/%3E%3Cpath d='M88 78c42-18 92-11 132 4' fill='none' stroke='white' stroke-width='19' stroke-linecap='round' opacity='.72'/%3E%3C/g%3E%3C/svg%3E")!important;
-    filter:drop-shadow(0 14px 22px rgba(6,78,59,.15))!important;pointer-events:none!important;
-  }
-  @media(max-width:750px){#page-home .fu127-home-diamond{width:148px!important;height:134px!important;margin:1.35rem auto 1rem!important;}}
-
-  /* No modificar el círculo multicolor de FortyUp+ */
-  .bnav .bn-plus,.bnav [data-page="premium"] .bn-plus,.bn-plus{background:radial-gradient(circle at 30% 25%,#ff8ef6 0%,#68e6ff 32%,#8fff9e 58%,#ffe66d 78%,#ffffff 100%)!important;box-shadow:0 0 0 7px rgba(255,255,255,.72),0 0 24px rgba(104,230,255,.55)!important;color:transparent!important;}
-
-  /* Campanita funcional: botón redondo verde + campana amarilla, conservando panel y badge */
-  .fu-notif-wrap{width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:50%!important;background:#064E3B!important;border:2px solid #A7F3D0!important;box-shadow:0 5px 14px rgba(6,78,59,.16)!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin-right:.12rem!important;position:relative!important;z-index:2!important;cursor:pointer!important;}
-  .fu-notif-bell{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;font-size:0!important;line-height:1!important;color:#F2B705!important;background:transparent!important;border:0!important;}
-  .fu-notif-bell::before{content:"🔔"!important;font-size:20px!important;filter:drop-shadow(0 2px 4px rgba(242,183,5,.36))!important;}
-  .fu-notif-count{position:absolute!important;right:-5px!important;top:-6px!important;min-width:18px!important;height:18px!important;border-radius:999px!important;background:#dc2626!important;color:#fff!important;border:2px solid #fff!important;font-size:10px!important;font-weight:900!important;display:none;align-items:center!important;justify-content:center!important;}
-  .fu-notif-count:not(:empty){display:flex!important;}
-  .fu-notif-panel{z-index:1400!important;}
-
-  /* Presencia en tarjetas: un solo indicador, sin textos superpuestos */
-  .pcard .fu-v87-status-dot,.pcard .fu-stable-card-status,.pcard .fu92-card-dot-wrap,.pcard .fu-v90-card-status,.pcard .fu91-card-presence,.pcard [class*="card-status"],.pcard [class*="card-presence"]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
-  .pcard{position:relative!important;}
-  .fu127-card-presence{position:absolute!important;top:.62rem!important;left:.62rem!important;z-index:60!important;width:28px!important;height:28px!important;border-radius:999px!important;background:rgba(255,255,255,.94)!important;border:1.5px solid rgba(255,255,255,.98)!important;box-shadow:0 7px 18px rgba(6,78,59,.14)!important;display:flex!important;align-items:center!important;justify-content:center!important;pointer-events:none!important;}
-  .fu127-card-presence::before{content:""!important;width:10px!important;height:10px!important;border-radius:50%!important;background:#10B981!important;box-shadow:0 0 0 4px rgba(16,185,129,.16)!important;}
-  .fu127-card-presence.off::before{background:#EF4444!important;box-shadow:0 0 0 4px rgba(239,68,68,.13)!important;}
-
-  /* Botones de tarjetas respirables */
-  .pcard-acts{display:flex!important;align-items:center!important;gap:.42rem!important;flex-wrap:nowrap!important;overflow:hidden!important;}
-  .pa-forti{flex:1 1 auto!important;min-width:74px!important;max-width:116px!important;white-space:nowrap!important;}
-  .pa-super,.pa-fav,.pa-chat,.pa-blk{flex:0 0 auto!important;}
-  @media(max-width:420px){.pcard-acts{gap:.32rem!important;padding-left:.72rem!important;padding-right:.72rem!important}.pa-more{display:none!important}.pa-forti{min-width:70px!important;font-size:.72rem!important}}
-</style>
-<script id="fortyup-v127-sebas-integral-js">
+<!-- FortyUp v125 - buscador de localidad: Buscar aplica y cierra + X cierra seguro -->
+<script id="fortyup-v125-location-search-close-fix">
 (function(){
-  if(window.__fortyUpV127SebasIntegral)return; window.__fortyUpV127SebasIntegral=true;
-  function q(s,r){return (r||document).querySelector(s)}
-  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
-  function hasUser(){try{return !!(window.CU&&CU.id)}catch(_){return false}}
-  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
-  function save(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
-  function users(){try{return typeof window.users==='function'?window.users():read('fu_users',[])}catch(_){return read('fu_users',[])}}
-  function online(u){if(!u)return false;if(window.CU&&String(u.id)===String(CU.id))return true;var t=Date.parse(u.lastSeen||u.lastActive||u.geoUpdatedAt||0);return !!(u.online===true&&(!t||Date.now()-t<3*60*1000))||!!(t&&Date.now()-t<3*60*1000)}
-  function patchCurrentUser(patch){if(!hasUser())return;try{Object.assign(CU,patch);var arr=read('fu_users',[]);if(Array.isArray(arr)){var found=false;arr=arr.map(function(u){if(u&&String(u.id)===String(CU.id)){found=true;return Object.assign({},u,patch)}return u});if(!found)arr.push(Object.assign({},CU,patch));save('fu_users',arr)}save('fu_current_user',CU);save('fu_current',CU);if(window.DB&&CU.id){try{DB.collection('users').doc(CU.id).set(patch,{merge:true})}catch(_){}}}catch(_){}}
+  if(window.__fu125LocationSearchCloseFix)return;
+  window.__fu125LocationSearchCloseFix=true;
 
-  function closeManualLocation(){
-    window._fuLocationMode='auto'; window._searchCity=''; window._locFilter=''; window._searchLat=null; window._searchLng=null;
-    qa('#locationSearchBar,#locActiveLabel,#mapSearchModal,.location-search,.fu-map-box,.fu-map-foot,#mapSearchContainer').forEach(function(el){el.style.display='none';el.classList.remove('open','show','active')});
+  function id(x){return document.getElementById(x)}
+  function clean(v){
+    return String(v||'')
+      .replace(/^📍\s*/,'')
+      .replace(/^Zona seleccionada:\s*/i,'')
+      .replace(/^Ver perfiles\s+(cerca de|en|por)\s*/i,'')
+      .replace(/→/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
   }
-  function bestCity(d){var a=(d&&d.address)||{};return a.city||a.town||a.village||a.municipality||a.suburb||a.county||a.state||''}
-  function reverseCity(lat,lng){
-    try{fetch('https://nominatim.openstreetmap.org/reverse?lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng)+'&format=json&accept-language=es')
-      .then(function(r){return r.json()}).then(function(d){var city=bestCity(d);var p={lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()};if(city)p.city=city;patchCurrentUser(p);refreshProfilesSoon();})
-      .catch(function(){patchCurrentUser({lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()})});}catch(_){patchCurrentUser({lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()})}
+  function toastMsg(msg,type){
+    try{ if(typeof window.toast==='function') window.toast(msg,type||'ok'); }
+    catch(_){ }
   }
-  function startLiveLocation(){
-    if(!hasUser()||!navigator.geolocation)return;
-    if(window.__fuLiveWatchStartedV127)return; window.__fuLiveWatchStartedV127=true;
-    var lastKey='fu_live_loc_last_'+CU.id;
-    function handle(pos){var lat=pos.coords.latitude,lng=pos.coords.longitude;window.MLAT=lat;window.MLNG=lng;closeManualLocation();var last=Number(localStorage.getItem(lastKey)||0);if(Date.now()-last>8*60*1000){localStorage.setItem(lastKey,String(Date.now()));reverseCity(lat,lng)}else{patchCurrentUser({lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()});refreshProfilesSoon();}}
-    try{navigator.geolocation.getCurrentPosition(handle,function(){},{enableHighAccuracy:false,timeout:9000,maximumAge:300000})}catch(_){}
-    try{navigator.geolocation.watchPosition(handle,function(){},{enableHighAccuracy:false,timeout:12000,maximumAge:300000})}catch(_){}
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c});
   }
-  function refreshProfilesSoon(){setTimeout(function(){try{if(typeof rProfiles==='function')rProfiles()}catch(_){ }paintPresence()},80)}
-  window.openMapSearch=function(){closeManualLocation();startLiveLocation();try{if(window.toast)toast('La app usa tu ubicación automáticamente 📍','ok')}catch(_){}};
-  window.closeMapSearch=function(){closeManualLocation();return false};
-  window.applyMapSearch=function(){closeManualLocation();startLiveLocation();refreshProfilesSoon();return false};
-  window.searchPlaceOnMap=window.applyMapSearch;
-  window.useMyLocation=function(){closeManualLocation();startLiveLocation();refreshProfilesSoon();try{if(window.toast)toast('Mostrando perfiles cercanos a tu ubicación 📍','ok')}catch(_){}};
-  window.clearLocationFilter=function(){closeManualLocation();startLiveLocation();refreshProfilesSoon();};
-
-  function ensureHomeDiamond(){
-    var home=q('#page-home'); if(!home)return;
-    var existing=q('.fu127-home-diamond',home); if(existing)return;
-    var after=q('.h-tag',home)||q('.hz-desc',home)||q('.h-p',home)||q('.h-sub',home);
-    var d=document.createElement('div'); d.className='fu127-home-diamond'; d.setAttribute('aria-hidden','true');
-    if(after&&after.parentNode) after.parentNode.insertBefore(d,after.nextSibling); else home.insertBefore(d,home.firstChild);
+  function selectedPlace(){
+    var inp=id('mapPlaceSearch'), btn=id('mapSearchBtn'), info=id('mapSearchInfo');
+    var p='';
+    if(inp && inp.value) p=inp.value;
+    if(!p && btn && btn.dataset && btn.dataset.place) p=btn.dataset.place;
+    if(!p && info) p=info.textContent||'';
+    if(!p && btn) p=btn.textContent||'';
+    return clean(p);
   }
-
-  function ensureBell(){
-    if(!hasUser())return;
-    try{if(typeof window.fuInjectBell==='function')window.fuInjectBell()}catch(_){ }
-    var nr=q('#nR')||q('.nav-right'); if(!nr)return;
-    var b=q('#fuNotifBtn');
-    if(!b){b=document.createElement('button');b.type='button';b.id='fuNotifBtn';b.className='fu-notif-wrap';b.setAttribute('aria-label','Notificaciones');b.innerHTML='<span class="fu-notif-bell"></span><span class="fu-notif-count" id="fuNotifCount">0</span>';nr.insertBefore(b,nr.firstChild)}
-    b.onclick=function(e){e.preventDefault();e.stopPropagation();try{if(typeof window.fuToggleNotifPanel==='function')window.fuToggleNotifPanel(true);else fallbackNotifPanel()}catch(_){fallbackNotifPanel()}return false};
-    var bell=q('.fu-notif-bell',b); if(bell)bell.textContent='';
-    updateBellCount();
-  }
-  function getNotifs(){try{if(typeof window.fuGetNotifications==='function')return window.fuGetNotifications()||[]}catch(_){ }try{return read('fu_notifs_'+CU.id,[])}catch(_){return []}}
-  function updateBellCount(){var c=q('#fuNotifCount'); if(!c||!hasUser())return;var n=getNotifs().filter(function(x){return !x.read}).length;c.textContent=n?String(n):'';}
-  function fallbackNotifPanel(){
-    var p=q('#fuNotifPanel'); if(!p){p=document.createElement('div');p.id='fuNotifPanel';p.className='fu-notif-panel';document.body.appendChild(p)}
-    var arr=getNotifs();
-    p.innerHTML='<div class="fu-notif-box"><div class="fu-notif-head"><div class="fu-notif-title">🔔 Notificaciones</div><button class="fu-notif-close" type="button">×</button></div><div class="fu-notif-list">'+(arr.length?arr.map(function(n){return '<div class="fu-notif-item '+(!n.read?'unread':'')+'"><div class="fu-notif-ico">🔔</div><div><div class="fu-notif-t">'+String(n.title||'Notificación')+'</div><div class="fu-notif-d">'+String(n.desc||'Tenés una novedad en FortyUp')+'</div></div></div>'}).join(''):'<div class="fu-notif-empty">Sin notificaciones nuevas 🔔</div>')+'</div></div>';
-    p.classList.add('open'); var x=q('.fu-notif-close',p); if(x)x.onclick=function(){p.classList.remove('open')}; p.onclick=function(e){if(e.target===p)p.classList.remove('open')};
-  }
-
-  function paintPresence(){
-    var arr=users();
-    qa('.pcard').forEach(function(card){
-      qa('.fu127-card-presence',card).slice(1).forEach(function(x){x.remove()});
-      var id=(card.id||'').replace(/^ca-/,'');
-      var u=arr.find(function(x){return x&&String(x.id)===String(id)})||{};
-      var p=q('.fu127-card-presence',card); if(!p){p=document.createElement('span');p.className='fu127-card-presence';card.appendChild(p)}
-      p.classList.toggle('off',!online(u)); p.title=online(u)?'Conectado':'Desconectado';
-    });
-  }
-
-  function healthFix(){closeManualLocation();ensureHomeDiamond();ensureBell();paintPresence();startLiveLocation();}
-  var oldGoTo=window.goTo;if(typeof oldGoTo==='function'&&!oldGoTo.__fu127){var wrapped=function(){var r=oldGoTo.apply(this,arguments);setTimeout(healthFix,90);setTimeout(healthFix,420);return r};wrapped.__fu127=true;window.goTo=wrapped}
-  var oldRProfiles=window.rProfiles;if(typeof oldRProfiles==='function'&&!oldRProfiles.__fu127){var rp=function(){var r=oldRProfiles.apply(this,arguments);setTimeout(paintPresence,80);return r};rp.__fu127=true;window.rProfiles=rp}
-  document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('#mapSearchBtn,#mapSearchDoBtn,.fu-map-close,[data-close-map]');if(t){e.preventDefault();e.stopPropagation();closeManualLocation();return false}},true);
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(healthFix,180);setTimeout(healthFix,900);});
-  setTimeout(healthFix,250);setTimeout(healthFix,1200);setInterval(function(){try{ensureBell();updateBellCount();paintPresence()}catch(_){ }},5000);
-  window.addEventListener('error',function(ev){console.warn('FortyUp controló un error:',ev&&ev.message);setTimeout(healthFix,120)});
-})();
-</script>
-
-
-<!-- FortyUp v128 - ajustes Sebas -->
-<style id="fortyup-v128-sebas-css">
-/* 1) Cristal del inicio más grande */
-#page-home .fu127-home-diamond,#page-home .fu128-home-diamond{width:235px!important;height:210px!important;margin:1.85rem auto 1.35rem!important;display:block!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;filter:drop-shadow(0 18px 28px rgba(6,78,59,.18))!important}
-@media(max-width:750px){#page-home .fu127-home-diamond,#page-home .fu128-home-diamond{width:212px!important;height:190px!important;margin:1.55rem auto 1.15rem!important}}
-
-/* 2) Diamante de la página FortyUp+ igual concepto que inicio, pero multicolor */
-#page-fortyplus .fup-diamond,#page-fortyplus .fup-final-diamond,#page-fortyplus .fup-hero .fup-diamond{width:215px!important;height:192px!important;min-width:215px!important;min-height:192px!important;max-width:215px!important;max-height:192px!important;margin:0 auto 1.1rem!important;display:block!important;color:transparent!important;font-size:0!important;line-height:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background-color:transparent!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;filter:drop-shadow(0 18px 28px rgba(6,78,59,.18))!important;transform:none!important;animation:none!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 410'%3E%3Cdefs%3E%3CradialGradient id='a' cx='50%25' cy='42%25' r='62%25'%3E%3Cstop offset='0' stop-color='%23FFF2A8' stop-opacity='.9'/%3E%3Cstop offset='.6' stop-color='%23A7F3D0' stop-opacity='.3'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='18' stdDeviation='14' flood-color='%23064E3B' flood-opacity='.18'/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx='230' cy='200' r='205' fill='url(%23a)'/%3E%3Cg filter='url(%23s)'%3E%3Cpolygon points='140,18 320,18 455,135 230,395 5,135' fill='%234FD8FF'/%3E%3Cpolygon points='140,18 230,18 205,132 92,118' fill='%23FFC4EC'/%3E%3Cpolygon points='230,18 320,18 365,116 205,132' fill='%239AD7FF'/%3E%3Cpolygon points='320,18 455,135 365,116' fill='%238A7CFF'/%3E%3Cpolygon points='5,135 92,118 205,132 140,18' fill='%23F9FEFF'/%3E%3Cpolygon points='5,135 92,118 135,224' fill='%23FF8FDB'/%3E%3Cpolygon points='92,118 205,132 135,224' fill='%2369E8FF'/%3E%3Cpolygon points='205,132 275,224 135,224' fill='%23B7FFDA'/%3E%3Cpolygon points='205,132 365,116 275,224' fill='%23FFF9CA'/%3E%3Cpolygon points='365,116 455,135 275,224' fill='%23FFD166'/%3E%3Cpolygon points='5,135 135,224 230,395' fill='%238A7CFF'/%3E%3Cpolygon points='135,224 275,224 230,395' fill='%23E9FCFF'/%3E%3Cpolygon points='275,224 455,135 230,395' fill='%234ADE80'/%3E%3Cpath d='M140 18H320L455 135L230 395L5 135Z' fill='none' stroke='%23fff' stroke-width='3' opacity='.7'/%3E%3Cpath d='M5 135H455M92 118L135 224M365 116L275 224M205 132L135 224M205 132L275 224M135 224H275M230 395L135 224M230 395L275 224' fill='none' stroke='%23064E3B' stroke-width='1.3' opacity='.18'/%3E%3Cpath d='M88 78c42-18 92-11 132 4' fill='none' stroke='white' stroke-width='19' stroke-linecap='round' opacity='.72'/%3E%3C/g%3E%3C/svg%3E")!important}
-#page-fortyplus .fup-diamond:before,#page-fortyplus .fup-diamond:after,#page-fortyplus .fup-final-diamond:before,#page-fortyplus .fup-final-diamond:after{content:none!important;display:none!important}
-@media(max-width:750px){#page-fortyplus .fup-diamond,#page-fortyplus .fup-final-diamond,#page-fortyplus .fup-hero .fup-diamond{width:192px!important;height:172px!important;min-width:192px!important;min-height:172px!important}}
-
-/* 3) Campanita activa: si no hay nada, dice “No tenés notificaciones” */
-#fuNotifBtn,.fu-notif-wrap{position:relative!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border-radius:50%!important;background:#064E3B!important;border:2px solid #A7F3D0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin:0 .18rem!important;cursor:pointer!important;z-index:50!important;box-shadow:0 5px 14px rgba(6,78,59,.18)!important;overflow:visible!important}
-#fuNotifBtn .fu-notif-bell,.fu-notif-bell{font-size:0!important;line-height:1!important;display:flex!important;align-items:center!important;justify-content:center!important}
-#fuNotifBtn .fu-notif-bell:before,.fu-notif-bell:before{content:'🔔'!important;font-size:20px!important;filter:drop-shadow(0 2px 4px rgba(242,183,5,.38))!important}
-#fuNotifCount,.fu-notif-count{position:absolute!important;top:-6px!important;right:-6px!important;min-width:18px!important;height:18px!important;border-radius:999px!important;background:#F2B705!important;color:#064E3B!important;border:2px solid #fff!important;font-size:10px!important;font-weight:900!important;align-items:center!important;justify-content:center!important;display:none}
-.fu-notif-panel{position:fixed!important;inset:0!important;background:rgba(6,20,16,.45)!important;backdrop-filter:blur(5px)!important;z-index:2000!important;display:none!important;padding:78px 14px 14px!important}.fu-notif-panel.open{display:block!important}.fu-notif-box{max-width:390px!important;margin:0 auto!important;background:#fff!important;border:1.5px solid #D1E8DF!important;border-radius:24px!important;box-shadow:0 22px 60px rgba(6,78,59,.22)!important;overflow:hidden!important}.fu-notif-head{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:1rem 1.1rem!important;border-bottom:1px solid #ECFDF5!important;background:#F0FDF8!important}.fu-notif-title{font-weight:900!important;color:#064E3B!important;font-size:.95rem!important}.fu-notif-close{width:30px!important;height:30px!important;border-radius:50%!important;background:#fff!important;border:1px solid #D1E8DF!important;color:#064E3B!important;font-size:18px!important;cursor:pointer!important}.fu-notif-empty{padding:2rem 1.2rem!important;text-align:center!important;color:#2D4A40!important;font-weight:800!important;font-size:.95rem!important}.fu-notif-item{display:flex!important;gap:.7rem!important;padding:.9rem 1rem!important;border-bottom:1px solid #ECFDF5!important;color:#10231D!important}.fu-notif-ico{width:34px!important;height:34px!important;border-radius:50%!important;background:#F0FDF8!important;display:flex!important;align-items:center!important;justify-content:center!important}.fu-notif-t{font-weight:900!important;color:#064E3B!important;font-size:.84rem!important}.fu-notif-d{font-size:.78rem!important;color:#2D4A40!important;line-height:1.35!important}.fu-notif-time{font-size:.68rem!important;color:#6B7C76!important;margin-top:.18rem!important}
-</style>
-<script id="fortyup-v128-sebas-js">
-(function(){if(window.__fortyUpV128Sebas)return;window.__fortyUpV128Sebas=true;function q(s,r){return(r||document).querySelector(s)}function hasUser(){try{return!!(window.CU&&CU.id)}catch(e){return false}}function read(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}function nk(){return hasUser()?'fu_notifs_'+CU.id:null}function getN(){try{if(typeof window.fuGetNotifications==='function'){var a=window.fuGetNotifications();if(Array.isArray(a))return a}}catch(e){}var k=nk();return k?(read(k,[])||[]):[]}function saveN(a){var k=nk();if(k)write(k,a||[])}function e(s){return String(s||'').replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}function ago(iso){try{var d=iso?new Date(iso):new Date(),m=Date.now()-d.getTime();if(m<60000)return'recién';if(m<3600000)return Math.floor(m/60000)+' min';if(m<86400000)return Math.floor(m/3600000)+' h';return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'})}catch(x){return''}}function ic(t){return t==='message'?'💬':t==='match'?'✨':(t==='super'||t==='superDiamond')?'💎':t==='forti'?'💎':'🔔'}
-window.fuUpdateNotifBadge=function(){var c=q('#fuNotifCount');if(!c)return;var n=getN().filter(function(x){return!x.read}).length;c.textContent=n?String(n>99?'99+':n):'';c.style.display=n?'flex':'none'};
-window.fuRenderNotifPanel=function(){var p=q('#fuNotifPanel');if(!p){p=document.createElement('div');p.id='fuNotifPanel';p.className='fu-notif-panel';document.body.appendChild(p)}var arr=getN();var body=arr.length?arr.map(function(n){return'<div class="fu-notif-item" data-from="'+e(n.fromId||'')+'"><div class="fu-notif-ico">'+ic(n.type)+'</div><div><div class="fu-notif-t">'+e(n.title||'Notificación')+'</div><div class="fu-notif-d">'+e(n.desc||'Tenés una novedad en FortyUp')+'</div><div class="fu-notif-time">'+ago(n.at)+'</div></div></div>'}).join(''):'<div class="fu-notif-empty">No tenés notificaciones 🔔</div>';p.innerHTML='<div class="fu-notif-box"><div class="fu-notif-head"><div class="fu-notif-title">🔔 Notificaciones</div><button class="fu-notif-close" type="button">×</button></div><div class="fu-notif-list">'+body+'</div></div>';var x=q('.fu-notif-close',p);if(x)x.onclick=function(ev){ev.preventDefault();window.fuToggleNotifPanel(false)};p.onclick=function(ev){if(ev.target===p)window.fuToggleNotifPanel(false)};Array.prototype.forEach.call(p.querySelectorAll('.fu-notif-item'),function(it){it.onclick=function(){var id=it.getAttribute('data-from');window.fuMarkNotifsRead();window.fuToggleNotifPanel(false);if(id&&typeof window.openMod==='function')try{window.openMod(id)}catch(e){}}})};
-window.fuToggleNotifPanel=function(open){var p=q('#fuNotifPanel');if(!p){p=document.createElement('div');p.id='fuNotifPanel';p.className='fu-notif-panel';document.body.appendChild(p)}if(open){window.fuRenderNotifPanel();p.classList.add('open')}else p.classList.remove('open')};
-window.fuMarkNotifsRead=function(){saveN(getN().map(function(n){n.read=true;return n}));window.fuUpdateNotifBadge()};
-window.fuInjectBell=function(){if(!hasUser())return;var nr=q('#nR')||q('.nav-right');if(!nr)return;var b=q('#fuNotifBtn');if(!b){b=document.createElement('button');b.type='button';b.id='fuNotifBtn';b.className='fu-notif-wrap';b.setAttribute('aria-label','Notificaciones');b.innerHTML='<span class="fu-notif-bell"></span><span class="fu-notif-count" id="fuNotifCount"></span>';nr.insertBefore(b,nr.firstChild)}b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();window.fuToggleNotifPanel(true);return false};window.fuUpdateNotifBadge()};
-function ensureHomeDiamond(){var home=q('#page-home');if(!home)return;var d=q('.fu127-home-diamond,.fu128-home-diamond',home);if(!d){d=document.createElement('div');d.className='fu127-home-diamond fu128-home-diamond';d.setAttribute('aria-hidden','true');var after=q('.h-tag',home)||q('.h-p',home)||q('.h-sub',home);if(after&&after.parentNode)after.parentNode.insertBefore(d,after.nextSibling);else home.insertBefore(d,home.firstChild)}}function boot(){ensureHomeDiamond();window.fuInjectBell();window.fuUpdateNotifBadge()}var old=window.upNav;if(typeof old==='function'&&!old.__fu128){var nu=function(){var r=old.apply(this,arguments);setTimeout(boot,30);setTimeout(boot,250);return r};nu.__fu128=true;window.upNav=nu}document.addEventListener('click',function(ev){var t=ev.target&&ev.target.closest&&ev.target.closest('#fuNotifBtn,.fu-notif-wrap');if(t){ev.preventDefault();ev.stopPropagation();window.fuToggleNotifPanel(true);return false}},true);document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,120);setTimeout(boot,700)});setTimeout(boot,150);setTimeout(boot,900);setInterval(function(){try{boot()}catch(e){}},3500)})();
-</script>
-
-
-<!-- FortyUp v129 FINAL Sebas - app de citas pulida: cristales coherentes, campana real, FortyUp+ consistente, UX dating -->
-<style id="fortyup-v129-final-css">
-  :root{--fu-green:#064E3B;--fu-green2:#10B981;--fu-mint:#E9FFF6;--fu-border:#D1E8DF;--fu-gold:#F2B705;--fu-text:#10231D;}
-
-  /* Header premium y campana 100% clickeable */
-  .nav{z-index:1200!important;}
-  .nav-right,#nR{position:relative!important;display:flex!important;align-items:center!important;gap:.55rem!important;}
-  #fuNotifBtn,.fu-notif-wrap,.fu129-bell{
-    position:relative!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;
-    border-radius:50%!important;background:radial-gradient(circle at 35% 25%,#0A7C5D,#064E3B 70%)!important;
-    border:3px solid rgba(167,243,208,.95)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
-    padding:0!important;margin:0 .1rem!important;cursor:pointer!important;z-index:1500!important;pointer-events:auto!important;
-    box-shadow:0 8px 22px rgba(6,78,59,.24), inset 0 0 0 1px rgba(255,255,255,.12)!important;overflow:visible!important;
-    -webkit-tap-highlight-color:transparent!important;touch-action:manipulation!important;
-  }
-  #fuNotifBtn .fu-notif-bell,.fu-notif-bell{font-size:0!important;width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;pointer-events:none!important;}
-  #fuNotifBtn .fu-notif-bell:before,.fu-notif-bell:before{content:'🔔'!important;font-size:25px!important;line-height:1!important;filter:drop-shadow(0 3px 5px rgba(242,183,5,.45))!important;}
-  #fuNotifCount,.fu-notif-count{position:absolute!important;top:-5px!important;right:-5px!important;min-width:19px!important;height:19px!important;border-radius:999px!important;background:#F2B705!important;color:#064E3B!important;border:2px solid #fff!important;font-size:10px!important;font-weight:900!important;display:none;align-items:center!important;justify-content:center!important;}
-  #fuNotifCount:not(:empty),.fu-notif-count:not(:empty){display:flex!important;}
-
-  /* Modal de notificaciones estable */
-  #fu129NotifPanel{position:fixed!important;inset:0!important;background:rgba(6,20,16,.48)!important;backdrop-filter:blur(7px)!important;-webkit-backdrop-filter:blur(7px)!important;z-index:9999!important;display:none!important;padding:82px 14px 18px!important;}
-  #fu129NotifPanel.open{display:block!important;}
-  .fu129-notif-box{max-width:410px!important;margin:0 auto!important;background:#fff!important;border:1.5px solid var(--fu-border)!important;border-radius:26px!important;box-shadow:0 26px 70px rgba(6,78,59,.28)!important;overflow:hidden!important;}
-  .fu129-notif-head{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:1rem 1.15rem!important;background:linear-gradient(135deg,#F0FDF8,#FFFDF7)!important;border-bottom:1px solid #ECFDF5!important;}
-  .fu129-notif-head b{font-size:1rem!important;color:#064E3B!important;font-weight:900!important;}
-  .fu129-notif-x{width:34px!important;height:34px!important;border-radius:50%!important;background:#fff!important;border:1.5px solid #D1E8DF!important;color:#064E3B!important;font-size:20px!important;font-weight:900!important;cursor:pointer!important;}
-  .fu129-notif-empty{padding:2.35rem 1.25rem!important;text-align:center!important;color:#2D4A40!important;font-weight:900!important;font-size:1rem!important;line-height:1.45!important;}
-  .fu129-notif-empty span{display:block!important;font-size:2.2rem!important;margin-bottom:.45rem!important;}
-  .fu129-notif-item{display:flex!important;gap:.75rem!important;padding:.95rem 1.05rem!important;border-bottom:1px solid #ECFDF5!important;cursor:pointer!important;}
-  .fu129-notif-item:hover{background:#F0FDF8!important;}
-  .fu129-notif-ico{width:38px!important;height:38px!important;border-radius:50%!important;background:#E9FFF6!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 38px!important;}
-  .fu129-notif-title{font-weight:900!important;color:#064E3B!important;font-size:.88rem!important;}
-  .fu129-notif-desc{font-size:.79rem!important;color:#2D4A40!important;line-height:1.38!important;margin-top:.08rem!important;}
-  .fu129-notif-time{font-size:.68rem!important;color:#6B7C76!important;margin-top:.22rem!important;}
-
-  /* Cristal de inicio: grande, limpio, mismo estilo que Completa tu perfil */
-  #page-home .fu129-home-crystal,.fu127-home-diamond,.fu128-home-diamond{
-    width:300px!important;height:265px!important;max-width:86vw!important;margin:1.2rem auto 1.35rem!important;display:block!important;position:relative!important;
-    background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;pointer-events:none!important;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 410'%3E%3Cdefs%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='18' stdDeviation='14' flood-color='%23064E3B' flood-opacity='.18'/%3E%3C/filter%3E%3CradialGradient id='g' cx='50%25' cy='42%25' r='62%25'%3E%3Cstop offset='0' stop-color='%23FFF7CC' stop-opacity='.95'/%3E%3Cstop offset='1' stop-color='%23FFF7CC' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='230' cy='200' r='205' fill='url(%23g)'/%3E%3Cg filter='url(%23s)'%3E%3Cpolygon points='140,18 320,18 455,135 230,395 5,135' fill='%2378C9EA'/%3E%3Cpolygon points='140,18 230,18 205,132 92,118' fill='%23B5E3F5'/%3E%3Cpolygon points='230,18 320,18 365,116 205,132' fill='%23A8DAF0'/%3E%3Cpolygon points='320,18 455,135 365,116' fill='%230787D5'/%3E%3Cpolygon points='5,135 92,118 205,132 140,18' fill='%23E9FAFF'/%3E%3Cpolygon points='5,135 92,118 135,224' fill='%2375C8EA'/%3E%3Cpolygon points='92,118 205,132 135,224' fill='%235EB1E7'/%3E%3Cpolygon points='205,132 275,224 135,224' fill='%23AEEAF2'/%3E%3Cpolygon points='205,132 365,116 275,224' fill='%23E9FAFF'/%3E%3Cpolygon points='365,116 455,135 275,224' fill='%236EC4E8'/%3E%3Cpolygon points='5,135 135,224 230,395' fill='%232389DD'/%3E%3Cpolygon points='135,224 275,224 230,395' fill='%23E7FAFF'/%3E%3Cpolygon points='275,224 455,135 230,395' fill='%23B9E9F7'/%3E%3Cpath d='M140 18H320L455 135L230 395L5 135Z' fill='none' stroke='%237ec9e9' stroke-width='2' opacity='.75'/%3E%3Cpath d='M5 135H455M92 118L135 224M365 116L275 224M205 132L135 224M205 132L275 224M135 224H275M230 395L135 224M230 395L275 224' fill='none' stroke='%231F6281' stroke-width='1.2' opacity='.20'/%3E%3Cpath d='M88 78c42-18 92-11 132 4' fill='none' stroke='white' stroke-width='19' stroke-linecap='round' opacity='.72'/%3E%3C/g%3E%3C/svg%3E")!important;
-    filter:drop-shadow(0 18px 26px rgba(6,78,59,.18))!important;
-  }
-  @media(max-width:750px){#page-home .fu129-home-crystal,.fu127-home-diamond,.fu128-home-diamond{width:310px!important;height:275px!important;margin:1rem auto 1.15rem!important;}.nav-in{gap:.25rem!important}.nav-logo{font-size:1.85rem!important}.av-nm{font-size:.96rem!important}}
-  @media(max-width:390px){#page-home .fu129-home-crystal,.fu127-home-diamond,.fu128-home-diamond{width:282px!important;height:250px!important}#fuNotifBtn,.fu-notif-wrap{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important}.nav-logo{font-size:1.7rem!important}}
-
-  /* FortyUp+: mismo cristal, multicolor. No cambia el círculo multicolor del menú inferior */
-  #page-fortyplus{background:linear-gradient(180deg,#FFF7A8 0%,#FFE171 42%,#FFF3A9 100%)!important;}
-  #page-fortyplus .fup-final-diamond,#page-fortyplus .fup-diamond,#page-fortyplus .fu129-plus-crystal{
-    width:240px!important;height:210px!important;min-width:240px!important;min-height:210px!important;margin:0 auto .35rem!important;display:block!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;font-size:0!important;color:transparent!important;filter:drop-shadow(0 16px 24px rgba(6,78,59,.18))!important;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 410'%3E%3Cdefs%3E%3CradialGradient id='a' cx='50%25' cy='42%25' r='62%25'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.95'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='18' stdDeviation='14' flood-color='%23064E3B' flood-opacity='.18'/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx='230' cy='200' r='205' fill='url(%23a)'/%3E%3Cg filter='url(%23s)'%3E%3Cpolygon points='140,18 320,18 455,135 230,395 5,135' fill='%234FD8FF'/%3E%3Cpolygon points='140,18 230,18 205,132 92,118' fill='%23FFC4EC'/%3E%3Cpolygon points='230,18 320,18 365,116 205,132' fill='%239AD7FF'/%3E%3Cpolygon points='320,18 455,135 365,116' fill='%238A7CFF'/%3E%3Cpolygon points='5,135 92,118 205,132 140,18' fill='%23F9FEFF'/%3E%3Cpolygon points='5,135 92,118 135,224' fill='%23FF8FDB'/%3E%3Cpolygon points='92,118 205,132 135,224' fill='%2369E8FF'/%3E%3Cpolygon points='205,132 275,224 135,224' fill='%23B7FFDA'/%3E%3Cpolygon points='205,132 365,116 275,224' fill='%23FFF9CA'/%3E%3Cpolygon points='365,116 455,135 275,224' fill='%23FFD166'/%3E%3Cpolygon points='5,135 135,224 230,395' fill='%238A7CFF'/%3E%3Cpolygon points='135,224 275,224 230,395' fill='%23E9FCFF'/%3E%3Cpolygon points='275,224 455,135 230,395' fill='%234ADE80'/%3E%3Cpath d='M140 18H320L455 135L230 395L5 135Z' fill='none' stroke='%23fff' stroke-width='3' opacity='.7'/%3E%3Cpath d='M5 135H455M92 118L135 224M365 116L275 224M205 132L135 224M205 132L275 224M135 224H275M230 395L135 224M230 395L275 224' fill='none' stroke='%23064E3B' stroke-width='1.3' opacity='.18'/%3E%3Cpath d='M88 78c42-18 92-11 132 4' fill='none' stroke='white' stroke-width='19' stroke-linecap='round' opacity='.72'/%3E%3C/g%3E%3C/svg%3E")!important;
-  }
-  #page-fortyplus .fup-final-diamond:before,#page-fortyplus .fup-final-diamond:after,#page-fortyplus .fup-diamond:before,#page-fortyplus .fup-diamond:after{content:none!important;display:none!important;}
-  #page-fortyplus .fup-final-hero{border-radius:28px!important;background:linear-gradient(145deg,#FFD54A,#FFB703)!important;box-shadow:0 16px 44px rgba(242,183,5,.28)!important;position:relative!important;overflow:hidden!important;border:2px solid rgba(255,255,255,.65)!important;}
-  #page-fortyplus .fup-final-copy{font-size:.94rem!important;line-height:1.35!important;color:#2D4A40!important;}
-  #page-fortyplus .fup-final-title{color:#064E3B!important;}
-  #page-fortyplus .fup-final-soon{background:rgba(255,255,255,.72)!important;border:1.5px solid rgba(6,78,59,.2)!important;color:#064E3B!important;}
-  #page-fortyplus .fup-final-item{border-radius:26px!important;background:rgba(255,255,255,.9)!important;border:1.5px solid rgba(255,255,255,.78)!important;box-shadow:0 12px 28px rgba(6,78,59,.08)!important;}
-  .fup-crystal-counter{font-weight:900!important;color:#064E3B!important;}
-
-  /* Tarjetas de citas: más limpias, sin conectado/desconectado superpuesto */
-  .pcard{position:relative!important;border-radius:28px!important;overflow:hidden!important;}
-  .pcard .fu-v87-status-dot,.pcard .fu-stable-card-status,.pcard .fu92-card-dot-wrap,.pcard .fu-v90-card-status,.pcard .fu91-card-presence,.pcard [class*='card-status'],.pcard [class*='card-presence']{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
-  .fu129-presence{position:absolute!important;top:.72rem!important;left:.72rem!important;z-index:70!important;background:rgba(255,255,255,.94)!important;border:1.5px solid rgba(255,255,255,.9)!important;border-radius:999px!important;padding:.27rem .55rem!important;display:flex!important;align-items:center!important;gap:.32rem!important;box-shadow:0 8px 18px rgba(6,78,59,.15)!important;font-size:.68rem!important;font-weight:900!important;color:#064E3B!important;pointer-events:none!important;}
-  .fu129-presence:before{content:''!important;width:9px!important;height:9px!important;border-radius:50%!important;background:#10B981!important;box-shadow:0 0 0 4px rgba(16,185,129,.16)!important;}
-  .fu129-presence.off:before{background:#9CA3AF!important;box-shadow:0 0 0 4px rgba(156,163,175,.16)!important;}
-  .fu129-score{position:absolute!important;top:.72rem!important;right:.72rem!important;z-index:72!important;background:linear-gradient(135deg,#FFFDF7,#F0FDF8)!important;border:1.5px solid #D1E8DF!important;border-radius:999px!important;padding:.24rem .55rem!important;box-shadow:0 8px 18px rgba(6,78,59,.13)!important;font-size:.68rem!important;font-weight:900!important;color:#064E3B!important;pointer-events:none!important;}
-  .pcard-bdg{display:none!important;}
-  .pcard-acts{display:flex!important;gap:.42rem!important;align-items:center!important;flex-wrap:nowrap!important;overflow:hidden!important;}
-  .pa-forti{flex:1 1 auto!important;min-width:82px!important;max-width:128px!important;border-radius:18px!important;white-space:nowrap!important;}
-  .pa-super,.pa-fav,.pa-chat,.pa-blk{flex:0 0 auto!important;}
-  .pa-more{flex:0 0 auto!important;}
-  @media(max-width:420px){.pa-more{display:none!important}.pa-forti{min-width:76px!important;font-size:.74rem!important}.pcard-acts{gap:.34rem!important;padding-left:.72rem!important;padding-right:.72rem!important}}
-
-  /* Detalles de app real de citas */
-  .fu129-empty{background:rgba(255,255,255,.9)!important;border:1.5px solid #D1E8DF!important;border-radius:28px!important;padding:2rem 1.2rem!important;text-align:center!important;box-shadow:0 12px 30px rgba(6,78,59,.08)!important;color:#2D4A40!important;font-weight:800!important;}
-  .fu129-empty .big{font-size:2.6rem!important;margin-bottom:.35rem!important;}
-  .fu129-tip{margin:.65rem 0 1rem!important;padding:.75rem 1rem!important;border-radius:20px!important;background:#F0FDF8!important;border:1.5px solid #D1E8DF!important;color:#064E3B!important;font-size:.82rem!important;font-weight:800!important;line-height:1.4!important;}
-  .fu129-report{background:#fff!important;border:1.5px solid #fecaca!important;color:#dc2626!important;border-radius:50px!important;padding:.44rem .65rem!important;font-size:.72rem!important;font-weight:900!important;cursor:pointer!important;}
-</style>
-
-<script id="fortyup-v129-final-js">
-(function(){
-  if(window.__fortyUpV129FinalSebas) return; window.__fortyUpV129FinalSebas=true;
-  function q(s,r){return (r||document).querySelector(s)}
-  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
-  function logged(){try{return !!(window.CU&&CU.id)}catch(e){return false}}
-  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-  function save(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-  function userList(){try{if(typeof users==='function')return users()||[]}catch(e){}return read('fu_users',[])||[]}
-  function normArr(v){if(Array.isArray(v))return v.map(String);if(typeof v==='string')return v.split(/[,;|]/).map(function(x){return x.trim()}).filter(Boolean);return []}
-  function online(u){if(!u)return false;if(logged()&&String(u.id)===String(CU.id))return true;var t=Date.parse(u.lastSeen||u.lastActive||u.geoUpdatedAt||0);if(t&&Date.now()-t<7*60*1000)return true;return u.online===true}
-  function scoreWith(u){
-    if(!logged()||!u) return 72;
-    var a=0,total=0;
-    function hit(a1,a2,w){total+=w;var A=normArr(a1).map(function(x){return x.toLowerCase()}),B=normArr(a2).map(function(x){return x.toLowerCase()});if(A.length&&B.length&&A.some(function(x){return B.indexOf(x)>-1}))a+=w;}
-    hit(CU.plans||CU.plan||CU.idealPlans,u.plans||u.plan||u.idealPlans,28);
-    hit(CU.interests,u.interests,28);
-    hit(CU.looking||CU.busca||CU.search,u.looking||u.busca||u.search,18);
-    total+=24; a+=12;
-    var sc= total?Math.round(58+(a/total)*39):72;
-    return Math.max(58,Math.min(97,sc));
-  }
-
-  /* ===== CAMPANA REAL ===== */
-  function notifKey(){return logged()?'fu_notifs_'+CU.id:null}
-  function getNotifs(){
-    var arr=[];
-    try{ if(typeof window.fuGetNotifications==='function'){var x=window.fuGetNotifications(); if(Array.isArray(x)) arr=arr.concat(x);} }catch(e){}
-    var k=notifKey(); if(k){var l=read(k,[]); if(Array.isArray(l)) arr=arr.concat(l)}
-    var seen={}; return arr.filter(function(n){ if(!n)return false; var id=(n.id||'')+'|'+(n.type||'')+'|'+(n.fromId||n.from||'')+'|'+(n.at||''); if(seen[id])return false; seen[id]=1; return true;}).sort(function(a,b){return Date.parse(b.at||0)-Date.parse(a.at||0)});
-  }
-  function saveNotifs(arr){var k=notifKey(); if(k)save(k,arr||[])}
-  function icon(t){return t==='message'?'💬':t==='match'?'✨':(t==='super'||t==='superDiamond')?'💎':t==='forti'?'💚':'🔔'}
-  function ago(iso){try{var d=iso?new Date(iso):new Date(),m=Date.now()-d.getTime();if(m<60000)return'recién';if(m<3600000)return Math.floor(m/60000)+' min';if(m<86400000)return Math.floor(m/3600000)+' h';return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'})}catch(e){return''}}
-  function ensurePanel(){var p=q('#fu129NotifPanel'); if(!p){p=document.createElement('div');p.id='fu129NotifPanel';document.body.appendChild(p)} return p}
-  window.fu129RenderNotifications=function(){
-    var p=ensurePanel(), arr=getNotifs();
-    var body=arr.length?arr.map(function(n){return '<div class="fu129-notif-item" data-from="'+esc(n.fromId||n.from||'')+'"><div class="fu129-notif-ico">'+icon(n.type)+'</div><div><div class="fu129-notif-title">'+esc(n.title||'Notificación')+'</div><div class="fu129-notif-desc">'+esc(n.desc||n.text||'Tenés una novedad en FortyUp')+'</div><div class="fu129-notif-time">'+ago(n.at)+'</div></div></div>'}).join(''):'<div class="fu129-notif-empty"><span>🔔</span>No tenés notificaciones</div>';
-    p.innerHTML='<div class="fu129-notif-box"><div class="fu129-notif-head"><b>Notificaciones</b><button class="fu129-notif-x" type="button">×</button></div>'+body+'</div>';
-    var x=q('.fu129-notif-x',p); if(x)x.onclick=function(ev){ev.preventDefault();window.fu129ToggleNotifications(false)};
-    p.onclick=function(ev){if(ev.target===p)window.fu129ToggleNotifications(false)};
-    qa('.fu129-notif-item',p).forEach(function(it){it.onclick=function(){markRead();window.fu129ToggleNotifications(false);var id=it.getAttribute('data-from');if(id&&typeof openMod==='function')try{openMod(id)}catch(e){}}});
-  };
-  function badge(){var c=q('#fuNotifCount')||q('.fu-notif-count'); if(!c)return; var n=getNotifs().filter(function(x){return !x.read}).length; c.textContent=n?String(n>99?'99+':n):''; c.style.display=n?'flex':'none'}
-  function markRead(){var arr=getNotifs().map(function(n){n.read=true;return n}); saveNotifs(arr); badge()}
-  window.fu129ToggleNotifications=function(open){var p=ensurePanel(); if(open){window.fu129RenderNotifications();p.classList.add('open');markRead()}else{p.classList.remove('open')}};
-  window.fuToggleNotifPanel=window.fu129ToggleNotifications;
-  function ensureBell(){
-    if(!logged())return;
-    var nr=q('#nR')||q('.nav-right'); if(!nr)return;
-    var b=q('#fuNotifBtn')||q('.fu-notif-wrap');
-    if(!b){b=document.createElement('button');b.type='button';b.id='fuNotifBtn';b.className='fu-notif-wrap fu129-bell';b.setAttribute('aria-label','Notificaciones');b.innerHTML='<span class="fu-notif-bell"></span><span class="fu-notif-count" id="fuNotifCount"></span>';nr.insertBefore(b,nr.firstChild)}
-    b.id='fuNotifBtn'; b.classList.add('fu-notif-wrap','fu129-bell'); b.setAttribute('onclick','return fu129BellClick(event)');
-    if(!q('.fu-notif-bell',b)) b.innerHTML='<span class="fu-notif-bell"></span><span class="fu-notif-count" id="fuNotifCount"></span>';
-    b.onclick=window.fu129BellClick;
-    badge();
-  }
-  window.fu129BellClick=function(ev){ if(ev){ev.preventDefault();ev.stopPropagation();} window.fu129ToggleNotifications(true); return false; };
-  document.addEventListener('click',function(ev){var t=ev.target&&ev.target.closest&&ev.target.closest('#fuNotifBtn,.fu-notif-wrap,.fu129-bell'); if(t){ev.preventDefault();ev.stopPropagation();window.fu129ToggleNotifications(true);return false}},true);
-
-  /* ===== CRISTAL INICIO ===== */
-  function ensureHomeCrystal(){
-    var home=q('#page-home'); if(!home)return;
-    var d=q('.fu129-home-crystal',home) || q('.fu127-home-diamond,.fu128-home-diamond',home);
-    if(!d){d=document.createElement('div');d.className='fu129-home-crystal';d.setAttribute('aria-hidden','true');
-      var target=q('.hz-logo',home)||q('.h-title',home)||q('.auth-logo',home);
-      if(target&&target.parentNode) target.parentNode.insertBefore(d,target.nextSibling); else home.insertBefore(d,home.firstChild);
-    } else d.classList.add('fu129-home-crystal');
-  }
-
-  /* ===== FORTYUP+ COHERENTE ===== */
-  function crystals(){var c=read('fortyup_crystals',null); if(c===null)c=read('fu_crystals',0); c=Number(c||0); return isNaN(c)?0:c;}
-  window.ensurePlusPageV129=function(force){
-    var page=q('#page-fortyplus'); if(!page)return;
-    if(page.dataset.v129==='ok'&&!force)return;
-    page.dataset.v129='ok';
-    page.innerHTML='<div class="inner fu129-plus-inner">'+
-      '<div class="fup-final-hero">'+
-        '<div class="fup-crystal-counter">💎 '+crystals()+'</div>'+
-        '<div class="fup-final-diamond fu129-plus-crystal"></div>'+
-        '<div class="fup-final-title">Forty<span>Up+</span></div>'+
-        '<div class="fup-final-copy">Una experiencia premium para <strong>conexiones reales</strong> y <strong>planes reales</strong>.</div>'+ 
-        '<div class="fup-final-copy">Usá cristales para destacar perfiles y enviar señales especiales.</div>'+ 
-        '<div class="fup-final-soon">✨ Próximamente disponible</div>'+ 
-      '</div>'+
-      '<div class="fup-final-list">'+
-        '<div class="fup-final-item"><div class="fup-final-icon">💎</div><div><h3>Cristales diarios</h3><p>Ganás 1 por día en futuros juegos.</p></div><div class="fup-final-check">✓</div></div>'+
-        '<div class="fup-final-item"><div class="fup-final-icon">⭐</div><div><h3>Más visibilidad</h3><p>Tu perfil puede destacarse más.</p></div><div class="fup-final-check">✓</div></div>'+
-        '<div class="fup-final-item"><div class="fup-final-icon">💬</div><div><h3>Más conexión</h3><p>Más chances de iniciar una charla.</p></div><div class="fup-final-check">✓</div></div>'+ 
-      '</div>'+ 
-    '</div>';
-  };
-  function bindPlus(){
-    var b=q('#bn-plus')||q('.bn-plus'); if(!b)return;
-    b.onclick=function(ev){ev.preventDefault();ev.stopPropagation(); if(!logged()&&typeof openAuth==='function'){openAuth('login');return false;} if(typeof goTo==='function'){try{goTo('fortyplus')}catch(e){}} setTimeout(function(){window.ensurePlusPageV129(true)},40); return false;};
-  }
-
-  /* ===== TARJETAS: presencia + compatibilidad + reporte ===== */
-  function enhanceCards(){
-    qa('.pcard').forEach(function(card){
-      var id=card.getAttribute('data-id')||card.dataset.id||'';
-      if(!id){var btn=card.querySelector('[onclick*="openMod"],[onclick*="sendForti"],[onclick*="toggleFav"]'); if(btn){var m=String(btn.getAttribute('onclick')||'').match(/['"]([^'"]+)['"]/); if(m)id=m[1];}}
-      var u=id?userList().find(function(x){return x&&String(x.id)===String(id)}):null;
-      var pr=q('.fu129-presence',card); if(!pr){pr=document.createElement('div');pr.className='fu129-presence';card.appendChild(pr)}
-      var on=online(u); pr.className='fu129-presence'+(on?'':' off'); pr.textContent=on?'Conectado':'Desconectado';
-      var sc=q('.fu129-score',card); if(!sc){sc=document.createElement('div');sc.className='fu129-score';card.appendChild(sc)} sc.textContent=scoreWith(u)+'% match';
-      if(!q('.fu129-report',card)){
-        var acts=q('.pcard-acts',card); if(acts){var r=document.createElement('button');r.type='button';r.className='fu129-report';r.textContent='Reportar';r.onclick=function(ev){ev.preventDefault();ev.stopPropagation(); if(confirm('¿Querés reportar este perfil?')){try{var reps=read('fu_reports',[]);reps.push({from:logged()?CU.id:null,target:id,at:new Date().toISOString()});save('fu_reports',reps)}catch(e){} if(typeof toast==='function')toast('Reporte recibido. Gracias por cuidar la comunidad.','ok');}}; acts.appendChild(r)}
-      }
-    });
-    var grid=q('#pgrid'); if(grid&&!grid.children.length){grid.innerHTML='<div class="fu129-empty" style="grid-column:1/-1"><div class="big">💚</div>No hay perfiles para mostrar todavía.<div class="fu129-tip">Cuando haya personas compatibles o cercanas, van a aparecer acá automáticamente.</div></div>'}
-  }
-
-  /* ===== Ubicación automática, sin buscador trabado ===== */
-  function autoLocation(){
-    var bar=q('#locationSearchBar'); if(bar)bar.style.display='none';
-    if(!logged()||!navigator.geolocation||window.__fu129GeoAsked)return; window.__fu129GeoAsked=true;
-    try{navigator.geolocation.getCurrentPosition(function(pos){
-      try{var patch={lat:pos.coords.latitude,lng:pos.coords.longitude,geoUpdatedAt:new Date().toISOString(),online:true,lastSeen:new Date().toISOString()}; Object.assign(CU,patch); var arr=read('fu_users',[]); if(Array.isArray(arr)){arr=arr.map(function(u){return u&&String(u.id)===String(CU.id)?Object.assign({},u,patch):u});save('fu_users',arr)} if(window.DB&&CU.id)try{DB.collection('users').doc(CU.id).set(patch,{merge:true})}catch(e){} }catch(e){}
-    },function(){},{enableHighAccuracy:false,maximumAge:300000,timeout:5000})}catch(e){}
-  }
-
-  /* ===== Hooks no invasivos ===== */
-  function boot(){try{ensureBell();ensureHomeCrystal();bindPlus();window.ensurePlusPageV129(false);enhanceCards();autoLocation()}catch(e){console.warn('FortyUp v129 boot',e)}}
-  var oldUp=window.upNav; if(typeof oldUp==='function'&&!oldUp.__fu129){window.upNav=function(){var r=oldUp.apply(this,arguments);setTimeout(boot,30);setTimeout(boot,350);return r};window.upNav.__fu129=true}
-  var oldGo=window.goTo; if(typeof oldGo==='function'&&!oldGo.__fu129){window.goTo=function(p){var r=oldGo.apply(this,arguments); if(p==='fortyplus'||p==='plus')setTimeout(function(){window.ensurePlusPageV129(true)},30); setTimeout(boot,50);setTimeout(boot,350);return r};window.goTo.__fu129=true}
-  var oldRender=window.rProfiles; if(typeof oldRender==='function'&&!oldRender.__fu129){window.rProfiles=function(){var r=oldRender.apply(this,arguments);setTimeout(enhanceCards,50);setTimeout(enhanceCards,400);return r};window.rProfiles.__fu129=true}
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,80);setTimeout(boot,600);setTimeout(boot,1400)});
-  setTimeout(boot,80);setTimeout(boot,700);setInterval(boot,2500);
-})();
-</script>
-
-
-
-<!-- FortyUp v130 Sebas - correcciones reales: FortyUp+ sin corte, presencia limpia, sin autoreporte -->
-<style id="fortyup-v130-sebas-fixes">
-  /* FortyUp+ — el cristal no se corta, no tapa texto y mantiene el mismo estilo */
-  #page-fortyplus .fu129-plus-inner{padding-top:.85rem!important;padding-bottom:7rem!important;}
-  #page-fortyplus .fup-final-hero{
-    position:relative!important;overflow:visible!important;min-height:0!important;height:auto!important;
-    padding:1.15rem 1rem 1.25rem!important;border-radius:30px!important;
-    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
-    gap:.18rem!important;
-  }
-  #page-fortyplus .fup-crystal-counter{position:absolute!important;top:.9rem!important;right:.9rem!important;z-index:5!important;}
-  #page-fortyplus .fup-final-diamond,#page-fortyplus .fup-diamond,#page-fortyplus .fu129-plus-crystal{
-    width:168px!important;height:148px!important;min-width:168px!important;min-height:148px!important;
-    max-width:168px!important;max-height:148px!important;margin:.12rem auto .25rem!important;
-    background-size:contain!important;background-position:center!important;flex:0 0 auto!important;
-  }
-  #page-fortyplus .fup-final-title{font-size:2.08rem!important;line-height:1.02!important;margin:.08rem 0 .12rem!important;position:relative!important;z-index:2!important;}
-  #page-fortyplus .fup-final-copy{font-size:.88rem!important;line-height:1.25!important;margin:.05rem auto!important;max-width:92%!important;position:relative!important;z-index:2!important;}
-  #page-fortyplus .fup-final-soon{position:relative!important;z-index:3!important;margin:.55rem auto 0!important;top:auto!important;left:auto!important;transform:none!important;}
-  #page-fortyplus .fup-final-list{margin-top:.9rem!important;gap:1rem!important;}
-
-  /* Tarjetas — presencia limpia, sin puntos superpuestos ni badges viejos */
-  .pcard{position:relative!important;}
-  .pcard .fu-v87-status-dot,
-  .pcard .fu-stable-card-status,
-  .pcard .fu92-card-dot-wrap,
-  .pcard .fu-v90-card-status,
-  .pcard .fu91-card-presence,
-  .pcard .fu-v81-status,
-  .pcard .fu-v82-dot-status,
-  .pcard .fu-v84-dot-status,
-  .pcard .fu-presence-pill,
-  .pcard .fu-presence-slot,
-  .pcard .fu-clean-dot-status,
-  .pcard [class*='card-status'],
-  .pcard [class*='card-presence']{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
-  .fu129-presence{
-    top:.72rem!important;left:.72rem!important;z-index:80!important;display:inline-flex!important;
-    align-items:center!important;justify-content:center!important;gap:.42rem!important;
-    min-height:34px!important;padding:.34rem .72rem!important;border-radius:999px!important;
-    background:rgba(255,255,255,.96)!important;border:1.5px solid rgba(209,232,223,.88)!important;
-    color:#064E3B!important;font-size:.76rem!important;font-weight:900!important;line-height:1!important;
-    box-shadow:0 8px 20px rgba(6,78,59,.13)!important;white-space:nowrap!important;
-  }
-  .fu129-presence:before{
-    content:''!important;position:static!important;display:inline-block!important;flex:0 0 10px!important;
-    width:10px!important;height:10px!important;min-width:10px!important;min-height:10px!important;
-    margin:0!important;border-radius:50%!important;background:#10B981!important;
-    box-shadow:0 0 0 4px rgba(16,185,129,.16)!important;transform:none!important;
-  }
-  .fu129-presence.off:before{background:#CBD5E1!important;box-shadow:0 0 0 4px rgba(148,163,184,.18)!important;}
-  .fu129-score{top:.72rem!important;right:.72rem!important;min-height:34px!important;display:inline-flex!important;align-items:center!important;padding:.34rem .72rem!important;font-size:.76rem!important;line-height:1!important;}
-
-  /* No existe autoreportarse: si por algo tu tarjeta entra al listado, se ocultan acciones de reporte */
-  .pcard.fu130-self-card .fu129-report,
-  .pcard.fu130-self-card [data-action='report'],
-  .pcard.fu130-self-card button[title*='Report'],
-  .pcard.fu130-self-card button[aria-label*='Report']{display:none!important;}
-
-  @media(max-width:750px){
-    #page-fortyplus .fu129-plus-inner{padding:.72rem .9rem 7rem!important;}
-    #page-fortyplus .fup-final-hero{padding:1.05rem .8rem 1.12rem!important;border-radius:28px!important;}
-    #page-fortyplus .fup-final-diamond,#page-fortyplus .fup-diamond,#page-fortyplus .fu129-plus-crystal{
-      width:152px!important;height:134px!important;min-width:152px!important;min-height:134px!important;max-width:152px!important;max-height:134px!important;margin:.05rem auto .22rem!important;
+  function closeModal(){
+    var m=id('mapSearchModal');
+    if(m){
+      m.style.display='none';
+      m.classList.remove('open','show','active');
+      m.setAttribute('aria-hidden','true');
     }
-    #page-fortyplus .fup-final-title{font-size:1.92rem!important;}
-    #page-fortyplus .fup-final-copy{font-size:.84rem!important;line-height:1.22!important;}
-    #page-fortyplus .fup-final-soon{font-size:.82rem!important;padding:.48rem 1rem!important;}
-    .fu129-presence,.fu129-score{font-size:.72rem!important;min-height:32px!important;padding:.32rem .62rem!important;}
+    document.body.style.overflow='';
+    document.documentElement.style.overflow='';
+    document.body.classList.remove('modal-open');
+    return false;
   }
+  function setInfo(place){
+    var info=id('mapSearchInfo'), btn=id('mapSearchBtn');
+    if(info) info.innerHTML='📍 Zona seleccionada: <strong>'+esc(place)+'</strong>';
+    if(btn){
+      btn.dataset.place=place;
+      btn.setAttribute('data-place',place);
+      btn.textContent='Ver perfiles cerca de '+place+' →';
+      btn.style.display='flex';
+      btn.disabled=false;
+    }
+  }
+  function applyPlace(){
+    var place=selectedPlace();
+    if(!place){
+      toastMsg('Escribí una localidad para buscar','w');
+      var inp=id('mapPlaceSearch'); if(inp) inp.focus();
+      return false;
+    }
+
+    window._fuLocationMode='city';
+    window._searchCity=place;
+    window._locFilter=place;
+    window._searchLat=null;
+    window._searchLng=null;
+    window.MLAT=null;
+    window.MLNG=null;
+
+    setInfo(place);
+    try{ if(typeof window.showLocLabel==='function') window.showLocLabel(place); }catch(_){ }
+    closeModal();
+    try{ if(typeof window.goTo==='function') window.goTo('profiles'); }catch(_){ }
+    try{ if(typeof window.setBn==='function') window.setBn('profiles'); }catch(_){ }
+    setTimeout(function(){try{ if(typeof window.rProfiles==='function') window.rProfiles(); }catch(_){ }},20);
+    setTimeout(function(){try{ if(typeof window.rProfiles==='function') window.rProfiles(); }catch(_){ }},180);
+    toastMsg('Mostrando perfiles de '+place+' 📍','ok');
+    return false;
+  }
+
+  window.closeMapSearch=closeModal;
+  window.applyMapSearch=applyPlace;
+  window.searchPlaceOnMap=applyPlace;
+
+  document.addEventListener('click',function(e){
+    var t=e.target && e.target.closest ? e.target.closest('#mapSearchDoBtn,#mapSearchBtn,.fu-map-close,.m-cl,[data-close-map]') : null;
+    if(!t)return;
+    if(t.matches('.fu-map-close,.m-cl,[data-close-map]')){
+      e.preventDefault(); e.stopPropagation(); closeModal(); return false;
+    }
+    if(t.id==='mapSearchDoBtn' || t.id==='mapSearchBtn'){
+      e.preventDefault(); e.stopPropagation(); applyPlace(); return false;
+    }
+  },true);
+
+  document.addEventListener('touchend',function(e){
+    var t=e.target && e.target.closest ? e.target.closest('#mapSearchDoBtn,#mapSearchBtn,.fu-map-close,.m-cl,[data-close-map]') : null;
+    if(!t)return;
+    e.preventDefault(); e.stopPropagation();
+    if(t.matches('.fu-map-close,.m-cl,[data-close-map]')) closeModal();
+    else applyPlace();
+    return false;
+  },{capture:true,passive:false});
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && id('mapSearchModal')) closeModal();
+    if(e.key==='Enter' && document.activeElement && document.activeElement.id==='mapPlaceSearch'){
+      e.preventDefault(); applyPlace();
+    }
+  },true);
+})();
+</script>
+
+<
+<!-- FortyUp v126 - sin buscador manual de ubicación + ubicación viva + diamante/campana OK -->
+<style id="fortyup-v126-sebas-final-css">
+  #locationSearchBar,#locActiveLabel,#mapSearchModal,.location-search,.fu-map-box,.fu-map-foot{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+  body.fu-logged #page-home .h-btns,body:not(.sebas-guest) #page-home .h-btns{display:block!important;position:relative!important;min-height:180px!important;height:180px!important;margin:2rem auto 0!important;padding:0!important;overflow:visible!important;}
+  body.fu-logged #page-home .h-btns .btn,body:not(.sebas-guest) #page-home .h-btns .btn{display:none!important;}
+  body.fu-logged #page-home .h-btns:before,body:not(.sebas-guest) #page-home .h-btns:before{content:""!important;display:block!important;position:absolute!important;left:50%!important;top:18px!important;transform:translateX(-50%)!important;width:148px!important;height:132px!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 410'%3E%3Cdefs%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='18' stdDeviation='14' flood-color='%23064E3B' flood-opacity='.20'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23s)'%3E%3Cpolygon points='140,18 320,18 455,135 230,395 5,135' fill='%2378C9EA'/%3E%3Cpolygon points='140,18 230,18 205,132 92,118' fill='%23B5E3F5'/%3E%3Cpolygon points='230,18 320,18 365,116 205,132' fill='%23A8DAF0'/%3E%3Cpolygon points='320,18 455,135 365,116' fill='%230787D5'/%3E%3Cpolygon points='5,135 92,118 205,132 140,18' fill='%23E9FAFF'/%3E%3Cpolygon points='5,135 92,118 135,224' fill='%2375C8EA'/%3E%3Cpolygon points='92,118 205,132 135,224' fill='%235EB1E7'/%3E%3Cpolygon points='205,132 275,224 135,224' fill='%23AEEAF2'/%3E%3Cpolygon points='205,132 365,116 275,224' fill='%23E9FAFF'/%3E%3Cpolygon points='365,116 455,135 275,224' fill='%236EC4E8'/%3E%3Cpolygon points='5,135 135,224 230,395' fill='%232389DD'/%3E%3Cpolygon points='135,224 275,224 230,395' fill='%23E7FAFF'/%3E%3Cpolygon points='275,224 455,135 230,395' fill='%23B9E9F7'/%3E%3Cpath d='M140 18H320L455 135L230 395L5 135Z' fill='none' stroke='%237ec9e9' stroke-width='2' opacity='.75'/%3E%3Cpath d='M5 135H455M92 118L135 224M365 116L275 224M205 132L135 224M205 132L275 224M135 224H275M230 395L135 224M230 395L275 224' fill='none' stroke='%231F6281' stroke-width='1.2' opacity='.20'/%3E%3Cpath d='M88 78c42-18 92-11 132 4' fill='none' stroke='white' stroke-width='19' stroke-linecap='round' opacity='.72'/%3E%3C/g%3E%3C/svg%3E")!important;filter:drop-shadow(0 12px 18px rgba(6,78,59,.16)) drop-shadow(0 0 18px rgba(255,255,255,.70))!important;z-index:3!important;pointer-events:none!important;}
+  body.fu-logged #page-home .h-btns:after,body:not(.sebas-guest) #page-home .h-btns:after{content:none!important;display:none!important;}
+  @media(max-width:750px){body.fu-logged #page-home .h-btns,body:not(.sebas-guest) #page-home .h-btns{min-height:172px!important;height:172px!important;margin-top:1.8rem!important;}body.fu-logged #page-home .h-btns:before,body:not(.sebas-guest) #page-home .h-btns:before{width:142px!important;height:126px!important;top:12px!important;}}
+  .fu-notif-wrap{width:42px!important;height:42px!important;flex:0 0 42px!important;border-radius:50%!important;background:linear-gradient(135deg,#E7FFF5,#C8F7E2)!important;border:2px solid #A7F3D0!important;box-shadow:0 5px 14px rgba(6,78,59,.10)!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin-right:.12rem!important;position:relative!important;}
+  .fu-notif-bell{width:28px!important;height:28px!important;border-radius:50%!important;background:#064E3B!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:0!important;line-height:1!important;color:#F2B705!important;text-shadow:0 1px 0 rgba(255,255,255,.18),0 2px 6px rgba(242,183,5,.35)!important;}
+  .fu-notif-bell::before{content:"🔔"!important;font-size:16px!important;}
+  .fu-notif-count{position:absolute!important;right:-4px!important;top:-5px!important;min-width:17px!important;height:17px!important;border-radius:999px!important;background:#dc2626!important;color:#fff!important;border:2px solid #fff!important;font-size:10px!important;font-weight:900!important;align-items:center!important;justify-content:center!important;}
 </style>
-<script id="fortyup-v130-sebas-fixes-js">
+<script id="fortyup-v126-sebas-final-js">
 (function(){
-  if(window.__fortyUpV130SebasFixes)return; window.__fortyUpV130SebasFixes=true;
+  if(window.__fortyUpV126Sebas)return; window.__fortyUpV126Sebas=true;
   function q(s,r){return (r||document).querySelector(s)}
-  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
-  function me(){try{return window.CU&&CU.id?String(CU.id):''}catch(e){return''}}
-  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-  function users(){try{if(typeof window.users==='function')return window.users()||[]}catch(e){} return read('fu_users',[])||[]}
-  function idFromCard(card){
-    var id=card.getAttribute('data-id')||card.dataset.id||card.getAttribute('data-user-id')||'';
-    if(id)return String(id);
-    var btn=card.querySelector('[onclick*="openMod"],[onclick*="sendForti"],[onclick*="toggleFav"],[onclick*="chatWith"]');
-    if(btn){var m=String(btn.getAttribute('onclick')||'').match(/["']([^"']+)["']/); if(m)return String(m[1]);}
-    var name=(card.querySelector('.pcard-name')||{}).textContent||'';
-    var u=users().find(function(x){return x&&x.name&&name&&String(name).toLowerCase().indexOf(String(x.name).toLowerCase())>-1});
-    return u&&u.id?String(u.id):'';
-  }
-  function fixCards(){
-    var my=me();
-    qa('.pcard').forEach(function(card){
-      var id=idFromCard(card);
-      if(my&&id&&String(id)===my){
-        card.classList.add('fu130-self-card');
-        /* En una app de citas no te mostrás a vos mismo en explorar perfiles. */
-        if(card.closest('#pgrid,.pgrid,#page-profiles')){card.remove();return;}
-      }
-      qa('.fu129-report',card).forEach(function(b){
-        if(my&&id&&String(id)===my){b.remove();}
-        else if(!b.dataset.v130){b.dataset.v130='ok';b.textContent='Reportar';}
-      });
-      var p=q('.fu129-presence',card);
-      if(p){
-        p.textContent=(p.classList.contains('off')?'Desconectado':'Conectado');
-        p.setAttribute('aria-label',p.textContent);
-      }
-    });
-  }
-  function fixPlus(){
-    var page=q('#page-fortyplus'); if(!page)return;
-    var hero=q('.fup-final-hero',page); if(hero){hero.style.overflow='visible';}
-    var d=q('.fup-final-diamond,.fup-diamond,.fu129-plus-crystal',page);
-    if(d){d.classList.add('fu129-plus-crystal');}
-  }
-  function boot(){try{fixCards();fixPlus();}catch(e){console.warn('FortyUp v130',e)}}
-  var oldRender=window.rProfiles;
-  if(typeof oldRender==='function'&&!oldRender.__fu130){window.rProfiles=function(){var r=oldRender.apply(this,arguments);setTimeout(boot,40);setTimeout(boot,300);return r};window.rProfiles.__fu130=true;}
-  var oldGo=window.goTo;
-  if(typeof oldGo==='function'&&!oldGo.__fu130){window.goTo=function(){var r=oldGo.apply(this,arguments);setTimeout(boot,40);setTimeout(boot,300);return r};window.goTo.__fu130=true;}
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,80);setTimeout(boot,600);});
-  setTimeout(boot,80);setTimeout(boot,700);setInterval(boot,900);
+  function hasUser(){try{return !!(window.CU&&CU.id)}catch(_){return false}}
+  function save(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v));}catch(_){}}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function patchCurrentUser(patch){if(!hasUser())return;try{Object.assign(CU,patch);var users=read('fu_users',[]);if(Array.isArray(users)){users=users.map(function(u){return u&&u.id===CU.id?Object.assign({},u,patch):u});save('fu_users',users)}save('fu_current_user',CU);save('fu_current',CU);if(window.DB&&CU.id){try{DB.collection('users').doc(CU.id).set(patch,{merge:true})}catch(_){}}}catch(_){}}
+  function bestCity(d){var a=(d&&d.address)||{};return a.city||a.town||a.village||a.municipality||a.suburb||a.county||a.state||''}
+  function reverseCity(lat,lng){fetch('https://nominatim.openstreetmap.org/reverse?lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng)+'&format=json&accept-language=es').then(function(r){return r.json()}).then(function(d){var city=bestCity(d);var p={lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()};if(city)p.city=city;patchCurrentUser(p);try{window.MLAT=lat;window.MLNG=lng}catch(_){}try{if(q('#page-profiles.active')&&typeof rProfiles==='function')rProfiles()}catch(_){}}).catch(function(){patchCurrentUser({lat:lat,lng:lng,geoUpdatedAt:new Date().toISOString()})})}
+  function startLiveLocation(){if(!hasUser()||!navigator.geolocation||window.__fuLiveWatchStarted)return;window.__fuLiveWatchStarted=true;var lastKey='fu_live_loc_last_'+CU.id;function handle(pos){var lat=pos.coords.latitude,lng=pos.coords.longitude;window.MLAT=lat;window.MLNG=lng;var last=Number(localStorage.getItem(lastKey)||0);if(Date.now()-last>8*60*1000){localStorage.setItem(lastKey,String(Date.now()));reverseCity(lat,lng)}else{try{if(q('#page-profiles.active')&&typeof rProfiles==='function')rProfiles()}catch(_){}}}try{navigator.geolocation.getCurrentPosition(handle,function(){},{enableHighAccuracy:false,timeout:9000,maximumAge:300000})}catch(_){}try{navigator.geolocation.watchPosition(handle,function(){},{enableHighAccuracy:false,timeout:12000,maximumAge:300000})}catch(_){}}
+  function resetManualLocation(){window._locFilter='';window._searchCity='';window._searchLat=null;window._searchLng=null;var inp=q('#locationFilter');if(inp)inp.value='';var lbl=q('#locActiveLabel');if(lbl)lbl.style.display='none'}
+  window.searchByCity=function(){resetManualLocation();try{if(typeof rProfiles==='function')rProfiles()}catch(_){}};
+  window.filterByLocation=function(){resetManualLocation();try{if(typeof rProfiles==='function')rProfiles()}catch(_){}};
+  window.openMapSearch=function(){resetManualLocation();startLiveLocation();try{if(window.toast)toast('La app usa tu ubicación automáticamente 📍','ok')}catch(_){}};
+  window.closeMapSearch=function(){var m=q('#mapSearchModal');if(m)m.style.display='none'};
+  window.applyMapSearch=function(){resetManualLocation();startLiveLocation();try{if(typeof rProfiles==='function')rProfiles()}catch(_){}};
+  window.useMyLocation=function(){resetManualLocation();startLiveLocation();try{if(typeof rProfiles==='function')rProfiles()}catch(_){}try{if(window.toast)toast('Mostrando perfiles cercanos a tu ubicación 📍','ok')}catch(_){}};
+  window.clearLocationFilter=function(){resetManualLocation();startLiveLocation();try{if(typeof rProfiles==='function')rProfiles()}catch(_){}};
+  function tidy(){resetManualLocation();var bar=q('#locationSearchBar');if(bar)bar.style.display='none';var modal=q('#mapSearchModal');if(modal)modal.style.display='none';var bell=q('#fuNotifBtn .fu-notif-bell');if(bell)bell.textContent='';startLiveLocation()}
+  var oldGoTo=window.goTo;if(typeof oldGoTo==='function'&&!oldGoTo.__fu126){var wrapped=function(){var r=oldGoTo.apply(this,arguments);setTimeout(tidy,80);return r};wrapped.__fu126=true;window.goTo=wrapped}
+  var oldUpNav=window.upNav;if(typeof oldUpNav==='function'&&!oldUpNav.__fu126){var nav=function(){var r=oldUpNav.apply(this,arguments);setTimeout(tidy,80);return r};nav.__fu126=true;window.upNav=nav}
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(tidy,200);setTimeout(tidy,900)});setTimeout(tidy,500);setTimeout(tidy,1500);
 })();
 </script>
 
