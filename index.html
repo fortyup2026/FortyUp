@@ -373,11 +373,19 @@ window.addEventListener("firebase-ready",()=>{
     window.fuFirebase.onAuthStateChanged(window.fuAuth, async user=>{
       fuCloudUser=user;
       if(user){
-        await loadCloudMe(user.uid);
-        await loadCloudProfiles();
-        store('fu_session_on',true);
-        boot();
-        if(document.querySelector('.page.active')?.id==='landing') go('home');
+        const snap=await window.fuFirebase.getDoc(window.fuFirebase.doc(window.fuDb,"users",user.uid));
+        if(snap.exists()){
+          await loadCloudMe(user.uid);
+          await loadCloudProfiles();
+          store('fu_session_on',true);
+          boot();
+          if(document.querySelector('.page.active')?.id==='landing') go('home');
+        }else{
+          store('fu_registered_user',{id:user.uid,email:user.email||'',password:'',name:'',age:'',birth:'',city:'',photo:'',intent:'Conocer gente nueva',bio:'',lat:null,lng:null,fortisSent:0,fortisRec:0,super:1,profileComplete:false});
+          store('fu_session_on',true);
+          boot();
+          openAuth('register');
+        }
       }else{
         store('fu_session_on',false);
       }
@@ -526,7 +534,18 @@ async function register(){
    await saveCloudMe(userData);
    await loadCloudProfiles();
    closeAuth();boot();go('home');toast('Cuenta creada en Firebase 💚')
- }catch(err){toast('Error: '+(err.message||err));showFirebaseStatus('Error Firebase',true)}
+ }catch(err){
+   const code=err.code||'';
+   if(code.includes('email-already-in-use')){
+     toast('Ese mail ya existe. Iniciá sesión.');
+     setAuth('login');
+     if($('lEmail')) $('lEmail').value=e;
+     if($('lPass')) $('lPass').value=p;
+     showFirebaseStatus('Mail ya registrado',true);
+     return;
+   }
+   toast('Error: '+(err.message||err));showFirebaseStatus('Error Firebase',true)
+ }
 }
 async function login(){
  let e=$('lEmail').value.trim(),p=$('lPass').value;
@@ -534,16 +553,31 @@ async function login(){
    if(!fuCloudReady) return toast('Firebase todavía no cargó. Esperá 2 segundos.');
    showFirebaseStatus('Ingresando...');
    const cred=await window.fuFirebase.signInWithEmailAndPassword(window.fuAuth,e,p);
-   await loadCloudMe(cred.user.uid);
-   await loadCloudProfiles();
-   closeAuth();boot();go('home');toast('Sesión iniciada')
+
+   const snap=await window.fuFirebase.getDoc(window.fuFirebase.doc(window.fuDb,"users",cred.user.uid));
+   if(snap.exists()){
+     await loadCloudMe(cred.user.uid);
+     await loadCloudProfiles();
+     closeAuth();boot();go('home');toast('Sesión iniciada');
+   }else{
+     const shell={id:cred.user.uid,email:e,password:p,name:'',age:'',birth:'',city:'',photo:'',intent:'Conocer gente nueva',bio:'',lat:null,lng:null,fortisSent:0,fortisRec:0,super:1,profileComplete:false};
+     store('fu_registered_user',shell);
+     store('fu_session_on',true);
+     closeAuth();
+     boot();
+     openAuth('register');
+     toast('Tu cuenta existe. Completá tu perfil.');
+   }
  }catch(err){
-   // demo fallback
    if(e==='lala@demo.com'&&p==='123456'){
      setMe({id:'me',name:'Lala',age:45,birth:'1980-01-01',city:'Mendoza, Argentina',email:e,password:p,photo:'https://randomuser.me/api/portraits/women/28.jpg',intent:'Conocer gente nueva',bio:'Me gusta conocer gente y compartir planes simples.',fortisSent:2,fortisRec:1,super:1});
      closeAuth();boot();go('home');toast('Sesión demo iniciada');return;
    }
-   toast('No estás registrado o la contraseña es incorrecta');showFirebaseStatus('Error de ingreso',true)
+   const code=err.code||'';
+   if(code.includes('wrong-password')||code.includes('invalid-credential')) toast('Contraseña incorrecta o cuenta incompleta');
+   else if(code.includes('user-not-found')) toast('No existe una cuenta con ese mail');
+   else toast('No se pudo iniciar sesión');
+   showFirebaseStatus('Error de ingreso',true)
  }
 }
 async function logout(){try{if(fuCloudReady) await window.fuFirebase.signOut(window.fuAuth)}catch(e){} store('fu_session_on',false);boot();go('landing');toast('Sesión cerrada')}
