@@ -42,6 +42,42 @@
 .dash-card{cursor:pointer}
 .dash-card:hover{transform:translateY(-2px);box-shadow:var(--sh)}
 
+
+/* === FortyUp v5 fixes: sesión persistente, campana global, chat limpio === */
+.global-bell{
+  position:fixed;
+  top:82px;
+  right:16px;
+  z-index:80;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:#E9FFF5;
+  box-shadow:var(--sh);
+  display:none;
+  place-items:center;
+  font-size:24px;
+}
+.global-bell.show{display:grid}
+.global-bell:after{
+  content:attr(data-count);
+  position:absolute;
+  right:4px;
+  top:2px;
+  min-width:19px;
+  height:19px;
+  padding:0 4px;
+  border-radius:999px;
+  background:var(--red);
+  color:#fff;
+  border:2px solid #fff;
+  font-size:11px;
+  font-weight:900;
+  display:grid;
+  place-items:center;
+}
+.global-bell[data-count="0"]:after{display:none}
+
 </style>
 </head>
 <body>
@@ -67,9 +103,9 @@
 
 <section id="messages" class="page"><div class="screen"><div class="top"><div><h1 style="font-size:38px;color:var(--g)">Mensajes</h1><p style="font-size:20px;color:var(--muted)">Tus charlas y conexiones recientes</p></div><button class="filter">☷</button></div><input class="search" placeholder="Buscar conversación..."><div class="chips"><button class="chip active">Todos</button><button class="chip">Nuevos</button><button class="chip">Planes</button><button class="chip">Archivados</button></div><div id="msgList" class="messages-list"></div></div></section>
 
-<section id="chat" class="page"><div class="screen"><div class="chat-top"><button class="back" onclick="go('messages')">‹</button><img id="chatAvatar"><div><h1 id="chatName" style="font-size:30px">Marta, 48</h1><b style="color:var(--g2)">● Online</b></div><button class="filter" style="margin-left:auto">…</button></div><div class="card" style="margin:18px 0;padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;font-weight:900"><span>📍<br>Ver lugar</span><span>👥<br>Ver quiénes van</span><span style="color:#A71930">↪<br>Salir del plan</span></div><div id="chatBox" class="chat-box"></div></div><div class="chat-input"><button>📎</button><input id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">➤</button></div></section>
+<section id="chat" class="page"><div class="screen"><div class="chat-top"><button class="back" onclick="go('messages')">‹</button><img id="chatAvatar"><div><h1 id="chatName" style="font-size:30px">Marta, 48</h1><b style="color:var(--g2)">● Online</b></div><button class="filter" style="margin-left:auto">…</button></div><div id="chatBox" class="chat-box"></div></div><div class="chat-input"><button>📎</button><input id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">➤</button></div></section>
 
-<section id="me" class="page"><div class="screen"><div class="top"><div class="logo">Forty<em>Up</em></div><div class="top-actions"><img id="meTopAvatar" class="avatar"><b id="meTopName">Sebita</b><button class="out" onclick="logout()">↪ Cerrar sesión</button></div></div><button class="btn btn-outline" onclick="go('home')" style="margin:10px 0 24px">← Volver</button><div class="me-card"><img id="mePhoto"><div><h1 id="meNameAge">Sebita, 41</h1><p>📍 <span id="meCity">Santos Lugares, Argentina</span></p><span class="status">● Perfil activo</span><span class="status">✓ Email verificado</span><br><button class="btn btn-outline" style="margin-top:18px;color:#fff;border-color:rgba(255,255,255,.4)" onclick="openAuth('register')">✎ Editar mi perfil</button></div></div><div class="dash"><div class="card dash-card"><div class="ico">🔶</div><h3>Mis Fortis</h3><p>Enviados <b id="sentFortis">0</b><br>Recibidos <b id="recFortis">0</b></p></div><div class="card dash-card"><div class="ico">📸</div><h3>Fotos y videos</h3><p>Álbumes públicos y privados</p></div><div class="card dash-card"><div class="ico">⭐</div><h3>Favoritos</h3><p>Personas que te gustan</p></div><div class="card dash-card"><div class="ico">✏️</div><h3>Editar perfil</h3><p>Actualizá tu información</p></div><div class="card dash-card"><div class="ico">🔒</div><h3>Privacidad</h3><p>Controlá quién ve tu información</p></div><div class="card dash-card"><div class="ico">🔔</div><h3>Notificaciones</h3><p>Gestioná tus notificaciones</p></div></div></div></section>
+<section id="me" class="page"><div class="screen"><div class="top"><div class="logo">Forty<em>Up</em></div><div class="top-actions"><img id="meTopAvatar" class="avatar"><b id="meTopName">Sebita</b><button class="out" onclick="logout()">↪ Cerrar sesión</button></div></div><button class="btn btn-outline" onclick="go('home')" style="margin:10px 0 24px">← Volver</button><div class="me-card"><img id="mePhoto"><div><h1 id="meNameAge">Sebita, 41</h1><p>📍 <span id="meCity">Santos Lugares, Argentina</span></p><span class="status">● Perfil activo</span><span class="status">✓ Email verificado</span><br><button class="btn btn-outline" style="margin-top:18px;color:#fff;border-color:rgba(255,255,255,.4)" onclick="openAuth('register')">✎ Editar mi perfil</button></div></div><div class="dash"><div class="card dash-card"><div class="ico">🔶</div><h3>Mis Fortis</h3><p>Enviados <b id="sentFortis">0</b><br>Recibidos <b id="recFortis">0</b></p></div><div class="card dash-card"><div class="ico">📸</div><h3>Fotos y videos</h3><p>Álbumes públicos y privados</p></div><div class="card dash-card"><div class="ico">⭐</div><h3>Favoritos</h3><p>Personas que te gustan</p></div><div class="card dash-card"><div class="ico">✏️</div><h3>Editar perfil</h3><p>Actualizá tu información</p></div><div class="card dash-card"><div class="ico">🔒</div><h3>Privacidad</h3><p>Controlá quién ve tu información</p></div></div></div></section>
 
 
 <div id="matchPopup" class="match-overlay">
@@ -129,6 +165,7 @@
 </div>
 
 
+<button id="globalBell" class="global-bell" data-count="0" onclick="showNotificationsPanel()">🔔</button>
 <nav class="bottom hidden" id="bottomNav"><button class="navb active" onclick="go('home')"><i>⌂</i>Inicio</button><button class="navb" onclick="go('profiles')"><i>👥</i>Perfiles</button><button class="navb center-btn" onclick="go('plans')"><i>▦</i>¿Qué hacemos hoy?</button><button class="navb" onclick="go('messages')"><i>☵</i>Mensajes</button><button class="navb" onclick="go('me')"><i id="navAvatarIcon">👤</i>Mi perfil</button></nav>
 <div id="toast" style="position:fixed;left:50%;bottom:105px;transform:translateX(-50%);background:#064E3B;color:#fff;padding:12px 18px;border-radius:999px;font-weight:900;box-shadow:var(--sh);display:none;z-index:200"></div>
 <script>
@@ -161,7 +198,7 @@ const defaultMessages=[
  ['p_luis','Luis',50,'Qué bueno estuvo el encuentro!','FortyUp','https://randomuser.me/api/portraits/men/60.jpg',0]
 ];
 
-function me(){return load('fu_user',null)}function setMe(u){store('fu_user',u)}
+function registered(){return load('fu_registered_user',null)}function sessionOn(){return load('fu_session_on',false)}function me(){return sessionOn()?registered():null}function setMe(u){store('fu_registered_user',u);store('fu_session_on',true)}
 function getFortis(){return load('fu_fortis',[])}function setFortis(v){store('fu_fortis',v)}
 function getNotis(){return load('fu_notis',[])}function setNotis(v){store('fu_notis',v)}
 function getChats(){return load('fu_chats',{})}function setChats(v){store('fu_chats',v)}
@@ -170,7 +207,7 @@ function getBlocked(){return load('fu_blocked',[])}function setBlocked(v){store(
 function userCity(){let u=me();return ((u&&u.city)||'Mendoza').split(',')[0].trim()}
 function addNoti(type,title,text,profile){let n=getNotis();n.unshift({type,title,text,profile,at:Date.now(),read:false});setNotis(n)}
 function boot(){
- let u=me();$('bottomNav').classList.toggle('hidden',!u);$('bottomNav').classList.toggle('locked',!u);
+ let u=me();$('bottomNav').classList.toggle('hidden',!u);$('bottomNav').classList.toggle('locked',!u); if($('globalBell')){$('globalBell').classList.toggle('show',!!u);$('globalBell').setAttribute('data-count', getNotis().filter(n=>!n.read).length);}
  if(u){
   $('topName').textContent=u.name;$('helloName').textContent=u.name;$('topAvatar').src=u.photo;$('meTopAvatar').src=u.photo;$('meTopName').textContent=u.name;$('mePhoto').src=u.photo;$('meNameAge').textContent=`${u.name}, ${u.age}`;$('meCity').textContent=u.city;$('sentFortis').textContent=u.fortisSent||0;$('recFortis').textContent=u.fortisRec||0;$('superCount').textContent=u.super||0;$('cityTop').textContent=userCity();$('navAvatarIcon').innerHTML='<img src="'+u.photo+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin:auto">';
   renderHome();renderPlans();renderProfiles();renderMessages();
@@ -196,12 +233,18 @@ function register(){
  let r=new FileReader();r.onload=()=>save(r.result);r.readAsDataURL(f)
 }
 function login(){
- let u=me(),e=$('lEmail').value.trim(),p=$('lPass').value;
- if(!u){if(e==='lala@demo.com'&&p==='123456'){setMe({id:'me',name:'Lala',age:45,birth:'1980-01-01',city:'Mendoza, Argentina',email:e,password:p,photo:'https://randomuser.me/api/portraits/women/28.jpg',intent:'Conocer gente nueva',bio:'Me gusta conocer gente y compartir planes simples.',fortisSent:2,fortisRec:1,super:1})}else return toast('Primero registrate o usá demo')}
- else if((e&&e!==u.email)||(p&&p!==u.password))return toast('Email o contraseña incorrectos');
+ let u=registered(),e=$('lEmail').value.trim(),p=$('lPass').value;
+ if(!u){
+  if(e==='lala@demo.com'&&p==='123456'){
+   setMe({id:'me',name:'Lala',age:45,birth:'1980-01-01',city:'Mendoza, Argentina',email:e,password:p,photo:'https://randomuser.me/api/portraits/women/28.jpg',intent:'Conocer gente nueva',bio:'Me gusta conocer gente y compartir planes simples.',fortisSent:2,fortisRec:1,super:1})
+  }else return toast('No estás registrado. Creá tu cuenta primero.')
+ }else{
+  if(e!==u.email || p!==u.password) return toast('Email o contraseña incorrectos');
+  store('fu_session_on',true);
+ }
  closeAuth();boot();go('home');toast('Sesión iniciada')
 }
-function logout(){localStorage.removeItem('fu_user');boot();go('landing');toast('Sesión cerrada')}
+function logout(){store('fu_session_on',false);boot();go('landing');toast('Sesión cerrada')}
 function go(id){
  if(!me()&&id!=='landing'){openAuth(id==='profiles'||id==='plans'?'register':'login');return}
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navb').forEach(b=>b.classList.remove('active'));let map={home:0,profiles:1,plans:2,messages:3,me:4};let b=document.querySelectorAll('.navb')[map[id]];if(b)b.classList.add('active');window.scrollTo(0,0);
@@ -259,6 +302,15 @@ function showEditPanel(){
 }
 function saveEdit(){let u=me();u.name=$('editName').value.trim()||u.name;u.city=$('editCity').value.trim()||u.city;u.bio=$('editBio').value.trim();u.email=$('editEmail').value.trim()||u.email;setMe(u);boot();renderProfiles();closePanel();toast('Perfil actualizado')}
 function soon(txt){toast(txt||'Disponible próximamente')}
+
+function showNotificationsPanel(){
+ let ns=getNotis();
+ ns=ns.map(n=>({...n,read:true}));setNotis(ns);boot();
+ let html='<h2>Notificaciones</h2>';
+ html += ns.length ? ns.map(n=>`<div class="list-row"><img src="${n.profile?.img||defaultPhoto}"><div><b>${n.title}</b><p>${n.text}</p></div><button class="btn btn-soft" onclick="${n.profile?`startChat('${n.profile.id}','${n.profile.n}',45,'${n.profile.img}');closePanel()`:`closePanel()`}">Ver</button></div>`).join('') : '<div class="mini-alert">No tenés notificaciones.</div>';
+ openPanel(html);
+}
+
 document.addEventListener('click',e=>{
  let card=e.target.closest('.dash-card');if(!card)return;
  let title=(card.querySelector('h3')||{}).textContent||'';
@@ -267,7 +319,7 @@ document.addEventListener('click',e=>{
  else if(title.includes('Favoritos'))showFavoritesPanel();
  else if(title.includes('Editar'))showEditPanel();
  else if(title.includes('Privacidad'))soon('Privacidad y seguridad próximamente');
- else if(title.includes('Notificaciones'))openPanel('<h2>Notificaciones</h2>'+(getNotis().length?getNotis().map(n=>`<div class="notice"><b>${n.title}</b><p>${n.text}</p></div>`).join(''):'<div class="mini-alert">No tenés notificaciones.</div>'));
+ 
 });
 renderHome();renderPlans();renderProfiles();renderMessages();boot();
 </script>
