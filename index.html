@@ -218,6 +218,24 @@
 .firebase-status.err{color:#b91c1c;background:#fff1f2;border-color:#fecdd3}
 @media(max-width:700px){.firebase-status{top:160px;left:18px}}
 
+
+/* === v9: landing limpio sin sesión === */
+body:not(.logged-in) #globalBell,
+body:not(.logged-in) #bottomNav,
+body:not(.logged-in) .firebase-status{
+  display:none!important;
+}
+body.logged-in #bottomNav{
+  display:flex;
+}
+body.logged-in #globalBell.show{
+  display:grid;
+}
+.firebase-status{
+  opacity:.92;
+  pointer-events:none;
+}
+
 </style>
 </head>
 <body>
@@ -365,7 +383,7 @@ window.dispatchEvent(new Event("firebase-ready"));
 
 
 <script>
-let fuCloudReady=false, fuCloudUser=null, fuCloudProfiles=[];
+let fuCloudReady=false, fuCloudUser=null, fuCloudProfiles=[];document.body.classList.remove('logged-in');document.body.classList.add('locked');
 window.addEventListener("firebase-ready",()=>{
   fuCloudReady=true;
   showFirebaseStatus("Firebase listo");
@@ -393,6 +411,7 @@ window.addEventListener("firebase-ready",()=>{
   }catch(e){showFirebaseStatus("Error Firebase", true)}
 });
 function showFirebaseStatus(t,err=false){
+  if(!registered() && !sessionOn()) return;
   const el=document.getElementById('firebaseStatus');
   if(!el)return;
   el.textContent=t;
@@ -502,7 +521,7 @@ function getBlocked(){return load('fu_blocked',[])}function setBlocked(v){store(
 function userCity(){let u=me();return ((u&&u.city)||'Mendoza').split(',')[0].trim()}
 function addNoti(type,title,text,profile){let n=getNotis();n.unshift({type,title,text,profile,at:Date.now(),read:false});setNotis(n)}
 function boot(){
- let u=me();$('bottomNav').classList.toggle('hidden',!u);$('bottomNav').classList.toggle('locked',!u); if($('globalBell')){$('globalBell').classList.toggle('show',!!u);$('globalBell').setAttribute('data-count', getNotis().filter(n=>!n.read).length);}
+ let u=me();document.body.classList.toggle('logged-in', !!u);document.body.classList.toggle('locked', !u);$('bottomNav').classList.toggle('hidden',!u);$('bottomNav').classList.toggle('locked',!u); if($('globalBell')){$('globalBell').classList.toggle('show',!!u);$('globalBell').setAttribute('data-count', getNotis().filter(n=>!n.read).length);}
  if(u){
   $('topName').textContent=u.name;$('helloName').textContent=u.name;$('topAvatar').src=u.photo;$('meTopAvatar').src=u.photo;$('meTopName').textContent=u.name;$('mePhoto').src=u.photo;$('meNameAge').textContent=`${u.name}, ${u.age}`;$('meCity').textContent=u.city;$('sentFortis').textContent=u.fortisSent||0;$('recFortis').textContent=u.fortisRec||0;$('superCount').textContent=u.super||0;$('cityTop').textContent=userCity();$('navAvatarIcon').innerHTML='<img src="'+u.photo+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin:auto">';
   renderHome();renderPlans();renderProfiles();renderMessages();
