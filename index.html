@@ -78,6 +78,125 @@
 }
 .global-bell[data-count="0"]:after{display:none}
 
+
+/* === FortyUp v6 ajustes visuales y seguridad === */
+.global-bell{
+  top:92px!important;
+  right:18px!important;
+  width:46px!important;
+  height:46px!important;
+  border-radius:50%!important;
+  background:#E9FFF5!important;
+  border:1.5px solid #D1E8DF!important;
+  box-shadow:0 10px 26px rgba(6,78,59,.12)!important;
+  font-size:0!important;
+}
+.global-bell::before{
+  content:"🔔";
+  font-size:22px;
+  line-height:1;
+}
+.global-bell::after{
+  right:-3px!important;
+  top:-4px!important;
+  background:#E53935!important;
+}
+.people-focus{
+  margin:22px 0 18px;
+}
+.people-focus h2{
+  font-size:32px;
+  line-height:1.05;
+  color:var(--g);
+  margin-bottom:10px;
+}
+.people-focus h2 em{
+  color:#10B981;
+  font-style:italic;
+}
+.people-focus p{
+  color:#3f5550;
+  font-size:18px;
+  line-height:1.45;
+  max-width:520px;
+}
+.people-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+.people-mini{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:12px;
+  box-shadow:var(--sh);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.people-mini img{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  object-fit:cover;
+}
+.people-mini b{
+  display:block;
+  color:var(--g);
+  font-size:15px;
+}
+.people-mini small{
+  color:var(--muted);
+  font-weight:800;
+}
+.plans-secondary-title{
+  color:#0A7C5D!important;
+  font-size:24px!important;
+  margin-top:26px!important;
+}
+.plans-secondary-title span{
+  color:#10B981;
+  font-style:italic;
+}
+.center-hint{
+  background:linear-gradient(135deg,#ECFDF5,#FFFDF7);
+  border:1.5px solid #D1E8DF;
+  border-radius:22px;
+  padding:14px 16px;
+  margin:14px 0 8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  box-shadow:var(--sh);
+}
+.center-hint b{color:var(--g);font-size:17px}
+.center-hint button{white-space:nowrap}
+.confirm-box{
+  text-align:center;
+}
+.confirm-box h2{
+  color:var(--g);
+  font-size:32px;
+  margin-bottom:10px;
+}
+.confirm-box p{
+  color:#40534d;
+  font-weight:800;
+  line-height:1.45;
+  margin-bottom:16px;
+}
+@media(max-width:700px){
+  .global-bell{top:176px!important;right:20px!important;width:42px!important;height:42px!important}
+  .global-bell::before{font-size:20px}
+  .people-row{grid-template-columns:1fr}
+  .people-focus h2{font-size:29px}
+  .people-focus p{font-size:16px}
+  .center-hint{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 </head>
 <body>
@@ -250,20 +369,29 @@ function go(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navb').forEach(b=>b.classList.remove('active'));let map={home:0,profiles:1,plans:2,messages:3,me:4};let b=document.querySelectorAll('.navb')[map[id]];if(b)b.classList.add('active');window.scrollTo(0,0);
  if(id==='home')renderHome();if(id==='plans')renderPlans();if(id==='profiles')renderProfiles();if(id==='messages')renderMessages();if(id==='me')boot()
 }
-function renderHome(){let city=userCity();let h=plans.filter(p=>p[7]===city).slice(0,4).map(p=>`<div class="card plan-small"><div class="plan-img2" style="background-image:url('${p[3]}')"></div><p>${p[4]} ${p[0]}</p><small>${p[1].split('·')[1]||p[1]}</small><small>📍 ${p[5]} &nbsp; 👥 ${p[6].split(' ')[0]}</small></div>`).join('');$('homePlans').innerHTML=h||'<div class="card plan-small"><p>No hay planes cargados en tu ciudad todavía.</p></div>'}
-function renderPlans(q=''){let city=userCity();$('cityTop').textContent=city;q=(q||'').toLowerCase();$('plansList').innerHTML=plans.filter(p=>p[7]===city&&p.join(' ').toLowerCase().includes(q)).map(p=>`<div class="card plan-card"><img src="${p[3]}"><div><h3>${p[4]} ${p[0]}</h3><b style="color:var(--muted)">${p[1]}</b><p>${p[2]}</p><div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div><button class="btn btn-green" onclick="toast('Te sumaste al plan')">${p[0].includes('Busco')?'Me sumo':'Asistiré'}</button></div></div>`).join('')||'<div class="card" style="padding:20px">No hay planes para esta zona.</div>'}
-function profilesForCity(){let u=me(),city=userCity();let self=u?[{id:'me',n:u.name,a:u.age,c:u.city,city,img:u.photo,tags:['👤 Mi perfil','📍 Cerca','💚 Registrado'],d:u.bio||'Este es tu perfil de prueba. Tu foto impacta en toda la app.'}]:[];return[...self,...baseProfiles.filter(p=>p.city===city)]}
-function renderProfiles(){let list=profilesForCity();$('profilesList').innerHTML=list.map((p,i)=>`<div class="card profile-card"><div class="profile-photo" style="background-image:url('${p.img}')"><span class="distance">📍 ${i?'2.'+i+' km':'Menos de 1 km'}</span></div><div class="profile-info"><h2>${p.n}, <span>${p.a}</span></h2><b style="color:var(--muted)">📍 ${p.c}</b><div class="tagrow"><span class="tag">👥 Quiere conocer gente para hacer planes</span></div><p>${p.d}</p><div class="tagrow">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="profile-actions"><button class="btn btn-soft" onclick="startChat('${p.id}','${p.n}',${p.a},'${p.img}')">💬 Enviar mensaje</button><button class="round" onclick="sendForti(event,'${p.id}','${p.n}','${p.img}')">🔶</button><button class="round" onclick="sendSuper(event,'${p.id}','${p.n}','${p.img}')">💎</button></div></div></div>`).join('')}
-function renderMessages(){
- let msgs=load('fu_messages',defaultMessages);
- $('msgList').innerHTML=msgs.map(m=>`<div class="card msg-card"><img src="${m[5]}" onclick="startChat('${m[0]}','${m[1]}',${m[2]},'${m[5]}')"><div onclick="startChat('${m[0]}','${m[1]}',${m[2]},'${m[5]}')"><h3>${m[1]}, ${m[2]}</h3><p>${m[3]}</p><span class="tag">${m[4]}</span></div><div class="message-actions"><button onclick="toggleFav('${m[0]}','${m[1]}')">⭐</button><button onclick="blockProfile('${m[0]}','${m[1]}')">🚫</button><button onclick="reportProfile('${m[0]}','${m[1]}')">⚠️</button></div></div>`).join('')
+function renderHome(){
+  let city=userCity();
+  let people=profilesForCity().filter(p=>p.id!=='me').slice(0,3);
+  let peopleHtml=people.length
+    ? `<div class="people-focus"><h2>Conectá con personas <em>reales</em></h2><p>FortyUp se enfoca primero en que conozcas gente compatible cerca tuyo. Los planes son una ayuda para animarse a dar el siguiente paso.</p><div class="people-row">${people.map(p=>`<div class="people-mini" onclick="go('profiles')"><img src="${p.img}"><div><b>${p.n}, ${p.a}</b><small>${p.city}</small></div></div>`).join('')}</div></div>`
+    : `<div class="people-focus"><h2>Conectá con personas <em>reales</em></h2><p>Cuando haya usuarios en tu ciudad, aparecen acá.</p></div>`;
+  let h=plans.filter(p=>p[7]===city).slice(0,4).map(p=>`<div class="card plan-small"><div class="plan-img2" style="background-image:url('${p[3]}')"></div><p>${p[4]} ${p[0]}</p><small>${p[1].split('·')[1]||p[1]}</small><small>📍 ${p[5]} &nbsp; 👥 ${p[6].split(' ')[0]}</small></div>`).join('');
+  $('homePlans').innerHTML=peopleHtml+`<div class="center-hint"><div><b>¿Qué hacemos hoy?</b><p style="margin:4px 0 0;color:var(--muted);font-weight:800">Planes por ciudad/zona para convertir una conexión en una salida real.</p></div><button class="btn btn-green" onclick="go('plans')">Ver planes</button></div><h2 class="plans-secondary-title">Planes para <span>compartir</span></h2>`+(h||'<div class="card plan-small"><p>No hay planes cargados en tu ciudad todavía.</p></div>');
 }
 function startChat(id,n,a,img){
  go('chat');chatWith={id,name:n,age:a,img};$('chatName').textContent=`${n}, ${a}`;$('chatAvatar').src=img;let chats=getChats(),key=id;if(!chats[key]){chats[key]=[{side:'left',txt:'Hola! 😊'},{side:'right',txt:`Hola ${n}! Me gustó tu perfil.`},{side:'left',txt:'Qué bueno! ¿Te gustaría compartir un plan?'}];setChats(chats)}renderChatBubbles()
 }
-function renderChatBubbles(){let chats=getChats(),arr=chats[chatWith.id]||[];$('chatBox').innerHTML=`<div class="chat-self-note">Acciones rápidas: <button class="tag" onclick="toggleFav('${chatWith.id}','${chatWith.name}')">⭐ Favorito</button> <button class="tag" onclick="blockProfile('${chatWith.id}','${chatWith.name}')">🚫 Bloquear</button> <button class="tag" onclick="reportProfile('${chatWith.id}','${chatWith.name}')">⚠️ Reportar</button></div>`+arr.map(m=>`<div class="bubble ${m.side}">${m.txt}</div>`).join('')}
+function renderChatBubbles(){let chats=getChats(),arr=chats[chatWith.id]||[];$('chatBox').innerHTML=`<div class="chat-self-note">Acciones rápidas: <button class="tag" onclick="toggleFav('${chatWith.id}','${chatWith.name}')">⭐ Favorito</button> <button class="tag" onclick="confirmBlock('${chatWith.id}','${chatWith.name}')">🚫 Bloquear</button> <button class="tag" onclick="confirmReport('${chatWith.id}','${chatWith.name}')">⚠️ Reportar</button></div>`+arr.map(m=>`<div class="bubble ${m.side}">${m.txt}</div>`).join('')}
 function sendMsg(){let v=$('chatInput').value.trim();if(!v)return;let chats=getChats(),key=chatWith.id;chats[key]=chats[key]||[];chats[key].push({side:'right',txt:v});setChats(chats);$('chatInput').value='';renderChatBubbles();$('chatBox').scrollTop=$('chatBox').scrollHeight}
 function toggleFav(id,n){let favs=getFavs();if(favs.includes(id)){favs=favs.filter(x=>x!==id);toast('Quitado de favoritos')}else{favs.push(id);toast(n+' agregado a favoritos ⭐')}setFavs(favs)}
+
+function confirmBlock(id,n){
+  openPanel(`<div class="confirm-box"><h2>¿Bloquear perfil?</h2><p>Si bloqueás a ${n}, no te aparecerá más en perfiles ni mensajes de prueba.</p><div class="login-choice"><button class="btn btn-danger" onclick="blockProfile('${id}','${n}');closePanel()">Sí, bloquear</button><button class="btn btn-outline" onclick="closePanel()">Cancelar</button></div></div>`);
+}
+function confirmReport(id,n){
+  openPanel(`<div class="confirm-box"><h2>¿Reportar perfil?</h2><p>Usá reportar solo si el perfil o mensaje incumple las reglas de FortyUp.</p><div class="login-choice"><button class="btn btn-danger" onclick="reportProfile('${id}','${n}');closePanel()">Sí, reportar</button><button class="btn btn-outline" onclick="closePanel()">Cancelar</button></div></div>`);
+}
+
 function blockProfile(id,n){let b=getBlocked();if(!b.includes(id))b.push(id);setBlocked(b);toast(n+' bloqueado')}
 function reportProfile(id,n){let r=load('fu_reports',[]);r.push({id,n,at:Date.now()});store('fu_reports',r);toast('Reporte enviado')}
 function showMatch(title,text,icon){$('matchTitle').textContent=title;$('matchText').textContent=text;$('matchIcon').textContent=icon||'💎';$('matchPopup').classList.add('show')}
