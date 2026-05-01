@@ -15611,5 +15611,131 @@ function ensureHomeDiamond(){var home=q('#page-home');if(!home)return;var d=q('.
 })();
 </script>
 
+
+
+<!-- FortyUp v130 Sebas - correcciones reales: FortyUp+ sin corte, presencia limpia, sin autoreporte -->
+<style id="fortyup-v130-sebas-fixes">
+  /* FortyUp+ — el cristal no se corta, no tapa texto y mantiene el mismo estilo */
+  #page-fortyplus .fu129-plus-inner{padding-top:.85rem!important;padding-bottom:7rem!important;}
+  #page-fortyplus .fup-final-hero{
+    position:relative!important;overflow:visible!important;min-height:0!important;height:auto!important;
+    padding:1.15rem 1rem 1.25rem!important;border-radius:30px!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+    gap:.18rem!important;
+  }
+  #page-fortyplus .fup-crystal-counter{position:absolute!important;top:.9rem!important;right:.9rem!important;z-index:5!important;}
+  #page-fortyplus .fup-final-diamond,#page-fortyplus .fup-diamond,#page-fortyplus .fu129-plus-crystal{
+    width:168px!important;height:148px!important;min-width:168px!important;min-height:148px!important;
+    max-width:168px!important;max-height:148px!important;margin:.12rem auto .25rem!important;
+    background-size:contain!important;background-position:center!important;flex:0 0 auto!important;
+  }
+  #page-fortyplus .fup-final-title{font-size:2.08rem!important;line-height:1.02!important;margin:.08rem 0 .12rem!important;position:relative!important;z-index:2!important;}
+  #page-fortyplus .fup-final-copy{font-size:.88rem!important;line-height:1.25!important;margin:.05rem auto!important;max-width:92%!important;position:relative!important;z-index:2!important;}
+  #page-fortyplus .fup-final-soon{position:relative!important;z-index:3!important;margin:.55rem auto 0!important;top:auto!important;left:auto!important;transform:none!important;}
+  #page-fortyplus .fup-final-list{margin-top:.9rem!important;gap:1rem!important;}
+
+  /* Tarjetas — presencia limpia, sin puntos superpuestos ni badges viejos */
+  .pcard{position:relative!important;}
+  .pcard .fu-v87-status-dot,
+  .pcard .fu-stable-card-status,
+  .pcard .fu92-card-dot-wrap,
+  .pcard .fu-v90-card-status,
+  .pcard .fu91-card-presence,
+  .pcard .fu-v81-status,
+  .pcard .fu-v82-dot-status,
+  .pcard .fu-v84-dot-status,
+  .pcard .fu-presence-pill,
+  .pcard .fu-presence-slot,
+  .pcard .fu-clean-dot-status,
+  .pcard [class*='card-status'],
+  .pcard [class*='card-presence']{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+  .fu129-presence{
+    top:.72rem!important;left:.72rem!important;z-index:80!important;display:inline-flex!important;
+    align-items:center!important;justify-content:center!important;gap:.42rem!important;
+    min-height:34px!important;padding:.34rem .72rem!important;border-radius:999px!important;
+    background:rgba(255,255,255,.96)!important;border:1.5px solid rgba(209,232,223,.88)!important;
+    color:#064E3B!important;font-size:.76rem!important;font-weight:900!important;line-height:1!important;
+    box-shadow:0 8px 20px rgba(6,78,59,.13)!important;white-space:nowrap!important;
+  }
+  .fu129-presence:before{
+    content:''!important;position:static!important;display:inline-block!important;flex:0 0 10px!important;
+    width:10px!important;height:10px!important;min-width:10px!important;min-height:10px!important;
+    margin:0!important;border-radius:50%!important;background:#10B981!important;
+    box-shadow:0 0 0 4px rgba(16,185,129,.16)!important;transform:none!important;
+  }
+  .fu129-presence.off:before{background:#CBD5E1!important;box-shadow:0 0 0 4px rgba(148,163,184,.18)!important;}
+  .fu129-score{top:.72rem!important;right:.72rem!important;min-height:34px!important;display:inline-flex!important;align-items:center!important;padding:.34rem .72rem!important;font-size:.76rem!important;line-height:1!important;}
+
+  /* No existe autoreportarse: si por algo tu tarjeta entra al listado, se ocultan acciones de reporte */
+  .pcard.fu130-self-card .fu129-report,
+  .pcard.fu130-self-card [data-action='report'],
+  .pcard.fu130-self-card button[title*='Report'],
+  .pcard.fu130-self-card button[aria-label*='Report']{display:none!important;}
+
+  @media(max-width:750px){
+    #page-fortyplus .fu129-plus-inner{padding:.72rem .9rem 7rem!important;}
+    #page-fortyplus .fup-final-hero{padding:1.05rem .8rem 1.12rem!important;border-radius:28px!important;}
+    #page-fortyplus .fup-final-diamond,#page-fortyplus .fup-diamond,#page-fortyplus .fu129-plus-crystal{
+      width:152px!important;height:134px!important;min-width:152px!important;min-height:134px!important;max-width:152px!important;max-height:134px!important;margin:.05rem auto .22rem!important;
+    }
+    #page-fortyplus .fup-final-title{font-size:1.92rem!important;}
+    #page-fortyplus .fup-final-copy{font-size:.84rem!important;line-height:1.22!important;}
+    #page-fortyplus .fup-final-soon{font-size:.82rem!important;padding:.48rem 1rem!important;}
+    .fu129-presence,.fu129-score{font-size:.72rem!important;min-height:32px!important;padding:.32rem .62rem!important;}
+  }
+</style>
+<script id="fortyup-v130-sebas-fixes-js">
+(function(){
+  if(window.__fortyUpV130SebasFixes)return; window.__fortyUpV130SebasFixes=true;
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function me(){try{return window.CU&&CU.id?String(CU.id):''}catch(e){return''}}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+  function users(){try{if(typeof window.users==='function')return window.users()||[]}catch(e){} return read('fu_users',[])||[]}
+  function idFromCard(card){
+    var id=card.getAttribute('data-id')||card.dataset.id||card.getAttribute('data-user-id')||'';
+    if(id)return String(id);
+    var btn=card.querySelector('[onclick*="openMod"],[onclick*="sendForti"],[onclick*="toggleFav"],[onclick*="chatWith"]');
+    if(btn){var m=String(btn.getAttribute('onclick')||'').match(/["']([^"']+)["']/); if(m)return String(m[1]);}
+    var name=(card.querySelector('.pcard-name')||{}).textContent||'';
+    var u=users().find(function(x){return x&&x.name&&name&&String(name).toLowerCase().indexOf(String(x.name).toLowerCase())>-1});
+    return u&&u.id?String(u.id):'';
+  }
+  function fixCards(){
+    var my=me();
+    qa('.pcard').forEach(function(card){
+      var id=idFromCard(card);
+      if(my&&id&&String(id)===my){
+        card.classList.add('fu130-self-card');
+        /* En una app de citas no te mostrás a vos mismo en explorar perfiles. */
+        if(card.closest('#pgrid,.pgrid,#page-profiles')){card.remove();return;}
+      }
+      qa('.fu129-report',card).forEach(function(b){
+        if(my&&id&&String(id)===my){b.remove();}
+        else if(!b.dataset.v130){b.dataset.v130='ok';b.textContent='Reportar';}
+      });
+      var p=q('.fu129-presence',card);
+      if(p){
+        p.textContent=(p.classList.contains('off')?'Desconectado':'Conectado');
+        p.setAttribute('aria-label',p.textContent);
+      }
+    });
+  }
+  function fixPlus(){
+    var page=q('#page-fortyplus'); if(!page)return;
+    var hero=q('.fup-final-hero',page); if(hero){hero.style.overflow='visible';}
+    var d=q('.fup-final-diamond,.fup-diamond,.fu129-plus-crystal',page);
+    if(d){d.classList.add('fu129-plus-crystal');}
+  }
+  function boot(){try{fixCards();fixPlus();}catch(e){console.warn('FortyUp v130',e)}}
+  var oldRender=window.rProfiles;
+  if(typeof oldRender==='function'&&!oldRender.__fu130){window.rProfiles=function(){var r=oldRender.apply(this,arguments);setTimeout(boot,40);setTimeout(boot,300);return r};window.rProfiles.__fu130=true;}
+  var oldGo=window.goTo;
+  if(typeof oldGo==='function'&&!oldGo.__fu130){window.goTo=function(){var r=oldGo.apply(this,arguments);setTimeout(boot,40);setTimeout(boot,300);return r};window.goTo.__fu130=true;}
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(boot,80);setTimeout(boot,600);});
+  setTimeout(boot,80);setTimeout(boot,700);setInterval(boot,900);
+})();
+</script>
+
 </body>
 </html>
