@@ -15510,5 +15510,153 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+
+<!-- FortyUp v141 - sin presencia + notificaciones limpias -->
+<style id="fu-v141-no-presence-clean-notifs-css">
+/* Sebas: se eliminan todos los indicadores conectado/desconectado para que no se superpongan */
+.fu-premium-presence-dot,
+.fu-chat-presence-one,
+.fu-v87-status-dot,
+.fu-v87-chat-status,
+.fu-stable-card-status,
+.fu-stable-modal-status,
+.fu-stable-chat-status,
+.fu-v90-presence-badge,
+.fu-v90-modal-status,
+.fu-v90-chat-status,
+.fu92-card-dot-wrap,
+.fu92-modal-dot,
+.fu92-modal-presence,
+.fu92-chat-presence,
+.fu91-modal-presence,
+.fu91-chat-presence,
+.fu91-card-presence,
+.fu-v81-status,
+.fu-v82-dot-status,
+.fu-v84-dot-status,
+.fu-presence-pill,
+.fu-presence-slot,
+.fu-clean-dot-status,
+.fu-clean-chat-status,
+.myp-status,
+.hcard-online{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  width:0!important;
+  height:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  position:absolute!important;
+}
+.fu-notif-actions{grid-template-columns:1fr!important;display:grid!important;}
+.fu-notif-actions button:not(.fu-clear){display:none!important;}
+.fu-notif-actions .fu-clear{width:100%!important;}
+</style>
+<script id="fu-v141-no-presence-clean-notifs-js">
+(function(){
+  if(window.__FU_V141_NO_PRESENCE__)return; window.__FU_V141_NO_PRESENCE__=true;
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function esc(t){return String(t||'').replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function me(){return window.CU&&CU.id?CU:null}
+  function users(){return read((window.K&&K.U)||'fu_u',[])}
+  function userById(id){return users().filter(function(u){return u&&String(u.id)===String(id)})[0]||(me()&&String(CU.id)===String(id)?CU:null)}
+  function fmt(iso){try{var d=iso?new Date(iso):new Date(),m=Date.now()-d.getTime();if(m<60000)return'recién';if(m<3600000)return Math.floor(m/60000)+' min';if(m<86400000)return Math.floor(m/3600000)+' h';return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'})}catch(_){return''}}
+  function icon(t){return t==='super'?'💎':t==='match'?'✨':t==='message'?'💬':'◆'}
+  function removePresence(root){
+    root=root||document;
+    var sel=[
+      '.fu-premium-presence-dot','.fu-chat-presence-one','.fu-v87-status-dot','.fu-v87-chat-status',
+      '.fu-stable-card-status','.fu-stable-modal-status','.fu-stable-chat-status','.fu-v90-presence-badge',
+      '.fu-v90-modal-status','.fu-v90-chat-status','.fu92-card-dot-wrap','.fu92-modal-dot',
+      '.fu92-modal-presence','.fu92-chat-presence','.fu91-modal-presence','.fu91-chat-presence',
+      '.fu91-card-presence','.fu-v81-status','.fu-v82-dot-status','.fu-v84-dot-status',
+      '.fu-presence-pill','.fu-presence-slot','.fu-clean-dot-status','.fu-clean-chat-status','.myp-status'
+    ].join(',');
+    qa(sel,root).forEach(function(el){try{el.remove()}catch(_){el.style.display='none'}});
+    // Por si alguna versión vieja generó una píldora sin clase estable.
+    qa('.m-body span,.m-body div,.chat-hdr span,.chat-hdr div,.pcard span,.pcard div',root).forEach(function(el){
+      var t=(el.textContent||'').trim();
+      var cls=String(el.className||'').toLowerCase();
+      if((t==='Conectado'||t==='Desconectado'||t==='Activo ahora') && /(status|presence|online|dot|estado)/.test(cls)){
+        try{el.remove()}catch(_){el.style.display='none'}
+      }
+    });
+  }
+  window.fuRemovePresenceEverywhere=removePresence;
+
+  function markChatRead(uid){
+    try{var cu=me(); if(cu&&uid) localStorage.setItem('fu_read_'+cu.id+'_'+uid,new Date().toISOString())}catch(_){}
+    try{if(typeof fuUpdateNotifBadge==='function')setTimeout(fuUpdateNotifBadge,60)}catch(_){}
+  }
+  window.fuMarkChatRead=markChatRead;
+
+  // Mantener una sola acción real: limpiar avisos. Los mensajes no se borran hasta entrar al chat.
+  if(typeof window.fuRenderNotifPanel==='function'){
+    window.fuRenderNotifPanel=function(){
+      var p=q('#fuNotifPanel'); if(!p)return;
+      var arr=(typeof fuGetNotifications==='function'?fuGetNotifications():[]);
+      var items=arr.length?arr.map(function(n){
+        return '<div class="fu-notif-item '+esc(n.type||'')+' '+(!n.read?'unread':'')+'" data-nid="'+esc(n.id)+'" data-type="'+esc(n.type)+'" data-from="'+esc(n.fromId||'')+'"><div class="fu-notif-ico">'+icon(n.type)+'</div><div><div class="fu-notif-t">'+esc(n.title)+'</div><div class="fu-notif-d">'+esc(n.desc)+'</div><div class="fu-notif-time">'+fmt(n.at)+'</div></div></div>'
+      }).join(''):'<div class="fu-notif-empty"><div style="font-size:2rem;margin-bottom:.35rem">🔔</div>No tenés notificaciones por ahora.<br>Los Fortis, súper diamantes y mensajes van a aparecer acá.</div>';
+      p.innerHTML='<div class="fu-notif-box"><div class="fu-notif-head"><div><div class="fu-notif-title">Notificaciones</div><div class="fu-notif-sub">Fortis, súper diamantes y mensajes</div></div><button class="fu-notif-close" type="button" onclick="fuToggleNotifPanel(false)">×</button></div><div class="fu-notif-list">'+items+'</div><div class="fu-notif-actions"><button type="button" class="fu-clear" onclick="fuClearStoredNotifs()">Limpiar notificaciones</button></div></div>';
+      qa('.fu-notif-item',p).forEach(function(it){
+        it.onclick=function(){
+          var id=it.getAttribute('data-from')||'', type=it.getAttribute('data-type')||'', nid=it.getAttribute('data-nid')||'';
+          if(type==='message'&&id){ markChatRead(id); try{fuToggleNotifPanel(false)}catch(_){}; var u=userById(id); try{startChat(id,u?(u.name||u.email):'Chat')}catch(_){} }
+          else{ try{ if(typeof markEventRead==='function')markEventRead(nid) }catch(_){}; try{fuToggleNotifPanel(false)}catch(_){}; if(id){try{openMod(id)}catch(_){try{goTo('profiles')}catch(__){}}} }
+          try{ if(typeof fuUpdateNotifBadge==='function')fuUpdateNotifBadge() }catch(_){}
+          setTimeout(removePresence,80);
+        };
+      });
+      p.onclick=function(e){if(e.target===p)fuToggleNotifPanel(false)};
+    };
+  }
+
+  window.fuClearStoredNotifs=function(){
+    var cu=me(); if(!cu)return;
+    // Borra avisos guardados y marca Fortis/súper/matches como leídos. Los mensajes quedan hasta abrir el chat.
+    write('fu_notifs_'+cu.id,[]);
+    try{ if(typeof fuGetNotifications==='function'){
+      var a=read('fu_notif_read_events_'+cu.id,[]);
+      fuGetNotifications().forEach(function(n){if(n&&n.type!=='message'&&a.indexOf(n.id)<0)a.push(n.id)});
+      write('fu_notif_read_events_'+cu.id,a.slice(-500));
+    }}catch(_){}
+    try{ if(typeof fuUpdateNotifBadge==='function')fuUpdateNotifBadge() }catch(_){}
+    try{ if(typeof fuRenderNotifPanel==='function')fuRenderNotifPanel() }catch(_){}
+    try{ if(typeof toast==='function')toast('Notificaciones limpiadas','ok') }catch(_){}
+  };
+
+  // Al abrir un chat, los mensajes de esa persona pasan a leídos.
+  if(typeof window.startChat==='function'&&!window.startChat.__fuV141){
+    var oldStartChat=window.startChat;
+    window.startChat=function(id){ markChatRead(id); var r=oldStartChat.apply(this,arguments); setTimeout(function(){markChatRead(id);removePresence()},80); return r };
+    window.startChat.__fuV141=true;
+  }
+
+  // Blindaje contra scripts anteriores que vuelvan a meter conectado/desconectado.
+  ['goTo','go','upNav','rProfiles','rChatList','rChatMsgs','sendMsg','sendForti','sendSuperDiamond','openMod'].forEach(function(name){
+    var old=window[name];
+    if(typeof old==='function'&&!old.__fuV141NoPresence){
+      var nw=function(){var r=old.apply(this,arguments);setTimeout(removePresence,80);setTimeout(removePresence,350);try{if(typeof fuUpdateNotifBadge==='function')fuUpdateNotifBadge()}catch(_){};return r};
+      nw.__fuV141NoPresence=true; window[name]=nw;
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(removePresence,300);setTimeout(removePresence,1200)});
+  document.addEventListener('click',function(){setTimeout(removePresence,60);setTimeout(removePresence,260)},true);
+  setInterval(function(){try{removePresence(); if(typeof fuUpdateNotifBadge==='function')fuUpdateNotifBadge()}catch(_){}},1800);
+})();
+</script>
+
 </body>
 </html>
