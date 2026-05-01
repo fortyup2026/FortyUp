@@ -15240,5 +15240,121 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+<!-- FortyUp v125 - buscador de localidad: Buscar aplica y cierra + X cierra seguro -->
+<script id="fortyup-v125-location-search-close-fix">
+(function(){
+  if(window.__fu125LocationSearchCloseFix)return;
+  window.__fu125LocationSearchCloseFix=true;
+
+  function id(x){return document.getElementById(x)}
+  function clean(v){
+    return String(v||'')
+      .replace(/^📍\s*/,'')
+      .replace(/^Zona seleccionada:\s*/i,'')
+      .replace(/^Ver perfiles\s+(cerca de|en|por)\s*/i,'')
+      .replace(/→/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function toastMsg(msg,type){
+    try{ if(typeof window.toast==='function') window.toast(msg,type||'ok'); }
+    catch(_){ }
+  }
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c});
+  }
+  function selectedPlace(){
+    var inp=id('mapPlaceSearch'), btn=id('mapSearchBtn'), info=id('mapSearchInfo');
+    var p='';
+    if(inp && inp.value) p=inp.value;
+    if(!p && btn && btn.dataset && btn.dataset.place) p=btn.dataset.place;
+    if(!p && info) p=info.textContent||'';
+    if(!p && btn) p=btn.textContent||'';
+    return clean(p);
+  }
+  function closeModal(){
+    var m=id('mapSearchModal');
+    if(m){
+      m.style.display='none';
+      m.classList.remove('open','show','active');
+      m.setAttribute('aria-hidden','true');
+    }
+    document.body.style.overflow='';
+    document.documentElement.style.overflow='';
+    document.body.classList.remove('modal-open');
+    return false;
+  }
+  function setInfo(place){
+    var info=id('mapSearchInfo'), btn=id('mapSearchBtn');
+    if(info) info.innerHTML='📍 Zona seleccionada: <strong>'+esc(place)+'</strong>';
+    if(btn){
+      btn.dataset.place=place;
+      btn.setAttribute('data-place',place);
+      btn.textContent='Ver perfiles cerca de '+place+' →';
+      btn.style.display='flex';
+      btn.disabled=false;
+    }
+  }
+  function applyPlace(){
+    var place=selectedPlace();
+    if(!place){
+      toastMsg('Escribí una localidad para buscar','w');
+      var inp=id('mapPlaceSearch'); if(inp) inp.focus();
+      return false;
+    }
+
+    window._fuLocationMode='city';
+    window._searchCity=place;
+    window._locFilter=place;
+    window._searchLat=null;
+    window._searchLng=null;
+    window.MLAT=null;
+    window.MLNG=null;
+
+    setInfo(place);
+    try{ if(typeof window.showLocLabel==='function') window.showLocLabel(place); }catch(_){ }
+    closeModal();
+    try{ if(typeof window.goTo==='function') window.goTo('profiles'); }catch(_){ }
+    try{ if(typeof window.setBn==='function') window.setBn('profiles'); }catch(_){ }
+    setTimeout(function(){try{ if(typeof window.rProfiles==='function') window.rProfiles(); }catch(_){ }},20);
+    setTimeout(function(){try{ if(typeof window.rProfiles==='function') window.rProfiles(); }catch(_){ }},180);
+    toastMsg('Mostrando perfiles de '+place+' 📍','ok');
+    return false;
+  }
+
+  window.closeMapSearch=closeModal;
+  window.applyMapSearch=applyPlace;
+  window.searchPlaceOnMap=applyPlace;
+
+  document.addEventListener('click',function(e){
+    var t=e.target && e.target.closest ? e.target.closest('#mapSearchDoBtn,#mapSearchBtn,.fu-map-close,.m-cl,[data-close-map]') : null;
+    if(!t)return;
+    if(t.matches('.fu-map-close,.m-cl,[data-close-map]')){
+      e.preventDefault(); e.stopPropagation(); closeModal(); return false;
+    }
+    if(t.id==='mapSearchDoBtn' || t.id==='mapSearchBtn'){
+      e.preventDefault(); e.stopPropagation(); applyPlace(); return false;
+    }
+  },true);
+
+  document.addEventListener('touchend',function(e){
+    var t=e.target && e.target.closest ? e.target.closest('#mapSearchDoBtn,#mapSearchBtn,.fu-map-close,.m-cl,[data-close-map]') : null;
+    if(!t)return;
+    e.preventDefault(); e.stopPropagation();
+    if(t.matches('.fu-map-close,.m-cl,[data-close-map]')) closeModal();
+    else applyPlace();
+    return false;
+  },{capture:true,passive:false});
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && id('mapSearchModal')) closeModal();
+    if(e.key==='Enter' && document.activeElement && document.activeElement.id==='mapPlaceSearch'){
+      e.preventDefault(); applyPlace();
+    }
+  },true);
+})();
+</script>
+
 </body>
 </html>
