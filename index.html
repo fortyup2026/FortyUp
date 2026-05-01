@@ -23,6 +23,10 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 /* ── SCREENS ── */
 .screen{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column}
 .screen.active{display:flex}
+#chat.screen.active{display:grid!important;grid-template-rows:56px 1fr auto;overflow:hidden!important;height:100dvh;height:100vh}
+#chat .chat-topbar{grid-row:1}
+#chat .chat-messages{grid-row:2;overflow-y:auto}
+#chat .chat-input-area{grid-row:3;position:relative;z-index:5}
 .screen-inner{flex:1;padding:1rem 1rem 5rem}
 
 /* ── TOP BAR ── */
@@ -503,12 +507,12 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       <div class="me-name" id="meNameAge">Nombre, 00</div>
       <div class="me-city" id="meCity">Ciudad</div>
       <div class="me-stats">
-        <div class="me-stat"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Fortis enviados</div></div>
-        <div class="me-stat"><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Fortis recibidos</div></div>
-        <div class="me-stat"><div class="me-stat-n" id="meSuperCount">1</div><div class="me-stat-l">Súper Diamantes</div></div>
+        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Fortis enviados</div></div>
+        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Fortis recibidos</div></div>
+        <div class="me-stat" onclick="showSuperPanel()" style="cursor:pointer"><div class="me-stat-n" id="meSuperCount">1</div><div class="me-stat-l">Súper Diamantes</div></div>
       </div>
     </div>
-    <div class="me-cards">
+    <div class="me-cards" style="grid-template-columns:1fr 1fr 1fr">
       <div class="me-card" onclick="showEventosPanel()">
         <div class="me-card-ico">📅</div>
         <div class="me-card-title">Mis eventos</div>
@@ -518,11 +522,6 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
         <div class="me-card-ico">⭐</div>
         <div class="me-card-title">Favoritos</div>
         <div class="me-card-sub">Perfiles guardados</div>
-      </div>
-      <div class="me-card" onclick="showFortisPanel()">
-        <div class="me-card-ico">◆</div>
-        <div class="me-card-title">Mis Fortis</div>
-        <div class="me-card-sub">Conexiones activas</div>
       </div>
       <div class="me-card" onclick="showEditPanel()">
         <div class="me-card-ico">✏</div>
@@ -542,11 +541,11 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bnav hidden" id="bottomNav">
-  <button class="bn" id="bn-home" onclick="go('home')"><span class="bn-ico">🏠</span><span>Inicio</span></button>
-  <button class="bn" id="bn-plans" onclick="go('plans')"><span class="bn-ico">📅</span><span>Planes</span></button>
-  <button class="bn-center" id="bn-center" onclick="go('profiles')">👥</button>
+  <button class="bn" id="bn-home" onclick="go('home')"><span class="bn-ico" style="font-size:1.3rem">🌿</span><span>Inicio</span></button>
+  <button class="bn" id="bn-plans" onclick="go('plans')"><span class="bn-ico" style="font-size:1.3rem">🗺️</span><span>Planes</span></button>
+  <button class="bn-center" id="bn-center" onclick="go('profiles')" style="font-family:'Playfair Display',serif;font-weight:900;line-height:1;display:flex;flex-direction:column;align-items:center"><span style="color:#fff;font-size:.8rem">Forty</span><span style="color:#6ee7b7;font-style:italic;font-size:.8rem">Up</span></button>
   <button class="bn" id="bn-messages" onclick="go('messages')">
-    <span class="bn-ico">💬</span><span>Mensajes</span>
+    <span class="bn-ico" style="font-size:1.3rem">✉️</span><span>Mensajes</span>
     <span class="bn-dot" id="msgDot"></span>
   </button>
   <button class="bn" id="bn-me" onclick="go('me')">
@@ -763,15 +762,13 @@ function renderHome(){
 }
 
 // ── All profiles (demo + registered users) ──
+function distKm(la1,lo1,la2,lo2){if(!la1||!lo1||!la2||!lo2)return null;const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)*Math.sin(dO/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function distLabel(p){const u=me();if(!u||!u.lat||!p.lat)return '';const d=distKm(u.lat,u.lng,p.lat,p.lng);if(!d)return '';return d<0.5?'<500m':d<1?'<1 km':d.toFixed(1)+' km';}
 function allProfiles(){
-  const u=me();
-  const registered=getUsers().filter(usr=>!u||usr.id!==u.id);
-  // Merge registered users into profile format
-  const regProfiles=registered.map(usr=>({
-    id:usr.id,n:usr.name,a:usr.age,c:usr.city,
-    img:usr.photo||'',tags:[],bio:usr.bio||'',intent:usr.intent||''
-  }));
-  return [...regProfiles,...defaultProfiles];
+  const u=me();const blocked=getBlocked();
+  const reg=getUsers().filter(usr=>(!u||usr.id!==u.id)&&!blocked.includes(usr.id));
+  const rp=reg.map(usr=>({id:usr.id,n:usr.name,a:usr.age,c:usr.city,img:usr.photo||'',tags:[],bio:usr.bio||'',intent:usr.intent||'',lat:usr.lat||null,lng:usr.lng||null}));
+  return [...rp,...defaultProfiles.filter(p=>!blocked.includes(p.id))];
 }
 
 // ── Render Plans ──
@@ -1337,6 +1334,11 @@ function showSuperDiamondPopup(fromName){
   setTimeout(()=>{if(ov.parentNode)ov.remove()},8000);
 }
 
+function showSuperPanel(){
+  const u=me();
+  $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
+  $('profilePanel').classList.add('open');
+}
 // ── Toast ──
 function toast(msg,dur=3000){
   const el=$('toast');
