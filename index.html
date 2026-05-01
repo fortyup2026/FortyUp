@@ -15658,5 +15658,132 @@ body.has-session #page-register .fu-terms-link{
 })();
 </script>
 
+
+
+<!-- FortyUp v142 - cierre seguro de ventanas + limpiar notificaciones sin trabas -->
+<style id="fu-v142-safe-modals-notifs-css">
+/* Sin conectado/desconectado en ningún lugar */
+.fu-premium-presence-dot,.fu-chat-presence-one,.fu-v87-status-dot,.fu-v87-chat-status,
+.fu-stable-card-status,.fu-stable-modal-status,.fu-stable-chat-status,.fu-v90-presence-badge,
+.fu-v90-modal-status,.fu-v90-chat-status,.fu92-card-dot-wrap,.fu92-modal-dot,.fu92-modal-presence,
+.fu92-chat-presence,.fu91-modal-presence,.fu91-chat-presence,.fu91-card-presence,.fu-v81-status,
+.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,
+.fu-clean-chat-status,.myp-status,.hcard-online{
+  display:none!important;visibility:hidden!important;opacity:0!important;width:0!important;height:0!important;
+  min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;
+  overflow:hidden!important;pointer-events:none!important;position:absolute!important;
+}
+.fu-notif-actions{display:grid!important;grid-template-columns:1fr!important;gap:0!important;}
+.fu-notif-actions button:not(.fu-clear){display:none!important;}
+.fu-notif-actions .fu-clear{width:100%!important;cursor:pointer!important;}
+.fu-notif-panel:not(.open){display:none!important;pointer-events:none!important;}
+.fu-notif-panel.open{display:flex!important;pointer-events:auto!important;}
+.fu-notif-close,.m-cl,.auth-x{cursor:pointer!important;}
+body.fu-modal-unlocked{overflow-x:hidden!important;}
+</style>
+<script id="fu-v142-safe-modals-notifs-js">
+(function(){
+  if(window.__FU_V142_SAFE_NOTIFS__) return; window.__FU_V142_SAFE_NOTIFS__=true;
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function read(k,d){try{if(typeof g==='function')return g(k,d);var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}}
+  function write(k,v){try{if(typeof sv==='function')sv(k,v);else localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+  function me(){return window.CU&&CU.id?CU:null}
+  function users(){return read((window.K&&K.U)||'fu_u',[])}
+  function esc(t){return String(t||'').replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function icon(t){return t==='super'?'💎':t==='match'?'✨':t==='message'?'💬':'◆'}
+  function fmt(iso){try{var d=iso?new Date(iso):new Date(),m=Date.now()-d.getTime();if(m<60000)return'recién';if(m<3600000)return Math.floor(m/60000)+' min';if(m<86400000)return Math.floor(m/3600000)+' h';return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'})}catch(_){return''}}
+  function unlockUI(){
+    try{document.body.classList.add('fu-modal-unlocked');document.body.style.pointerEvents='auto';document.documentElement.style.pointerEvents='auto'}catch(_){ }
+    qa('.fu-premium-presence-dot,.fu-chat-presence-one,.fu-v87-status-dot,.fu-v87-chat-status,.fu-stable-card-status,.fu-stable-modal-status,.fu-stable-chat-status,.fu-v90-presence-badge,.fu-v90-modal-status,.fu-v90-chat-status,.fu92-card-dot-wrap,.fu92-modal-dot,.fu92-modal-presence,.fu92-chat-presence,.fu91-modal-presence,.fu91-chat-presence,.fu91-card-presence,.fu-v81-status,.fu-v82-dot-status,.fu-v84-dot-status,.fu-presence-pill,.fu-presence-slot,.fu-clean-dot-status,.fu-clean-chat-status,.myp-status').forEach(function(el){try{el.remove()}catch(_){el.style.display='none'}});
+  }
+  window.fuForceUnlockUI=unlockUI;
+
+  function closeNotifPanel(){
+    var p=q('#fuNotifPanel');
+    if(p){p.classList.remove('open');p.style.display='none';p.style.pointerEvents='none'}
+    unlockUI();
+  }
+  function openNotifPanel(){
+    var p=q('#fuNotifPanel');
+    if(!p){p=document.createElement('div');p.id='fuNotifPanel';p.className='fu-notif-panel';document.body.appendChild(p)}
+    p.style.display='flex';p.style.pointerEvents='auto';p.classList.add('open');
+    renderNotifPanel();
+  }
+  window.fuToggleNotifPanel=function(open){ if(open) openNotifPanel(); else closeNotifPanel(); };
+
+  function getNotifs(){try{return (typeof fuGetNotifications==='function'?fuGetNotifications():[])||[]}catch(_){return []}}
+  function updateBadge(){try{if(typeof fuUpdateNotifBadge==='function')fuUpdateNotifBadge()}catch(_){}}
+  function markChatRead(uid){try{var cu=me();if(cu&&uid)localStorage.setItem('fu_read_'+cu.id+'_'+uid,new Date().toISOString())}catch(_){}}
+  function userName(id){try{var u=users().filter(function(x){return x&&String(x.id)===String(id)})[0];return u?(u.name||u.email||'Chat'):'Chat'}catch(_){return 'Chat'}}
+
+  function renderNotifPanel(){
+    var p=q('#fuNotifPanel'); if(!p)return;
+    var arr=getNotifs();
+    var items=arr.length?arr.map(function(n){
+      return '<div class="fu-notif-item '+esc(n.type||'')+' '+(!n.read?'unread':'')+'" data-nid="'+esc(n.id)+'" data-type="'+esc(n.type)+'" data-from="'+esc(n.fromId||'')+'"><div class="fu-notif-ico">'+icon(n.type)+'</div><div><div class="fu-notif-t">'+esc(n.title||'Notificación')+'</div><div class="fu-notif-d">'+esc(n.desc||'')+'</div><div class="fu-notif-time">'+fmt(n.at)+'</div></div></div>'
+    }).join(''):'<div class="fu-notif-empty"><div style="font-size:2rem;margin-bottom:.35rem">🔔</div>No tenés notificaciones por ahora.<br>Los Fortis, súper diamantes y mensajes van a aparecer acá.</div>';
+    p.innerHTML='<div class="fu-notif-box"><div class="fu-notif-head"><div><div class="fu-notif-title">Notificaciones</div><div class="fu-notif-sub">Fortis, súper diamantes y mensajes</div></div><button class="fu-notif-close" type="button" aria-label="Cerrar">×</button></div><div class="fu-notif-list">'+items+'</div><div class="fu-notif-actions"><button type="button" class="fu-clear">Limpiar notificaciones</button></div></div>';
+    qa('.fu-notif-item',p).forEach(function(it){
+      it.addEventListener('click',function(e){
+        e.preventDefault();e.stopPropagation();
+        var id=it.getAttribute('data-from')||'', type=it.getAttribute('data-type')||'', nid=it.getAttribute('data-nid')||'';
+        if(type==='message'&&id){markChatRead(id);closeNotifPanel();try{startChat(id,userName(id))}catch(_){}}
+        else{markEventIdRead(nid);closeNotifPanel();if(id){try{openMod(id)}catch(_){try{goTo('profiles')}catch(__){}}}}
+        updateBadge();setTimeout(unlockUI,50);
+      });
+    });
+  }
+  window.fuRenderNotifPanel=renderNotifPanel;
+
+  function markEventIdRead(id){
+    var cu=me(); if(!cu||!id)return;
+    var k='fu_notif_read_events_'+cu.id;
+    var a=read(k,[]); if(!Array.isArray(a))a=[];
+    if(a.indexOf(id)<0)a.push(id);
+    write(k,a.slice(-800));
+  }
+  function clearAllNotifs(e){
+    if(e&&e.preventDefault)e.preventDefault(); if(e&&e.stopPropagation)e.stopPropagation();
+    var cu=me(); if(!cu){closeNotifPanel();return false;}
+    var arr=getNotifs();
+    write('fu_notifs_'+cu.id,[]);
+    var k='fu_notif_read_events_'+cu.id;
+    var readEvents=read(k,[]); if(!Array.isArray(readEvents))readEvents=[];
+    arr.forEach(function(n){
+      if(!n)return;
+      if(n.type==='message'&&n.fromId) markChatRead(n.fromId);
+      else if(n.id&&readEvents.indexOf(n.id)<0) readEvents.push(n.id);
+    });
+    write(k,readEvents.slice(-800));
+    updateBadge();
+    closeNotifPanel();
+    try{if(typeof toast==='function')toast('Notificaciones limpiadas','ok')}catch(_){ }
+    setTimeout(function(){updateBadge();unlockUI()},80);
+    return false;
+  }
+  window.fuClearStoredNotifs=clearAllNotifs;
+  window.fuClearNotifs=clearAllNotifs;
+
+  document.addEventListener('click',function(e){
+    var close=e.target.closest&&e.target.closest('.fu-notif-close');
+    if(close){e.preventDefault();e.stopPropagation();closeNotifPanel();return false;}
+    var clear=e.target.closest&&e.target.closest('.fu-notif-actions .fu-clear');
+    if(clear){return clearAllNotifs(e);}
+    var panel=q('#fuNotifPanel.open');
+    if(panel&&e.target===panel){e.preventDefault();e.stopPropagation();closeNotifPanel();return false;}
+    var modalClose=e.target.closest&&e.target.closest('.m-cl,.auth-x');
+    if(modalClose){setTimeout(unlockUI,80)}
+  },true);
+
+  // Si una ventana queda sin clase open pero visible por estilos viejos, la desbloquea.
+  setInterval(function(){
+    try{var p=q('#fuNotifPanel'); if(p&&!p.classList.contains('open')){p.style.display='none';p.style.pointerEvents='none'}}catch(_){ }
+    unlockUI(); updateBadge();
+  },2000);
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(unlockUI,300);setTimeout(updateBadge,600)});
+})();
+</script>
+
 </body>
 </html>
