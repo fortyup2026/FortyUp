@@ -364,6 +364,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 .match-text{font-size:.9rem;color:rgba(255,255,255,.8);text-align:center;margin-bottom:1.5rem}
 .match-close{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.7rem 2rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
 @keyframes matchPop{0%{transform:scale(0)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes wave{0%,100%{transform:rotate(0deg)}25%{transform:rotate(20deg)}75%{transform:rotate(-20deg)}}
 
 /* ── TOAST ── */
 #toast{
@@ -479,6 +480,8 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
   </div>
   <div class="chat-messages" id="chatBox"></div>
   <div class="chat-input-area">
+    <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0">📷</button>
+    <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
     <input type="text" id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
     <button class="chat-send" onclick="sendMsg()">➤</button>
   </div>
@@ -528,8 +531,8 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       </div>
     </div>
     <div class="me-section">
-      <div class="me-row" onclick="soon()"><span class="me-row-ico">🔔</span><span class="me-row-txt">Notificaciones</span><span class="me-row-arr">›</span></div>
-      <div class="me-row" onclick="soon()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="soon()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="if(confirm('¿Eliminar tu cuenta?'))deleteAccount()" style="color:var(--red)"><span class="me-row-ico">🗑</span><span class="me-row-txt" style="color:var(--red)">Eliminar cuenta</span><span class="me-row-arr">›</span></div>
     </div>
@@ -648,6 +651,9 @@ const setChats=v=>store('fu_chats',v);
 const getFavs=()=>load('fu_favs',[]);
 const setFavs=v=>store('fu_favs',v);
 const getBlocked=()=>load('fu_blocked',[]);
+const getReported=()=>load('fu_reported',[]);
+const getEvents=()=>load('fu_events',[]);
+const setEvents=v=>store('fu_events',v);
 const getUsers=()=>load('fu_users',[]);
 const setUsers=v=>store('fu_users',v);
 
@@ -779,7 +785,7 @@ function renderPlans(q=''){
         <div class="plan-cat">${p[1]}</div>
         <p>${escHtml(p[2])}</p>
         <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div>
-        <button class="btn btn-green" onclick="toast('¡Te sumaste al plan! 🎉')">
+        <button class="btn btn-green" onclick="rsvpPlan(p[0],p[1],p[3])">
           ${p[0].includes('Busco')?'Me sumo':'Asistiré'}
         </button>
       </div>
@@ -941,9 +947,16 @@ function renderChatBubbles(){
   if(!chatWith) return;
   const chats=getChats();
   const msgs=chats[chatWith.id]||[];
+  const _cname=escHtml(chatWith.n||chatWith.name||'');
   $('chatBox').innerHTML=msgs.length?msgs.map(m=>`
-    <div class="bubble ${m.from==='me'?'mine':'theirs'}">${escHtml(m.text)}</div>`).join('')
-  :'<div class="empty" style="margin-top:2rem"><div class="empty-ico">👋</div><p>Decile hola a ${escHtml(chatWith.n||chatWith.name)}</p></div>';
+    <div class="bubble ${m.from==='me'?'mine':'theirs'}">
+      ${m.photo?`<img src="${m.photo}" style="max-width:200px;border-radius:12px;display:block">`:escHtml(m.text)}
+    </div>`).join('')
+  :`<div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+      <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
+      <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${_cname}!</p>
+      <p style="font-size:.82rem">Sé el primero en escribir</p>
+    </div>`;
   setTimeout(()=>{$('chatBox').scrollTop=$('chatBox').scrollHeight},50);
 }
 
@@ -986,15 +999,23 @@ function sendForti(pid){
   }
 }
 
+function canSendSuper(){
+  const last=load('fu_last_super',null);
+  if(!last) return true;
+  return (Date.now()-new Date(last).getTime())>=86400000;
+}
 function sendSuper(pid){
   const u=me();
   if(!u) return openAuth();
+  if(!canSendSuper()){toast('Ya enviaste tu Súper Diamante hoy. Volvé mañana 💎');return}
   if((u.super||0)<=0){toast('No tenés Súper Diamantes disponibles 💎');return}
   u.super=(u.super||1)-1;
   setMe(u);
+  store('fu_last_super',new Date().toISOString());
   $('superCount').textContent=u.super;
   $('meSuperCount').textContent=u.super;
   toast('¡Súper Diamante enviado! 💎');
+  setTimeout(()=>showSuperDiamondPopup('Vos'),500);
 }
 
 function toggleFav(pid){
@@ -1007,7 +1028,12 @@ function toggleFav(pid){
 
 function blockProfile(pid){
   const bl=getBlocked();
-  if(!bl.includes(pid)){bl.push(pid);store('fu_blocked',bl);toast('Usuario bloqueado')}
+  if(!bl.includes(pid)){bl.push(pid);store('fu_blocked',bl);toast('Usuario bloqueado 🚫')}
+  closePanel();
+}
+function reportProfile(pid){
+  const rep=getReported();
+  if(!rep.includes(pid)){rep.push(pid);store('fu_reported',rep);toast('Usuario reportado ✓')}
   closePanel();
 }
 
@@ -1044,6 +1070,7 @@ function openPanel(p){
         ${isFav?'⭐ En favoritos':'☆ Favorito'}
       </button>
       <button class="btn" style="width:100%;background:none;color:var(--muted);font-size:.8rem" onclick="blockProfile('${p.id}')">🚫 Bloquear</button>
+      <button class="btn" style="width:100%;background:none;color:var(--red);font-size:.8rem" onclick="reportProfile('${p.id}')">⚑ Reportar</button>
     </div>`;
   $('profilePanel').classList.add('open');
 }
@@ -1139,6 +1166,119 @@ function saveNewPhoto(input){
     toast('Foto actualizada ✓');
   };
   reader.readAsDataURL(file);
+}
+
+
+function rsvpPlan(name,when,img){
+  const events=getEvents();
+  if(events.some(e=>e.name===name)){toast('Ya estás anotado ✓');return}
+  events.push({name,when,img,at:new Date().toISOString()});
+  setEvents(events);
+  toast('¡Te sumaste al plan! 🎉');
+}
+function showEventosPanel(){
+  const events=getEvents();
+  $('panelContent').innerHTML=`
+    <div class="panel-title">📅 Mis eventos</div>
+    ${events.length?events.map(ev=>`
+      <div class="msg-item">
+        <img class="msg-avatar" src="${ev.img||''}" alt="" style="border-radius:12px;object-fit:cover">
+        <div class="msg-info">
+          <div class="msg-name">${escHtml(ev.name)}</div>
+          <div class="msg-preview">${escHtml(ev.when)}</div>
+        </div>
+      </div>`).join('')
+    :'<div class="empty"><div class="empty-ico">📅</div><p>Todavía no te anotaste a ningún plan</p></div>'}`;
+  $('profilePanel').classList.add('open');
+}
+function sendChatPhoto(input){
+  const file=input.files[0];
+  if(!file||!chatWith) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const chats=getChats();
+    if(!chats[chatWith.id]) chats[chatWith.id]=[];
+    const now=new Date();
+    chats[chatWith.id].push({from:'me',photo:e.target.result,text:'',time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+    setChats(chats);
+    renderChatBubbles();
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function showPrivacyPanel(){
+  const bl=getBlocked();
+  const rep=getReported();
+  const profs=allProfiles();
+  $('panelContent').innerHTML=`
+    <div class="panel-title">🔒 Privacidad</div>
+    <div style="font-weight:800;font-size:.78rem;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase">Usuarios bloqueados</div>
+    ${bl.length?bl.map(pid=>{const p=profs.find(x=>x.id===pid)||{n:'Usuario',img:''};return `
+      <div class="msg-item">
+        <img class="msg-avatar" src="${p.img||''}" alt="">
+        <div class="msg-info"><div class="msg-name">${escHtml(p.n||p.name||pid)}</div><div class="msg-preview">Bloqueado 🚫</div></div>
+        <button onclick="unblock('${pid}')" style="background:none;border:1px solid var(--line);border-radius:50px;padding:.25rem .65rem;font-size:.72rem;cursor:pointer;color:var(--g);font-weight:800;flex-shrink:0">Desbloquear</button>
+      </div>`;}).join(''):'<p style="font-size:.82rem;color:var(--muted);padding:.4rem 0">Sin usuarios bloqueados</p>'}
+    <div style="font-weight:800;font-size:.78rem;color:var(--muted);margin:.85rem 0 .5rem;text-transform:uppercase">Usuarios reportados</div>
+    ${rep.length?rep.map(pid=>{const p=profs.find(x=>x.id===pid)||{n:'Usuario',img:''};return `
+      <div class="msg-item">
+        <img class="msg-avatar" src="${p.img||''}" alt="">
+        <div class="msg-info"><div class="msg-name">${escHtml(p.n||p.name||pid)}</div><div class="msg-preview">Reportado ⚑</div></div>
+      </div>`;}).join(''):'<p style="font-size:.82rem;color:var(--muted);padding:.4rem 0">Sin usuarios reportados</p>'}`;
+  $('profilePanel').classList.add('open');
+}
+function unblock(pid){
+  const bl=getBlocked().filter(x=>x!==pid);
+  store('fu_blocked',bl);
+  showPrivacyPanel();
+  toast('Usuario desbloqueado ✓');
+}
+function showSecurityPanel(){
+  $('panelContent').innerHTML=`
+    <div class="panel-title">🛡 Seguridad</div>
+    <div class="me-section" style="margin:0">
+      <div class="me-row" onclick="showTermsContent()"><span class="me-row-ico">📄</span><span class="me-row-txt">Términos y condiciones</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showPrivacyPolicyContent()"><span class="me-row-ico">🔐</span><span class="me-row-txt">Política de privacidad</span><span class="me-row-arr">›</span></div>
+    </div>`;
+  $('profilePanel').classList.add('open');
+}
+function showTermsContent(){
+  $('panelContent').innerHTML=`
+    <div class="panel-title">📄 Términos y condiciones</div>
+    <p style="font-size:.85rem;line-height:1.8;color:var(--txt)">
+      <strong>FortyUp</strong> es una app social para mayores de 40 años.<br><br>
+      <strong>1. Uso:</strong> Al registrarte confirmás que tenés más de 40 años y que tu información es verídica.<br><br>
+      <strong>2. Conducta:</strong> Está prohibido el acoso, discriminación o comportamiento que atente contra otros usuarios.<br><br>
+      <strong>3. Fortis:</strong> Podés enviarlos a distintos usuarios sin límite de cantidad.<br><br>
+      <strong>4. Súper Diamantes:</strong> Podés enviar uno por día, por usuario.<br><br>
+      <strong>5. Modificaciones:</strong> FortyUp puede modificar estos términos con previo aviso.
+    </p>`;
+}
+function showPrivacyPolicyContent(){
+  $('panelContent').innerHTML=`
+    <div class="panel-title">🔐 Política de privacidad</div>
+    <p style="font-size:.85rem;line-height:1.8;color:var(--txt)">
+      <strong>Datos:</strong> Nombre, fecha de nacimiento, ciudad, email y foto de perfil.<br><br>
+      <strong>Uso:</strong> Solo para mostrar tu perfil y permitir interacciones en la plataforma.<br><br>
+      <strong>Almacenamiento:</strong> Datos guardados en tu dispositivo y en Firebase (Google Cloud).<br><br>
+      <strong>Compartir:</strong> No compartimos ni vendemos tus datos a terceros.<br><br>
+      <strong>Eliminación:</strong> Podés eliminar tu cuenta y todos tus datos desde Mi Perfil.
+    </p>`;
+}
+function showDeleteConfirm(){
+  if(confirm('¿Seguro querés eliminar tu cuenta? Esta acción no se puede deshacer.')) deleteAccount();
+}
+function showSuperDiamondPopup(fromName){
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:800;background:rgba(4,47,37,.92);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem';
+  ov.innerHTML=`<div style="text-align:center;animation:matchPop .5s ease">
+    <div style="font-size:5rem;margin-bottom:.75rem">💎</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:.5rem">¡Súper Diamante!</h2>
+    <p style="font-size:.9rem;color:rgba(255,255,255,.8);margin-bottom:1.5rem"><strong>${escHtml(fromName)}</strong> te envió su Súper Diamante ✨</p>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.7rem 2rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">¡Genial!</button>
+  </div>`;
+  document.body.appendChild(ov);
+  setTimeout(()=>{if(ov.parentNode)ov.remove()},8000);
 }
 
 // ── Toast ──
