@@ -17506,3 +17506,39 @@ body .pa-super *{animation:none!important;}
   });
 })();
 </script>
+<!-- FortyUp v133: ubicación sin congelar ni bloquear navegación -->
+<style id="fortyup-v133-no-freeze-css">
+#page-profiles .back-b,#page-profiles button[onclick*="openMapSearch"],#page-profiles button[onclick*="useMyLocation"]:not(.fu-location-refresh-btn),#page-profiles button[onclick*="clearLocationFilter"]:not(.fu-location-refresh-btn){display:none!important;visibility:hidden!important;pointer-events:none!important}
+body,html{pointer-events:auto!important;overflow-x:hidden!important}
+#mapSearchModal:not(.open),.auth-ov:not(.open),.m-ov:not(.open),.forti-match-ov:not(.open){display:none!important;pointer-events:none!important;opacity:0!important}
+#locationSearchBar.fu-location-refresh-bar{display:block!important;width:100%;padding:.45rem 0 1rem!important}
+.fu-location-refresh-btn{width:100%;display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#ffffff,#ECFDF5);border:1.8px solid #10B981;border-radius:24px;padding:.72rem .9rem;box-shadow:0 8px 24px rgba(6,78,59,.10);color:#064E3B;cursor:pointer;transition:.2s;text-align:left;pointer-events:auto!important;position:relative;z-index:2}
+.fu-location-refresh-btn.loading{opacity:.92;pointer-events:auto!important}
+.fu-location-refresh-ico{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-size:1.25rem;box-shadow:0 6px 16px rgba(6,78,59,.22);flex:0 0 42px}
+.fu-location-refresh-copy{display:flex;flex-direction:column;gap:.05rem;min-width:0;flex:1}
+.fu-location-refresh-copy strong{font-size:.94rem;font-weight:900;color:#064E3B;line-height:1.1}
+.fu-location-refresh-copy small{font-size:.73rem;font-weight:800;color:#6B7C76;line-height:1.25;white-space:normal}
+.fu-location-refresh-arrow{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #D1E8DF;color:#059669;font-size:1.05rem;font-weight:900;flex:0 0 34px}
+.fu-location-refresh-btn.loading .fu-location-refresh-arrow{animation:fuSpinLocV133 .85s linear infinite}
+@keyframes fuSpinLocV133{to{transform:rotate(360deg)}}
+</style>
+<script id="fortyup-v133-no-freeze-js">
+(function(){
+var locBusy=false;
+function byId(id){return document.getElementById(id)}
+function showToast(msg,type){try{if(window.toast)toast(msg,type||'ok')}catch(_){}}
+function setText(txt){var el=byId('fuLocationRefreshText');if(el)el.textContent=txt}
+function setLoading(on){var b=document.querySelector('.fu-location-refresh-btn');if(b)b.classList.toggle('loading',!!on)}
+function installLocationButton(){var bar=byId('locationSearchBar');if(!bar)return;bar.className='fu-location-refresh-bar';bar.style.display=window.CU?'block':'none';bar.innerHTML='<button type="button" class="fu-location-refresh-btn" id="fuLocationRefreshBtn"><span class="fu-location-refresh-ico">📍</span><span class="fu-location-refresh-copy"><strong>Actualizar ubicación</strong><small id="fuLocationRefreshText">Tomar mi lugar exacto actual</small></span><span class="fu-location-refresh-arrow">↻</span></button>';var btn=byId('fuLocationRefreshBtn');if(btn)btn.onclick=function(ev){ev.preventDefault();ev.stopPropagation();return window.fuUpdateExactLocation(true)}}
+function saveCoords(lat,lng){window.MLAT=lat;window.MLNG=lng;window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null;try{if(window.CU){CU.lat=lat;CU.lng=lng;CU.lastActive=new Date().toISOString();if(typeof sv==='function'&&window.K)sv(K.C,CU);if(typeof g==='function'&&typeof sv==='function'&&window.K){var users=g(K.U,[]).map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lat:lat,lng:lng,lastActive:CU.lastActive}):u});sv(K.U,users)}}}catch(e){console.warn('No pude guardar coords localmente',e)}}
+function safeRenderProfiles(){if(typeof window.rProfiles!=='function')return;if(window.requestAnimationFrame){requestAnimationFrame(function(){setTimeout(function(){try{window.rProfiles()}catch(e){console.warn('rProfiles falló',e)}},0)})}else setTimeout(function(){try{window.rProfiles()}catch(e){}},0)}
+window.fuUpdateExactLocation=function(manual){if(locBusy){showToast('Ya estoy actualizando tu ubicación','ok');return false}if(!navigator.geolocation){showToast('GPS no disponible','w');return false}locBusy=true;setLoading(true);setText('Buscando ubicación exacta...');var finished=false;var hardStop=setTimeout(function(){if(finished)return;finished=true;locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');showToast('El GPS tardó demasiado, podés seguir usando la app','w')},8500);try{navigator.geolocation.getCurrentPosition(function(pos){if(finished)return;finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.round(pos.coords.accuracy||0);saveCoords(lat,lng);setText(acc?('Ubicación actualizada · precisión aprox. '+acc+' m'):'Ubicación actualizada');safeRenderProfiles();showToast('Ubicación actualizada 📍','ok')},function(err){if(finished)return;finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');showToast('No pude obtener la ubicación, pero la app sigue activa','w');console.warn('GPS error',err)},{enableHighAccuracy:true,timeout:7000,maximumAge:60000})}catch(e){finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');console.warn(e)}return false};
+window.openMapSearch=function(){return window.fuUpdateExactLocation(true)};
+window.useMyLocation=function(){return window.fuUpdateExactLocation(true)};
+window.clearLocationFilter=function(){window._fuLocationMode='gps';window._searchCity='';window._locFilter='';safeRenderProfiles();return false};
+window.addEventListener('pageshow',function(){document.body.style.overflow='';document.documentElement.style.overflow='';setTimeout(installLocationButton,80)});
+document.addEventListener('DOMContentLoaded',function(){setTimeout(installLocationButton,80);setTimeout(installLocationButton,600)});
+var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__fu133){window.goTo=function(pg){var r=oldGo.apply(this,arguments);if(pg==='profiles')setTimeout(installLocationButton,80);return r};window.goTo.__fu133=true}
+setTimeout(installLocationButton,500);
+})();
+</script>
