@@ -472,14 +472,14 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 </div>
 
 <!-- ══ CHAT ══ -->
-<div id="chat" class="screen" style="padding-bottom:0">
+<div id="chat" class="screen" style="padding-bottom:0;flex-direction:column;height:100dvh;overflow:hidden">
   <div class="chat-topbar">
     <button class="chat-back" onclick="go('messages')">←</button>
     <img id="chatAvatar" class="top-avatar" src="" alt="">
     <span id="chatName">Chat</span>
   </div>
-  <div class="chat-messages" id="chatBox"></div>
-  <div class="chat-input-area">
+  <div class="chat-messages" id="chatBox" style="flex:1;overflow-y:auto;min-height:0;padding:1rem"></div>
+  <div class="chat-input-area" style="flex-shrink:0;position:relative;bottom:auto">
     <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0">📷</button>
     <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
     <input type="text" id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -509,20 +509,20 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       </div>
     </div>
     <div class="me-cards">
-      <div class="me-card" onclick="showFortisPanel()">
-        <div class="me-card-ico">◆</div>
-        <div class="me-card-title">Mis Fortis</div>
-        <div class="me-card-sub">Conexiones activas</div>
+      <div class="me-card" onclick="showEventosPanel()">
+        <div class="me-card-ico">📅</div>
+        <div class="me-card-title">Mis eventos</div>
+        <div class="me-card-sub">A los que vas a ir</div>
       </div>
       <div class="me-card" onclick="showFavoritesPanel()">
         <div class="me-card-ico">⭐</div>
         <div class="me-card-title">Favoritos</div>
         <div class="me-card-sub">Perfiles guardados</div>
       </div>
-      <div class="me-card" onclick="showPhotosPanel()">
-        <div class="me-card-ico">📸</div>
-        <div class="me-card-title">Fotos y videos</div>
-        <div class="me-card-sub">Tu contenido</div>
+      <div class="me-card" onclick="showFortisPanel()">
+        <div class="me-card-ico">◆</div>
+        <div class="me-card-title">Mis Fortis</div>
+        <div class="me-card-sub">Conexiones activas</div>
       </div>
       <div class="me-card" onclick="showEditPanel()">
         <div class="me-card-ico">✏</div>
@@ -582,6 +582,10 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
         </select>
       </div>
       <div class="form-group"><label>Bio (opcional)</label><textarea id="rBio" placeholder="Contate algo..."></textarea></div>
+      <div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.85rem;padding:.75rem;background:var(--soft);border-radius:var(--r);border:1px solid var(--line)">
+        <input type="checkbox" id="termsCheck" style="width:18px;height:18px;accent-color:var(--g);flex-shrink:0;margin-top:2px">
+        <label for="termsCheck" style="font-size:.78rem;color:var(--txt);line-height:1.5;cursor:pointer">Acepto los <strong style="color:var(--g)">Términos y condiciones</strong> y la <strong style="color:var(--g)">Política de privacidad</strong>. Confirmo que tengo más de 40 años.</label>
+      </div>
       <button class="auth-btn" onclick="register()">Crear mi perfil</button>
     </div>
     <!-- Login -->
@@ -796,28 +800,36 @@ function renderPlans(q=''){
 // ── Render Profiles ──
 function renderProfiles(){
   const profs=allProfiles();
-  $('profilesList').innerHTML=profs.map((p,i)=>`
-    <div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-      <div class="profile-photo" style="background-image:url('${p.img||p.photo||''}')">
-        <span class="distance">📍 ${i===0?'Menos de 1 km':(Math.random()*9+0.5).toFixed(1)+' km'}</span>
+  const favs=getFavs();
+  if(!profs.length){
+    $('profilesList').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles disponibles</p></div>';
+    return;
+  }
+  $('profilesList').innerHTML=profs.map(p=>{
+    const dl=distLabel(p);
+    const isFav=favs.includes(p.id);
+    const photo=p.img||p.photo||'';
+    const initial=(p.n||p.name||'?')[0].toUpperCase();
+    return `<div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="profile-photo" style="${photo?`background-image:url('${photo}')`:``}">
+        ${!photo?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:3rem;font-weight:800;color:rgba(6,78,59,.4)">${initial}</div>`:''}
+        ${dl?`<span class="distance">📍 ${dl}</span>`:''}
       </div>
       <div class="profile-info">
         <h2>${escHtml(p.n||p.name)} <span>${p.a||p.age}</span></h2>
         <b>📍 ${escHtml(p.c||p.city)}</b>
-        <div class="tagrow">
-          ${(p.tags||[]).map(t=>`<span class="tag">${escHtml(t)}</span>`).join('')}
-        </div>
+        ${p.intent?`<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">${escHtml(p.intent)}</div>`:''}
         <div class="profile-actions">
           <button class="btn-forti" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Forti</button>
           <button class="btn-super" onclick="event.stopPropagation();sendSuper('${p.id}')">💎</button>
           <button class="btn-chat" onclick="event.stopPropagation();startChat(${JSON.stringify(p).replace(/"/g,'&quot;')})">💬</button>
-          <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')">☆</button>
+          <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-// ── Render Messages ──
 function renderMessages(){
   const chats=getChats();
   const profiles=allProfiles();
@@ -867,6 +879,20 @@ function setAuth(tab){
   $('logFields').style.display=tab==='log'?'block':'none';
 }
 
+function requestGPS(){
+  if(!navigator.geolocation) return;
+  if(!confirm('¿Permitís que FortyUp use tu ubicación para mostrarte personas y eventos cerca?')) return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const u=me();
+    if(!u) return;
+    u.lat=pos.coords.latitude; u.lng=pos.coords.longitude;
+    setMe(u);
+    const users=getUsers();
+    const idx=users.findIndex(x=>x.id===u.id);
+    if(idx>=0){users[idx].lat=u.lat;users[idx].lng=u.lng;setUsers(users);}
+    toast('Ubicación guardada 📍');
+  },()=>toast('No se pudo obtener ubicación'));
+}
 function register(){
   const n=$('rName').value.trim();
   const birth=$('rBirth').value;
@@ -877,6 +903,8 @@ function register(){
   const intent=$('rIntent').value;
   const bio=$('rBio').value.trim();
   
+  const terms=$('termsCheck');
+  if(terms&&!terms.checked) return toast('Debés aceptar los términos y condiciones ⚠️');
   if(!n||!birth||!c||!e||!p) return toast('Completá todos los campos obligatorios ⚠️');
   const age=ageFromBirth(birth);
   if(age<40) return toast('FortyUp es para mayores de 40 ⚠️');
@@ -1027,14 +1055,16 @@ function toggleFav(pid){
 }
 
 function blockProfile(pid){
+  if(!confirm('¿Bloquear este usuario? Desaparecerá de tu lista de perfiles.')) return;
   const bl=getBlocked();
-  if(!bl.includes(pid)){bl.push(pid);store('fu_blocked',bl);toast('Usuario bloqueado 🚫')}
-  closePanel();
+  if(!bl.includes(pid)){bl.push(pid);store('fu_blocked',bl);}
+  closePanel();toast('Usuario bloqueado 🚫');renderProfiles();
 }
 function reportProfile(pid){
+  if(!confirm('¿Reportar este usuario? Lo enviaremos a revisión.')) return;
   const rep=getReported();
-  if(!rep.includes(pid)){rep.push(pid);store('fu_reported',rep);toast('Usuario reportado ✓')}
-  closePanel();
+  if(!rep.includes(pid)){rep.push(pid);store('fu_reported',rep);}
+  closePanel();toast('Usuario reportado ✓');
 }
 
 // ── Match popup ──
