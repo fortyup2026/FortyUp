@@ -5725,15 +5725,19 @@ body:not(.fu-logged) #page-home .h-btns .btn-o{
 <div class="page" id="page-profiles">
   <div class="inner"><div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
   <div><h2 class="pg-tit">Explorar perfiles</h2><p class="pg-sub">Personas reales buscando conexiones reales.</p></div>
+  <button onclick="syncFromFirestore();toast('Actualizando...','ok')" style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:50px;padding:.38rem .85rem;font-size:.76rem;font-weight:800;color:var(--g1);cursor:pointer">🔄</button>
 </div>
-<div id="locationSearchBar" class="fu-location-refresh-bar" style="display:block;padding:.5rem 0 .85rem">
-  <button type="button" class="fu-location-refresh-btn" onclick="fuUpdateExactLocation(true)">
-    <span class="fu-location-refresh-ico">📍</span>
-    <span class="fu-location-refresh-copy"><strong>Actualizar ubicación</strong><small id="fuLocationRefreshText">Tomar mi lugar exacto actual</small></span>
-    <span class="fu-location-refresh-arrow">↻</span>
-  </button>
-  <div id="locActiveLabel" class="fu-location-status" style="display:none">
-    <span id="locActiveName">Ubicación actualizada</span>
+<div id="locationSearchBar" style="display:none;padding:.5rem 0 .75rem">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+    <button onclick="useMyLocation()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;background:#fff;border:1.5px solid var(--g2);border-radius:50px;padding:.65rem .75rem;font-size:.84rem;font-weight:800;color:var(--g1);cursor:pointer;box-shadow:0 2px 8px rgba(6,78,59,.08)">
+      📍 Mi ubicación
+    </button>
+    <button onclick="openMapSearch()" style="display:flex;align-items:center;justify-content:center;gap:.4rem;background:#fff;border:1.5px solid var(--g2);border-radius:50px;padding:.65rem .75rem;font-size:.84rem;font-weight:800;color:var(--g1);cursor:pointer;box-shadow:0 2px 8px rgba(6,78,59,.08)">
+      🗺 Ver mapa
+    </button>
+  </div>
+  <div id="locActiveLabel" style="display:none;margin-top:.5rem;font-size:.78rem;color:var(--g1);font-weight:700;text-align:center;padding:.3rem .75rem;background:var(--bg3);border-radius:50px;width:fit-content;margin-left:auto;margin-right:auto">
+    📍 <span id="locActiveName"></span> · <button onclick="clearLocationFilter()" style="background:none;border:none;color:#dc2626;font-size:.75rem;font-weight:800;cursor:pointer">✕ Limpiar</button>
   </div>
 </div><div class="pgrid" id="pgrid"></div></div>
 </div>
@@ -14660,90 +14664,228 @@ body.has-session #page-register .fu-terms-link{
 
 
 
-<!-- FortyUp v131: actualizar ubicación exacta sin buscador manual ni mapa -->
-<style id="fortyup-v131-location-refresh-style">
-  #locationSearchBar.fu-location-refresh-bar{display:block!important;width:100%;padding:.45rem 0 1rem!important}
-  .fu-location-refresh-btn{width:100%;display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#ffffff,#ECFDF5);border:1.8px solid #A7F3D0;border-radius:24px;padding:.72rem .9rem;box-shadow:0 8px 24px rgba(6,78,59,.10);color:#064E3B;cursor:pointer;transition:.2s;text-align:left}
-  .fu-location-refresh-btn:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(6,78,59,.14);border-color:#10B981}
-  .fu-location-refresh-btn:active{transform:scale(.99)}
-  .fu-location-refresh-btn.loading{opacity:.9;pointer-events:auto}
-  .fu-location-refresh-ico{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-size:1.25rem;box-shadow:0 6px 16px rgba(6,78,59,.22);flex:0 0 42px}
-  .fu-location-refresh-copy{display:flex;flex-direction:column;gap:.05rem;min-width:0;flex:1}
-  .fu-location-refresh-copy strong{font-size:.94rem;font-weight:900;color:#064E3B;line-height:1.1}
-  .fu-location-refresh-copy small{font-size:.73rem;font-weight:800;color:#6B7C76;line-height:1.25;white-space:normal}
-  .fu-location-refresh-arrow{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #D1E8DF;color:#059669;font-size:1.05rem;font-weight:900;flex:0 0 34px}
-  .fu-location-refresh-btn.loading .fu-location-refresh-arrow{animation:fuSpinLoc .85s linear infinite}
-  .fu-location-status{margin:.55rem auto 0;width:fit-content;max-width:100%;background:#F0FDF8;border:1px solid #A7F3D0;color:#064E3B;border-radius:999px;padding:.36rem .75rem;font-size:.76rem;font-weight:900;text-align:center;box-shadow:0 4px 14px rgba(6,78,59,.07)}
-  @keyframes fuSpinLoc{to{transform:rotate(360deg)}}
-</style>
-<script id="fortyup-v131-location-refresh-script">
-(function(){
-  function q(id){return document.getElementById(id)}
-  function setLocText(txt){var el=q('fuLocationRefreshText'); if(el)el.textContent=txt;}
-  function setLocLabel(txt){var lbl=q('locActiveLabel'), nm=q('locActiveName'); if(nm)nm.textContent=txt||'Ubicación actualizada'; if(lbl)lbl.style.display='block';}
-  function saveCurrentUserCoords(lat,lng){
-    try{
-      window.MLAT=lat; window.MLNG=lng;
-      if(window.CU){
-        CU.lat=lat; CU.lng=lng; CU.lastActive=new Date().toISOString();
-        if(typeof sv==='function'&&window.K){sv(K.C,CU)}
-        if(typeof g==='function'&&typeof sv==='function'&&window.K){
-          var users=g(K.U,[]).map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lat:lat,lng:lng,lastActive:CU.lastActive}):u});
-          sv(K.U,users);
-        }
-        if(typeof saveToFirestore==='function')saveToFirestore(CU);
-      }
-    }catch(err){console.warn('No se pudo guardar ubicación',err)}
+<!-- FortyUp v134 Sebas: ubicación definitiva sin bloqueo + explorador limpio -->
+<style id="fu-v134-location-final-css">
+  /* Oculta el mini botón viejo de refrescar en Explorar perfiles */
+  #page-profiles .fu-v134-hide-old-refresh{display:none!important;}
+
+  /* Barra final de ubicación */
+  #locationSearchBar.fu-v134-location-ready{
+    display:block!important;
+    padding:.35rem 0 1.15rem!important;
+    width:100%!important;
   }
-  window.fuUpdateExactLocation=function(manual){
-    var btn=document.querySelector('.fu-location-refresh-btn');
-    if(!navigator.geolocation){if(window.toast)toast('Tu navegador no permite ubicación','w');return;}
-    if(btn)btn.classList.add('loading');
-    setLocText('Buscando ubicación exacta...');
-    if(window.toast&&manual)toast('Actualizando ubicación...','ok');
-    navigator.geolocation.getCurrentPosition(function(pos){
-      var lat=pos.coords.latitude, lng=pos.coords.longitude;
-      saveCurrentUserCoords(lat,lng);
-      try{window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null;}catch(_){ }
-      var accuracy=Math.round(pos.coords.accuracy||0);
-      setLocText(accuracy?('Ubicación actualizada · precisión aprox. '+accuracy+' m'):'Ubicación actualizada');
-      setLocLabel('📍 Ubicación actual actualizada');
-      if(btn)btn.classList.remove('loading');
-      if(typeof syncFromFirestore==='function')setTimeout(function(){try{syncFromFirestore()}catch(_){ }},150);
-      if(typeof rProfiles==='function')setTimeout(function(){try{rProfiles()}catch(_){ }},220);
-      if(window.toast&&manual)toast('Ubicación actualizada 📍','ok');
-      if(!window._fuLocWatchStarted && navigator.geolocation.watchPosition){
-        window._fuLocWatchStarted=true;
-        try{navigator.geolocation.watchPosition(function(p){
-          saveCurrentUserCoords(p.coords.latitude,p.coords.longitude);
-          if(typeof rProfiles==='function'){try{rProfiles()}catch(_){ }}
-        },function(){}, {enableHighAccuracy:true,maximumAge:30000,timeout:12000});}catch(_){ }
+  #locationSearchBar.fu-v134-location-ready .fu-v134-location-card{
+    width:100%;
+    min-height:92px;
+    display:grid;
+    grid-template-columns:64px 1fr 52px;
+    align-items:center;
+    gap:.82rem;
+    padding:.82rem .9rem;
+    border-radius:34px;
+    border:3px solid #10B981;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F3FFF8 100%);
+    box-shadow:0 12px 30px rgba(6,78,59,.08);
+    color:#064E3B;
+    cursor:pointer;
+    touch-action:manipulation;
+    user-select:none;
+    -webkit-user-select:none;
+    position:relative;
+    overflow:hidden;
+  }
+  #locationSearchBar.fu-v134-location-ready .fu-v134-location-card:active{transform:scale(.995)}
+  .fu-v134-pin{
+    width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 30% 25%,#13CFA0,#008A63 68%,#064E3B 100%);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:2rem;box-shadow:0 10px 24px rgba(6,78,59,.22);
+    flex-shrink:0;
+  }
+  .fu-v134-location-title{font-size:1.15rem;font-weight:950;line-height:1.05;color:#064E3B;letter-spacing:.01em;}
+  .fu-v134-location-sub{font-size:.82rem;font-weight:850;color:#6B7C76;margin-top:.2rem;line-height:1.25;}
+  .fu-v134-location-action{
+    width:52px;height:52px;border-radius:50%;
+    background:#fff;border:1.6px solid #D1E8DF;color:#008A63;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.45rem;font-weight:900;box-shadow:0 6px 16px rgba(6,78,59,.06);
+  }
+  .fu-v134-location-card.fu-v134-loading .fu-v134-location-action{animation:fuV134Spin .85s linear infinite;}
+  .fu-v134-location-card.fu-v134-loading{opacity:.92;}
+  .fu-v134-location-card.fu-v134-loading .fu-v134-location-title:after{content:'...';}
+  @keyframes fuV134Spin{to{transform:rotate(360deg)}}
+
+  /* Corta cualquier bloqueo visual heredado de mapa/GPS */
+  body.fu-v134-unlocked, html.fu-v134-unlocked{overflow:auto!important;pointer-events:auto!important;}
+  .fu-map-modal:not(.open):not([style*="flex"]){pointer-events:none!important;}
+
+  /* Evita saltos al refrescar cards */
+  #pgrid{min-height:340px;content-visibility:auto;contain-intrinsic-size:340px;}
+  #page-profiles .pcard{transform:none!important;will-change:auto!important;}
+  #page-profiles .pcard:hover{transform:none!important;}
+  #page-profiles .pcard-acts{touch-action:manipulation;}
+  @media(max-width:480px){
+    #locationSearchBar.fu-v134-location-ready .fu-v134-location-card{grid-template-columns:58px 1fr 48px;padding:.75rem .78rem;border-radius:30px;}
+    .fu-v134-pin{width:58px;height:58px;font-size:1.85rem;}
+    .fu-v134-location-title{font-size:1.02rem;}
+    .fu-v134-location-sub{font-size:.78rem;}
+    .fu-v134-location-action{width:48px;height:48px;font-size:1.32rem;}
+  }
+</style>
+<script id="fu-v134-location-final-js">
+(function(){
+  'use strict';
+  var busy=false;
+  var lastRun=0;
+  var lastCoords=null;
+
+  function q(s){return document.querySelector(s)}
+  function qa(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+  function now(){return Date.now?Date.now():(new Date()).getTime()}
+  function toastSafe(msg,type){try{ if(typeof window.toast==='function') window.toast(msg,type||'ok'); }catch(_){}}
+  function unlockUI(){
+    try{
+      document.body.classList.add('fu-v134-unlocked');
+      document.documentElement.classList.add('fu-v134-unlocked');
+      document.body.style.pointerEvents='';
+      document.documentElement.style.pointerEvents='';
+      if(!q('.fu-map-modal[style*="flex"]')){document.body.style.overflow='';document.documentElement.style.overflow='';}
+      qa('.fu-v134-location-card').forEach(function(b){b.classList.remove('fu-v134-loading')});
+    }catch(_){ }
+  }
+  function setBusy(on){
+    busy=!!on;
+    qa('.fu-v134-location-card').forEach(function(btn){
+      btn.classList.toggle('fu-v134-loading',!!on);
+      var title=btn.querySelector('.fu-v134-location-title');
+      var sub=btn.querySelector('.fu-v134-location-sub');
+      if(title) title.textContent=on?'Actualizando ubicación':'Actualizar ubicación';
+      if(sub) sub.textContent=on?'Tomando tu lugar exacto actual':'Tomar mi lugar exacto actual';
+    });
+  }
+  function saveCoords(lat,lng){
+    lat=Number(lat); lng=Number(lng);
+    if(!isFinite(lat)||!isFinite(lng))return false;
+    lastCoords={lat:lat,lng:lng,t:now()};
+    try{localStorage.setItem('fu_last_lat',String(lat));localStorage.setItem('fu_last_lng',String(lng));localStorage.setItem('fu_last_geo_at',String(lastCoords.t));}catch(_){ }
+    try{window.MLAT=lat;window.MLNG=lng;window._fuLocationMode='gps';window._locFilter='';window._searchCity='';window._searchLat=null;window._searchLng=null;}catch(_){ }
+    try{
+      if(window.CU){
+        window.CU.lat=lat; window.CU.lng=lng; window.CU.lastActive=(new Date()).toISOString();
+        if(typeof window.sv==='function'&&window.K&&K.C) window.sv(K.C,window.CU);
+        if(typeof window.g==='function'&&typeof window.sv==='function'&&window.K&&K.U){
+          var us=window.g(K.U,[])||[];
+          us=us.map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lat:lat,lng:lng,lastActive:CU.lastActive}):u});
+          window.sv(K.U,us);
+        }
       }
-    },function(err){
-      if(btn)btn.classList.remove('loading');
-      setLocText('Tocá para intentar actualizar de nuevo');
-      if(window.toast)toast('No se pudo obtener tu ubicación','w');
-      console.warn('GPS error',err);
-    },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    }catch(_){ }
+    return true;
+  }
+  function renderProfilesSafe(){
+    setTimeout(function(){
+      try{ if(typeof window.rProfiles==='function') window.rProfiles(); }catch(e){console.warn('rProfiles error',e)}
+      unlockUI();
+    },50);
+  }
+  function geolocateFast(done){
+    var finished=false;
+    function finish(ok,pos,err){ if(finished)return; finished=true; done(ok,pos,err); }
+    var hard=setTimeout(function(){finish(false,null,{code:'TIMEOUT',message:'GPS timeout'});},4500);
+    try{
+      if(!navigator.geolocation){clearTimeout(hard);return finish(false,null,{code:'NO_GPS'});}
+      navigator.geolocation.getCurrentPosition(function(pos){
+        clearTimeout(hard); finish(true,pos,null);
+      },function(err){
+        clearTimeout(hard); finish(false,null,err);
+      },{enableHighAccuracy:false,timeout:3200,maximumAge:120000});
+    }catch(e){clearTimeout(hard);finish(false,null,e);}
+  }
+
+  window.fuUpdateExactLocation=function(){
+    unlockUI();
+    var n=now();
+    if(busy)return false;
+    if(n-lastRun<900)return false;
+    lastRun=n;
+    setBusy(true);
+    toastSafe('Actualizando ubicación...','ok');
+    geolocateFast(function(ok,pos,err){
+      setBusy(false);
+      if(ok&&pos&&pos.coords&&saveCoords(pos.coords.latitude,pos.coords.longitude)){
+        toastSafe('Ubicación actualizada 📍','ok');
+        renderProfilesSafe();
+      }else{
+        console.warn('GPS no actualizado',err);
+        toastSafe('No se pudo actualizar ahora. La app sigue funcionando.','w');
+        renderProfilesSafe();
+      }
+    });
+    setTimeout(unlockUI,5200);
+    return false;
   };
-  window.useMyLocation=window.fuUpdateExactLocation;
-  window.openMapSearch=function(){window.fuUpdateExactLocation(true)};
-  window.clearLocationFilter=function(){try{window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null;}catch(_){ } window.fuUpdateExactLocation(true)};
-  function install(){
-    var bar=q('locationSearchBar');
-    if(bar){bar.className='fu-location-refresh-bar';bar.style.display='block';
-      if(!bar.querySelector('.fu-location-refresh-btn')){
-        bar.innerHTML='<button type="button" class="fu-location-refresh-btn" onclick="fuUpdateExactLocation(true)"><span class="fu-location-refresh-ico">📍</span><span class="fu-location-refresh-copy"><strong>Actualizar ubicación</strong><small id="fuLocationRefreshText">Tomar mi lugar exacto actual</small></span><span class="fu-location-refresh-arrow">↻</span></button><div id="locActiveLabel" class="fu-location-status" style="display:none"><span id="locActiveName">Ubicación actualizada</span></div>';
+
+  /* Override definitivo: scripts viejos que llamen useMyLocation/getMyLoc ya no pueden congelar la app */
+  window.useMyLocation=function(){return window.fuUpdateExactLocation();};
+  window.getMyLoc=function(){
+    try{
+      if(window.CU&&CU.lat&&CU.lng){window.MLAT=CU.lat;window.MLNG=CU.lng;window._fuLocationMode='gps';}
+      else{
+        var lat=parseFloat(localStorage.getItem('fu_last_lat')||'');
+        var lng=parseFloat(localStorage.getItem('fu_last_lng')||'');
+        if(isFinite(lat)&&isFinite(lng)){window.MLAT=lat;window.MLNG=lng;window._fuLocationMode='gps';}
       }
+    }catch(_){ }
+    renderProfilesSafe();
+    return false;
+  };
+
+  function buildLocationButton(){
+    var bar=q('#locationSearchBar');
+    if(!bar)return;
+    bar.className=(bar.className||'')+' fu-v134-location-ready';
+    bar.style.display='block';
+    bar.innerHTML='<button type="button" class="fu-v134-location-card" id="fuV134LocationBtn" onclick="return fuUpdateExactLocation()" aria-label="Actualizar ubicación exacta">'
+      +'<span class="fu-v134-pin">📍</span>'
+      +'<span><span class="fu-v134-location-title">Actualizar ubicación</span><span class="fu-v134-location-sub">Tomar mi lugar exacto actual</span></span>'
+      +'<span class="fu-v134-location-action">↻</span>'
+      +'</button>';
+  }
+  function hideOldRefresh(){
+    var page=q('#page-profiles'); if(!page)return;
+    var head=page.querySelector('.inner > div:first-child');
+    if(head){
+      qa('button',head).forEach(function(b){
+        var t=(b.textContent||'').trim();
+        var oc=String(b.getAttribute('onclick')||'');
+        if(t==='🔄'||oc.indexOf('syncFromFirestore')>-1)b.classList.add('fu-v134-hide-old-refresh');
+      });
     }
   }
-  document.addEventListener('DOMContentLoaded',function(){install();setTimeout(install,500);setTimeout(install,1500)});
-  var oldGo=window.goTo;
-  if(typeof oldGo==='function'){
-    window.goTo=function(pg){var r=oldGo.apply(this,arguments); if(pg==='profiles'){setTimeout(install,80)} return r;};
+  function init(){
+    unlockUI();
+    hideOldRefresh();
+    buildLocationButton();
+    try{ if(window.CU&&(CU.lat||CU.lng)){window.MLAT=CU.lat;window.MLNG=CU.lng;window._fuLocationMode='gps';} }catch(_){ }
+    renderProfilesSafe();
   }
+
+  /* Re-aplica luego de navegación interna, porque la app re-renderiza secciones */
+  var oldGo=window.goTo;
+  if(typeof oldGo==='function'&&!oldGo.__fuV134){
+    var wrapped=function(){var r=oldGo.apply(this,arguments);setTimeout(init,80);setTimeout(unlockUI,180);return r;};
+    wrapped.__fuV134=true;
+    window.goTo=wrapped;
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(init,80);setTimeout(init,500);});
+  window.addEventListener('load',function(){setTimeout(init,120);});
+  window.addEventListener('pageshow',function(){setTimeout(init,80);setTimeout(unlockUI,250);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(unlockUI,120);});
+  setInterval(function(){if(busy&&now()-lastRun>6000){setBusy(false);unlockUI();}},1500);
 })();
 </script>
+
 </body>
 </html>
 
@@ -17434,111 +17576,5 @@ body .pa-super *{animation:none!important;}
     document.documentElement.style.overflow='';
     setTimeout(wireButton,400);
   });
-})();
-</script>
-
-<!-- FortyUp v132: ubicación no bloqueante + sin botón mini superior -->
-<style id="fortyup-v132-no-block-location-style">
-  #page-profiles .inner > div:first-child > button[onclick*="syncFromFirestore"]{display:none!important}
-  .fu-location-refresh-btn.loading{pointer-events:auto!important;opacity:.92!important}
-  .fu-location-refresh-btn{touch-action:manipulation}
-</style>
-<script id="fortyup-v132-no-block-location-script">
-(function(){
-  function q(id){return document.getElementById(id)}
-  function setTxt(t){var el=q('fuLocationRefreshText');if(el)el.textContent=t}
-  function setLabel(t){var l=q('locActiveLabel'),n=q('locActiveName');if(n)n.textContent=t||'📍 Ubicación actualizada';if(l)l.style.display='block'}
-  function done(btn){if(btn)btn.classList.remove('loading');window._fuLocBusy=false}
-  function save(lat,lng){
-    try{
-      window.MLAT=lat;window.MLNG=lng;
-      if(window.CU){
-        CU.lat=lat;CU.lng=lng;CU.lastActive=new Date().toISOString();
-        if(typeof sv==='function'&&window.K){sv(K.C,CU)}
-        if(typeof g==='function'&&typeof sv==='function'&&window.K){
-          var users=g(K.U,[]).map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lat:lat,lng:lng,lastActive:CU.lastActive}):u});
-          sv(K.U,users);
-        }
-        if(typeof saveToFirestore==='function')setTimeout(function(){try{saveToFirestore(CU)}catch(_){ }},20);
-      }
-    }catch(err){console.warn('Ubicación: no se pudo guardar',err)}
-  }
-  window.fuUpdateExactLocation=function(manual){
-    var btn=document.querySelector('.fu-location-refresh-btn');
-    if(window._fuLocBusy){ if(window.toast&&manual)toast('Ya estoy actualizando tu ubicación...','ok'); return; }
-    if(!navigator.geolocation){ if(window.toast)toast('Tu navegador no permite ubicación','w'); return; }
-    window._fuLocBusy=true;
-    if(btn)btn.classList.add('loading');
-    setTxt('Buscando ubicación exacta...');
-    if(window.toast&&manual)toast('Actualizando ubicación...','ok');
-    var finished=false;
-    var safety=setTimeout(function(){
-      if(finished)return;
-      finished=true;done(btn);
-      setTxt('No respondió el GPS. Tocá para intentar otra vez.');
-      if(window.toast)toast('La ubicación tardó demasiado','w');
-    },9000);
-    navigator.geolocation.getCurrentPosition(function(pos){
-      if(finished)return;finished=true;clearTimeout(safety);
-      var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.round(pos.coords.accuracy||0);
-      save(lat,lng);
-      try{window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null}catch(_){ }
-      setTxt(acc?('Actualizada · precisión aprox. '+acc+' m'):'Ubicación actualizada');
-      setLabel('📍 Tu ubicación actual está activa');
-      done(btn);
-      setTimeout(function(){try{if(typeof rProfiles==='function')rProfiles()}catch(_){ }},40);
-      setTimeout(function(){try{if(typeof syncFromFirestore==='function')syncFromFirestore()}catch(_){ }},450);
-      if(window.toast&&manual)toast('Ubicación actualizada 📍','ok');
-    },function(err){
-      if(finished)return;finished=true;clearTimeout(safety);done(btn);
-      setTxt('Tocá para intentar actualizar de nuevo');
-      if(window.toast)toast('No pude tomar tu ubicación','w');
-      console.warn('GPS error',err);
-    },{enableHighAccuracy:true,timeout:8000,maximumAge:15000});
-  };
-  window.useMyLocation=window.fuUpdateExactLocation;
-  window.openMapSearch=function(){window.fuUpdateExactLocation(true)};
-  window.clearLocationFilter=function(){try{window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null}catch(_){ } window.fuUpdateExactLocation(true)};
-  document.addEventListener('DOMContentLoaded',function(){
-    var topBtn=document.querySelector('#page-profiles .inner > div:first-child > button[onclick*="syncFromFirestore"]');
-    if(topBtn)topBtn.remove();
-    setTimeout(function(){var b=document.querySelector('.fu-location-refresh-btn');if(b)b.classList.remove('loading')},600);
-  });
-})();
-</script>
-<!-- FortyUp v133: ubicación sin congelar ni bloquear navegación -->
-<style id="fortyup-v133-no-freeze-css">
-#page-profiles .back-b,#page-profiles button[onclick*="openMapSearch"],#page-profiles button[onclick*="useMyLocation"]:not(.fu-location-refresh-btn),#page-profiles button[onclick*="clearLocationFilter"]:not(.fu-location-refresh-btn){display:none!important;visibility:hidden!important;pointer-events:none!important}
-body,html{pointer-events:auto!important;overflow-x:hidden!important}
-#mapSearchModal:not(.open),.auth-ov:not(.open),.m-ov:not(.open),.forti-match-ov:not(.open){display:none!important;pointer-events:none!important;opacity:0!important}
-#locationSearchBar.fu-location-refresh-bar{display:block!important;width:100%;padding:.45rem 0 1rem!important}
-.fu-location-refresh-btn{width:100%;display:flex;align-items:center;gap:.75rem;background:linear-gradient(135deg,#ffffff,#ECFDF5);border:1.8px solid #10B981;border-radius:24px;padding:.72rem .9rem;box-shadow:0 8px 24px rgba(6,78,59,.10);color:#064E3B;cursor:pointer;transition:.2s;text-align:left;pointer-events:auto!important;position:relative;z-index:2}
-.fu-location-refresh-btn.loading{opacity:.92;pointer-events:auto!important}
-.fu-location-refresh-ico{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;font-size:1.25rem;box-shadow:0 6px 16px rgba(6,78,59,.22);flex:0 0 42px}
-.fu-location-refresh-copy{display:flex;flex-direction:column;gap:.05rem;min-width:0;flex:1}
-.fu-location-refresh-copy strong{font-size:.94rem;font-weight:900;color:#064E3B;line-height:1.1}
-.fu-location-refresh-copy small{font-size:.73rem;font-weight:800;color:#6B7C76;line-height:1.25;white-space:normal}
-.fu-location-refresh-arrow{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #D1E8DF;color:#059669;font-size:1.05rem;font-weight:900;flex:0 0 34px}
-.fu-location-refresh-btn.loading .fu-location-refresh-arrow{animation:fuSpinLocV133 .85s linear infinite}
-@keyframes fuSpinLocV133{to{transform:rotate(360deg)}}
-</style>
-<script id="fortyup-v133-no-freeze-js">
-(function(){
-var locBusy=false;
-function byId(id){return document.getElementById(id)}
-function showToast(msg,type){try{if(window.toast)toast(msg,type||'ok')}catch(_){}}
-function setText(txt){var el=byId('fuLocationRefreshText');if(el)el.textContent=txt}
-function setLoading(on){var b=document.querySelector('.fu-location-refresh-btn');if(b)b.classList.toggle('loading',!!on)}
-function installLocationButton(){var bar=byId('locationSearchBar');if(!bar)return;bar.className='fu-location-refresh-bar';bar.style.display=window.CU?'block':'none';bar.innerHTML='<button type="button" class="fu-location-refresh-btn" id="fuLocationRefreshBtn"><span class="fu-location-refresh-ico">📍</span><span class="fu-location-refresh-copy"><strong>Actualizar ubicación</strong><small id="fuLocationRefreshText">Tomar mi lugar exacto actual</small></span><span class="fu-location-refresh-arrow">↻</span></button>';var btn=byId('fuLocationRefreshBtn');if(btn)btn.onclick=function(ev){ev.preventDefault();ev.stopPropagation();return window.fuUpdateExactLocation(true)}}
-function saveCoords(lat,lng){window.MLAT=lat;window.MLNG=lng;window._fuLocationMode='gps';window._searchCity='';window._locFilter='';window._searchLat=null;window._searchLng=null;try{if(window.CU){CU.lat=lat;CU.lng=lng;CU.lastActive=new Date().toISOString();if(typeof sv==='function'&&window.K)sv(K.C,CU);if(typeof g==='function'&&typeof sv==='function'&&window.K){var users=g(K.U,[]).map(function(u){return u&&u.id===CU.id?Object.assign({},u,{lat:lat,lng:lng,lastActive:CU.lastActive}):u});sv(K.U,users)}}}catch(e){console.warn('No pude guardar coords localmente',e)}}
-function safeRenderProfiles(){if(typeof window.rProfiles!=='function')return;if(window.requestAnimationFrame){requestAnimationFrame(function(){setTimeout(function(){try{window.rProfiles()}catch(e){console.warn('rProfiles falló',e)}},0)})}else setTimeout(function(){try{window.rProfiles()}catch(e){}},0)}
-window.fuUpdateExactLocation=function(manual){if(locBusy){showToast('Ya estoy actualizando tu ubicación','ok');return false}if(!navigator.geolocation){showToast('GPS no disponible','w');return false}locBusy=true;setLoading(true);setText('Buscando ubicación exacta...');var finished=false;var hardStop=setTimeout(function(){if(finished)return;finished=true;locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');showToast('El GPS tardó demasiado, podés seguir usando la app','w')},8500);try{navigator.geolocation.getCurrentPosition(function(pos){if(finished)return;finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=Math.round(pos.coords.accuracy||0);saveCoords(lat,lng);setText(acc?('Ubicación actualizada · precisión aprox. '+acc+' m'):'Ubicación actualizada');safeRenderProfiles();showToast('Ubicación actualizada 📍','ok')},function(err){if(finished)return;finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');showToast('No pude obtener la ubicación, pero la app sigue activa','w');console.warn('GPS error',err)},{enableHighAccuracy:true,timeout:7000,maximumAge:60000})}catch(e){finished=true;clearTimeout(hardStop);locBusy=false;setLoading(false);setText('Tocá para intentar actualizar de nuevo');console.warn(e)}return false};
-window.openMapSearch=function(){return window.fuUpdateExactLocation(true)};
-window.useMyLocation=function(){return window.fuUpdateExactLocation(true)};
-window.clearLocationFilter=function(){window._fuLocationMode='gps';window._searchCity='';window._locFilter='';safeRenderProfiles();return false};
-window.addEventListener('pageshow',function(){document.body.style.overflow='';document.documentElement.style.overflow='';setTimeout(installLocationButton,80)});
-document.addEventListener('DOMContentLoaded',function(){setTimeout(installLocationButton,80);setTimeout(installLocationButton,600)});
-var oldGo=window.goTo;if(typeof oldGo==='function'&&!oldGo.__fu133){window.goTo=function(pg){var r=oldGo.apply(this,arguments);if(pg==='profiles')setTimeout(installLocationButton,80);return r};window.goTo.__fu133=true}
-setTimeout(installLocationButton,500);
 })();
 </script>
