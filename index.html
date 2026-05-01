@@ -472,14 +472,14 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 </div>
 
 <!-- ══ CHAT ══ -->
-<div id="chat" class="screen" style="padding-bottom:0;flex-direction:column;height:100dvh;overflow:hidden">
+<div id="chat" class="screen chat-screen">
   <div class="chat-topbar">
     <button class="chat-back" onclick="go('messages')">←</button>
     <img id="chatAvatar" class="top-avatar" src="" alt="">
     <span id="chatName">Chat</span>
   </div>
-  <div class="chat-messages" id="chatBox" style="flex:1;overflow-y:auto;min-height:0;padding:1rem"></div>
-  <div class="chat-input-area" style="flex-shrink:0;position:relative;bottom:auto">
+  <div class="chat-messages" id="chatBox"></div>
+  <div class="chat-input-area">
     <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0">📷</button>
     <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
     <input type="text" id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -531,6 +531,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       </div>
     </div>
     <div class="me-section">
+      <div class="me-row" onclick="updateGPS()"><span class="me-row-ico">📍</span><span class="me-row-txt">Actualizar ubicación</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="soon()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
@@ -716,7 +717,7 @@ function boot(){
     
     // Check unread messages
     updateMsgDot();
-    
+    if(!u.lat) setTimeout(requestGPS,1500);
     // Restore last page on refresh
     let lastPage='home';
     try{lastPage=sessionStorage.getItem('fu_page')||'home'}catch(e){}
@@ -789,12 +790,21 @@ function renderPlans(q=''){
         <div class="plan-cat">${p[1]}</div>
         <p>${escHtml(p[2])}</p>
         <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div>
-        <button class="btn btn-green" onclick="rsvpPlan(p[0],p[1],p[3])">
+        <button class="btn btn-green btn-rsvp" data-name="${p[0].replace(/"/g,'&quot;')}" data-when="${p[1].replace(/"/g,'&quot;')}" data-img="${p[3]}">
           ${p[0].includes('Busco')?'Me sumo':'Asistiré'}
         </button>
       </div>
     </div>`).join('')
   :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
+  // Bind RSVP buttons
+  document.querySelectorAll('.btn-rsvp').forEach(btn=>{
+    btn.onclick=e=>{
+      e.stopPropagation();
+      rsvpPlan(btn.dataset.name,btn.dataset.when,btn.dataset.img);
+      btn.textContent='¡Anotado! ✓';
+      btn.disabled=true;
+    };
+  });
 }
 
 // ── Render Profiles ──
@@ -880,18 +890,34 @@ function setAuth(tab){
 }
 
 function requestGPS(){
-  if(!navigator.geolocation) return;
-  if(!confirm('¿Permitís que FortyUp use tu ubicación para mostrarte personas y eventos cerca?')) return;
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const u=me();
-    if(!u) return;
-    u.lat=pos.coords.latitude; u.lng=pos.coords.longitude;
-    setMe(u);
-    const users=getUsers();
-    const idx=users.findIndex(x=>x.id===u.id);
-    if(idx>=0){users[idx].lat=u.lat;users[idx].lng=u.lng;setUsers(users);}
-    toast('Ubicación guardada 📍');
-  },()=>toast('No se pudo obtener ubicación'));
+  if(!navigator.geolocation){toast('Tu navegador no soporta GPS');return;}
+  // Browser will show its own permission dialog - no need for confirm()
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const u=me();
+      if(!u) return;
+      u.lat=pos.coords.latitude;
+      u.lng=pos.coords.longitude;
+      setMe(u);
+      const users=getUsers();
+      const idx=users.findIndex(x=>x.id===u.id);
+      if(idx>=0){users[idx].lat=u.lat;users[idx].lng=u.lng;setUsers(users);}
+      toast('📍 Ubicación guardada. Ya podés ver quién está cerca.');
+      // Re-render profiles with distance
+      if(document.getElementById('profilesList')) renderProfiles();
+      if(document.getElementById('homePlans')) renderHome();
+    },
+    err=>{
+      if(err.code===1) toast('Permiso de ubicación denegado. Podés activarlo en configuración.');
+      else toast('No se pudo obtener la ubicación');
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:300000}
+  );
+}
+// Also allow updating GPS from profile
+function updateGPS(){
+  toast('Obteniendo ubicación... 📍');
+  requestGPS();
 }
 function register(){
   const n=$('rName').value.trim();
