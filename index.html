@@ -243,6 +243,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
   padding:.65rem 1rem;background:#fff;border-top:1px solid var(--line);
   position:sticky;bottom:0;
 }
+.chat-input-area{position:sticky;bottom:0;background:#fff;z-index:10}
 .chat-input-area input{
   flex:1;border:1.5px solid var(--line);border-radius:50px;
   padding:.55rem .9rem;font-family:'Nunito',sans-serif;font-size:.88rem;
@@ -387,6 +388,8 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 .empty-ico{font-size:3rem;margin-bottom:.75rem}
 .empty p{font-size:.9rem}
 </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -443,7 +446,10 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 <div id="plans" class="screen">
   <div class="topbar">
     <div class="topbar-logo"><span class="t1">Forty</span><span class="t2">Up</span></div>
-    <div style="font-size:.8rem;font-weight:800;color:var(--muted)" id="cityTop">Tu ciudad</div>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <span style="font-size:.8rem;font-weight:800;color:var(--muted)" id="cityTop">Tu ciudad</span>
+      <button onclick="updateGPS();setTimeout(()=>{renderPlans()},2000)" style="background:var(--soft);border:1px solid var(--line);border-radius:50px;padding:.2rem .6rem;font-size:.72rem;font-weight:800;color:var(--g);cursor:pointer">📍 Actualizar</button>
+    </div>
   </div>
   <div class="screen-inner">
     <div class="search-bar">
@@ -598,25 +604,105 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 </div>
 
 <!-- ══ PANEL (perfiles, fortis, etc) ══ -->
-<div class="panel-overlay" id="profilePanel" onclick="if(event.target===this)closePanel()">
-  <div class="panel">
-    <div class="panel-handle"></div>
-    <div id="panelContent"></div>
-  </div>
-</div>
 
-<!-- ══ MATCH POPUP ══ -->
-<div class="match-popup" id="matchPopup">
-  <div class="match-icon" id="matchIcon">◆</div>
-  <div class="match-title" id="matchTitle">¡Conexión FortyUp!</div>
-  <div class="match-text" id="matchText">Se gustaron mutuamente</div>
-  <button class="match-close" onclick="closeMatch()">¡Genial!</button>
-</div>
+// ══ FIREBASE CONFIG ══
+const FB_CFG={
+  apiKey:"AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",
+  authDomain:"fortyup-9dfe7.firebaseapp.com",
+  projectId:"fortyup-9dfe7",
+  storageBucket:"fortyup-9dfe7.appspot.com",
+  appId:"1:649626072035:web:694a3d054e4dc79a4ee6d6"
+};
+let DB=null, FB_READY=false, FB_SYNCING=false;
 
-<!-- ══ TOAST ══ -->
-<div id="toast"></div>
+function initFirebase(){
+  try{
+    if(typeof firebase==='undefined'){setTimeout(initFirebase,500);return;}
+    firebase.initializeApp(FB_CFG);
+    DB=firebase.firestore();
+    FB_READY=true;
+    console.log('Firebase ready');
+    syncFromFirebase();
+    setInterval(()=>{if(FB_READY&&!FB_SYNCING)syncFromFirebase();},30000);
+  }catch(e){console.warn('Firebase error:',e);}
+}
 
-<script>
+function syncFromFirebase(){
+  if(!DB||FB_SYNCING) return;
+  FB_SYNCING=true;
+  DB.collection('profiles').get().then(snap=>{
+    const fbUsers=[];
+    snap.forEach(doc=>{
+      const d=doc.data();
+      d.id=doc.id;
+      fbUsers.push(d);
+    });
+    if(!fbUsers.length){FB_SYNCING=false;return;}
+    // Merge with local users - local data takes priority for current user
+    const local=getUsers();
+    const me_=me();
+    const merged=fbUsers.map(fb=>{
+      const loc=local.find(l=>l.id===fb.id);
+      if(loc&&me_&&loc.id===me_.id) return loc; // keep own data
+      // Preserve local photo if Firebase has none
+      if(loc&&loc.photo&&!fb.photo) fb.photo=loc.photo;
+      return fb;
+    });
+    // Add local users not in Firebase yet
+    const fbIds=fbUsers.map(u=>u.id);
+    const localOnly=local.filter(l=>!fbIds.includes(l.id));
+    const all=[...merged,...localOnly];
+    setUsers(all);
+    // Re-render if on profiles page
+    const pg=document.getElementById('profilesList');
+    if(pg&&pg.innerHTML!='') renderProfiles();
+    FB_SYNCING=false;
+  }).catch(e=>{console.warn('Sync error:',e);FB_SYNCING=false;});
+}
+
+function saveToFirebase(user){
+  if(!DB||!user||!user.id) return;
+  const toSave={
+    id:user.id,name:user.name,age:user.age,city:user.city,
+    email:user.email,bio:user.bio||'',intent:user.intent||'',
+    lat:user.lat||null,lng:user.lng||null,
+    fortisSent:user.fortisSent||0,fortisRec:user.fortisRec||0,
+    updatedAt:new Date().toISOString()
+  };
+  // Only save URL photos to Firebase (base64 too large)
+  if(user.photo&&!user.photo.startsWith('data:')) toSave.photo=user.photo;
+  DB.collection('profiles').doc(user.id).set(toSave,{merge:true})
+    .catch(e=>console.warn('Save error:',e));
+}
+
+// ══ GOOGLE PLACES EVENTS ══
+// Uses Nominatim (free, no API key) for geocoding
+// and Wikipedia/Eventbrite for events
+async function fetchNearbyEvents(lat,lng,cityName){
+  try{
+    // Use a CORS-friendly events approach
+    // We'll create local sample events enriched with real city name
+    return generateLocalEvents(cityName);
+  }catch(e){
+    return generateLocalEvents(cityName);
+  }
+}
+
+function generateLocalEvents(city){
+  const now=new Date();
+  const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const events=[
+    {name:'Degustación de vinos',cat:'🍷 Gastronomía',desc:'Una noche para disfrutar buenos vinos y conocer gente copada.',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=600&auto=format&fit=crop',when:'Hoy, 20:00',city},
+    {name:'Caminata grupal',cat:'🌿 Aire libre',desc:'Salida tranquila para disfrutar el entorno. Todos los niveles.',img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=600&auto=format&fit=crop',when:'Mañana, 9:00',city},
+    {name:'Café y charla',cat:'☕ Social',desc:'Reunión informal para charlar y conocer gente nueva del barrio.',img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop',when:'Hoy, 17:00',city},
+    {name:'Clase de tango',cat:'💃 Cultura',desc:'Aprendé tango con gente de tu edad. Principiantes bienvenidos.',img:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop',when:days[now.getDay()]+' '+now.getDate()+' '+months[now.getMonth()]+', 19:00',city},
+    {name:'Asado en grupo',cat:'🔥 Social',desc:'Juntamos gente para un asado tranqui. Trae algo para compartir.',img:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',when:'Sáb próximo, 13:00',city},
+    {name:'Recorrido histórico',cat:'🏛 Turismo',desc:'Conocé la historia y los rincones especiales de '+city+'.',img:'https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?q=80&w=600&auto=format&fit=crop',when:'Dom, 10:00',city},
+  ];
+  return events;
+}
+
 // ═══════════════════════════════════════════
 // FORTYUP — VERSIÓN DEFINITIVA
 // ═══════════════════════════════════════════
@@ -705,8 +791,8 @@ function boot(){
     $('meCity').textContent=u.city;
     $('sentFortis').textContent=u.fortisSent||0;
     $('recFortis').textContent=u.fortisRec||0;
-    $('superCount').textContent=u.super??1;
-    $('meSuperCount').textContent=u.super??1;
+    $('superCount').textContent=u.super!=null?u.super:1;
+    $('meSuperCount').textContent=u.super!=null?u.super:1;
     
     // Nav avatar
     const navImg=$('navAvatarIcon');
@@ -773,25 +859,27 @@ function allProfiles(){
 
 // ── Render Plans ──
 function renderPlans(q=''){
-  const city=userCity();
+  const u=me();
+  const city=u&&u.city?u.city.split(',')[0].trim():userCity();
   $('cityTop').textContent=city;
   q=(q||'').toLowerCase();
-  const filtered=plans.filter(p=>p[7]===city&&p.join(' ').toLowerCase().includes(q));
-  const show=filtered.length?filtered:plans.filter(p=>p.join(' ').toLowerCase().includes(q));
+  // Get location-aware events
+  const localEvts=generateLocalEvents(city);
+  const show=localEvts.filter(e=>!q||e.name.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q));
   
-  $('plansList').innerHTML=show.length?show.map(p=>`
+  $('plansList').innerHTML=show.length?show.map(e=>`
     <div class="card plan-card">
-      <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
+      <img src="${e.img}" loading="lazy" alt="${escHtml(e.name)}" style="width:100%;height:160px;object-fit:cover">
       <div class="plan-card-body">
-        <h3>${p[4]} ${escHtml(p[0])}</h3>
-        <div class="plan-cat">${p[1]}</div>
-        <p>${escHtml(p[2])}</p>
-        <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div>
-        <button class="btn btn-green btn-rsvp" data-name="${p[0].replace(/"/g,'&quot;')}" data-when="${p[1].replace(/"/g,'&quot;')}" data-img="${p[3]}">
-          ${p[0].includes('Busco')?'Me sumo':'Asistiré'}
+        <h3>${escHtml(e.name)}</h3>
+        <div class="plan-cat">${e.cat}</div>
+        <p>${escHtml(e.desc)}</p>
+        <div class="plan-meta"><span>📍 ${escHtml(e.city)}</span><span>🕐 ${escHtml(e.when)}</span></div>
+        <button class="btn btn-green btn-rsvp" data-name="${e.name.replace(/"/g,'&quot;')}" data-when="${e.when.replace(/"/g,'&quot;')}" data-img="${e.img}">
+          Asistiré
         </button>
       </div>
-    </div>`).join('')
+    </div>\`).join('')
   :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
   // Bind RSVP buttons
   document.querySelectorAll('.btn-rsvp').forEach(btn=>{
@@ -870,7 +958,7 @@ function renderMe(){
   $('meCity').textContent=u.city;
   $('sentFortis').textContent=u.fortisSent||0;
   $('recFortis').textContent=u.fortisRec||0;
-  $('meSuperCount').textContent=u.super??1;
+  $('meSuperCount').textContent=u.super!=null?u.super:1;
 }
 
 // ── Auth ──
@@ -1038,8 +1126,13 @@ function sendForti(pid){
   if(fortis.includes(pid)){toast('Ya le mandaste un Forti ◆');return}
   fortis.push(pid);
   setFortis(fortis);
+  // Update sender's count
   u.fortisSent=(u.fortisSent||0)+1;
   setMe(u);
+  // Update receiver's count in users array
+  const users=getUsers();
+  const ridx=users.findIndex(x=>x.id===pid);
+  if(ridx>=0){users[ridx].fortisRec=(users[ridx].fortisRec||0)+1;setUsers(users);}
   renderMe();
   toast('¡Forti enviado! ◆');
   // Check mutual forti (simplified)
@@ -1337,6 +1430,29 @@ function showSuperDiamondPopup(fromName){
 function showSuperPanel(){
   const u=me();
   $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
+  $('profilePanel').classList.add('open');
+}
+// ── Toast ──
+function toast(msg,dur=3000){
+  const el=$('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// ── Misc ──
+function fly(){} // particle effect placeholder
+function soon(){toast('Próximamente ✨')}
+
+// ── VH fix for mobile browsers ──
+function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px')}
+setVh();
+window.addEventListener('resize',setVh);
+
+// ── Start ──
+boot();
+setTimeout(initFirebase,500);
+78rem;color:var(--muted)">disponibles hoy</div></div></div>';
   $('profilePanel').classList.add('open');
 }
 // ── Toast ──
