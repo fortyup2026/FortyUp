@@ -197,6 +197,27 @@
   .center-hint{align-items:flex-start;flex-direction:column}
 }
 
+
+/* === FortyUp v7 Firebase real === */
+.firebase-status{
+  position:fixed;
+  left:14px;
+  top:82px;
+  z-index:90;
+  background:#fff;
+  border:1.5px solid var(--line);
+  color:var(--g);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:900;
+  box-shadow:var(--sh);
+  display:none;
+}
+.firebase-status.show{display:block}
+.firebase-status.err{color:#b91c1c;background:#fff1f2;border-color:#fecdd3}
+@media(max-width:700px){.firebase-status{top:160px;left:18px}}
+
 </style>
 </head>
 <body>
@@ -286,8 +307,155 @@
 
 <button id="globalBell" class="global-bell" data-count="0" onclick="showNotificationsPanel()">🔔</button>
 <nav class="bottom hidden" id="bottomNav"><button class="navb active" onclick="go('home')"><i>⌂</i>Inicio</button><button class="navb" onclick="go('profiles')"><i>👥</i>Perfiles</button><button class="navb center-btn" onclick="go('plans')"><i>▦</i>¿Qué hacemos hoy?</button><button class="navb" onclick="go('messages')"><i>☵</i>Mensajes</button><button class="navb" onclick="go('me')"><i id="navAvatarIcon">👤</i>Mi perfil</button></nav>
+<div id="firebaseStatus" class="firebase-status">Firebase conectado</div>
 <div id="toast" style="position:fixed;left:50%;bottom:105px;transform:translateX(-50%);background:#064E3B;color:#fff;padding:12px 18px;border-radius:999px;font-weight:900;box-shadow:var(--sh);display:none;z-index:200"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+  onAuthStateChanged, updateEmail
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, collection, getDocs, addDoc, query,
+  where, orderBy, serverTimestamp, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",
+  authDomain: "fortyup-9dfe7.firebaseapp.com",
+  projectId: "fortyup-9dfe7",
+  storageBucket: "fortyup-9dfe7.firebasestorage.app",
+  messagingSenderId: "649626072035",
+  appId: "1:649626072035:web:694a3d054e4dc79a4ee6d6",
+  measurementId: "G-DTZ2B67BSY"
+};
+
+const app = initializeApp(firebaseConfig);
+window.fuAuth = getAuth(app);
+window.fuDb = getFirestore(app);
+window.fuStorage = getStorage(app);
+window.fuFirebase = {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateEmail,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+  updateDoc,
+  ref,
+  uploadBytes,
+  getDownloadURL
+};
+
+window.dispatchEvent(new Event("firebase-ready"));
+</script>
+
+
 <script>
+let fuCloudReady=false, fuCloudUser=null, fuCloudProfiles=[];
+window.addEventListener("firebase-ready",()=>{
+  fuCloudReady=true;
+  showFirebaseStatus("Firebase listo");
+  try{
+    window.fuFirebase.onAuthStateChanged(window.fuAuth, async user=>{
+      fuCloudUser=user;
+      if(user){
+        await loadCloudMe(user.uid);
+        await loadCloudProfiles();
+        store('fu_session_on',true);
+        boot();
+        if(document.querySelector('.page.active')?.id==='landing') go('home');
+      }else{
+        store('fu_session_on',false);
+      }
+    });
+  }catch(e){showFirebaseStatus("Error Firebase", true)}
+});
+function showFirebaseStatus(t,err=false){
+  const el=document.getElementById('firebaseStatus');
+  if(!el)return;
+  el.textContent=t;
+  el.classList.add('show');
+  el.classList.toggle('err',err);
+  clearTimeout(window.fuStatusTimer);
+  window.fuStatusTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+async function uploadProfilePhoto(file, uid){
+  const storageRef = window.fuFirebase.ref(window.fuStorage, `profilePhotos/${uid}/${Date.now()}_${file.name}`);
+  await window.fuFirebase.uploadBytes(storageRef, file);
+  return await window.fuFirebase.getDownloadURL(storageRef);
+}
+async function saveCloudMe(u){
+  if(!fuCloudReady || !window.fuAuth.currentUser)return;
+  const uid=window.fuAuth.currentUser.uid;
+  await window.fuFirebase.setDoc(window.fuFirebase.doc(window.fuDb,"users",uid), {
+    ...u,
+    id:uid,
+    updatedAt: window.fuFirebase.serverTimestamp()
+  }, {merge:true});
+}
+async function loadCloudMe(uid){
+  const snap=await window.fuFirebase.getDoc(window.fuFirebase.doc(window.fuDb,"users",uid));
+  if(snap.exists()){
+    const data=snap.data();
+    store('fu_registered_user', {...data, id:uid});
+    store('fu_session_on',true);
+  }
+}
+async function loadCloudProfiles(){
+  if(!fuCloudReady)return;
+  const qs=await window.fuFirebase.getDocs(window.fuFirebase.collection(window.fuDb,"users"));
+  fuCloudProfiles=[];
+  qs.forEach(d=>{
+    const x=d.data();
+    if(x.profileComplete!==false && x.name && x.photo){
+      fuCloudProfiles.push({
+        id:d.id,
+        n:x.name,
+        a:x.age,
+        c:x.city,
+        city:(x.city||"").split(",")[0].trim(),
+        img:x.photo,
+        tags:[x.intent||"Conocer gente", "📍 "+((x.city||"").split(",")[0].trim())],
+        d:x.bio||"Usuario de FortyUp."
+      });
+    }
+  });
+}
+async function cloudAddForti(toId,type,toName,img){
+  if(!fuCloudReady || !window.fuAuth.currentUser)return;
+  await window.fuFirebase.addDoc(window.fuFirebase.collection(window.fuDb,"fortis"), {
+    from:window.fuAuth.currentUser.uid,
+    to:toId,
+    type,
+    toName,
+    toPhoto:img||"",
+    createdAt:window.fuFirebase.serverTimestamp()
+  });
+}
+async function cloudAddMessage(toId,text){
+  if(!fuCloudReady || !window.fuAuth.currentUser)return;
+  await window.fuFirebase.addDoc(window.fuFirebase.collection(window.fuDb,"messages"), {
+    from:window.fuAuth.currentUser.uid,
+    to:toId,
+    text,
+    createdAt:window.fuFirebase.serverTimestamp()
+  });
+}
+
 const $=id=>document.getElementById(id);
 const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
@@ -317,7 +485,7 @@ const defaultMessages=[
  ['p_luis','Luis',50,'Qué bueno estuvo el encuentro!','FortyUp','https://randomuser.me/api/portraits/men/60.jpg',0]
 ];
 
-function registered(){return load('fu_registered_user',null)}function sessionOn(){return load('fu_session_on',false)}function me(){return sessionOn()?registered():null}function setMe(u){store('fu_registered_user',u);store('fu_session_on',true)}
+function registered(){return load('fu_registered_user',null)}function sessionOn(){return load('fu_session_on',false)}function me(){return sessionOn()?registered():null}function setMe(u){store('fu_registered_user',u);store('fu_session_on',true); if(fuCloudReady&&window.fuAuth?.currentUser){saveCloudMe(u).catch(()=>{})}}
 function getFortis(){return load('fu_fortis',[])}function setFortis(v){store('fu_fortis',v)}
 function getNotis(){return load('fu_notis',[])}function setNotis(v){store('fu_notis',v)}
 function getChats(){return load('fu_chats',{})}function setChats(v){store('fu_chats',v)}
@@ -343,27 +511,42 @@ function useGPS(){
   toast('Ubicación guardada')
  },()=>toast('No se pudo usar GPS'))
 }
-function register(){
+async function register(){
  let n=$('rName').value.trim(),birth=$('rBirth').value,c=$('rCity').value.trim(),e=$('rEmail').value.trim(),p=$('rPass').value,p2=$('rPass2').value,intent=$('rIntent').value,bio=$('rBio').value.trim();
  if(!n||!birth||!c||!e||!p)return toast('Completá todos los campos obligatorios');
  let a=ageFromBirth(birth);if(a<40)return toast('FortyUp es para mayores de 40');if(p.length<6)return toast('La contraseña debe tener mínimo 6 caracteres');if(p!==p2)return toast('Las contraseñas no coinciden');if(!$('terms').checked)return toast('Aceptá los términos');
  let f=$('rPhoto').files[0];if(!f)return toast('Cargá una foto de perfil');
- let save=photo=>{setMe({id:'me',name:n,age:a,birth,city:c,email:e,password:p,photo,intent,bio,lat:gpsData?.lat||null,lng:gpsData?.lng||null,fortisSent:0,fortisRec:0,super:1});closeAuth();boot();go('home');toast('Cuenta creada. App habilitada 💚')};
- let r=new FileReader();r.onload=()=>save(r.result);r.readAsDataURL(f)
+ try{
+   if(!fuCloudReady) return toast('Firebase todavía no cargó. Esperá 2 segundos.');
+   showFirebaseStatus('Creando cuenta...');
+   const cred=await window.fuFirebase.createUserWithEmailAndPassword(window.fuAuth,e,p);
+   const photo=await uploadProfilePhoto(f, cred.user.uid);
+   const userData={id:cred.user.uid,name:n,age:a,birth,city:c,email:e,password:p,photo,intent,bio,lat:gpsData?.lat||null,lng:gpsData?.lng||null,fortisSent:0,fortisRec:0,super:1,profileComplete:true};
+   store('fu_registered_user',userData);store('fu_session_on',true);
+   await saveCloudMe(userData);
+   await loadCloudProfiles();
+   closeAuth();boot();go('home');toast('Cuenta creada en Firebase 💚')
+ }catch(err){toast('Error: '+(err.message||err));showFirebaseStatus('Error Firebase',true)}
 }
-function login(){
- let u=registered(),e=$('lEmail').value.trim(),p=$('lPass').value;
- if(!u){
-  if(e==='lala@demo.com'&&p==='123456'){
-   setMe({id:'me',name:'Lala',age:45,birth:'1980-01-01',city:'Mendoza, Argentina',email:e,password:p,photo:'https://randomuser.me/api/portraits/women/28.jpg',intent:'Conocer gente nueva',bio:'Me gusta conocer gente y compartir planes simples.',fortisSent:2,fortisRec:1,super:1})
-  }else return toast('No estás registrado. Creá tu cuenta primero.')
- }else{
-  if(e!==u.email || p!==u.password) return toast('Email o contraseña incorrectos');
-  store('fu_session_on',true);
+async function login(){
+ let e=$('lEmail').value.trim(),p=$('lPass').value;
+ try{
+   if(!fuCloudReady) return toast('Firebase todavía no cargó. Esperá 2 segundos.');
+   showFirebaseStatus('Ingresando...');
+   const cred=await window.fuFirebase.signInWithEmailAndPassword(window.fuAuth,e,p);
+   await loadCloudMe(cred.user.uid);
+   await loadCloudProfiles();
+   closeAuth();boot();go('home');toast('Sesión iniciada')
+ }catch(err){
+   // demo fallback
+   if(e==='lala@demo.com'&&p==='123456'){
+     setMe({id:'me',name:'Lala',age:45,birth:'1980-01-01',city:'Mendoza, Argentina',email:e,password:p,photo:'https://randomuser.me/api/portraits/women/28.jpg',intent:'Conocer gente nueva',bio:'Me gusta conocer gente y compartir planes simples.',fortisSent:2,fortisRec:1,super:1});
+     closeAuth();boot();go('home');toast('Sesión demo iniciada');return;
+   }
+   toast('No estás registrado o la contraseña es incorrecta');showFirebaseStatus('Error de ingreso',true)
  }
- closeAuth();boot();go('home');toast('Sesión iniciada')
 }
-function logout(){store('fu_session_on',false);boot();go('landing');toast('Sesión cerrada')}
+async function logout(){try{if(fuCloudReady) await window.fuFirebase.signOut(window.fuAuth)}catch(e){} store('fu_session_on',false);boot();go('landing');toast('Sesión cerrada')}
 function go(id){
  if(!me()&&id!=='landing'){openAuth(id==='profiles'||id==='plans'?'register':'login');return}
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.navb').forEach(b=>b.classList.remove('active'));let map={home:0,profiles:1,plans:2,messages:3,me:4};let b=document.querySelectorAll('.navb')[map[id]];if(b)b.classList.add('active');window.scrollTo(0,0);
@@ -382,7 +565,7 @@ function startChat(id,n,a,img){
  go('chat');chatWith={id,name:n,age:a,img};$('chatName').textContent=`${n}, ${a}`;$('chatAvatar').src=img;let chats=getChats(),key=id;if(!chats[key]){chats[key]=[{side:'left',txt:'Hola! 😊'},{side:'right',txt:`Hola ${n}! Me gustó tu perfil.`},{side:'left',txt:'Qué bueno! ¿Te gustaría compartir un plan?'}];setChats(chats)}renderChatBubbles()
 }
 function renderChatBubbles(){let chats=getChats(),arr=chats[chatWith.id]||[];$('chatBox').innerHTML=`<div class="chat-self-note">Acciones rápidas: <button class="tag" onclick="toggleFav('${chatWith.id}','${chatWith.name}')">⭐ Favorito</button> <button class="tag" onclick="confirmBlock('${chatWith.id}','${chatWith.name}')">🚫 Bloquear</button> <button class="tag" onclick="confirmReport('${chatWith.id}','${chatWith.name}')">⚠️ Reportar</button></div>`+arr.map(m=>`<div class="bubble ${m.side}">${m.txt}</div>`).join('')}
-function sendMsg(){let v=$('chatInput').value.trim();if(!v)return;let chats=getChats(),key=chatWith.id;chats[key]=chats[key]||[];chats[key].push({side:'right',txt:v});setChats(chats);$('chatInput').value='';renderChatBubbles();$('chatBox').scrollTop=$('chatBox').scrollHeight}
+function sendMsg(){let v=$('chatInput').value.trim();if(!v)return;let chats=getChats(),key=chatWith.id;chats[key]=chats[key]||[];chats[key].push({side:'right',txt:v});setChats(chats);cloudAddMessage(chatWith.id,v).catch(()=>{});$('chatInput').value='';renderChatBubbles();$('chatBox').scrollTop=$('chatBox').scrollHeight}
 function toggleFav(id,n){let favs=getFavs();if(favs.includes(id)){favs=favs.filter(x=>x!==id);toast('Quitado de favoritos')}else{favs.push(id);toast(n+' agregado a favoritos ⭐')}setFavs(favs)}
 
 function confirmBlock(id,n){
@@ -399,10 +582,10 @@ function closeMatch(){$('matchPopup').classList.remove('show')}
 function sendForti(e,toId,toName,img){
  let u=me()||{fortisSent:0,fortisRec:0},f=getFortis();f.push({from:'me',to:toId,type:'forti',at:Date.now()});
  if(toId!=='me'&&!f.some(x=>x.from===toId&&x.to==='me')){f.push({from:toId,to:'me',type:'forti',at:Date.now()+1});u.fortisRec=(u.fortisRec||0)+1;addNoti('forti','Forti recibido',`${toName} te devolvió un Forti 💎`,{id:toId,n:toName,img})}
- setFortis(f);u.fortisSent=(u.fortisSent||0)+1;setMe(u);boot();fly(e,'🔶');toast('Forti enviado');showMatch('Match de Fortis',`Vos y ${toName} se enviaron Fortis. Ya pueden charlar.`, '💎')
+ setFortis(f);cloudAddForti(toId,'forti',toName,img).catch(()=>{});u.fortisSent=(u.fortisSent||0)+1;setMe(u);boot();fly(e,'🔶');toast('Forti enviado');showMatch('Match de Fortis',`Vos y ${toName} se enviaron Fortis. Ya pueden charlar.`, '💎')
 }
 function sendSuper(e,toId,toName,img){
- let u=me();if(!u)return openAuth('login');if((u.super||0)<1)return toast('Ya usaste tu súper diamante');u.super--;u.fortisSent=(u.fortisSent||0)+1;setMe(u);addNoti('super','Súper diamante recibido',`${toName} te envió un Súper Diamante. Tocá para ver su perfil.`,{id:toId,n:toName,img});boot();fly(e,'💎');toast('Súper diamante enviado 💎');showMatch('Súper Diamante',`Le enviaste un Súper Diamante a ${toName}.`, '💎')
+ let u=me();if(!u)return openAuth('login');if((u.super||0)<1)return toast('Ya usaste tu súper diamante');u.super--;u.fortisSent=(u.fortisSent||0)+1;setMe(u);cloudAddForti(toId,'super',toName,img).catch(()=>{});addNoti('super','Súper diamante recibido',`${toName} te envió un Súper Diamante. Tocá para ver su perfil.`,{id:toId,n:toName,img});boot();fly(e,'💎');toast('Súper diamante enviado 💎');showMatch('Súper Diamante',`Le enviaste un Súper Diamante a ${toName}.`, '💎')
 }
 function fly(e,s){let d=document.createElement('div');d.className='forti-fly';d.textContent=s;let r=e.target.getBoundingClientRect();d.style.left=r.left+'px';d.style.top=r.top+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),950)}
 function toast(t){let el=$('toast');el.textContent=t;el.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>el.style.display='none',2200)}
@@ -424,9 +607,14 @@ function showFavoritesPanel(){
 function showPhotosPanel(){
  let u=me();openPanel(`<h2>Fotos y videos</h2><p class="hero-p" style="font-size:18px;text-align:left">Cambiá tu foto de perfil. Impacta en toda la app.</p><img class="upload-preview" src="${u.photo}"><div class="field"><label>Nueva foto</label><input id="newProfilePhoto" type="file" accept="image/*"></div><button class="btn btn-green" style="width:100%" onclick="saveNewPhoto()">Guardar foto</button><div class="mini-alert soon">Videos y álbumes estarán disponibles próximamente.</div>`)
 }
-function saveNewPhoto(){let f=$('newProfilePhoto').files[0];if(!f)return toast('Elegí una foto');let r=new FileReader();r.onload=()=>{let u=me();u.photo=r.result;setMe(u);boot();closePanel();toast('Foto actualizada')};r.readAsDataURL(f)}
-function showEditPanel(){
- let u=me();openPanel(`<h2>Editar perfil</h2><div class="field"><label>Nombre</label><input id="editName" value="${u.name}"></div><div class="field"><label>Ciudad</label><input id="editCity" value="${u.city}"></div><div class="field"><label>Sobre vos</label><textarea id="editBio" rows="3">${u.bio||''}</textarea></div><div class="field"><label>Email</label><input id="editEmail" value="${u.email||''}"></div><button class="btn btn-green" style="width:100%" onclick="saveEdit()">Guardar cambios</button>`)
+async function saveNewPhoto(){
+ let f=$('newProfilePhoto').files[0];if(!f)return toast('Elegí una foto');
+ try{
+   let photo;
+   if(fuCloudReady&&window.fuAuth.currentUser){photo=await uploadProfilePhoto(f, window.fuAuth.currentUser.uid)}
+   else {photo=await new Promise(res=>{let r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(f)})}
+   let u=me();u.photo=photo;setMe(u);await saveCloudMe(u);boot();closePanel();toast('Foto actualizada')
+ }catch(e){toast('No se pudo guardar la foto')}
 }
 function saveEdit(){let u=me();u.name=$('editName').value.trim()||u.name;u.city=$('editCity').value.trim()||u.city;u.bio=$('editBio').value.trim();u.email=$('editEmail').value.trim()||u.email;setMe(u);boot();renderProfiles();closePanel();toast('Perfil actualizado')}
 function soon(txt){toast(txt||'Disponible próximamente')}
