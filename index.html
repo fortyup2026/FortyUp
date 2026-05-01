@@ -103,7 +103,7 @@ h1,h2,h3{font-family:'Playfair Display',serif}
 .btn-outline{background:rgba(255,255,255,.65);border:2px solid rgba(6,78,59,.22);color:var(--green)}
 .btn-soft{background:var(--mint);border:1.5px solid #A7F3D0;color:var(--green)}
 .btn-danger{background:#FEF2F2;border:1.5px solid #FCA5A5;color:#DC2626}
-.btn-full{width:100%}.btn-sm{padding:.43rem .8rem;font-size:.78rem}
+.btn-full{width:100%}.btn-sm{padding:.43rem .8rem;font-size:.78rem}.top-back{margin-bottom:.75rem}.click-card{cursor:pointer;transition:.18s}.click-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
 .inner{max-width:1120px;margin:0 auto;padding:1.5rem 1.1rem 4rem}
 .inner-narrow{max-width:760px}
 .title-page{
@@ -411,6 +411,7 @@ h1,h2,h3{font-family:'Playfair Display',serif}
 
   <section class="page" id="page-register">
     <div class="inner inner-narrow">
+      <button class="btn btn-outline btn-sm top-back" onclick="go('home')">← Volver</button>
       <h2 class="title-page">Crear perfil</h2>
       <p class="sub-page">Todo lo que cargues impacta en toda la app: foto, nombre, edad, ciudad, gustos y ubicación.</p>
       <div class="steps" id="steps"></div>
@@ -486,6 +487,15 @@ h1,h2,h3{font-family:'Playfair Display',serif}
     <div class="inner inner-narrow" id="myArea"></div>
   </section>
 
+
+  <section class="page" id="page-favorites">
+    <div class="inner">
+      <h2 class="title-page">Favoritos</h2>
+      <p class="sub-page">Perfiles que guardaste para volver a verlos.</p>
+      <div class="grid" id="favoritesGrid"></div>
+    </div>
+  </section>
+
   <section class="page" id="page-notifications">
     <div class="inner inner-narrow">
       <h2 class="title-page">Notificaciones</h2>
@@ -518,13 +528,28 @@ const intents=['Conocer gente nueva','Amistades','Compañía para actividades','
 const planPrefs=['Café','Vino','Caminata','Cena','Cine','Música en vivo','Viaje corto'];
 let regStep=0, activeChat=null, msgMode='all';
 
+function makeAvatar(name){
+ const initials=(name||'SW').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#063D33"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs><rect width="500" height="500" rx="250" fill="url(#g)"/><circle cx="365" cy="130" r="82" fill="#F2B705" opacity=".22"/><text x="250" y="287" text-anchor="middle" font-size="120" font-family="Arial" font-weight="900" fill="white">${initials}</text></svg>`;
+ return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+}
+function defaultMe(){return {id:'me_sebas',name:'Sebas',dob:'1985-01-01',age:41,city:'Mendoza',province:'Mendoza',lat:-32.8895,lng:-68.8458,gender:'Hombre',email:'sebas@fortyup.demo',photo:makeAvatar('Sebas'),intent:'Conocer gente nueva',interests:['Vino','Música en vivo','Cine','Viajes'],plans:['Vino','Cena','Música en vivo'],desc:'Perfil demo de Sebas para probar la app. La foto que cargues en registro reemplaza esta y aparece en toda la app.',tags:['FortyUp','Mendoza'],terms:true,superFortis:1,verified:true,created:Date.now()}}
+function seedDemoState(){
+ if(!get(K.me,null)) set(K.me, defaultMe());
+ const u=get(K.me,null); let all=users();
+ if(u && !all.some(x=>x.id===u.id)){all.unshift(u); saveUsers(all)}
+ if(!localStorage.getItem(K.notis)){set(K.notis,[{id:'n1',to:u.id,text:'Guillermo te envió un Forti 💎',type:'forti',read:false,at:Date.now()-3600000},{id:'n2',to:u.id,text:'Laura Prueba te envió un Súper Forti dorado 💎',type:'super',read:false,at:Date.now()-1800000},{id:'n3',to:u.id,text:'Match de Fortis con Carmen ✨',type:'match',read:false,at:Date.now()-900000}])}
+ if(!localStorage.getItem(K.fortis)){set(K.fortis,[{from:'s4',to:u.id,type:'forti',at:Date.now()-3600000},{from:'s7',to:u.id,type:'super',at:Date.now()-1800000},{from:'s1',to:u.id,type:'forti',at:Date.now()-1200000},{from:u.id,to:'s1',type:'forti',at:Date.now()-900000}])}
+}
+
+
 const demoUsers=[
 {id:'s1',name:'Carmen',dob:'1970-04-12',age:55,city:'Córdoba',province:'Córdoba',lat:-31.4201,lng:-64.1888,gender:'Mujer',photo:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Amistades',interests:['Cine','Viajes','Café'],plans:['Café','Cine'],desc:'Me encanta conversar sin apuro, el cine y los desayunos largos.',superFortis:1,verified:true},
 {id:'s2',name:'Roberto',dob:'1978-01-08',age:47,city:'Rosario',province:'Santa Fe',lat:-32.9442,lng:-60.6505,gender:'Hombre',photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Compañía para actividades',interests:['Vino','Música en vivo','Cena'],plans:['Vino','Música en vivo'],desc:'Arquitecto, jazz, vino y charlas con contenido.',superFortis:1,verified:true},
 {id:'s3',name:'Marta',dob:'1973-09-21',age:52,city:'Buenos Aires',province:'Buenos Aires',lat:-34.6037,lng:-58.3816,gender:'Mujer',photo:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Conocer gente nueva',interests:['Teatro','Viajes','Gastronomía'],plans:['Cena','Cine'],desc:'Disfruto descubrir lugares y compartir planes reales.',superFortis:1,verified:true},
 {id:'s4',name:'Guillermo',dob:'1964-06-18',age:61,city:'Mendoza',province:'Mendoza',lat:-32.8895,lng:-68.8458,gender:'Hombre',photo:'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Compañía para actividades',interests:['Vino','Caminatas','Naturaleza'],plans:['Vino','Caminata'],desc:'Enólogo. Si hay una buena copa y buena charla, estoy.',superFortis:1,verified:true},
 {id:'s5',name:'Silvia',dob:'1976-03-03',age:49,city:'Mar del Plata',province:'Buenos Aires',lat:-38.0055,lng:-57.5426,gender:'Mujer',photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Amistades',interests:['Mascotas','Naturaleza','Música en vivo'],plans:['Caminata','Música en vivo'],desc:'Veterinaria, plantas, música y planes sencillos.',superFortis:1,verified:true},
-{id:'s6',name:'Diego',dob:'1974-12-04',age:51,city:'Ushuaia',province:'Tierra del Fuego',lat:-54.8019,lng:-68.3030,gender:'Hombre',photo:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Conocer gente nueva',interests:['Naturaleza','Caminatas','Viajes'],plans:['Caminata','Café'],desc:'Vivo cerca del fin del mundo y me gusta compartirlo.',superFortis:1,verified:true}
+{id:'s6',name:'Diego',dob:'1974-12-04',age:51,city:'Ushuaia',province:'Tierra del Fuego',lat:-54.8019,lng:-68.3030,gender:'Hombre',photo:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Conocer gente nueva',interests:['Naturaleza','Caminatas','Viajes'],plans:['Caminata','Café'],desc:'Vivo cerca del fin del mundo y me gusta compartirlo.',superFortis:1,verified:true},{id:'s7',name:'Laura Prueba',dob:'1975-07-15',age:50,city:'Mendoza',province:'Mendoza',lat:-32.8908,lng:-68.8441,gender:'Mujer',photo:'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&h=650&fit=crop&crop=faces&auto=format&q=80',intent:'Compañía para actividades',interests:['Vino','Bailar','Recitales'],plans:['Vino','Música en vivo'],desc:'Perfil de prueba para verificar Fortis, mensajes, favoritos y ubicación en Mendoza.',superFortis:1,verified:true}
 ];
 
 const plans=[
@@ -553,7 +578,7 @@ function init(){
  renderAll();
  go('home');
 }
-function renderAll(){renderTop();renderHome();renderRegister();renderProfiles();renderPlans();renderMessages();renderMe();renderNotifications();renderBlocked();populateCities();}
+function renderAll(){renderTop();renderHome();renderRegister();renderProfiles();renderPlans();renderMessages();renderMe();renderNotifications();renderBlocked();renderFavorites();populateCities();}
 function renderTop(){
  const u=me();
  document.getElementById('joinTop').style.display=u?'none':'inline-flex';
@@ -567,6 +592,7 @@ function go(page){
  if(page==='profiles')renderProfiles();
  if(page==='plans')renderPlans();
  if(page==='messages')renderMessages();
+ if(page==='favorites')renderFavorites();
  if(page==='chat')renderChat();
  if(page==='me')renderMe();
  if(page==='notifications'){markRead();renderNotifications();}
@@ -649,7 +675,7 @@ function useGPS(){
   try{
    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${u.lat}&lon=${u.lng}&accept-language=es`);
    const d=await r.json(); const city=d.address.city||d.address.town||d.address.village||d.address.county;
-   if(city) document.getElementById('rCity').value=city;
+   if(city && document.getElementById('rCity')) document.getElementById('rCity').value=city;
   }catch(e){}
   toast('Ubicación detectada');
  },()=>toast('No se pudo usar GPS'))
@@ -692,6 +718,13 @@ function sendSuper(to){
 }
 function toggleFav(id){if(!me())return openRegister();let f=get(K.favs,[]);f=f.includes(id)?f.filter(x=>x!==id):[...f,id];set(K.favs,f);toast(f.includes(id)?'Agregado a favoritos':'Quitado de favoritos');renderProfiles();renderMe()}
 function blockUser(id){let b=get(K.blocked,[]);if(!b.includes(id))b.push(id);set(K.blocked,b);toast('Perfil bloqueado');renderProfiles();renderBlocked()}
+
+function renderFavorites(){
+ const ids=get(K.favs,[]); const area=document.getElementById('favoritesGrid');
+ const arr=users().filter(u=>ids.includes(u.id));
+ area.innerHTML=arr.length?arr.map(userCard).join(''):'<div class="empty">Todavía no guardaste favoritos. Tocá ★ en una tarjeta de perfil.</div>';
+}
+
 function renderPlans(){
  const u=me(), city=u?.city||'Mendoza', time=val('planTime')||'all', cat=val('planCat');
  document.getElementById('plansCity').textContent=city;
@@ -721,7 +754,7 @@ function renderMe(){
  const u=me(), area=document.getElementById('myArea');
  if(!u){area.innerHTML='<div class="empty">Creá tu perfil para usar FortyUp.</div><button class="btn btn-primary btn-full" onclick="openRegister()">Crear perfil</button>';return}
  const c=fortisCount(u.id), favs=get(K.favs,[]).length, msg=get(K.messages,[]).filter(x=>x.key.includes(u.id)&&!x.system).length;
- area.innerHTML=`<div class="my-hero"><div class="my-photo">${avatarHTML(u)}</div><div class="my-name">${esc(u.name)}, ${u.age}</div><div class="my-city">📍 ${esc(u.city)}</div><div class="my-badges"><span class="my-badge">Email verificado</span><span class="my-badge">${esc(u.intent||'Conexiones')}</span><span class="my-badge">${u.superFortis?'Súper Forti disponible':'Súper Forti usado'}</span></div><button class="btn btn-gold btn-sm" style="margin-top:1rem" onclick="openRegister()">Editar perfil</button></div><div class="my-cards"><div class="my-card"><div class="my-icon">💎</div><h4>Mis Fortis</h4><p>${c.sent} enviados · ${c.received} recibidos</p></div><div class="my-card"><div class="my-icon">💬</div><h4>Mensajes</h4><p>${msg} mensajes</p></div><div class="my-card"><div class="my-icon">⭐</div><h4>Favoritos</h4><p>${favs} perfiles guardados</p></div><div class="my-card"><div class="my-icon">📍</div><h4>Ubicación</h4><p>${u.lat?'GPS activo':'Solo ciudad'} · ${esc(u.city)}</p></div></div><div class="card"><h3>Sobre mí</h3><p class="description">${esc(u.desc||'Sin descripción cargada.')}</p>${(u.interests||[]).map(i=>'<span class="tag">'+esc(i)+'</span>').join('')}</div><div class="settings" style="margin-top:1rem"><div class="setting" onclick="go('blocked')"><span class="setting-icon">🚫</span>Perfiles bloqueados</div><div class="setting" onclick="toast('Términos y condiciones aceptados')"><span class="setting-icon">📄</span>Términos y condiciones</div><div class="setting" onclick="logout()"><span class="setting-icon">🚪</span>Cerrar sesión</div></div>`;
+ area.innerHTML=`<div class="my-hero"><div class="my-photo">${avatarHTML(u)}</div><div class="my-name">${esc(u.name)}, ${u.age}</div><div class="my-city">📍 ${esc(u.city)}</div><div class="my-badges"><span class="my-badge">Email verificado</span><span class="my-badge">${esc(u.intent||'Conexiones')}</span><span class="my-badge">${u.superFortis?'Súper Forti disponible':'Súper Forti usado'}</span></div><button class="btn btn-gold btn-sm" style="margin-top:1rem" onclick="openRegister()">Editar perfil</button></div><div class="my-cards"><div class="my-card click-card" onclick="go('notifications')"><div class="my-icon">💎</div><h4>Mis Fortis</h4><p>${c.sent} enviados · ${c.received} recibidos</p></div><div class="my-card click-card" onclick="go('messages')"><div class="my-icon">💬</div><h4>Mensajes</h4><p>${msg} mensajes</p></div><div class="my-card click-card" onclick="go('favorites')"><div class="my-icon">⭐</div><h4>Favoritos</h4><p>${favs} perfiles guardados</p></div><div class="my-card click-card" onclick="openRegister()"><div class="my-icon">📍</div><h4>Ubicación</h4><p>${u.lat?'GPS activo':'Solo ciudad'} · ${esc(u.city)}</p></div></div><div class="card"><h3>Sobre mí</h3><p class="description">${esc(u.desc||'Sin descripción cargada.')}</p>${(u.interests||[]).map(i=>'<span class="tag">'+esc(i)+'</span>').join('')}</div><div class="settings" style="margin-top:1rem"><div class="setting" onclick="go('blocked')"><span class="setting-icon">🚫</span>Perfiles bloqueados</div><div class="setting" onclick="toast('Términos y condiciones aceptados')"><span class="setting-icon">📄</span>Términos y condiciones</div><div class="setting" onclick="logout()"><span class="setting-icon">🚪</span>Cerrar sesión</div></div>`;
 }
 function renderNotifications(){
  const m=me(), area=document.getElementById('notificationsArea'); if(!m){area.innerHTML='<div class="empty">Creá tu perfil para ver notificaciones.</div>';return}
@@ -736,7 +769,7 @@ function renderBlocked(){
 }
 function unblock(id){set(K.blocked,get(K.blocked,[]).filter(x=>x!==id));toast('Perfil desbloqueado');renderBlocked();renderProfiles()}
 function logout(){localStorage.removeItem(K.me);toast('Sesión cerrada');renderAll();go('home')}
-document.addEventListener('DOMContentLoaded',()=>{if(!get(K.users,null))set(K.users,demoUsers);renderAll();go('home')});
+document.addEventListener('DOMContentLoaded',()=>{if(!get(K.users,null))set(K.users,demoUsers);seedDemoState();renderAll();go('home')});
 </script>
 </body>
 </html>
