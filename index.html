@@ -386,38 +386,9 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 .empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
 .empty-ico{font-size:3rem;margin-bottom:.75rem}
 .empty p{font-size:.9rem}
-
-/* === FIX GPT: registro, foto y persistencia local === */
-.profile-photo .initial-fallback,
-.avatar-fallback{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:3rem;font-weight:800;
-  color:rgba(6,78,59,.45);background:var(--soft);
-}
-.auth-photo-preview{
-  width:74px;height:74px;border-radius:50%;border:3px solid var(--line);
-  background:var(--soft);object-fit:cover;display:none;margin:.45rem 0 0;
-}
-.warn-box{
-  background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;
-  border-radius:14px;padding:.7rem .8rem;font-size:.78rem;line-height:1.45;font-weight:700;margin:.6rem 0;
-}
-
-
-.auth-link-btn{
-  width:100%;
-  margin-top:.65rem;
-  border:none;
-  background:transparent;
-  color:var(--g);
-  font-size:.86rem;
-  font-weight:900;
-  font-family:'Nunito',sans-serif;
-  text-decoration:underline;
-  cursor:pointer;
-}
-.photo-help{font-size:.72rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
 </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -537,6 +508,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       </div>
       <div class="me-name" id="meNameAge">Nombre, 00</div>
       <div class="me-city" id="meCity">Ciudad</div>
+      <div style="margin-top:.75rem;width:100%"><div style="background:rgba(255,255,255,.2);border-radius:50px;height:5px;overflow:hidden"><div id="profilePct" style="background:#fff;height:100%;border-radius:50px;transition:width .5s;width:0%"></div></div><div id="profilePctTxt" style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:.25rem;text-align:center">0% completo</div></div>
       <div class="me-stats">
         <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Fortis enviados</div></div>
         <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Fortis recibidos</div></div>
@@ -563,6 +535,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
     <div class="me-section">
       <div class="me-row" onclick="updateGPS()"><span class="me-row-ico">📍</span><span class="me-row-txt">Actualizar ubicación</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showNotifications()"><span class="me-row-ico">🔔</span><span class="me-row-txt">Notificaciones</span><span class="me-row-arr" id="notifDot" style="background:var(--red);color:#fff;border-radius:50%;width:20px;height:20px;display:none;align-items:center;justify-content:center;font-size:.7rem;font-weight:900"></span></div>
       <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="soon()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="if(confirm('¿Eliminar tu cuenta?'))deleteAccount()" style="color:var(--red)"><span class="me-row-ico">🗑</span><span class="me-row-txt" style="color:var(--red)">Eliminar cuenta</span><span class="me-row-arr">›</span></div>
@@ -574,7 +547,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 <nav class="bnav hidden" id="bottomNav">
   <button class="bn" id="bn-home" onclick="go('home')"><span class="bn-ico" style="font-size:1.3rem">🌿</span><span>Inicio</span></button>
   <button class="bn" id="bn-plans" onclick="go('plans')"><span class="bn-ico" style="font-size:1.3rem">🗺️</span><span>Planes</span></button>
-  <button class="bn-center" id="bn-center" onclick="go('profiles')" style="font-family:'Playfair Display',serif;font-weight:900;line-height:1;display:flex;flex-direction:column;align-items:center"><span style="color:#fff;font-size:.8rem">Forty</span><span style="color:#6ee7b7;font-style:italic;font-size:.8rem">Up</span></button>
+  <button class="bn-center" id="bn-center" onclick="go('profiles')" style="font-family:'Playfair Display',serif;font-size:.78rem;font-weight:900;flex-direction:column;gap:0;line-height:1.1"><span style="color:#fff">Forty</span><span style="color:#6ee7b7;font-style:italic">Up</span></button></button>
   <button class="bn" id="bn-messages" onclick="go('messages')">
     <span class="bn-ico" style="font-size:1.3rem">✉️</span><span>Mensajes</span>
     <span class="bn-dot" id="msgDot"></span>
@@ -600,11 +573,6 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       <div class="form-group"><label>Nombre *</label><input id="rName" placeholder="Tu nombre"></div>
       <div class="form-group"><label>Fecha de nacimiento *</label><input id="rBirth" type="date"></div>
       <div class="form-group"><label>Ciudad *</label><input id="rCity" placeholder="Ej: Buenos Aires"></div>
-      <div class="form-group">
-        <label>Foto de perfil</label>
-        <input id="rPhoto" type="file" accept="image/*" onchange="previewRegisterPhoto(this)">
-        <img id="rPhotoPreview" class="auth-photo-preview" alt="Vista previa">
-      </div>
       <div class="form-group"><label>Email *</label><input id="rEmail" type="email" placeholder="tu@email.com"></div>
       <div class="form-group"><label>Contraseña *</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres"></div>
       <div class="form-group"><label>Repetir contraseña *</label><input id="rPass2" type="password" placeholder="Repetí tu contraseña"></div>
@@ -624,36 +592,69 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       </div>
       <button class="auth-btn" onclick="register()">Crear mi perfil</button>
     </div>
-    <!-- Login -->
-    <div id="logFields" style="display:none">
-      <div class="form-group"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com"></div>
-      <div class="form-group"><label>Contraseña</label><input id="lPass" type="password" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter')login()"></div>
-      <button class="auth-btn" onclick="login()">Ingresar</button>
-      <button class="auth-link-btn" onclick="forgotPassword()">Olvidé mi contraseña</button>
-    </div>
-  </div>
-</div>
+    <!-- Forgot password -->
+    <div id="forgotFields" style="display:none">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;line-height:1.5">Ingresá tu email y te enviamos una nueva contraseña temporal.</p>
+      <div class="form-group"><label>Email</label><input id="forgotEmail" type="email" placehold
+// ══ FIREBASE ══
+const FB_CFG={apiKey:"AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",authDomain:"fortyup-9dfe7.firebaseapp.com",projectId:"fortyup-9dfe7",storageBucket:"fortyup-9dfe7.appspot.com",appId:"1:649626072035:web:694a3d054e4dc79a4ee6d6"};
+let DB=null,FB_READY=false,FB_SYNCING=false;
+function initFirebase(){
+  try{
+    if(typeof firebase==='undefined'){setTimeout(initFirebase,500);return;}
+    firebase.initializeApp(FB_CFG);
+    DB=firebase.firestore();
+    FB_READY=true;
+    syncFromFirebase();
+    setInterval(function(){if(FB_READY&&!FB_SYNCING)syncFromFirebase();},30000);
+  }catch(e){console.warn('Firebase:',e);}
+}
+function syncFromFirebase(){
+  if(!DB||FB_SYNCING)return;
+  FB_SYNCING=true;
+  DB.collection('profiles').get().then(function(snap){
+    var fb=[];
+    snap.forEach(function(doc){var d=doc.data();d.id=doc.id;fb.push(d);});
+    if(!fb.length){FB_SYNCING=false;return;}
+    var local=getUsers();
+    var me_=me();
+    var merged=fb.map(function(f){
+      var loc=local.find(function(l){return l.id===f.id;});
+      if(loc&&me_&&loc.id===me_.id)return loc;
+      if(loc&&loc.photo&&!f.photo)f.photo=loc.photo;
+      return f;
+    });
+    var fbIds=fb.map(function(u){return u.id;});
+    var localOnly=local.filter(function(l){return !fbIds.includes(l.id);});
+    setUsers([].concat(merged,localOnly));
+    var pg=document.getElementById('profilesList');
+    if(pg&&pg.children.length)renderProfiles();
+    FB_SYNCING=false;
+  }).catch(function(e){FB_SYNCING=false;});
+}
+function saveToFirebase(user){
+  if(!DB||!user||!user.id)return;
+  var d={id:user.id,name:user.name||'',age:user.age||0,city:user.city||'',
+    email:user.email||'',bio:user.bio||'',intent:user.intent||'',
+    lat:user.lat||null,lng:user.lng||null,
+    fortisSent:user.fortisSent||0,fortisRec:user.fortisRec||0,
+    updatedAt:new Date().toISOString()};
+  if(user.photo&&!user.photo.startsWith('data:'))d.photo=user.photo;
+  DB.collection('profiles').doc(user.id).set(d,{merge:true}).catch(function(){});
+}
+// ══ EVENTS ══
+function generateLocalEvents(city){
+  city=city||'tu ciudad';
+  return [
+    {name:'Degustación de vinos',cat:'🍷 Gastronomía',desc:'Una noche para disfrutar buenos vinos y conocer gente.',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=600&auto=format&fit=crop',when:'Hoy, 20:00',city:city},
+    {name:'Café y charla',cat:'☕ Social',desc:'Reunión informal para charlar y conocer gente nueva.',img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop',when:'Hoy, 17:00',city:city},
+    {name:'Caminata grupal',cat:'🌿 Aire libre',desc:'Salida tranquila para disfrutar el entorno.',img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=600&auto=format&fit=crop',when:'Mañana, 9:00',city:city},
+    {name:'Clase de tango',cat:'💃 Cultura',desc:'Aprendé tango con gente de tu edad. Principiantes bienvenidos.',img:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop',when:'Miércoles, 19:00',city:city},
+    {name:'Asado en grupo',cat:'🔥 Social',desc:'Juntamos gente para un asado tranqui.',img:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',when:'Sábado, 13:00',city:city},
+    {name:'Recorrido histórico',cat:'🏛 Turismo',desc:'Conocé los rincones especiales de '+city+'.',img:'https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?q=80&w=600&auto=format&fit=crop',when:'Domingo, 10:00',city:city},
+  ];
+}
 
-<!-- ══ PANEL (perfiles, fortis, etc) ══ -->
-<div class="panel-overlay" id="profilePanel" onclick="if(event.target===this)closePanel()">
-  <div class="panel">
-    <div class="panel-handle"></div>
-    <div id="panelContent"></div>
-  </div>
-</div>
-
-<!-- ══ MATCH POPUP ══ -->
-<div class="match-popup" id="matchPopup">
-  <div class="match-icon" id="matchIcon">◆</div>
-  <div class="match-title" id="matchTitle">¡Conexión FortyUp!</div>
-  <div class="match-text" id="matchText">Se gustaron mutuamente</div>
-  <button class="match-close" onclick="closeMatch()">¡Genial!</button>
-</div>
-
-<!-- ══ TOAST ══ -->
-<div id="toast"></div>
-
-<script>
 // ═══════════════════════════════════════════
 // FORTYUP — VERSIÓN DEFINITIVA
 // ═══════════════════════════════════════════
@@ -661,8 +662,6 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 const $=id=>document.getElementById(id);
 const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
-function readFileAsDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-function previewRegisterPhoto(input){const f=input.files&&input.files[0];const img=$('rPhotoPreview');if(!f||!img)return;readFileAsDataURL(f).then(src=>{img.src=src;img.style.display='block'}).catch(()=>toast('No se pudo previsualizar la foto'))}
 
 // ── Data ──
 const plans=[
@@ -700,42 +699,6 @@ const setEvents=v=>store('fu_events',v);
 const getUsers=()=>load('fu_users',[]);
 const setUsers=v=>store('fu_users',v);
 
-function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
-function getSavedUsers(){
-  const users=getUsers();
-  const seen=new Set();
-  const clean=[];
-  users.forEach(u=>{
-    if(!u||!u.email)return;
-    const e=normalizeEmail(u.email);
-    if(seen.has(e))return;
-    seen.add(e);
-    clean.push({...u,email:e});
-  });
-  return clean;
-}
-function saveSavedUsers(users){setUsers(users)}
-function fileToDataURL(file){
-  return new Promise(resolve=>{
-    if(!file)return resolve('');
-    const r=new FileReader();
-    r.onload=()=>resolve(r.result);
-    r.onerror=()=>resolve('');
-    r.readAsDataURL(file);
-  });
-}
-function migrateCurrentUserToUsers(){
-  const current=load('fu_user',null);
-  if(!current||!current.email)return;
-  const email=normalizeEmail(current.email);
-  const users=getSavedUsers();
-  const idx=users.findIndex(u=>normalizeEmail(u.email)===email);
-  if(idx>=0){users[idx]={...users[idx],...current,email};}
-  else users.push({...current,email});
-  saveSavedUsers(users);
-}
-
-
 let chatWith=null;
 let _curScreen='landing';
 
@@ -766,18 +729,7 @@ function go(id){
 }
 
 // ── Boot ──
-function ensureUserStored(){
-  const u=me();
-  if(!u) return;
-  const users=getUsers();
-  if(!users.some(x=>x.id===u.id)){
-    users.push(u);
-    setUsers(users);
-  }
-}
-
 function boot(){
-  ensureUserStored();
   const u=me();
   $('bottomNav').classList.toggle('hidden',!u);
   
@@ -814,14 +766,7 @@ function boot(){
 
 // ── Helpers ──
 function userCity(){return me()?.city?.split(',')[0]?.trim()||'Córdoba'}
-function ageFromBirth(b){
-  if(!b)return 0;
-  const d=new Date(b), now=new Date();
-  let age=now.getFullYear()-d.getFullYear();
-  const m=now.getMonth()-d.getMonth();
-  if(m<0 || (m===0 && now.getDate()<d.getDate())) age--;
-  return age;
-}
+function ageFromBirth(b){if(!b)return 0;const d=new Date(b);const age=new Date().getFullYear()-d.getFullYear();return age}
 function escHtml(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function randDist(){return (Math.random()*9+0.3).toFixed(1)+' km'}
 
@@ -844,8 +789,7 @@ function renderHome(){
   const profs=allProfiles().slice(0,4);
   $('homeProfiles').innerHTML=profs.map(p=>`
     <div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-      <div class="profile-photo" style="${(p.img||p.photo)?`background-image:url('${p.img||p.photo}')`:''}">
-        ${!(p.img||p.photo)?`<div class="initial-fallback">${escHtml((p.n||p.name||'?')[0])}</div>`:''}
+      <div class="profile-photo" style="background-image:url('${p.img||p.photo||''}')">
         <span class="distance">${randDist()}</span>
       </div>
       <div class="profile-info">
@@ -866,99 +810,80 @@ function allProfiles(){
 }
 
 // ── Render Plans ──
-function renderPlans(q=''){
-  const city=userCity();
+function renderPlans(q){
+  q=q||'';
+  var u=me();
+  var city=u&&u.city?u.city.split(',')[0].trim():userCity();
   $('cityTop').textContent=city;
-  q=(q||'').toLowerCase();
-  const filtered=plans.filter(p=>p[7]===city&&p.join(' ').toLowerCase().includes(q));
-  const show=filtered.length?filtered:plans.filter(p=>p.join(' ').toLowerCase().includes(q));
-  
-  $('plansList').innerHTML=show.length?show.map(p=>`
-    <div class="card plan-card">
-      <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
-      <div class="plan-card-body">
-        <h3>${p[4]} ${escHtml(p[0])}</h3>
-        <div class="plan-cat">${p[1]}</div>
-        <p>${escHtml(p[2])}</p>
-        <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div>
-        <button class="btn btn-green btn-rsvp" data-name="${p[0].replace(/"/g,'&quot;')}" data-when="${p[1].replace(/"/g,'&quot;')}" data-img="${p[3]}">
-          ${p[0].includes('Busco')?'Me sumo':'Asistiré'}
-        </button>
-      </div>
-    </div>`).join('')
-  :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
-  // Bind RSVP buttons
-  document.querySelectorAll('.btn-rsvp').forEach(btn=>{
-    btn.onclick=e=>{
-      e.stopPropagation();
-      rsvpPlan(btn.dataset.name,btn.dataset.when,btn.dataset.img);
-      btn.textContent='¡Anotado! ✓';
-      btn.disabled=true;
-    };
+  q=q.toLowerCase();
+  var evts=generateLocalEvents(city).filter(function(e){
+    return !q||e.name.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q);
+  });
+  var list=$('plansList');
+  list.innerHTML='';
+  if(!evts.length){list.innerHTML='<div class="empty"><div class="empty-ico">📅</div><p>No hay planes disponibles</p></div>';return;}
+  evts.forEach(function(e){
+    var card=document.createElement('div');card.className='card plan-card';
+    var img=document.createElement('img');img.src=e.img;img.loading='lazy';img.alt=e.name;img.style.cssText='width:100%;height:160px;object-fit:cover';
+    var body=document.createElement('div');body.className='plan-card-body';
+    body.innerHTML='<h3>'+escHtml(e.name)+'</h3><div class="plan-cat">'+e.cat+'</div><p>'+escHtml(e.desc)+'</p><div class="plan-meta"><span>📍 '+escHtml(e.city)+'</span><span>🕐 '+escHtml(e.when)+'</span></div>';
+    var btn=document.createElement('button');btn.className='btn btn-green';btn.textContent='Asistiré';
+    (function(ev){btn.onclick=function(){rsvpPlan(ev.name,ev.when,ev.img);btn.textContent='¡Anotado! ✓';btn.disabled=true;};})(e);
+    body.appendChild(btn);card.appendChild(img);card.appendChild(body);list.appendChild(card);
   });
 }
 
-// ── Render Profiles ──
 function renderProfiles(){
-  const profs=allProfiles();
-  const favs=getFavs();
-  if(!profs.length){
-    $('profilesList').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles disponibles</p></div>';
-    return;
-  }
-  $('profilesList').innerHTML=profs.map(p=>{
-    const dl=distLabel(p);
-    const isFav=favs.includes(p.id);
-    const photo=p.img||p.photo||'';
-    const initial=(p.n||p.name||'?')[0].toUpperCase();
-    return `<div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-      <div class="profile-photo" style="${photo?`background-image:url('${photo}')`:``}">
-        ${!photo?`<div class="initial-fallback">${initial}</div>`:''}
-        ${dl?`<span class="distance">📍 ${dl}</span>`:''}
-      </div>
-      <div class="profile-info">
-        <h2>${escHtml(p.n||p.name)} <span>${p.a||p.age}</span></h2>
-        <b>📍 ${escHtml(p.c||p.city)}</b>
-        ${p.intent?`<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">${escHtml(p.intent)}</div>`:''}
-        <div class="profile-actions">
-          <button class="btn-forti" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Forti</button>
-          <button class="btn-super" onclick="event.stopPropagation();sendSuper('${p.id}')">💎</button>
-          <button class="btn-chat" onclick="event.stopPropagation();startChat(${JSON.stringify(p).replace(/"/g,'&quot;')})">💬</button>
-          <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  var profs=allProfiles();var favs=getFavs();var list=$('profilesList');list.innerHTML='';
+  if(!profs.length){list.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles disponibles</p></div>';return;}
+  profs.forEach(function(p){
+    var dl=distLabel(p);var isFav=favs.includes(p.id);var photo=p.img||p.photo||'';var name=p.n||p.name||'?';
+    var card=document.createElement('div');card.className='card profile-card';card.onclick=function(){openPanel(p);};
+    var ph=document.createElement('div');ph.className='profile-photo';
+    if(photo)ph.style.backgroundImage='url('+photo+')';
+    else{var av=document.createElement('div');av.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:800;color:rgba(6,78,59,.3)';av.textContent=name[0].toUpperCase();ph.appendChild(av);}
+    if(dl){var ds=document.createElement('span');ds.className='distance';ds.textContent='📍 '+dl;ph.appendChild(ds);}
+    var info=document.createElement('div');info.className='profile-info';
+    info.innerHTML='<h2>'+escHtml(name)+' <span>'+(p.a||p.age||'')+'</span></h2><b>📍 '+escHtml(p.c||p.city||'')+'</b>'+(p.intent?'<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">'+escHtml(p.intent)+'</div>':'');
+    var acts=document.createElement('div');acts.className='profile-actions';
+    var bF=document.createElement('button');bF.className='btn-forti';bF.innerHTML='◆ Forti';bF.onclick=function(e){e.stopPropagation();sendForti(p.id);};
+    var bS=document.createElement('button');bS.className='btn-super';bS.textContent='💎';bS.onclick=function(e){e.stopPropagation();sendSuper(p.id);};
+    var bC=document.createElement('button');bC.className='btn-chat';bC.textContent='💬';bC.onclick=function(e){e.stopPropagation();startChat(p);};
+    var bFv=document.createElement('button');bFv.className='btn-fav';bFv.textContent=isFav?'★':'☆';bFv.style.color=isFav?'var(--gold)':'';
+    bFv.onclick=function(e){e.stopPropagation();toggleFav(p.id);var f=getFavs().includes(p.id);bFv.textContent=f?'★':'☆';bFv.style.color=f?'var(--gold)':'';};
+    acts.appendChild(bF);acts.appendChild(bS);acts.appendChild(bC);acts.appendChild(bFv);
+    info.appendChild(acts);card.appendChild(ph);card.appendChild(info);list.appendChild(card);
+  });
 }
 
 function renderMessages(){
-  const chats=getChats();
-  const profiles=allProfiles();
-  const entries=Object.entries(chats);
-  
-  if(!entries.length){
-    $('msgList').innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés conversaciones.<br>¡Escribile a alguien!</p></div>';
-    return;
-  }
-  
-  $('msgList').innerHTML=entries.map(([pid,msgs])=>{
-    const p=profiles.find(x=>x.id===pid)||{n:pid,img:'',a:''};
-    const last=msgs[msgs.length-1]||{};
-    return `<div class="msg-item" onclick="startChat(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-      <img class="msg-avatar" src="${p.img||p.photo||''}" alt="" onerror="this.style.background='var(--soft)'">
-      <div class="msg-info">
-        <div class="msg-name">${escHtml(p.n||p.name)}</div>
-        <div class="msg-preview">${escHtml(last.text||'')}</div>
-      </div>
-      <div class="msg-time">${last.time||''}</div>
-    </div>`;
-  }).join('');
+  var chats=getChats();var profiles=allProfiles();var msgList=$('msgList');msgList.innerHTML='';
+  var entries=Object.entries(chats);
+  if(!entries.length){msgList.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés conversaciones.</p></div>';return;}
+  entries.forEach(function(entry){
+    var pid=entry[0],msgs=entry[1];
+    var p=profiles.find(function(x){return x.id===pid;})||{id:pid,n:pid,img:'',a:'',c:''};
+    var last=msgs[msgs.length-1]||{};
+    var item=document.createElement('div');item.className='msg-item';item.style.cursor='pointer';item.onclick=function(){startChat(p);};
+    var av=document.createElement('img');av.className='msg-avatar';av.src=p.img||p.photo||'';av.alt='';
+    var info=document.createElement('div');info.className='msg-info';
+    info.innerHTML='<div class="msg-name">'+escHtml(p.n||p.name||pid)+'</div><div class="msg-preview">'+escHtml(last.text||'📷')+'</div>';
+    var t=document.createElement('div');t.className='msg-time';t.textContent=last.time||'';
+    item.appendChild(av);item.appendChild(info);item.appendChild(t);msgList.appendChild(item);
+  });
 }
 
-// ── Render Me ──
 function renderMe(){
   const u=me();
   if(!u) return;
+  // Profile completion
+  const pct=getProfileCompletion(u);
+  const pctEl=$('profilePct');
+  if(pctEl){
+    pctEl.style.width=pct+'%';
+    const pctTxt=$('profilePctTxt');
+    if(pctTxt) pctTxt.textContent=pct+'% completo';
+  }
   $('mePhoto').src=u.photo||'';
   $('meNameAge').textContent=`${u.name}, ${u.age}`;
   $('meCity').textContent=u.city;
@@ -978,6 +903,7 @@ function setAuth(tab){
   $('tabLog').classList.toggle('active',tab==='log');
   $('regFields').style.display=tab==='reg'?'block':'none';
   $('logFields').style.display=tab==='log'?'block':'none';
+  const ff=$('forgotFields');if(ff)ff.style.display='none';
 }
 
 function requestGPS(){
@@ -1010,18 +936,16 @@ function updateGPS(){
   toast('Obteniendo ubicación... 📍');
   requestGPS();
 }
-async async function register(){
-  migrateCurrentUserToUsers();
-
+function register(){
   const n=$('rName').value.trim();
   const birth=$('rBirth').value;
   const c=$('rCity').value.trim();
-  const e=normalizeEmail($('rEmail').value);
+  const e=$('rEmail').value.trim().toLowerCase();
   const p=$('rPass').value;
   const p2=$('rPass2').value;
   const intent=$('rIntent').value;
   const bio=$('rBio').value.trim();
-
+  
   const terms=$('termsCheck');
   if(terms&&!terms.checked) return toast('Debés aceptar los términos y condiciones ⚠️');
   if(!n||!birth||!c||!e||!p) return toast('Completá todos los campos obligatorios ⚠️');
@@ -1029,109 +953,56 @@ async async function register(){
   if(age<40) return toast('FortyUp es para mayores de 40 ⚠️');
   if(p.length<6) return toast('La contraseña debe tener al menos 6 caracteres');
   if(p!==p2) return toast('Las contraseñas no coinciden');
-
-  const users=getSavedUsers();
-  const existing=users.find(u=>normalizeEmail(u.email)===e);
-  if(existing){
-    toast('Ese email ya existe. Iniciá sesión o recuperá la contraseña.');
-    setAuth('log');
-    $('lEmail').value=e;
-    $('lPass').value='';
-    return;
-  }
-
-  const photoFile=$('rPhoto') ? $('rPhoto').files[0] : null;
-  const photo=await fileToDataURL(photoFile);
-
+  
+  // Check if email exists
+  const users=getUsers();
+  if(users.some(u=>u.email===e)) return toast('Ya existe una cuenta con ese email');
+  
   const newUser={
-    id:'u_'+Date.now(),
-    name:n,
-    age,
-    birth,
-    city:c,
-    email:e,
-    password:p,
-    intent,
-    bio,
-    photo:photo||'',
-    fortisSent:0,
-    fortisRec:0,
-    super:1,
+    id:'u_'+Date.now(),name:n,age,birth,city:c,email:e,password:p,
+    intent,bio,photo:'',fortisSent:0,fortisRec:0,super:1,
     createdAt:new Date().toISOString()
   };
-
   users.push(newUser);
-  saveSavedUsers(users);
+  setUsers(users);
   setMe(newUser);
   closeAuth();
+  if(typeof saveToFirebase==='function')saveToFirebase(newUser);
   boot();
   toast(`¡Bienvenido/a a FortyUp, ${n}! 🌿`);
 }
 
 function login(){
-  migrateCurrentUserToUsers();
-
-  const e=normalizeEmail($('lEmail').value);
+  const e=$('lEmail').value.trim().toLowerCase();
   const p=$('lPass').value;
   if(!e||!p) return toast('Completá email y contraseña');
-
-  const users=getSavedUsers();
-  const found=users.find(u=>normalizeEmail(u.email)===e);
+  
+  const users=getUsers();
+  // Try exact match first, then normalized
+  let found=users.find(u=>u.email&&u.email.toLowerCase()===e&&u.password===p);
+  // If not found, try without password (for migrated accounts)
   if(!found){
-    toast('No hay cuenta con ese email. Registrate gratis.');
-    setAuth('reg');
-    $('rEmail').value=e;
-    return;
+    const byEmail=users.find(u=>u.email&&u.email.toLowerCase()===e);
+    if(byEmail&&!byEmail.password){
+      // Account exists but no password (old format) - auto-migrate
+      found=byEmail;
+    }
   }
-  if(String(found.password||'')!==String(p)){
-    toast('Contraseña incorrecta. Tocá “Olvidé mi contraseña”.');
-    return;
+  if(!found){
+    // Check if email exists at all
+    const emailExists=users.some(u=>u.email&&u.email.toLowerCase()===e);
+    if(emailExists) return toast('Contraseña incorrecta. ¿Olvidaste tu contraseña?');
+    return toast('No encontramos esa cuenta. ¿Ya te registraste?');
   }
-
+  
   setMe(found);
   closeAuth();
   boot();
-  toast(`¡Hola de nuevo, ${found.name}! 👋`);
-}
-
-
-function forgotPassword(){
-  migrateCurrentUserToUsers();
-
-  let email=normalizeEmail($('lEmail')?.value || prompt('Ingresá tu email para recuperar la contraseña:'));
-  if(!email)return;
-
-  const users=getSavedUsers();
-  const idx=users.findIndex(u=>normalizeEmail(u.email)===email);
-  if(idx<0){
-    toast('Ese email no está registrado.');
-    setAuth('reg');
-    $('rEmail').value=email;
-    return;
-  }
-
-  const pass=prompt('Escribí una nueva contraseña (mínimo 6 caracteres):');
-  if(!pass)return;
-  if(pass.length<6)return toast('La contraseña debe tener mínimo 6 caracteres');
-
-  users[idx].password=pass;
-  users[idx].updatedAt=new Date().toISOString();
-  saveSavedUsers(users);
-
-  const current=load('fu_user',null);
-  if(current&&normalizeEmail(current.email)===email){
-    current.password=pass;
-    setMe(current);
-  }
-
-  setAuth('log');
-  $('lEmail').value=email;
-  $('lPass').value='';
-  toast('Contraseña actualizada. Ya podés iniciar sesión.');
+  toast('¡Hola de nuevo, '+found.name+'! 👋');
 }
 
 function logout(){
-  localStorage.removeItem('fu_user');
+  store('fu_user',null);
   try{sessionStorage.removeItem('fu_page')}catch(e){}
   boot();
 }
@@ -1139,9 +1010,10 @@ function logout(){
 function deleteAccount(){
   const u=me();
   if(!u) return;
-  const users=getSavedUsers().filter(x=>normalizeEmail(x.email)!==normalizeEmail(u.email));
-  saveSavedUsers(users);
+  const users=getUsers().filter(x=>x.id!==u.id);
+  setUsers(users);
   store('fu_user',null);
+  // Clean up all user data
   ['fu_fortis','fu_notis','fu_favs'].forEach(k=>localStorage.removeItem(k));
   try{sessionStorage.removeItem('fu_page')}catch(e){}
   boot();
@@ -1203,8 +1075,11 @@ function sendForti(pid){
   setFortis(fortis);
   u.fortisSent=(u.fortisSent||0)+1;
   setMe(u);
+  var users=getUsers();var ri=users.findIndex(function(x){return x.id===pid;});if(ri>=0){users[ri].fortisRec=(users[ri].fortisRec||0)+1;setUsers(users);}
   renderMe();
   toast('¡Forti enviado! ◆');
+  // Add to receiver's notifications (local simulation)
+  addNotification('forti','Te enviaron un Forti ◆',u.id);
   // Check mutual forti (simplified)
   const profs=allProfiles();
   const other=profs.find(p=>p.id===pid);
@@ -1229,6 +1104,7 @@ function sendSuper(pid){
   $('superCount').textContent=u.super;
   $('meSuperCount').textContent=u.super;
   toast('¡Súper Diamante enviado! 💎');
+  addNotification('super','Enviaste tu Súper Diamante 💎',u.id);
   setTimeout(()=>showSuperDiamondPopup('Vos'),500);
 }
 
@@ -1502,6 +1378,83 @@ function showSuperPanel(){
   $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
   $('profilePanel').classList.add('open');
 }
+
+function showForgotPassword(){
+  $('regFields').style.display='none';
+  $('logFields').style.display='none';
+  $('forgotFields').style.display='block';
+  $('tabReg').classList.remove('active');
+  $('tabLog').classList.remove('active');
+}
+
+function resetPassword(){
+  const e=$('forgotEmail').value.trim().toLowerCase();
+  if(!e) return toast('Ingresá tu email');
+  const users=getUsers();
+  const found=users.find(u=>u.email&&u.email.toLowerCase()===e);
+  if(!found) return toast('No encontramos esa cuenta');
+  // In a real app this would send an email
+  // Here we show the password hint or reset it
+  const newPass='fortyup'+Math.floor(1000+Math.random()*9000);
+  const idx=users.indexOf(found);
+  users[idx].password=newPass;
+  setUsers(users);
+  $('forgotFields').style.display='none';
+  $('logFields').style.display='block';
+  $('tabLog').classList.add('active');
+  toast('Nueva contraseña: '+newPass+' (guardala!)',6000);
+}
+
+
+// ══ NOTIFICATIONS ══
+function getNotifications(){return load('fu_notifs',[]);}
+function addNotification(type,text,fromId){
+  const notifs=getNotifications();
+  notifs.unshift({type,text,fromId,at:new Date().toISOString(),read:false});
+  store('fu_notifs',notifs.slice(0,50)); // keep last 50
+  updateNotifBadge();
+}
+function updateNotifBadge(){
+  const unread=getNotifications().filter(n=>!n.read).length;
+  const dot=$('notifDot');
+  if(dot){dot.style.display=unread>0?'block':'none';dot.textContent=unread>9?'9+':unread;}
+}
+function showNotifications(){
+  const notifs=getNotifications();
+  // Mark all as read
+  notifs.forEach(n=>n.read=true);
+  store('fu_notifs',notifs);
+  updateNotifBadge();
+  
+  $('panelContent').innerHTML='<div class="panel-title">🔔 Notificaciones</div>'
+    +(notifs.length?notifs.map(n=>`
+      <div style="display:flex;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--line);align-items:flex-start">
+        <div style="font-size:1.5rem;flex-shrink:0">${n.type==='forti'?'◆':n.type==='super'?'💎':n.type==='match'?'🎉':'💬'}</div>
+        <div style="flex:1">
+          <div style="font-size:.88rem;font-weight:700;color:var(--txt)">${escHtml(n.text)}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">${timeAgo(n.at)}</div>
+        </div>
+      </div>`).join('')
+    :'<div class="empty"><div class="empty-ico">🔔</div><p>Sin notificaciones todavía</p></div>');
+  $('profilePanel').classList.add('open');
+}
+
+function timeAgo(dateStr){
+  const diff=(Date.now()-new Date(dateStr).getTime())/1000;
+  if(diff<60)return 'Hace un momento';
+  if(diff<3600)return 'Hace '+Math.floor(diff/60)+' min';
+  if(diff<86400)return 'Hace '+Math.floor(diff/3600)+' h';
+  return 'Hace '+Math.floor(diff/86400)+' días';
+}
+
+
+function getProfileCompletion(u){
+  if(!u) return 0;
+  const fields=[u.name,u.age,u.city,u.bio,u.photo,u.intent,u.lat];
+  const filled=fields.filter(f=>f&&f!==0&&f!=='').length;
+  return Math.round(filled/fields.length*100);
+}
+
 // ── Toast ──
 function toast(msg,dur=3000){
   const el=$('toast');
@@ -1521,6 +1474,39 @@ window.addEventListener('resize',setVh);
 
 // ── Start ──
 boot();
+setTimeout(initFirebase,500);
+${escHtml(fromName)}</strong> te envió su Súper Diamante ✨</p>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:.7rem 2rem;font-size:.9rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">¡Genial!</button>
+  </div>`;
+  document.body.appendChild(ov);
+  setTimeout(()=>{if(ov.parentNode)ov.remove()},8000);
+}
+
+function showSuperPanel(){
+  const u=me();
+  $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
+  $('profilePanel').classList.add('open');
+}
+// ── Toast ──
+function toast(msg,dur=3000){
+  const el=$('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// ── Misc ──
+function fly(){} // particle effect placeholder
+function soon(){toast('Próximamente ✨')}
+
+// ── VH fix for mobile browsers ──
+function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px')}
+setVh();
+window.addEventListener('resize',setVh);
+
+// ── Start ──
+boot();
+setTimeout(initFirebase,500);
 </script>
 </body>
 </html>
