@@ -927,7 +927,7 @@ body.chat-open #bottomNav{
       <div class="me-row" onclick="updateGPS()"><span class="me-row-ico">📍</span><span class="me-row-txt">Actualizar ubicación</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
-      <div class="me-row" onclick="soon()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showHelpPanel()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
       <div class="me-row" onclick="if(confirm('¿Eliminar tu cuenta?'))deleteAccount()" style="color:var(--red)"><span class="me-row-ico">🗑</span><span class="me-row-txt" style="color:var(--red)">Eliminar cuenta</span><span class="me-row-arr">›</span></div>
     </div>
   </div>
@@ -2056,6 +2056,51 @@ function toast(msg,dur=3000){
 
 // ── Misc ──
 function fly(){} // particle effect placeholder
+
+function supportMailto(topic='Consulta'){
+  const u=me()||{};
+  const subject=encodeURIComponent('Soporte FortyUp - '+topic);
+  const body=encodeURIComponent(
+    'Hola equipo de FortyUp, necesito ayuda con:\n\n' +
+    'Nombre: '+(u.name||'')+'\n' +
+    'Email de cuenta: '+(u.email||'')+'\n' +
+    'Ciudad: '+(u.city||'')+'\n\n' +
+    'Detalle de la consulta:\n'
+  );
+  window.location.href='mailto:Fortyup2026@gmail.com?subject='+subject+'&body='+body;
+}
+function helpFaq(title, text){
+  $('panelContent').innerHTML=`
+    <div class="panel-title">${title}</div>
+    <p style="font-size:.86rem;line-height:1.75;color:var(--txt);margin-bottom:1rem">${text}</p>
+    <button class="btn btn-out" style="width:100%;margin-bottom:.6rem" onclick="showHelpPanel()">← Volver a ayuda</button>
+    <button class="btn btn-green" style="width:100%" onclick="supportMailto('${String(title).replace(/'/g,"\\'")}')">Contactar soporte</button>`;
+}
+function showHelpPanel(){
+  $('panelContent').innerHTML=`
+    <div class="panel-title">❓ Ayuda FortyUp</div>
+    <div style="background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border-radius:24px;padding:1rem;margin-bottom:1rem;box-shadow:var(--sh2)">
+      <div style="font-size:1.35rem;margin-bottom:.25rem">📩</div>
+      <div style="font-weight:900;font-size:1rem;margin-bottom:.25rem">¿Necesitás ayuda?</div>
+      <div style="font-size:.82rem;line-height:1.45;opacity:.86;margin-bottom:.85rem">Escribinos a <strong>Fortyup2026@gmail.com</strong>. El mail se abre con tus datos básicos para que podamos ayudarte más rápido.</div>
+      <button class="btn" style="width:100%;background:#fff;color:var(--g)" onclick="supportMailto('Consulta general')">Contactar soporte</button>
+    </div>
+    <div class="me-section">
+      <div class="me-row" onclick="helpFaq('📅 ¿Cómo creo un evento?', 'Entrá en Planes y tocá Crear evento. Completá título, fecha, hora, ciudad y una descripción tipo: voy a ver a este artista, ¿quién se suma? El evento aparece público para usuarios de esa ciudad y pueden tocar Asistiré.')"><span class="me-row-ico">📅</span><span class="me-row-txt">¿Cómo creo un evento?</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="helpFaq('💬 ¿Cómo funciona el chat?', 'Podés iniciar conversación desde una tarjeta de perfil o desde Mensajes. Los mensajes se guardan en Firebase y deberían verse entre usuarios sin depender del teléfono donde se registraron.')"><span class="me-row-ico">💬</span><span class="me-row-txt">¿Cómo funciona el chat?</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="helpFaq('◆ ¿Qué es un Forti?', 'Un Forti es una señal simple de interés. Sirve para decir me interesa conectar sin iniciar una conversación larga. Si ambos se envían Forti, la app puede marcar una conexión.')"><span class="me-row-ico">◆</span><span class="me-row-txt">¿Qué es un Forti?</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="helpFaq('💎 ¿Qué es un Súper Diamante?', 'El Súper Diamante es una señal especial. La app muestra cuántos tenés disponibles y solo deberías poder enviarlo cuando realmente tengas saldo disponible.')"><span class="me-row-ico">💎</span><span class="me-row-txt">¿Qué es un Súper Diamante?</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="helpFaq('📍 Ubicación y planes', 'FortyUp usa tu ubicación para mostrar planes cercanos. También podés buscar otra ciudad si vas a viajar, por ejemplo Córdoba, Ushuaia o Puerto Iguazú.')"><span class="me-row-ico">📍</span><span class="me-row-txt">Ubicación y planes</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="helpFaq('⚠️ Problemas para entrar', 'Si no podés entrar, revisá que estés usando el mismo email con el que te registraste. Si cambiaste la contraseña o se mezcló una foto/perfil, contactanos desde el botón de soporte.')"><span class="me-row-ico">⚠️</span><span class="me-row-txt">Problemas para entrar</span><span class="me-row-arr">›</span></div>
+    </div>
+    <div class="me-section">
+      <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
+      <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
+    </div>
+    <button class="btn btn-out" style="width:100%;margin-top:.5rem" onclick="closePanel()">Cerrar</button>`;
+  $('profilePanel').classList.add('open');
+}
+
 function soon(){toast('Próximamente ✨')}
 
 // ── VH fix for mobile browsers ──
