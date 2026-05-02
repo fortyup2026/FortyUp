@@ -403,6 +403,20 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
   border-radius:14px;padding:.7rem .8rem;font-size:.78rem;line-height:1.45;font-weight:700;margin:.6rem 0;
 }
 
+
+.auth-link-btn{
+  width:100%;
+  margin-top:.65rem;
+  border:none;
+  background:transparent;
+  color:var(--g);
+  font-size:.86rem;
+  font-weight:900;
+  font-family:'Nunito',sans-serif;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.photo-help{font-size:.72rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
 </style>
 </head>
 <body>
@@ -615,6 +629,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
       <div class="form-group"><label>Email</label><input id="lEmail" type="email" placeholder="tu@email.com"></div>
       <div class="form-group"><label>Contraseña</label><input id="lPass" type="password" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter')login()"></div>
       <button class="auth-btn" onclick="login()">Ingresar</button>
+      <button class="auth-link-btn" onclick="forgotPassword()">Olvidé mi contraseña</button>
     </div>
   </div>
 </div>
@@ -682,8 +697,44 @@ const getBlocked=()=>load('fu_blocked',[]);
 const getReported=()=>load('fu_reported',[]);
 const getEvents=()=>load('fu_events',[]);
 const setEvents=v=>store('fu_events',v);
-const getUsers=()=>load('fu_users',[]);
+const getUsers=()=>{const v=load('fu_users',[]);return Array.isArray(v)?v:[]};
 const setUsers=v=>store('fu_users',v);
+
+function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
+function getSavedUsers(){
+  const users=getUsers();
+  const seen=new Set();
+  const clean=[];
+  users.forEach(u=>{
+    if(!u||!u.email)return;
+    const e=normalizeEmail(u.email);
+    if(seen.has(e))return;
+    seen.add(e);
+    clean.push({...u,email:e});
+  });
+  return clean;
+}
+function saveSavedUsers(users){setUsers(users)}
+function fileToDataURL(file){
+  return new Promise(resolve=>{
+    if(!file)return resolve('');
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=()=>resolve('');
+    r.readAsDataURL(file);
+  });
+}
+function migrateCurrentUserToUsers(){
+  const current=load('fu_user',null);
+  if(!current||!current.email)return;
+  const email=normalizeEmail(current.email);
+  const users=getSavedUsers();
+  const idx=users.findIndex(u=>normalizeEmail(u.email)===email);
+  if(idx>=0){users[idx]={...users[idx],...current,email};}
+  else users.push({...current,email});
+  saveSavedUsers(users);
+}
+
 
 let chatWith=null;
 let _curScreen='landing';
@@ -960,49 +1011,57 @@ function updateGPS(){
   requestGPS();
 }
 async function register(){
+  migrateCurrentUserToUsers();
+
   const n=$('rName').value.trim();
   const birth=$('rBirth').value;
   const c=$('rCity').value.trim();
-  const e=$('rEmail').value.trim().toLowerCase();
+  const e=normalizeEmail($('rEmail').value);
   const p=$('rPass').value;
   const p2=$('rPass2').value;
   const intent=$('rIntent').value;
   const bio=$('rBio').value.trim();
-  const terms=$('termsCheck');
 
+  const terms=$('termsCheck');
   if(terms&&!terms.checked) return toast('Debés aceptar los términos y condiciones ⚠️');
   if(!n||!birth||!c||!e||!p) return toast('Completá todos los campos obligatorios ⚠️');
-
   const age=ageFromBirth(birth);
   if(age<40) return toast('FortyUp es para mayores de 40 ⚠️');
   if(p.length<6) return toast('La contraseña debe tener al menos 6 caracteres');
   if(p!==p2) return toast('Las contraseñas no coinciden');
 
-  const users=getUsers();
-  if(users.some(u=>u.email===e)){
+  const users=getSavedUsers();
+  const existing=users.find(u=>normalizeEmail(u.email)===e);
+  if(existing){
+    toast('Ese email ya existe. Iniciá sesión o recuperá la contraseña.');
     setAuth('log');
     $('lEmail').value=e;
-    toast('Ese email ya existe. Iniciá sesión.');
+    $('lPass').value='';
     return;
   }
 
-  let photo='';
-  const f=$('rPhoto')&&$('rPhoto').files&&$('rPhoto').files[0];
-  if(f){
-    try{photo=await readFileAsDataURL(f)}catch(err){toast('No se pudo cargar la foto');return}
-  }
+  const photoFile=$('rPhoto') ? $('rPhoto').files[0] : null;
+  const photo=await fileToDataURL(photoFile);
 
   const newUser={
     id:'u_'+Date.now(),
-    name:n,age,birth,city:c,email:e,password:p,
-    intent,bio,
-    photo,
-    fortisSent:0,fortisRec:0,super:1,
+    name:n,
+    age,
+    birth,
+    city:c,
+    email:e,
+    password:p,
+    intent,
+    bio,
+    photo:photo||'',
+    fortisSent:0,
+    fortisRec:0,
+    super:1,
     createdAt:new Date().toISOString()
   };
 
   users.push(newUser);
-  setUsers(users);
+  saveSavedUsers(users);
   setMe(newUser);
   closeAuth();
   boot();
@@ -1010,21 +1069,65 @@ async function register(){
 }
 
 function login(){
-  const e=$('lEmail').value.trim().toLowerCase();
+  migrateCurrentUserToUsers();
+
+  const e=normalizeEmail($('lEmail').value);
   const p=$('lPass').value;
   if(!e||!p) return toast('Completá email y contraseña');
 
-  const users=getUsers();
-  const found=users.find(u=>u.email===e&&u.password===p);
-  if(!found) return toast('Email o contraseña incorrectos');
+  const users=getSavedUsers();
+  const found=users.find(u=>normalizeEmail(u.email)===e);
+  if(!found){
+    toast('No hay cuenta con ese email. Registrate gratis.');
+    setAuth('reg');
+    $('rEmail').value=e;
+    return;
+  }
+  if(String(found.password||'')!==String(p)){
+    toast('Contraseña incorrecta. Tocá “Olvidé mi contraseña”.');
+    return;
+  }
 
-  found.super = found.super ?? 1;
-  found.fortisSent = found.fortisSent || 0;
-  found.fortisRec = found.fortisRec || 0;
   setMe(found);
   closeAuth();
   boot();
   toast(`¡Hola de nuevo, ${found.name}! 👋`);
+}
+
+
+function forgotPassword(){
+  migrateCurrentUserToUsers();
+
+  let email=normalizeEmail($('lEmail')?.value || prompt('Ingresá tu email para recuperar la contraseña:'));
+  if(!email)return;
+
+  const users=getSavedUsers();
+  const idx=users.findIndex(u=>normalizeEmail(u.email)===email);
+  if(idx<0){
+    toast('Ese email no está registrado.');
+    setAuth('reg');
+    $('rEmail').value=email;
+    return;
+  }
+
+  const pass=prompt('Escribí una nueva contraseña (mínimo 6 caracteres):');
+  if(!pass)return;
+  if(pass.length<6)return toast('La contraseña debe tener mínimo 6 caracteres');
+
+  users[idx].password=pass;
+  users[idx].updatedAt=new Date().toISOString();
+  saveSavedUsers(users);
+
+  const current=load('fu_user',null);
+  if(current&&normalizeEmail(current.email)===email){
+    current.password=pass;
+    setMe(current);
+  }
+
+  setAuth('log');
+  $('lEmail').value=email;
+  $('lPass').value='';
+  toast('Contraseña actualizada. Ya podés iniciar sesión.');
 }
 
 function logout(){
@@ -1036,10 +1139,9 @@ function logout(){
 function deleteAccount(){
   const u=me();
   if(!u) return;
-  const users=getUsers().filter(x=>x.id!==u.id);
-  setUsers(users);
-  localStorage.removeItem('fu_user');
-  // Clean up all user data
+  const users=getSavedUsers().filter(x=>normalizeEmail(x.email)!==normalizeEmail(u.email));
+  saveSavedUsers(users);
+  store('fu_user',null);
   ['fu_fortis','fu_notis','fu_favs'].forEach(k=>localStorage.removeItem(k));
   try{sessionStorage.removeItem('fu_page')}catch(e){}
   boot();
