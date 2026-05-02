@@ -1966,7 +1966,7 @@ html,body{overscroll-behavior:none;}
 (function(){
   'use strict';
 
-  const FINAL_LABEL='FortyUp APP POSTA FINAL 2026-05-02';
+  const FINAL_LABEL='FortyUp APP POSTA FINAL AUTH FIX 2026-05-02';
   const firebaseConfig={
     apiKey:'AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY',
     authDomain:'fortyup-9dfe7.firebaseapp.com',
@@ -1988,7 +1988,14 @@ html,body{overscroll-behavior:none;}
   const setCurrentUser = u => localStorage.setItem('fu_user', JSON.stringify(u));
   const esc = v => typeof window.escHtml==='function' ? window.escHtml(v) : String(v||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
-  if(!window.firebase){ toastSafe('Firebase no cargó. Revisá internet y volvé a abrir la app.'); return; }
+  function lockFirebaseOnly(reason){
+    const msg=reason || 'Firebase no cargó. Revisá internet y volvé a abrir la app.';
+    window.register=window.login=window.forgotPassword=function(){ toastSafe(msg); };
+    window.sendMsg=window.sendChatPhoto=function(){ toastSafe('El chat necesita Firebase conectado.'); };
+    try{ localStorage.removeItem('fu_user'); }catch(e){}
+    toastSafe(msg);
+  }
+  if(!window.firebase){ lockFirebaseOnly('Firebase no cargó. No voy a crear usuarios locales para no mezclar cuentas.'); return; }
   if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const auth=firebase.auth();
   const db=firebase.firestore();
@@ -2002,7 +2009,7 @@ html,body{overscroll-behavior:none;}
   let currentChatId=null;
   let currentPeer=null;
 
-  function uid(){ return auth.currentUser?.uid || currentUser()?.id || ''; }
+  function uid(){ return auth.currentUser ? auth.currentUser.uid : ''; }
   function profileName(p){ return p?.n || p?.name || 'Usuario'; }
   function profilePhoto(p){ return p?.img || p?.photo || ''; }
   function chatIdFor(a,b){ return [String(a||''),String(b||'')].sort().join('__'); }
@@ -2061,8 +2068,17 @@ html,body{overscroll-behavior:none;}
   async function fetchUserDoc(user){
     if(!user) return null;
     const snap=await db.collection('users').doc(user.uid).get();
-    if(snap.exists) return cleanUserDoc(user.uid, snap.data());
-    const basic={id:user.uid,uid:user.uid,name:user.email?.split('@')[0]||'Usuario',n:user.email?.split('@')[0]||'Usuario',email:user.email||'',age:'',city:'',photo:'',super:1};
+    if(snap.exists){
+      const data=cleanUserDoc(user.uid, snap.data());
+      // El email canónico siempre es el de Firebase Auth, no uno editado/local.
+      data.email=user.email||data.email||'';
+      data.uid=user.uid; data.id=user.uid;
+      return data;
+    }
+    // Si existe Auth pero falta el perfil, creamos un perfil mínimo único por UID.
+    // No inventamos otro usuario local ni duplicamos por email.
+    const name=user.displayName || (user.email?user.email.split('@')[0]:'Usuario');
+    const basic={id:user.uid,uid:user.uid,name,n:name,email:user.email||'',age:'',a:'',city:'',c:'',photo:'',img:'',super:1,createdAt:new Date().toISOString()};
     await db.collection('users').doc(user.uid).set({...basic, createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
     return basic;
   }
@@ -2147,6 +2163,7 @@ html,body{overscroll-behavior:none;}
     const e=normalize(byId('rEmail')?.value); const p=byId('rPass')?.value; const p2=byId('rPass2')?.value;
     const intent=byId('rIntent')?.value || ''; const bio=byId('rBio')?.value.trim() || '';
     const terms=byId('termsCheck');
+    if(!window.firebase || !auth) return toastSafe('Firebase no está conectado. No se puede crear una cuenta local.');
     if(terms && !terms.checked) return toastSafe('Debés aceptar los términos y condiciones ⚠️');
     if(!n||!birth||!c||!e||!p) return toastSafe('Completá todos los campos obligatorios ⚠️');
     const age=typeof window.ageFromBirth==='function'?window.ageFromBirth(birth):0;
@@ -2155,10 +2172,20 @@ html,body{overscroll-behavior:none;}
     if(p!==p2) return toastSafe('Las contraseñas no coinciden');
     try{
       showLoad('Creando tu perfil...');
+      // Primero preguntamos a Firebase si ese email ya tiene cuenta.
+      const methods=await auth.fetchSignInMethodsForEmail(e).catch(()=>[]);
+      if(methods && methods.length){
+        hideLoad();
+        toastSafe('Ese email ya está registrado. Iniciá sesión con ese mail.');
+        if(typeof window.setAuth==='function') window.setAuth('log');
+        const le=byId('lEmail'); if(le) le.value=e;
+        return;
+      }
       const cred=await auth.createUserWithEmailAndPassword(e,p);
+      try{ await cred.user.updateProfile({displayName:n}); }catch(_e){}
       const photo=await compressImage(byId('rPhoto')?.files?.[0]);
-      const u={id:cred.user.uid,uid:cred.user.uid,name:n,n,age,a:age,birth,city:c,c,email:e,intent,bio,photo,img:photo,super:1,createdAt:new Date().toISOString()};
-      await db.collection('users').doc(cred.user.uid).set({...u, createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      const u={id:cred.user.uid,uid:cred.user.uid,name:n,n,age,a:age,birth,city:c,c,email:cred.user.email||e,intent,bio,photo,img:photo,super:1,createdAt:new Date().toISOString()};
+      await db.collection('users').doc(cred.user.uid).set({...u, createdAt:firebase.firestore.FieldValue.serverTimestamp(), updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
       setCurrentUser(u);
       if(typeof window.closeAuth==='function') window.closeAuth();
       startAllRealtime();
@@ -2167,18 +2194,24 @@ html,body{overscroll-behavior:none;}
       toastSafe(`¡Bienvenido/a a FortyUp, ${n}! 🌿`);
     }catch(e){
       console.error(e);
-      const msg=e.code==='auth/email-already-in-use'?'Ese email ya existe. Iniciá sesión.':(e.message||'No pude crear el perfil');
+      let msg='No pude crear el perfil.';
+      if(e.code==='auth/email-already-in-use') msg='Ese email ya existe. Iniciá sesión, no te registres de nuevo.';
+      else if(e.code==='auth/invalid-email') msg='Ese email no es válido.';
+      else if(e.code==='auth/weak-password') msg='La contraseña debe tener al menos 6 caracteres.';
+      else if(e.message) msg=e.message;
       toastSafe(msg);
     }finally{ hideLoad(); }
   };
 
   window.login=async function(){
     const e=normalize(byId('lEmail')?.value); const p=byId('lPass')?.value;
+    if(!window.firebase || !auth) return toastSafe('Firebase no está conectado. No se puede iniciar sesión.');
     if(!e||!p) return toastSafe('Completá email y contraseña');
     try{
       showLoad('Ingresando...');
       const cred=await auth.signInWithEmailAndPassword(e,p);
       const u=await fetchUserDoc(cred.user);
+      if(!u){ throw new Error('Perfil no encontrado'); }
       setCurrentUser(u);
       if(typeof window.closeAuth==='function') window.closeAuth();
       startAllRealtime();
@@ -2187,7 +2220,24 @@ html,body{overscroll-behavior:none;}
       toastSafe(`¡Hola de nuevo, ${u.name}! 👋`);
     }catch(e){
       console.error(e);
-      toastSafe('No pude ingresar: revisá email y contraseña.');
+      let msg='No pude ingresar: revisá email y contraseña.';
+      if(e.code==='auth/user-not-found') msg='No hay una cuenta con ese email. Registrate primero.';
+      if(e.code==='auth/wrong-password' || e.code==='auth/invalid-credential') msg='Contraseña incorrecta. Probá de nuevo o recuperá la contraseña.';
+      if(e.code==='auth/invalid-email') msg='Ese email no es válido.';
+      toastSafe(msg);
+    }finally{ hideLoad(); }
+  };
+
+  window.forgotPassword=async function(){
+    const e=normalize(byId('lEmail')?.value || prompt('Ingresá tu email para recuperar la contraseña:'));
+    if(!e) return;
+    try{
+      showLoad('Enviando recuperación...');
+      await auth.sendPasswordResetEmail(e);
+      toastSafe('Te mandé un email para cambiar la contraseña. Revisá tu correo.');
+    }catch(err){
+      console.error(err);
+      toastSafe('No pude enviar la recuperación. Revisá que el email esté bien escrito.');
     }finally{ hideLoad(); }
   };
 
@@ -2217,13 +2267,14 @@ html,body{overscroll-behavior:none;}
   };
 
   window.saveEdit=async function(){
-    const u=currentUser(); if(!u) return;
+    const u=currentUser(); if(!u || !auth.currentUser) return toastSafe('Primero iniciá sesión.');
     u.name=byId('editName')?.value.trim()||u.name; u.n=u.name;
     u.city=byId('editCity')?.value.trim()||u.city; u.c=u.city;
     u.bio=byId('editBio')?.value.trim()||'';
-    u.email=normalize(byId('editEmail')?.value)||u.email;
+    // El email no se cambia desde editar perfil para no mezclar cuentas.
+    u.email=auth.currentUser.email||u.email||'';
     setCurrentUser(u);
-    try{ await db.collection('users').doc(u.id).set({name:u.name,n:u.name,city:u.city,c:u.city,bio:u.bio,email:u.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); }catch(e){console.warn(e)}
+    try{ await db.collection('users').doc(auth.currentUser.uid).set({name:u.name,n:u.name,city:u.city,c:u.city,bio:u.bio,email:u.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); }catch(e){console.warn(e)}
     if(typeof window.closePanel==='function') window.closePanel();
     updateScreens(); toastSafe('¡Perfil actualizado! 🌿');
   };
@@ -2234,7 +2285,7 @@ html,body{overscroll-behavior:none;}
     showLoad('Actualizando foto...');
     const photo=await compressImage(file);
     u.photo=photo; u.img=photo; setCurrentUser(u);
-    try{ await db.collection('users').doc(u.id).set({photo,img:photo,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); }catch(e){console.warn(e)}
+    try{ await db.collection('users').doc(auth.currentUser.uid).set({photo,img:photo,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); }catch(e){console.warn(e)}
     updateScreens(); hideLoad(); toastSafe('Foto actualizada ✓');
   };
 
@@ -2411,14 +2462,15 @@ html,body{overscroll-behavior:none;}
         if(!active || active==='landing') { if(typeof window.go==='function') window.go('home'); }
       }else{
         stopRealtime();
+        try{ localStorage.removeItem('fu_user'); }catch(e){}
       }
     }catch(e){ console.warn('auth state', e); }
   });
 
   setTimeout(()=>{
     updateHeaderUI();
-    const u=currentUser();
-    if(auth.currentUser || u){ startAllRealtime(); updateScreens(); }
+    if(auth.currentUser){ startAllRealtime(); updateScreens(); }
+    else { try{ localStorage.removeItem('fu_user'); }catch(e){} }
   }, 700);
 
   window.__FORTYUP_FINAL_LABEL__=FINAL_LABEL;
