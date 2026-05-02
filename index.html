@@ -892,10 +892,18 @@ body.chat-open #bottomNav{
       </div>
       <div class="me-name" id="meNameAge">Nombre, 00</div>
       <div class="me-city" id="meCity">Ciudad</div>
-      <div class="me-stats">
-        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Forti enviados</div></div>
-        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Fortis recibidos</div></div>
-        <div class="me-stat" onclick="showSuperPanel()" style="cursor:pointer"><div class="me-stat-n" id="meSuperCount">1</div><div class="me-stat-l">Súper Diamantes</div></div>
+      <div class="me-stats me-stats-clean">
+        <div class="me-stat me-stat-fortis" onclick="showFortisPanel()" style="cursor:pointer">
+          <div class="forti-mini-row">
+            <div><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Enviados</div></div>
+            <div><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Recibidos</div></div>
+          </div>
+          <div class="me-stat-l me-stat-main-label">Fortis</div>
+        </div>
+        <div class="me-stat" onclick="showSuperPanel()" style="cursor:pointer">
+          <div class="me-stat-n" id="meSuperCount">1</div>
+          <div class="me-stat-l">Súper Diamantes</div>
+        </div>
       </div>
     </div>
     <div class="me-cards" style="grid-template-columns:1fr 1fr 1fr">
@@ -2937,6 +2945,242 @@ html,body{overscroll-behavior:none;}
   }
   document.addEventListener('DOMContentLoaded',()=>{renderChips();});
   window.__FORTYUP_PLAN_CITY_SEARCH__='PLANES_GPS_Y_VIAJE_2026_05_02';
+})();
+</script>
+
+
+
+<style id="fuProductFinalStyle">
+.me-stats-clean{display:grid!important;grid-template-columns:1.35fr .9fr!important;gap:.65rem!important;align-items:stretch!important}
+.me-stat-fortis{max-width:none!important;padding:.55rem .65rem!important}
+.forti-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;align-items:center}
+.me-stat-main-label{margin-top:.2rem;font-weight:900;color:rgba(255,255,255,.88)!important}
+.create-event-btn{width:100%;margin:.65rem 0 1rem;border:none;border-radius:999px;padding:.9rem 1rem;background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:1000;box-shadow:0 10px 24px rgba(242,183,5,.28);cursor:pointer}
+.create-event-btn:active{transform:scale(.98)}
+.profile-filter-box{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:.85rem;margin-bottom:1rem;box-shadow:var(--sh2)}
+.profile-filter-box label{display:block;font-size:.76rem;font-weight:900;color:var(--g);margin-bottom:.35rem}
+.profile-filter-row{display:flex;gap:.5rem;align-items:center}
+.profile-filter-row select{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:.65rem .85rem;background:var(--soft);font-family:'Nunito',sans-serif;font-weight:800;color:var(--txt)}
+.compat-pill{display:inline-flex;align-items:center;gap:.25rem;background:#ECFDF5;border:1px solid var(--line);color:var(--g);border-radius:999px;padding:.17rem .5rem;font-size:.65rem;font-weight:900;margin:.18rem 0 .35rem}
+.event-created-badge{display:inline-flex;align-items:center;gap:.25rem;background:#FEF3C7;border:1px solid #FDE68A;color:#7C4A03;border-radius:999px;padding:.2rem .55rem;font-size:.68rem;font-weight:1000;margin-bottom:.4rem}
+.event-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}.event-form-grid .full{grid-column:1/-1}
+.event-attendees-line{font-size:.76rem;color:var(--muted);font-weight:900;margin:.45rem 0 .7rem}
+@media(max-width:420px){.event-form-grid{grid-template-columns:1fr}.event-form-grid .full{grid-column:auto}.profile-filter-row{flex-direction:column;align-items:stretch}}
+</style>
+
+<script>
+/* === FortyUp PRODUCT FINAL: eventos públicos + gustos + cards limpias === */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const norm=v=>String(v||'').trim();
+  const low=v=>norm(v).toLowerCase();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+  const meLocal=()=>{try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}};
+  const setMeLocal=u=>{try{localStorage.setItem('fu_user',JSON.stringify(u));}catch(e){}}
+  const getAuth=()=>window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null);
+  const getDb=()=>window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null);
+  const uid=()=>getAuth()&&getAuth().currentUser?getAuth().currentUser.uid:(meLocal()?.id||'');
+  const serverTime=()=>firebase.firestore.FieldValue.serverTimestamp();
+  const arrayUnion=v=>firebase.firestore.FieldValue.arrayUnion(v);
+  const arrayRemove=v=>firebase.firestore.FieldValue.arrayRemove(v);
+  let completeUsers=[];
+  let publicEvents=[];
+  let seedAttendance={};
+  let unsubUsersFull=null, unsubPublicEvents=null, unsubSeedAttendance=null;
+
+  const citySeeds={
+    'buenos aires':[
+      ['After office con música en vivo','Jueves 20:30','Un plan tranqui para conocer gente después del trabajo.','🎶','Palermo','Buenos Aires'],
+      ['Teatro y cena grupal','Sábado 21:00','Salida para ver una obra y después comer algo entre todos.','🎭','Av. Corrientes','Buenos Aires'],
+      ['Café literario + charla','Domingo 17:00','Café, libros y charla abierta para sumarse sin presión.','☕','San Telmo','Buenos Aires']
+    ],
+    'cordoba':[
+      ['Peña y encuentro FortyUp','Viernes 22:00','Música, baile y mesa compartida para conocer gente nueva.','🪗','Nueva Córdoba','Córdoba'],
+      ['Caminata por Güemes','Sábado 18:00','Recorrido liviano, feria y algo para tomar después.','🚶','Güemes','Córdoba'],
+      ['Noche de stand up','Domingo 20:30','Plan grupal para reírse y cortar la semana.','🎤','Centro','Córdoba']
+    ],
+    'ushuaia':[
+      ['Café frente al canal','Viernes 18:30','Encuentro tranquilo para viajeros y gente local.','☕','Centro','Ushuaia'],
+      ['Caminata corta al atardecer','Sábado 16:00','Plan suave para compartir paisaje y charla.','🏔️','Bahía Encerrada','Ushuaia'],
+      ['Cena fueguina grupal','Sábado 21:00','Mesa abierta para quienes quieran sumarse.','🍽️','Centro','Ushuaia']
+    ],
+    'puerto iguazu':[
+      ['Salida a cataratas en grupo','Sábado 09:00','Plan para recorrer y compartir el día.','🌊','Parque Nacional','Puerto Iguazú'],
+      ['Cena viajera','Viernes 21:00','Ideal para quienes están de paso y quieren conocer gente.','🍽️','Centro','Puerto Iguazú'],
+      ['Mateada al atardecer','Domingo 18:00','Encuentro simple, público y relajado.','🧉','Hito Tres Fronteras','Puerto Iguazú']
+    ],
+    'mendoza':[
+      ['Tarde de vinos y charla','Sábado 19:00','Encuentro para compartir copa y conversación.','🍷','Chacras de Coria','Mendoza'],
+      ['Paseo por parque San Martín','Domingo 17:00','Caminata suave y merienda.','🌿','Parque San Martín','Mendoza']
+    ],
+    'rosario':[
+      ['Merienda junto al río','Sábado 18:00','Plan abierto para conversar y conocerse.','☕','Costanera','Rosario'],
+      ['Música en vivo grupal','Viernes 21:30','Salida para escuchar bandas locales.','🎸','Pichincha','Rosario']
+    ],
+    'bariloche':[
+      ['Chocolate y charla','Viernes 18:00','Encuentro cálido para viajeros y locales.','🍫','Centro Cívico','Bariloche'],
+      ['Caminata al lago','Sábado 16:00','Paseo tranquilo con grupo reducido.','🏞️','Nahuel Huapi','Bariloche']
+    ],
+    'mar del plata':[
+      ['Café frente al mar','Sábado 17:30','Un plan simple para conocerse.','🌊','La Perla','Mar del Plata'],
+      ['Cena de sábado','Sábado 21:30','Mesa abierta para sumarse.','🍽️','Güemes','Mar del Plata']
+    ],
+    'salta':[
+      ['Peña salteña grupal','Viernes 22:00','Música, comida y encuentro FortyUp.','🪗','Centro','Salta'],
+      ['Paseo y café','Domingo 18:00','Plan tranquilo para compartir la tarde.','☕','Balcarce','Salta']
+    ]
+  };
+
+  function cityKey(c){return low(c).replace('cataratas','puerto iguazu').replace('puerto iguazú','puerto iguazu');}
+  function activePlanCity(){try{return localStorage.getItem('fu_plan_city_override')||((meLocal()?.city||meLocal()?.c||'Buenos Aires').split(',')[0].trim());}catch(e){return 'Buenos Aires';}}
+  function eventDocIdFromSeed(title,city){return ('seed_'+city+'_'+title).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+  function legacyEventId(p){return typeof window.eventIdFromPlan==='function'?window.eventIdFromPlan(p):('ev_'+p[0]+'_'+p[1]+'_'+p[7]).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'_');}
+  function userAttendingEvent(ev){const id=uid(); if(!id)return false; return Array.isArray(ev.attendees)&&ev.attendees.includes(id);}
+  function seedAttendees(eventId){return seedAttendance[eventId]?.attendees||[];}
+  function userInterestMatches(interested, gender){
+    interested=low(interested); gender=low(gender);
+    if(!interested||!gender) return true;
+    if(interested==='ambos'||interested==='todos') return true;
+    if(interested==='hombres') return gender==='hombre'||gender==='masculino';
+    if(interested==='mujeres') return gender==='mujer'||gender==='femenino';
+    return true;
+  }
+  function normalizeGender(v){v=low(v); if(v.startsWith('h'))return 'hombre'; if(v.startsWith('m'))return 'mujer'; return v||'';}
+
+  function installRegistrationPrefs(){
+    const intent=byId('rIntent'); if(!intent||byId('rGender')) return;
+    const html=`<div class="form-group"><label>Soy</label><select id="rGender"><option value="">Elegir...</option><option value="hombre">Hombre</option><option value="mujer">Mujer</option><option value="otro">Otro / prefiero no decir</option></select></div><div class="form-group"><label>Me interesan</label><select id="rInterestedIn"><option value="ambos">Hombres y mujeres</option><option value="hombres">Hombres</option><option value="mujeres">Mujeres</option></select></div>`;
+    intent.closest('.form-group').insertAdjacentHTML('afterend',html);
+  }
+  function installCreateEventButton(){
+    const box=byId('plansList'); if(!box||byId('createEventBtn')) return;
+    box.insertAdjacentHTML('beforebegin',`<button id="createEventBtn" class="create-event-btn" onclick="showCreateEventPanel()">＋ Crear evento público</button>`);
+  }
+  function installProfileFilter(){
+    const list=byId('profilesList'); if(!list||byId('profileFilterBox')) return;
+    list.insertAdjacentHTML('beforebegin',`<div id="profileFilterBox" class="profile-filter-box"><label>Filtrar perfiles</label><div class="profile-filter-row"><select id="profilePreferenceFilter" onchange="renderProfiles()"><option value="compatibles">Compatibles conmigo</option><option value="todos">Todos</option><option value="hombres">Hombres</option><option value="mujeres">Mujeres</option></select></div></div>`);
+  }
+  function bootProductUI(){installRegistrationPrefs();installCreateEventButton();installProfileFilter();}
+
+  function startExtraRealtime(){
+    const db=getDb(); if(!db) return;
+    if(!unsubUsersFull){unsubUsersFull=db.collection('users').onSnapshot(s=>{completeUsers=[];s.forEach(d=>completeUsers.push({id:d.id,uid:d.id,...d.data()})); if(typeof window.renderProfiles==='function') window.renderProfiles();});}
+    if(!unsubPublicEvents){unsubPublicEvents=db.collection('publicEvents').where('public','==',true).onSnapshot(s=>{publicEvents=[];s.forEach(d=>publicEvents.push({id:d.id,...d.data()})); if(typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||'');});}
+    if(!unsubSeedAttendance){unsubSeedAttendance=db.collection('seedAttendance').onSnapshot(s=>{seedAttendance={};s.forEach(d=>seedAttendance[d.id]=d.data()||{}); if(typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||'');});}
+  }
+
+  const oldOpenAuth=window.openAuth;
+  if(typeof oldOpenAuth==='function') window.openAuth=function(){const r=oldOpenAuth.apply(this,arguments);setTimeout(installRegistrationPrefs,80);return r;};
+
+  const oldRegister=window.register;
+  window.register=async function(){
+    const gender=byId('rGender')?.value||'';
+    const interestedIn=byId('rInterestedIn')?.value||'ambos';
+    const res=oldRegister?await oldRegister.apply(this,arguments):undefined;
+    setTimeout(async()=>{
+      const a=getAuth(), db=getDb(), user=a&&a.currentUser; if(!user||!db) return;
+      const u=meLocal()||{}; u.gender=gender; u.interestedIn=interestedIn; setMeLocal(u);
+      try{await db.collection('users').doc(user.uid).set({gender,interestedIn,updatedAt:serverTime()},{merge:true});}catch(e){console.warn(e)}
+    },900);
+    return res;
+  };
+
+  window.showCreateEventPanel=function(){
+    const u=meLocal(); if(!u) return toast('Primero iniciá sesión');
+    const city=activePlanCity();
+    const today=new Date().toISOString().slice(0,10);
+    byId('panelContent').innerHTML=`<div class="panel-title">📅 Crear evento público</div><div class="event-form-grid"><div class="form-group full"><label>Título *</label><input id="evTitle" placeholder="Ej: Voy a ver a un artista, ¿quién se suma?"></div><div class="form-group full"><label>Mensaje / descripción *</label><textarea id="evDesc" placeholder="Contá el plan, si hay entradas, dónde se juntan, etc."></textarea></div><div class="form-group"><label>Ciudad *</label><input id="evCity" value="${esc(city)}" placeholder="Ej: Córdoba"></div><div class="form-group"><label>Lugar *</label><input id="evPlace" placeholder="Ej: Teatro, bar, estadio..."></div><div class="form-group"><label>Día *</label><input id="evDate" type="date" min="${today}"></div><div class="form-group"><label>Hora *</label><input id="evTime" type="time"></div></div><button class="btn btn-green" style="width:100%;margin-top:.6rem" onclick="savePublicEvent()">Publicar evento</button><p style="font-size:.75rem;color:var(--muted);line-height:1.45;margin-top:.7rem">El evento será público para usuarios que busquen esa ciudad. Después podrán tocar “Asistiré”.</p>`;
+    byId('profilePanel').classList.add('open');
+  };
+  window.savePublicEvent=async function(){
+    const db=getDb(), a=getAuth(), user=a&&a.currentUser, u=meLocal();
+    if(!db||!user) return toast('Primero iniciá sesión');
+    const title=norm(byId('evTitle')?.value), desc=norm(byId('evDesc')?.value), city=norm(byId('evCity')?.value), place=norm(byId('evPlace')?.value), date=byId('evDate')?.value, time=byId('evTime')?.value;
+    if(!title||!desc||!city||!place||!date||!time) return toast('Completá todos los datos del evento');
+    try{
+      await db.collection('publicEvents').add({public:true,title,description:desc,city,place,date,time,creatorId:user.uid,creatorName:u?.name||u?.n||'Usuario',attendees:[user.uid],createdAt:serverTime(),updatedAt:serverTime()});
+      if(typeof window.closePanel==='function') window.closePanel();
+      toast('Evento publicado ✅');
+    }catch(e){console.error(e);toast('No pude publicar el evento');}
+  };
+
+  window.togglePublicEventAttend=async function(type,id){
+    const db=getDb(), a=getAuth(), user=a&&a.currentUser; if(!db||!user) return toast('Primero iniciá sesión');
+    try{
+      if(type==='public'){
+        const ev=publicEvents.find(x=>x.id===id); const is=Array.isArray(ev?.attendees)&&ev.attendees.includes(user.uid);
+        await db.collection('publicEvents').doc(id).set({attendees:is?arrayRemove(user.uid):arrayUnion(user.uid),updatedAt:serverTime()},{merge:true});
+        toast(is?'Cancelaste tu asistencia':'Te sumaste al evento ✅');
+      }else if(type==='seed'){
+        const attendees=seedAttendees(id); const is=attendees.includes(user.uid);
+        await db.collection('seedAttendance').doc(id).set({attendees:is?arrayRemove(user.uid):arrayUnion(user.uid),updatedAt:serverTime()},{merge:true});
+        toast(is?'Cancelaste tu asistencia':'Te sumaste al evento ✅');
+      }
+    }catch(e){console.error(e);toast('No pude actualizar asistencia');}
+  };
+
+  const oldRenderPlans=window.renderPlans;
+  window.renderPlans=function(q=''){
+    bootProductUI();
+    const list=byId('plansList'); if(!list) return oldRenderPlans?oldRenderPlans(q):undefined;
+    const city=activePlanCity(); const key=cityKey(city); const query=low(q);
+    const cityTop=byId('cityTop'); if(cityTop) cityTop.textContent=(localStorage.getItem('fu_plan_city_override')?'Viajás a ':'')+city;
+    const legacy=(Array.isArray(window.plans)?window.plans:[]).filter(p=>low(p[7])===low(city)||p.join(' ').toLowerCase().includes(low(city))).map(p=>({kind:'legacy',id:legacyEventId(p),title:p[0],when:p[1],description:p[2],img:p[3],icon:p[4],place:p[5],city:p[7],link:p[8]||'',raw:p}));
+    const seed=(citySeeds[key]||citySeeds['buenos aires']).map(x=>{const id=eventDocIdFromSeed(x[0],x[5]||city); const att=seedAttendees(id); return {kind:'seed',id,title:x[0],when:x[1],description:x[2],icon:x[3],place:x[4],city:x[5]||city,attendees:att,img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=900&auto=format&fit=crop'};});
+    const pub=publicEvents.filter(e=>low(e.city)===low(city)).map(e=>({kind:'public',id:e.id,title:e.title,when:`${e.date||''} · ${e.time||''}`,description:e.description,icon:'✨',place:e.place||e.city,city:e.city,attendees:e.attendees||[],creatorName:e.creatorName,img:'https://images.unsplash.com/photo-1505236858219-8359eb29e329?q=80&w=900&auto=format&fit=crop'}));
+    let show=[...pub,...legacy,...seed];
+    if(query) show=show.filter(e=>[e.title,e.when,e.description,e.place,e.city,e.creatorName].join(' ').toLowerCase().includes(query));
+    const mode=`<div class="plan-mode-pill">${localStorage.getItem('fu_plan_city_override')?'🧳 Buscando para viaje':'📍 Según tu ubicación'} · ${esc(city)}</div>`;
+    list.innerHTML=mode+show.map(e=>{
+      const count=e.kind==='legacy'?(typeof window.attendingCount==='function'?window.attendingCount(e.id,parseInt(String(e.raw?.[6]||'0').match(/\d+/)?.[0]||0)):0):(e.attendees||[]).length;
+      const is=e.kind==='legacy'?(typeof window.currentUserAttending==='function'?window.currentUserAttending(e.id):false):userAttendingEvent(e);
+      const badge=e.kind==='public'?`<span class="event-created-badge">✨ Creado por ${esc(e.creatorName||'usuario')}</span>`:e.kind==='seed'?`<span class="event-source">🌿 Sugerido FortyUp</span>`:`<span class="event-source">${e.link?'🌐 Evento real curado':'🌿 Plan FortyUp'}</span>`;
+      const img=e.img||'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=900&auto=format&fit=crop';
+      const attend=e.kind==='legacy'?`toggleAttend('${e.id}','${String(e.title).replace(/'/g,"\\'")}','${String(e.when).replace(/'/g,"\\'")}','${String(img).replace(/'/g,"\\'")}','${String(e.city).replace(/'/g,"\\'")}','${String(e.link||'').replace(/'/g,"\\'")}')`:`togglePublicEventAttend('${e.kind}','${e.id}')`;
+      return `<div class="card plan-card"><img src="${img}" loading="lazy" alt="${esc(e.title)}" style="width:100%;height:160px;object-fit:cover"><div class="plan-card-body">${badge}<h3>${esc(e.icon||'📅')} ${esc(e.title)}</h3><div class="plan-cat">${esc(e.when)}</div><p>${esc(e.description)}</p><div class="plan-meta"><span>📍 ${esc(e.place||e.city)}</span><span>👥 ${count} asistirán</span></div><div class="event-attendees-line">${is?'Estás anotado':'Tocá Asistiré para sumarte al plan'}</div><button class="btn btn-green attend-btn ${is?'attending':''}" onclick="${attend}">${is?'✓ Asistiré':'Asistiré'}</button>${e.link?`<button class="event-link-btn" onclick="openExternalEvent('${esc(e.link)}')">Ver entradas / fuente</button>`:''}</div></div>`;
+    }).join('')+`<div class="live-events-box"><h3>🔎 Buscar más eventos en ${esc(city)}</h3><p>También podés buscar afuera y crear el evento público en FortyUp para que otros se sumen.</p><div class="live-actions"><button class="live-google" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent('eventos esta semana '+city+' Argentina')}','_blank')">Google eventos</button><button class="live-eventbrite" onclick="window.open('https://www.eventbrite.com.ar/d/argentina/${encodeURIComponent(city)}/events/','_blank')">Eventbrite</button></div></div>`;
+  };
+
+  const oldAllProfiles=window.allProfiles;
+  window.allProfiles=function(){
+    const base=oldAllProfiles?oldAllProfiles():[];
+    return base.map(p=>({...p,...(completeUsers.find(u=>u.id===p.id)||{})}));
+  };
+  window.renderProfiles=function(){
+    bootProductUI();
+    const list=byId('profilesList'); if(!list) return;
+    const u=meLocal()||{}; const filter=byId('profilePreferenceFilter')?.value||'compatibles';
+    let profs=window.allProfiles();
+    if(filter==='hombres') profs=profs.filter(p=>normalizeGender(p.gender)==='hombre');
+    else if(filter==='mujeres') profs=profs.filter(p=>normalizeGender(p.gender)==='mujer');
+    else if(filter==='compatibles') profs=profs.filter(p=>userInterestMatches(u.interestedIn,normalizeGender(p.gender)) && userInterestMatches(p.interestedIn,normalizeGender(u.gender)));
+    const favs=(()=>{try{return JSON.parse(localStorage.getItem('fu_favs'))||[]}catch(e){return[]}})();
+    if(!profs.length){list.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles con ese filtro todavía.</p></div>';return;}
+    list.innerHTML=profs.map(p=>{
+      const name=p.name||p.n||'Usuario', age=p.age||p.a||'', city=p.city||p.c||'', photo=p.photo||p.img||'', data=JSON.stringify(p).replace(/"/g,'&quot;');
+      const isFav=favs.includes(p.id); const initial=name.charAt(0).toUpperCase();
+      const comp=p.interestedIn?`<div class="compat-pill">💚 Busca: ${esc(p.interestedIn==='ambos'?'hombres y mujeres':p.interestedIn)}</div>`:'';
+      return `<div class="card profile-card" onclick="openPanel(${data})"><div class="profile-photo" style="${photo?`background-image:url('${photo}')`:''}">${!photo?`<div class="initial-fallback">${esc(initial)}</div>`:''}</div><div class="profile-info"><h2>${esc(name)} <span>${esc(age)}</span></h2><b>📍 ${esc(city)}</b>${comp}${p.intent?`<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">${esc(p.intent)}</div>`:''}<div class="profile-actions"><button class="btn-forti" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Forti</button><button class="btn-super" onclick="event.stopPropagation();sendSuper('${p.id}')">💎</button><button class="btn-chat" onclick="event.stopPropagation();startChat(${data})">💬</button><button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button></div></div></div>`;
+    }).join('');
+  };
+
+  window.showEditPanel=function(){
+    const u=meLocal(); if(!u)return;
+    byId('panelContent').innerHTML=`<div class="panel-title">✏ Editar perfil</div><div class="form-group"><label>Nombre</label><input id="editName" value="${esc(u.name||u.n||'')}"></div><div class="form-group"><label>Ciudad</label><input id="editCity" value="${esc(u.city||u.c||'')}"></div><div class="form-group"><label>Soy</label><select id="editGender"><option value="" ${!u.gender?'selected':''}>Elegir...</option><option value="hombre" ${u.gender==='hombre'?'selected':''}>Hombre</option><option value="mujer" ${u.gender==='mujer'?'selected':''}>Mujer</option><option value="otro" ${u.gender==='otro'?'selected':''}>Otro / prefiero no decir</option></select></div><div class="form-group"><label>Me interesan</label><select id="editInterestedIn"><option value="ambos" ${(!u.interestedIn||u.interestedIn==='ambos')?'selected':''}>Hombres y mujeres</option><option value="hombres" ${u.interestedIn==='hombres'?'selected':''}>Hombres</option><option value="mujeres" ${u.interestedIn==='mujeres'?'selected':''}>Mujeres</option></select></div><div class="form-group"><label>Bio</label><textarea id="editBio">${esc(u.bio||'')}</textarea></div><button class="btn btn-green" style="width:100%" onclick="saveEdit()">Guardar cambios</button>`;
+    byId('profilePanel').classList.add('open');
+  };
+  window.saveEdit=async function(){
+    const db=getDb(), a=getAuth(), user=a&&a.currentUser, u=meLocal()||{}; if(!user||!db)return toast('Primero iniciá sesión');
+    const upd={name:norm(byId('editName')?.value)||u.name, n:norm(byId('editName')?.value)||u.name, city:norm(byId('editCity')?.value)||u.city, c:norm(byId('editCity')?.value)||u.city, gender:byId('editGender')?.value||'', interestedIn:byId('editInterestedIn')?.value||'ambos', bio:norm(byId('editBio')?.value), updatedAt:serverTime()};
+    try{await db.collection('users').doc(user.uid).set(upd,{merge:true}); Object.assign(u,upd); delete u.updatedAt; setMeLocal(u); if(typeof window.closePanel==='function')window.closePanel(); toast('Perfil actualizado ✅'); if(typeof window.renderProfiles==='function')window.renderProfiles();}catch(e){console.error(e);toast('No pude guardar cambios');}
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function') window.go=function(id){const r=oldGo.apply(this,arguments); setTimeout(()=>{bootProductUI(); if(id==='plans')window.renderPlans(byId('plansTextSearch')?.value||''); if(id==='profiles')window.renderProfiles();},100); return r;};
+  document.addEventListener('DOMContentLoaded',()=>{bootProductUI();setTimeout(()=>{startExtraRealtime(); if(typeof window.renderPlans==='function')window.renderPlans(byId('plansTextSearch')?.value||'');},900);});
+  setTimeout(()=>{bootProductUI();startExtraRealtime();},1200);
+  window.__FORTYUP_PRODUCT_FINAL__='EVENTOS_PUBLICOS_GUSTOS_CARDS_2026_05_02';
 })();
 </script>
 
