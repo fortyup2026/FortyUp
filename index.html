@@ -417,6 +417,36 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
   cursor:pointer;
 }
 .photo-help{font-size:.72rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
+
+/* === CHAT INPUT FIX === */
+#chat.screen.active{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+#chat .chat-topbar{
+  flex:0 0 auto!important;
+}
+#chat .chat-messages{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  padding-bottom:1rem!important;
+}
+#chat .chat-input-area{
+  flex:0 0 auto!important;
+  position:sticky!important;
+  bottom:0!important;
+  z-index:50!important;
+  display:flex!important;
+}
+#chatInput{
+  display:block!important;
+  min-width:0!important;
+}
+
 </style>
 </head>
 <body>
@@ -1153,8 +1183,17 @@ function startChat(p){
   chatWith=p;
   $('chatAvatar').src=p.img||p.photo||'';
   $('chatName').textContent=p.n||p.name;
-  renderChatBubbles();
   go('chat');
+  renderChatBubbles();
+  setTimeout(()=>{
+    const input=$('chatInput');
+    if(input){
+      input.placeholder='Escribile a '+(p.n||p.name||'esta persona')+'...';
+      input.focus();
+    }
+    const box=$('chatBox');
+    if(box) box.scrollTop=box.scrollHeight;
+  },120);
 }
 
 function renderChatBubbles(){
@@ -1170,6 +1209,7 @@ function renderChatBubbles(){
       <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
       <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${_cname}!</p>
       <p style="font-size:.82rem">Sé el primero en escribir</p>
+      <button class="btn btn-green" style="margin-top:1rem" onclick="$('chatInput').focus()">Escribir hola</button>
     </div>`;
   setTimeout(()=>{$('chatBox').scrollTop=$('chatBox').scrollHeight},50);
 }
@@ -1185,6 +1225,7 @@ function sendMsg(){
   setChats(chats);
   inp.value='';
   renderChatBubbles();
+  setTimeout(()=>{$('chatInput').focus(); const box=$('chatBox'); if(box) box.scrollTop=box.scrollHeight;},50);
   updateMsgDot();
 }
 
