@@ -300,14 +300,13 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 
 /* ── AUTH ── */
 .auth-overlay{
-  position:fixed;inset:0;z-index:9999;
+  position:fixed;inset:0;z-index:500;
   background:rgba(4,47,37,.85);backdrop-filter:blur(10px);
   display:none;align-items:flex-end;justify-content:center;
 }
 .auth-overlay.open{display:flex}
 .auth-sheet{
   background:var(--cream);border-radius:28px 28px 0 0;
-  position:relative;z-index:10000;
   width:100%;max-width:480px;max-height:92vh;overflow-y:auto;
   padding:1.5rem 1.5rem 2rem;
 }
@@ -343,7 +342,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 
 /* ── PANELS ── */
 .panel-overlay{
-  position:fixed;inset:0;z-index:9998;
+  position:fixed;inset:0;z-index:400;
   background:rgba(4,47,37,.8);backdrop-filter:blur(8px);
   display:none;align-items:flex-end;
 }
@@ -418,6 +417,92 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
   cursor:pointer;
 }
 .photo-help{font-size:.72rem;color:var(--muted);margin-top:.25rem;line-height:1.4}
+
+/* === CHAT INPUT FIX === */
+#chat.screen.active{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+}
+#chat .chat-topbar{
+  flex:0 0 auto!important;
+}
+#chat .chat-messages{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  padding-bottom:1rem!important;
+}
+#chat .chat-input-area{
+  flex:0 0 auto!important;
+  position:sticky!important;
+  bottom:0!important;
+  z-index:50!important;
+  display:flex!important;
+}
+#chatInput{
+  display:block!important;
+  min-width:0!important;
+}
+
+
+/* === CHAT FINAL FIX — input visible, bottom nav hidden in chat === */
+body.chat-open #bottomNav{
+  display:none!important;
+}
+#chat.screen.active{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  padding-bottom:0!important;
+}
+#chat .chat-topbar{
+  flex:0 0 auto!important;
+  position:relative!important;
+  top:auto!important;
+}
+#chat .chat-messages{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  padding:1rem!important;
+}
+#chat .chat-input-area{
+  flex:0 0 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:.5rem!important;
+  width:100%!important;
+  background:#fff!important;
+  border-top:1px solid var(--line)!important;
+  padding:.7rem .9rem calc(.7rem + env(safe-area-inset-bottom,0px))!important;
+  position:relative!important;
+  bottom:auto!important;
+  z-index:999!important;
+}
+#chat .chat-input-area input[type="text"],
+#chatInput{
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  height:42px!important;
+  border:1.5px solid var(--line)!important;
+  border-radius:50px!important;
+  padding:.55rem .9rem!important;
+  background:var(--soft)!important;
+  color:var(--txt)!important;
+  font-size:.9rem!important;
+}
+#chat .chat-send{
+  flex:0 0 42px!important;
+  width:42px!important;
+  height:42px!important;
+}
+
 </style>
 </head>
 <body>
@@ -475,7 +560,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 <div id="plans" class="screen">
   <div class="topbar">
     <div class="topbar-logo"><span class="t1">Forty</span><span class="t2">Up</span></div>
-    <div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:.8rem;font-weight:800;color:var(--muted)" id="cityTop">Tu ciudad</span><button onclick="updateGPS&&updateGPS();setTimeout(function(){renderPlans();},2500)" style="background:var(--soft);border:1px solid var(--line);border-radius:50px;padding:.2rem .55rem;font-size:.7rem;font-weight:800;color:var(--g);cursor:pointer">📍 Actualizar</button></div>
+    <div style="font-size:.8rem;font-weight:800;color:var(--muted)" id="cityTop">Tu ciudad</div>
   </div>
   <div class="screen-inner">
     <div class="search-bar">
@@ -644,7 +729,17 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 </div>
 
 <!-- ══ MATCH POPUP ══ -->
-<div class="match-popup" id="m
+<div class="match-popup" id="matchPopup">
+  <div class="match-icon" id="matchIcon">◆</div>
+  <div class="match-title" id="matchTitle">¡Conexión FortyUp!</div>
+  <div class="match-text" id="matchText">Se gustaron mutuamente</div>
+  <button class="match-close" onclick="closeMatch()">¡Genial!</button>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<script>
 // ═══════════════════════════════════════════
 // FORTYUP — VERSIÓN DEFINITIVA
 // ═══════════════════════════════════════════
@@ -731,106 +826,23 @@ let chatWith=null;
 let _curScreen='landing';
 
 // ── Navigation ──
-
-// ══ EVENTS DATABASE - Argentine cities ══
-const EVENTS_DB=[
-  {id:'e1',name:'Degustación de vinos',when:'Hoy, 20:00',desc:'Una noche especial para disfrutar buenos vinos y conocer gente. Sommelier incluido.',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=600&auto=format&fit=crop',cat:'🍷 Gastronomía',city:'Córdoba',capacity:20},
-  {id:'e2',name:'Café y charla',when:'Hoy, 18:00',desc:'Reunión informal en el centro. Sin apuro, solo buena conversación.',img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop',cat:'☕ Social',city:'Córdoba',capacity:8},
-  {id:'e3',name:'Caminata por los cerros',when:'Domingo, 8:00',desc:'Salida tranquila por los cerros. Todos los niveles bienvenidos.',img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=600&auto=format&fit=crop',cat:'🌿 Aire libre',city:'Córdoba',capacity:15},
-  {id:'e4',name:'Clase de tango',when:'Miércoles, 19:00',desc:'Principiantes bienvenidos. Aprendemos juntos con un gran profesor.',img:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop',cat:'💃 Cultura',city:'Buenos Aires',capacity:16},
-  {id:'e5',name:'Recorrido por San Telmo',when:'Sábado, 10:00',desc:'Recorremos el barrio histórico, sus ferias y cafés con historia.',img:'https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?q=80&w=600&auto=format&fit=crop',cat:'🏛 Turismo',city:'Buenos Aires',capacity:20},
-  {id:'e6',name:'Cine al aire libre',when:'Viernes, 21:00',desc:'Película y picnic bajo las estrellas en Palermo.',img:'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600&auto=format&fit=crop',cat:'🎬 Cultura',city:'Buenos Aires',capacity:30},
-  {id:'e7',name:'Asado en la Costanera',when:'Domingo, 13:00',desc:'Juntamos gente para un asado con vista al río.',img:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',cat:'🔥 Social',city:'Buenos Aires',capacity:25},
-  {id:'e8',name:'Tour de bodegas',when:'Sábado, 9:00',desc:'Visitamos las mejores bodegas de Luján de Cuyo con degustación.',img:'https://images.unsplash.com/photo-1474722883778-792e7990302f?q=80&w=600&auto=format&fit=crop',cat:'🍷 Turismo',city:'Mendoza',capacity:15},
-  {id:'e9',name:'Trekking cerro Arco',when:'Domingo, 7:00',desc:'Caminata de nivel medio con vistas increíbles a la ciudad.',img:'https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=600&auto=format&fit=crop',cat:'⛰ Aventura',city:'Mendoza',capacity:10},
-  {id:'e10',name:'Sunset en la costanera',when:'Hoy, 19:00',desc:'Nos juntamos a ver el atardecer sobre el Paraná.',img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=600&auto=format&fit=crop',cat:'🌅 Social',city:'Rosario',capacity:20},
-  {id:'e11',name:'Asado grupal',when:'Sábado, 13:00',desc:'Asado con buena música y mejor compañía.',img:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',cat:'🔥 Social',city:'Rosario',capacity:18},
-  {id:'e12',name:'Caminata lago Nahuel Huapi',when:'Sábado, 8:30',desc:'Ruta tranquila con vista espectacular al lago.',img:'https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=600&auto=format&fit=crop',cat:'🏔 Aventura',city:'Bariloche',capacity:12},
-  {id:'e13',name:'Fondue y vino',when:'Viernes, 20:00',desc:'Una noche cálida y deliciosa en la montaña.',img:'https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=600&auto=format&fit=crop',cat:'🧀 Gastronomía',city:'Bariloche',capacity:10},
-  {id:'e14',name:'Peña folclórica',when:'Viernes, 22:00',desc:'Música, baile y empanadas salteñas. La noche perfecta.',img:'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600&auto=format&fit=crop',cat:'🎵 Cultura',city:'Salta',capacity:30},
-  {id:'e15',name:'Mate y charla',when:'Hoy, 17:00',desc:'Encuentro informal en la plaza central. Solo buena compañía.',img:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop',cat:'🧉 Social',city:'Tucumán',capacity:15},
-  {id:'e16',name:'Yoga al amanecer',when:'Mañana, 7:00',desc:'Clase de yoga al aire libre para todos los niveles.',img:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop',cat:'🧘 Bienestar',city:'_any',capacity:15},
-  {id:'e17',name:'Club de lectura',when:'Miércoles, 19:00',desc:'Compartimos lecturas y opiniones en un ambiente cálido.',img:'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop',cat:'📚 Cultura',city:'_any',capacity:10},
-  {id:'e18',name:'Fotografía callejera',when:'Sábado, 10:00',desc:'Aprendemos técnicas y salimos a fotografiar juntos.',img:'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop',cat:'📷 Arte',city:'_any',capacity:8},
-];
-
-function getEventAttendees(eid){return load('fu_evt_'+eid,[]);}
-function getAttendeeCount(eid){
-  const real=getEventAttendees(eid).length;
-  const seed=eid.charCodeAt(eid.length-1);
-  return real+(seed%6)+2;
-}
-function getNearbyLabel(eid){
-  const n=getAttendeeCount(eid);
-  return n===1?'1 persona cerca va':''+n+' personas cerca van';
-}
-function getEventsForCity(city){
-  if(!city)return EVENTS_DB.slice(0,6);
-  const c=city.split(',')[0].trim();
-  const specific=EVENTS_DB.filter(e=>e.city===c);
-  const universal=EVENTS_DB.filter(e=>e.city==='_any');
-  const combined=specific.concat(universal);
-  return combined.length?combined:EVENTS_DB.slice(0,6);
-}
-function rsvpEvent(eid,name,when,img){
-  const evts=getEvents();
-  if(evts.some(e=>e.id===eid)){toast('Ya estás anotado ✓');return;}
-  evts.push({id:eid,name,when,img,at:new Date().toISOString()});
-  setEvents(evts);
-  const u=me();
-  if(u){const att=getEventAttendees(eid);if(!att.includes(u.id)){att.push(u.id);store('fu_evt_'+eid,att);}}
-  toast('¡Te anotaste! 🎉');
-}
-function showEventPeople(evt){
-  const u=me();
-  const all=getSavedUsers();
-  const realIds=getEventAttendees(evt.id);
-  const realProfiles=realIds.map(id=>all.find(x=>x.id===id)).filter(Boolean);
-  const seed=evt.id.charCodeAt(evt.id.length-1);
-  const simNames=[['Carmen',45,'F'],['Roberto',52,'M'],['Silvia',48,'F'],['Gustavo',58,'M'],['Marta',61,'F'],['Diego',55,'M']];
-  const simCount=(seed%4)+1;
-  let html='<div class="panel-title">👥 Quién va a '+escHtml(evt.name)+'</div>';
-  html+='<div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">'+escHtml(evt.when)+' · '+escHtml(evt.city==='_any'?(u&&u.city||'tu ciudad'):evt.city)+'</div>';
-  if(realProfiles.length){
-    realProfiles.forEach(function(p){
-      const photo=p.photo||'';
-      html+='<div class="msg-item" style="cursor:pointer" onclick="closePanel()">'
-        +'<div style="width:44px;height:44px;border-radius:50%;background:var(--soft)'+(photo?' url('+photo+') center/cover':'')
-        +';flex-shrink:0;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--g);overflow:hidden">'
-        +(photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover">':escHtml((p.name||'?')[0]))+'</div>'
-        +'<div class="msg-info"><div class="msg-name">'+escHtml(p.name||'')+(p.age?', '+p.age:'')+'</div>'
-        +'<div class="msg-preview">📍 '+escHtml(p.city||'')+'</div></div>'
-        +'<span style="font-size:.7rem;font-weight:800;color:var(--g2)">Va ✓</span></div>';
-    });
-  }
-  for(var i=0;i<simCount;i++){
-    const si=(seed+i)%simNames.length;
-    html+='<div class="msg-item">'
-      +'<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g3));flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff">'+simNames[si][0][0]+'</div>'
-      +'<div class="msg-info"><div class="msg-name">'+simNames[si][0]+', '+simNames[si][1]+'</div>'
-      +'<div class="msg-preview">📍 Menos de 3 km de distancia</div></div>'
-      +'<span style="font-size:.7rem;font-weight:800;color:var(--g2)">Va ✓</span></div>';
-  }
-  $('panelContent').innerHTML=html;
-  $('profilePanel').classList.add('open');
-}
-
 function go(id){
-  // Save last page for refresh restore
   if(id!=='landing')try{sessionStorage.setItem('fu_page',id)}catch(e){}
-  
+
+  document.body.classList.toggle('chat-open', id==='chat');
+  const nav=$('bottomNav');
+  if(nav) nav.classList.toggle('hidden', id==='chat' || !me());
+
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const el=$( id);
+  const el=$(id);
   if(el) el.classList.add('active');
   _curScreen=id;
-  
-  // Update nav active state
+
   ['home','plans','profiles','messages','me'].forEach(k=>{
     const btn=$('bn-'+k);
     if(btn) btn.classList.toggle('active', k===id);
   });
-  
-  // Render content
+
   requestAnimationFrame(()=>{
     if(id==='home') renderHome();
     if(id==='plans') renderPlans();
@@ -854,7 +866,7 @@ function ensureUserStored(){
 function boot(){
   ensureUserStored();
   const u=me();
-  $('bottomNav').classList.toggle('hidden',!u);
+  $('bottomNav').classList.toggle('hidden',!u || _curScreen==='chat');
   
   if(u){
     // Update all user displays
@@ -866,8 +878,8 @@ function boot(){
     $('meCity').textContent=u.city;
     $('sentFortis').textContent=u.fortisSent||0;
     $('recFortis').textContent=u.fortisRec||0;
-    $('superCount').textContent=u.super??1;
-    $('meSuperCount').textContent=u.super??1;
+    $('superCount').textContent=availableSuper();
+    $('meSuperCount').textContent=availableSuper();
     
     // Nav avatar
     const navImg=$('navAvatarIcon');
@@ -877,6 +889,7 @@ function boot(){
     
     // Check unread messages
     updateMsgDot();
+    syncSuperUI();
     if(!u.lat) setTimeout(requestGPS,1500);
     // Restore last page on refresh
     let lastPage='home';
@@ -941,75 +954,39 @@ function allProfiles(){
 }
 
 // ── Render Plans ──
-function renderPlans(q){
-  q=q||'';
-  const u=me();
-  const city=u&&u.city?u.city.split(',')[0].trim():userCity();
+function renderPlans(q=''){
+  const city=userCity();
   $('cityTop').textContent=city;
-  q=q.toLowerCase();
-  const evts=getEventsForCity(city).filter(e=>!q||e.name.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q));
-  const list=$('plansList');
-  list.innerHTML='';
-  if(!evts.length){list.innerHTML='<div class="empty"><div class="empty-ico">📅</div><p>No hay eventos en tu zona todavía</p></div>';return;}
-  evts.forEach(function(e){
-    const myEvts=getEvents();
-    const going=myEvts.some(function(ev){return ev.id===e.id;});
-    const cnt=getAttendeeCount(e.id);
-    const nearbyLbl=getNearbyLabel(e.id);
-    
-    const card=document.createElement('div');card.className='card plan-card';
-    
-    const wrap=document.createElement('div');wrap.style.position='relative';
-    const img=document.createElement('img');img.src=e.img;img.loading='lazy';img.alt=e.name;
-    img.style.cssText='width:100%;height:180px;object-fit:cover;display:block';
-    wrap.appendChild(img);
-    
-    // Attendee count badge
-    const badge=document.createElement('div');
-    badge.style.cssText='position:absolute;bottom:.6rem;left:.75rem;background:rgba(0,0,0,.6);color:#fff;font-size:.7rem;font-weight:800;padding:.25rem .6rem;border-radius:50px;backdrop-filter:blur(4px)';
-    badge.textContent='👥 '+cnt+' van a ir';
-    wrap.appendChild(badge);
-    
-    // Cat badge
-    const cat=document.createElement('div');
-    cat.style.cssText='position:absolute;top:.6rem;right:.6rem;background:rgba(0,0,0,.55);color:#fff;font-size:.68rem;font-weight:800;padding:.2rem .5rem;border-radius:50px';
-    cat.textContent=e.cat;
-    wrap.appendChild(cat);
-    
-    const body=document.createElement('div');body.className='plan-card-body';
-    body.innerHTML='<h3>'+escHtml(e.name)+'</h3>'
-      +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:.4rem">🕐 '+escHtml(e.when)+'</div>'
-      +'<p>'+escHtml(e.desc)+'</p>'
-      +'<div style="background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:.55rem .75rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.45rem">'
-      +'<span style="font-size:1rem">📍</span>'
-      +'<span style="font-size:.78rem;color:var(--g);font-weight:700">'+nearbyLbl+' a este evento</span></div>';
-    
-    const row=document.createElement('div');row.style.cssText='display:flex;gap:.5rem';
-    
-    const btn=document.createElement('button');
-    btn.className='btn btn-green';btn.style.flex='1';
-    if(going){btn.textContent='✓ Voy a ir';btn.disabled=true;btn.style.opacity='.7';}
-    else{
-      btn.textContent='Asistiré';
-      (function(ev,b,bg){b.onclick=function(){
-        rsvpEvent(ev.id,ev.name,ev.when,ev.img);
-        b.textContent='✓ Voy a ir';b.disabled=true;b.style.opacity='.7';
-        bg.textContent='👥 '+(cnt+1)+' van a ir';
-      };})(e,btn,badge);
-    }
-    
-    const btn2=document.createElement('button');
-    btn2.className='btn btn-out';btn2.style.flexShrink='0';
-    btn2.textContent='Ver quién va';
-    (function(ev){btn2.onclick=function(){showEventPeople(ev);};})(e);
-    
-    row.appendChild(btn);row.appendChild(btn2);
-    body.appendChild(row);
-    card.appendChild(wrap);card.appendChild(body);
-    list.appendChild(card);
+  q=(q||'').toLowerCase();
+  const filtered=plans.filter(p=>p[7]===city&&p.join(' ').toLowerCase().includes(q));
+  const show=filtered.length?filtered:plans.filter(p=>p.join(' ').toLowerCase().includes(q));
+  
+  $('plansList').innerHTML=show.length?show.map(p=>`
+    <div class="card plan-card">
+      <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
+      <div class="plan-card-body">
+        <h3>${p[4]} ${escHtml(p[0])}</h3>
+        <div class="plan-cat">${p[1]}</div>
+        <p>${escHtml(p[2])}</p>
+        <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${p[6]}</span></div>
+        <button class="btn btn-green btn-rsvp" data-name="${p[0].replace(/"/g,'&quot;')}" data-when="${p[1].replace(/"/g,'&quot;')}" data-img="${p[3]}">
+          ${p[0].includes('Busco')?'Me sumo':'Asistiré'}
+        </button>
+      </div>
+    </div>`).join('')
+  :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
+  // Bind RSVP buttons
+  document.querySelectorAll('.btn-rsvp').forEach(btn=>{
+    btn.onclick=e=>{
+      e.stopPropagation();
+      rsvpPlan(btn.dataset.name,btn.dataset.when,btn.dataset.img);
+      btn.textContent='¡Anotado! ✓';
+      btn.disabled=true;
+    };
   });
 }
 
+// ── Render Profiles ──
 function renderProfiles(){
   const profs=allProfiles();
   const favs=getFavs();
@@ -1075,7 +1052,7 @@ function renderMe(){
   $('meCity').textContent=u.city;
   $('sentFortis').textContent=u.fortisSent||0;
   $('recFortis').textContent=u.fortisRec||0;
-  $('meSuperCount').textContent=u.super??1;
+  $('meSuperCount').textContent=availableSuper();
 }
 
 // ── Auth ──
@@ -1264,8 +1241,19 @@ function startChat(p){
   chatWith=p;
   $('chatAvatar').src=p.img||p.photo||'';
   $('chatName').textContent=p.n||p.name;
-  renderChatBubbles();
   go('chat');
+  renderChatBubbles();
+  setTimeout(()=>{
+    const input=$('chatInput');
+    if(input){
+      input.placeholder='Escribile a '+(p.n||p.name||'esta persona')+'...';
+      input.style.display='block';
+      input.disabled=false;
+      input.focus();
+    }
+    const box=$('chatBox');
+    if(box) box.scrollTop=box.scrollHeight;
+  },150);
 }
 
 function renderChatBubbles(){
@@ -1281,6 +1269,7 @@ function renderChatBubbles(){
       <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
       <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${_cname}!</p>
       <p style="font-size:.82rem">Sé el primero en escribir</p>
+      <button class="btn btn-green" style="margin-top:1rem" onclick="$('chatInput').value='Hola!';$('chatInput').focus()">Escribir hola</button>
     </div>`;
   setTimeout(()=>{$('chatBox').scrollTop=$('chatBox').scrollHeight},50);
 }
@@ -1296,6 +1285,7 @@ function sendMsg(){
   setChats(chats);
   inp.value='';
   renderChatBubbles();
+  setTimeout(()=>{$('chatInput').focus(); const box=$('chatBox'); if(box) box.scrollTop=box.scrollHeight;},50);
   updateMsgDot();
 }
 
@@ -1329,16 +1319,31 @@ function canSendSuper(){
   if(!last) return true;
   return (Date.now()-new Date(last).getTime())>=86400000;
 }
+function availableSuper(){
+  return canSendSuper()?1:0;
+}
+function syncSuperUI(){
+  const available=availableSuper();
+  const u=me();
+  if(u){
+    u.super=available;
+    setMe(u);
+  }
+  const sc=$('superCount'); if(sc) sc.textContent=available;
+  const mc=$('meSuperCount'); if(mc) mc.textContent=available;
+}
 function sendSuper(pid){
   const u=me();
   if(!u) return openAuth();
-  if(!canSendSuper()){toast('Ya enviaste tu Súper Diamante hoy. Volvé mañana 💎');return}
-  if((u.super||0)<=0){toast('No tenés Súper Diamantes disponibles 💎');return}
-  u.super=(u.super||1)-1;
-  setMe(u);
+  if(!canSendSuper()){
+    syncSuperUI();
+    toast('Ya usaste tu Súper Diamante de hoy. Volvé mañana 💎');
+    return;
+  }
   store('fu_last_super',new Date().toISOString());
-  $('superCount').textContent=u.super;
-  $('meSuperCount').textContent=u.super;
+  u.super=0;
+  setMe(u);
+  syncSuperUI();
   toast('¡Súper Diamante enviado! 💎');
   setTimeout(()=>showSuperDiamondPopup('Vos'),500);
 }
@@ -1619,20 +1624,6 @@ function toast(msg,dur=3000){
   el.textContent=msg;
   el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),dur);
-}
-
-// ── Misc ──
-function fly(){} // particle effect placeholder
-function soon(){toast('Próximamente ✨')}
-
-// ── VH fix for mobile browsers ──
-function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px')}
-setVh();
-window.addEventListener('resize',setVh);
-
-// ── Start ──
-boot();
-ve('show'),dur);
 }
 
 // ── Misc ──
