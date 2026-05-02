@@ -1218,97 +1218,39 @@ function openExternalEvent(url){
   window.open(url,'_blank');
 }
 
-function renderPlans(q=''){
+
+function renderPlans(){
   const city=userCity();
   $('cityTop').textContent=city;
 
-  const controls=$('plansControls');
-  if(controls && !controls.dataset.ready){
-    controls.dataset.ready='1';
-    controls.innerHTML=`
-      <div class="plans-toolbar">
-        <input id="eventSearch" placeholder="Buscar evento..." oninput="currentPlansPage=1;renderPlans()">
-        <select id="eventCity" onchange="currentPlansPage=1;renderPlans()">
-          <option value="actual">Mi ciudad / zona</option>
-          <option value="todas">Todas las ciudades</option>
-          <option value="Buenos Aires">Buenos Aires</option>
-          <option value="Mendoza">Mendoza</option>
-          <option value="Ushuaia">Ushuaia</option>
-        </select>
-        <select id="eventCat" onchange="currentPlansPage=1;renderPlans()">
-          <option value="">Todas las categorías</option>
-          <option value="Música">Música</option>
-          <option value="Teatro">Teatro</option>
-          <option value="Café">Café</option>
-          <option value="Vino">Vino</option>
-          <option value="Gastronomía">Gastronomía</option>
-          <option value="Aire libre">Aire libre</option>
-        </select>
-      </div>
-      <div class="event-count" id="eventCount"></div>
-    `;
-  }
-
   const now=new Date();
-  const search=(($('eventSearch')&&$('eventSearch').value)||q||'').toLowerCase();
-  const cityFilter=($('eventCity')&&$('eventCity').value)||'actual';
-  const catFilter=($('eventCat')&&$('eventCat').value)||'';
-
-  let filtered=plans.filter(p=>{
-    const eventDate=new Date(p[9]);
-    const isFuture=!isNaN(eventDate) && eventDate>=now;
-    const matchCity=cityFilter==='todas' ? true : cityFilter==='actual' ? p[7]===city : p[7]===cityFilter;
-    const matchCat=!catFilter || (p[10]||'').toLowerCase()===catFilter.toLowerCase();
-    const matchSearch=!search || p.join(' ').toLowerCase().includes(search);
-    return isFuture && matchCity && matchCat && matchSearch;
-  }).sort((a,b)=>new Date(a[9])-new Date(b[9]));
+  const filtered=plans.filter(p=>new Date(p[9])>=now && p[7]===city)
+                      .sort((a,b)=>new Date(a[9])-new Date(b[9]));
 
   const totalPages=Math.max(1,Math.ceil(filtered.length/plansPerPage));
   if(currentPlansPage>totalPages) currentPlansPage=totalPages;
+
   const start=(currentPlansPage-1)*plansPerPage;
   const show=filtered.slice(start,start+plansPerPage);
 
-  if($('eventCount')) $('eventCount').textContent=`${filtered.length} eventos futuros encontrados · Página ${currentPlansPage} de ${totalPages}`;
-
-  $('plansList').innerHTML=show.length?show.map(p=>{
-    const eventId=eventIdFromPlan(p);
-    const isAtt=currentUserAttending(eventId);
-    const base=parseInt(String(p[6]).match(/\d+/)?.[0]||0);
-    const count=attendingCount(eventId,base);
-    const link=p[8]||'';
-    return `
+  $('plansList').innerHTML=show.map(p=>`
     <div class="card plan-card">
-      <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
+      <img src="${p[3]}" style="width:100%;height:160px;object-fit:cover">
       <div class="plan-card-body">
-        <span class="event-source">🌐 Evento real curado</span>
-        <h3>${p[4]} ${escHtml(p[0])}</h3>
-        <div class="plan-cat">${p[1]}</div>
-        <p>${escHtml(p[2])}</p>
-        <div class="plan-meta"><span>📍 ${p[5]}</span><span>👥 ${count} asistirán</span></div>
-        <div class="attendee-mini">
-          <div class="attendee-dots"><span>Tú</span><span>+${Math.max(count-1,0)}</span></div>
-          <span>${isAtt?'Estás anotado':'Anotate y aparece en Mis eventos'}</span>
-        </div>
-        <button class="btn btn-green attend-btn ${isAtt?'attending':''}"
-          onclick="toggleAttend('${eventId}','${p[0].replace(/'/g,"\\'")}','${p[1].replace(/'/g,"\\'")}','${p[3]}','${p[7]}','${link}')">
-          ${isAtt?'✓ Asistiré':'Asistiré'}
-        </button>
-        ${link?`<button class="event-link-btn" onclick="openExternalEvent('${link}')">Ver entradas / fuente</button>`:''}
+        <h3>${p[4]} ${p[0]}</h3>
+        <p>${p[2]}</p>
+        <div>📍 ${p[5]}</div>
+        <button onclick="openExternalEvent('${p[8]}')">Ver entradas</button>
       </div>
-    </div>`}).join('')
-  :'<div class="empty"><div class="empty-ico">📅</div><p>No hay eventos futuros con esos filtros.</p></div>';
+    </div>
+  `).join('');
 
-  const pag=$('plansPagination');
-  if(pag){
-    pag.className='plans-pagination';
-    let buttons=`<button class="page-btn" ${currentPlansPage===1?'disabled':''} onclick="currentPlansPage--;renderPlans()">‹</button>`;
-    for(let i=1;i<=totalPages;i++){
-      buttons+=`<button class="page-btn ${i===currentPlansPage?'active':''}" onclick="currentPlansPage=${i};renderPlans()">${i}</button>`;
-    }
-    buttons+=`<button class="page-btn" ${currentPlansPage===totalPages?'disabled':''} onclick="currentPlansPage++;renderPlans()">›</button>`;
-    pag.innerHTML=buttons;
-  }
+  $('plansPagination').innerHTML=`
+    <button onclick="currentPlansPage--;renderPlans()" ${currentPlansPage===1?'disabled':''}>⬅</button>
+    <button onclick="currentPlansPage++;renderPlans()" ${currentPlansPage===totalPages?'disabled':''}>➡</button>
+  `;
 }
+
 
 // ── Render Profiles ──
 function renderProfiles(){
@@ -1643,7 +1585,7 @@ function showFortiMatch(p){
   $('matchIcon').textContent='◆◆◆';
   $('matchIcon').classList.add('forti-yellow');
   $('matchTitle').textContent='¡Match de Fortis!';
-  $('matchText').innerHTML=`Vos y ${escHtml(p.n||p.name)} se mandaron <span class="forti-yellow-text">Fortis amarillos</span>. ¡Ya pueden charlar!`;
+  $('matchText').innerHTML=`Vos y ${escHtml(p.n||p.name)} se mandaron <span class="forti-yellow-text">Forti</span>. ¡Ya pueden charlar!`;
   $('matchPopup').classList.add('show');
 }
 
