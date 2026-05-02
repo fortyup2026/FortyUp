@@ -3184,5 +3184,189 @@ html,body{overscroll-behavior:none;}
 })();
 </script>
 
+
+
+<style id="fuRealEventsInteractionStyle">
+.real-events-note{background:#ECFDF5;border:1.5px solid var(--line);border-radius:22px;padding:.9rem;margin:.75rem 0 1rem;color:var(--txt);box-shadow:var(--sh2)}
+.real-events-note h3{font-family:'Playfair Display',serif;color:var(--g);font-size:1.02rem;margin-bottom:.25rem}
+.real-events-note p{font-size:.78rem;color:var(--muted);line-height:1.45;margin:0}
+.event-empty-actions{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.8rem}
+.event-empty-actions button{border:none;border-radius:999px;padding:.72rem .75rem;font-family:'Nunito',sans-serif;font-weight:1000;cursor:pointer}
+.btn-create-yellow{background:linear-gradient(135deg,#F2B705,#FFD75A);color:#064E3B;box-shadow:0 8px 20px rgba(242,183,5,.24)}
+.btn-search-green{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff}
+.event-chat-hint{background:#FFFDF7;border:1px dashed var(--line);border-radius:16px;padding:.65rem .7rem;font-size:.75rem;color:var(--muted);font-weight:800;line-height:1.35;margin:.55rem 0 .7rem}
+.event-real-badge{display:inline-flex;align-items:center;gap:.25rem;background:#DBEAFE;border:1px solid #BFDBFE;color:#1E3A8A;border-radius:999px;padding:.2rem .55rem;font-size:.68rem;font-weight:1000;margin-bottom:.4rem}
+.reminder-pill{display:inline-flex;margin-left:.35rem;background:#F0F9FF;border:1px solid #BAE6FD;color:#075985;border-radius:999px;padding:.15rem .45rem;font-size:.66rem;font-weight:1000}
+.super-ok{color:var(--g)!important}.super-zero{color:var(--muted)!important}
+@media(max-width:420px){.event-empty-actions{grid-template-columns:1fr}}
+</style>
+
+<script id="fuRealEventsInteractionPatch">
+/* FortyUp - eventos reales + interacción + fix superdiamantes
+   Nota: en HTML estático no se pueden importar automáticamente todos los eventos reales del país sin una API/backend.
+   Por eso esta versión NO inventa eventos: muestra eventos públicos creados por usuarios + eventos curados existentes + links para buscar eventos reales y crearlos en FortyUp. */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const low=v=>String(v||'').trim().toLowerCase();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+  const getAuth=()=>window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null);
+  const getDb=()=>window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null);
+  const meLocal=()=>{try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}};
+  const uid=()=>getAuth()&&getAuth().currentUser?getAuth().currentUser.uid:(meLocal()?.id||'');
+  const serverTime=()=>firebase.firestore.FieldValue.serverTimestamp();
+  const arrayUnion=v=>firebase.firestore.FieldValue.arrayUnion(v);
+  const arrayRemove=v=>firebase.firestore.FieldValue.arrayRemove(v);
+  const cityNow=()=>{try{return localStorage.getItem('fu_plan_city_override')||((meLocal()?.city||meLocal()?.c||'Buenos Aires').split(',')[0].trim())||'Buenos Aires'}catch(e){return 'Buenos Aires'}};
+  const planMode=()=>localStorage.getItem('fu_plan_city_override')?'🧳 Buscando para viaje':'📍 Según tu ubicación';
+
+  let publicEventsReal=[];
+  let unsubPublicEventsReal=null;
+
+  const curatedRealEvents=[
+    ['Martin Garrix','Movistar Arena · 16 mayo 2026, 21:00','Show internacional de música electrónica. Evento curado con link oficial.','https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop','🎧','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/show/e3fd9108-83fe-46b2-8779-f6cbb651eeee'],
+    ['Jonas Brothers','Movistar Arena · 05 mayo 2026','Concierto en Buenos Aires.','https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop','🎵','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+    ['Divididos','Movistar Arena · 09 mayo 2026','Rock argentino en vivo en Movistar Arena.','https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=900&auto=format&fit=crop','🎸','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+    ['Fito Páez','Movistar Arena · 20 mayo 2026','Show musical en Buenos Aires.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop','🎹','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+    ['Mon Laferte','Movistar Arena · 21 mayo 2026','Concierto en Buenos Aires.','https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?q=80&w=900&auto=format&fit=crop','🎤','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+    ['Vinito Sessions','Eventbrite · 23 mayo 2026, 21:00','Evento externo curado para usarlo como plan dentro de FortyUp.','https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=900&auto=format&fit=crop','🍷','Buenos Aires','0 asistirán','Buenos Aires','https://www.eventbrite.com.ar/d/argentina--buenos-aires/mayo/']
+  ];
+
+  function legacyEventId(e){return ('curated_'+e[0]+'_'+e[1]+'_'+e[7]).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+  function attendKey(){return 'fu_curated_attendance_v2';}
+  function getCuratedAttendance(){try{return JSON.parse(localStorage.getItem(attendKey())||'{}')}catch(e){return {}}}
+  function setCuratedAttendance(v){try{localStorage.setItem(attendKey(),JSON.stringify(v||{}))}catch(e){}}
+  function curatedAttendees(id){const all=getCuratedAttendance(); return Array.isArray(all[id])?all[id]:[];}
+  function userAttendingCurated(id){const u=uid(); return !!u && curatedAttendees(id).includes(u);}
+  function userAttendingPublic(e){const u=uid(); return !!u && Array.isArray(e.attendees)&&e.attendees.includes(u);}
+
+  function eventSearchBox(city){
+    const google=`https://www.google.com/search?q=${encodeURIComponent('eventos recitales teatro '+city+' Argentina')}`;
+    const eventbrite=`https://www.eventbrite.com.ar/d/argentina/${encodeURIComponent(city)}/events/`;
+    return `<div class="live-events-box"><h3>🔎 Buscar eventos reales en ${esc(city)}</h3><p>Si encontrás uno que no está en FortyUp, crealo como evento público y otros pueden tocar “Asistiré”.</p><div class="live-actions"><button class="live-google" onclick="window.open('${google}','_blank')">Google eventos</button><button class="live-eventbrite" onclick="window.open('${eventbrite}','_blank')">Eventbrite</button></div></div>`;
+  }
+
+  function noEventsBox(city){
+    return `<div class="empty"><div class="empty-ico">📅</div><p>No hay eventos publicados todavía en ${esc(city)}.</p><div class="event-empty-actions"><button class="btn-create-yellow" onclick="showCreateEventPanel()">+ Crear evento público</button><button class="btn-search-green" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent('eventos '+city+' Argentina')}','_blank')">Buscar reales</button></div></div>`;
+  }
+
+  function scheduleReminderLocal(ev){
+    try{
+      const reminders=JSON.parse(localStorage.getItem('fu_event_reminders')||'[]');
+      const exists=reminders.some(x=>x.id===ev.id);
+      if(!exists){
+        reminders.push({id:ev.id,title:ev.title,city:ev.city,date:ev.date||'',time:ev.time||'',when:ev.when||'',notified:false});
+        localStorage.setItem('fu_event_reminders',JSON.stringify(reminders));
+      }
+    }catch(e){}
+  }
+  function requestNotificationPermission(){
+    if(!('Notification' in window)) return;
+    if(Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+  }
+  function checkEventReminders(){
+    if(!('Notification' in window) || Notification.permission!=='granted') return;
+    let reminders=[];
+    try{reminders=JSON.parse(localStorage.getItem('fu_event_reminders')||'[]')}catch(e){return;}
+    const now=Date.now();
+    let changed=false;
+    reminders.forEach(r=>{
+      if(r.notified||!r.date)return;
+      const dt=new Date(`${r.date}T${r.time||'09:00'}`);
+      if(!isNaN(dt.getTime()) && dt.getTime()-now <= 24*60*60*1000 && dt.getTime()-now > -6*60*60*1000){
+        new Notification('FortyUp te avisa 📅',{body:`Tenés un evento: ${r.title} · ${r.city||''}`,tag:'fortyup-'+r.id});
+        r.notified=true; changed=true;
+      }
+    });
+    if(changed)localStorage.setItem('fu_event_reminders',JSON.stringify(reminders));
+  }
+  setInterval(checkEventReminders,60000);
+  setTimeout(checkEventReminders,2500);
+
+  window.toggleCuratedAttend=async function(id,title,city,when){
+    const u=uid(); if(!u) return toast('Primero iniciá sesión');
+    const all=getCuratedAttendance(); all[id]=Array.isArray(all[id])?all[id]:[];
+    const i=all[id].indexOf(u);
+    if(i>=0){all[id].splice(i,1); toast('Cancelaste tu asistencia');}
+    else{all[id].push(u); toast('Te sumaste al evento ✅'); requestNotificationPermission(); scheduleReminderLocal({id,title,city,when});}
+    setCuratedAttendance(all); if(typeof window.renderPlans==='function')window.renderPlans(byId('plansTextSearch')?.value||'');
+  };
+
+  window.togglePublicEventAttend=async function(type,id){
+    const db=getDb(), a=getAuth(), user=a&&a.currentUser; if(!db||!user)return toast('Primero iniciá sesión');
+    const ev=publicEventsReal.find(x=>x.id===id); const is=userAttendingPublic(ev||{});
+    try{
+      await db.collection('publicEvents').doc(id).set({attendees:is?arrayRemove(user.uid):arrayUnion(user.uid),updatedAt:serverTime()},{merge:true});
+      if(!is){requestNotificationPermission(); scheduleReminderLocal({id,title:ev?.title||'Evento FortyUp',city:ev?.city||'',date:ev?.date||'',time:ev?.time||''});}
+      toast(is?'Cancelaste tu asistencia':'Te sumaste al evento ✅');
+    }catch(e){console.error(e);toast('No pude actualizar asistencia');}
+  };
+
+  function startPublicEventListener(){
+    const db=getDb(); if(!db||unsubPublicEventsReal)return;
+    unsubPublicEventsReal=db.collection('publicEvents').where('public','==',true).onSnapshot(s=>{
+      publicEventsReal=[]; s.forEach(d=>publicEventsReal.push({id:d.id,...d.data()}));
+      if(typeof window.renderPlans==='function')window.renderPlans(byId('plansTextSearch')?.value||'');
+    });
+  }
+
+  window.renderPlans=function(q=''){
+    if(typeof window.installCreateEventButton==='function') window.installCreateEventButton();
+    const list=byId('plansList'); if(!list)return;
+    const city=cityNow(); const query=low(q);
+    const cityTop=byId('cityTop'); if(cityTop)cityTop.textContent=(localStorage.getItem('fu_plan_city_override')?'Viajás a ':'')+city;
+
+    const pub=publicEventsReal.filter(e=>low(e.city)===low(city)).map(e=>({kind:'public',id:e.id,title:e.title||'Evento FortyUp',description:e.description||'',city:e.city||city,place:e.place||e.city||city,date:e.date||'',time:e.time||'',when:`${e.date||''}${e.time?' · '+e.time:''}`,attendees:e.attendees||[],creatorName:e.creatorName||'usuario',img:'https://images.unsplash.com/photo-1505236858219-8359eb29e329?q=80&w=900&auto=format&fit=crop'}));
+    const curated=curatedRealEvents.filter(e=>low(e[7])===low(city)||e.join(' ').toLowerCase().includes(low(city))).map(e=>{const id=legacyEventId(e);return {kind:'curated',id,title:e[0],when:e[1],description:e[2],img:e[3],icon:e[4],place:e[5],city:e[7],link:e[8]||'',attendees:curatedAttendees(id)};});
+    let show=[...pub,...curated];
+    if(query)show=show.filter(e=>[e.title,e.when,e.description,e.place,e.city,e.creatorName].join(' ').toLowerCase().includes(query));
+    let html=`<div class="plan-mode-pill">${planMode()} · ${esc(city)}</div>`+
+      `<div class="real-events-note"><h3>📅 Eventos reales + eventos creados por usuarios</h3><p>FortyUp ya no inventa eventos random. Si un evento real no aparece, podés crearlo público para que otros usuarios de esa ciudad se sumen.</p></div>`;
+    if(!show.length){list.innerHTML=html+noEventsBox(city)+eventSearchBox(city);return;}
+    html+=show.map(e=>{
+      const count=(e.attendees||[]).length; const is=e.kind==='public'?userAttendingPublic(e):userAttendingCurated(e.id);
+      const badge=e.kind==='public'?`<span class="event-created-badge">✨ Creado por ${esc(e.creatorName||'usuario')}</span>`:`<span class="event-real-badge">🌐 Evento real curado</span>`;
+      const attend=e.kind==='public'?`togglePublicEventAttend('public','${e.id}')`:`toggleCuratedAttend('${e.id}','${String(e.title).replace(/'/g,"\\'")}','${String(e.city).replace(/'/g,"\\'")}','${String(e.when).replace(/'/g,"\\'")}')`;
+      return `<div class="card plan-card"><img src="${esc(e.img)}" loading="lazy" alt="${esc(e.title)}" style="width:100%;height:160px;object-fit:cover"><div class="plan-card-body">${badge}<h3>${esc(e.icon||'📅')} ${esc(e.title)}</h3><div class="plan-cat">${esc(e.when)}</div><p>${esc(e.description)}</p><div class="plan-meta"><span>📍 ${esc(e.place||e.city)}</span><span>👥 ${count} asistirán</span></div><div class="event-chat-hint">${is?'Estás anotado. Ahora podés conectar con otros que vayan al mismo plan.':'Tocá “Asistiré” para sumarte y que el evento aparezca en Mis eventos.'}<span class="reminder-pill">aviso 24 h antes</span></div><button class="btn btn-green attend-btn ${is?'attending':''}" onclick="${attend}">${is?'✓ Asistiré':'Asistiré'}</button>${e.link?`<button class="event-link-btn" onclick="window.open('${esc(e.link)}','_blank')">Ver entradas / fuente</button>`:''}</div></div>`;
+    }).join('')+eventSearchBox(city);
+    list.innerHTML=html;
+  };
+
+  const oldCreate=window.showCreateEventPanel;
+  window.showCreateEventPanel=function(){
+    if(oldCreate) oldCreate();
+    setTimeout(()=>{
+      const desc=byId('evDesc'); if(desc && !desc.placeholder.includes('¿Quién se suma?')) desc.placeholder='Ej: Voy a ver a un artista en tal lado. ¿Quién se suma?';
+      const p=byId('panelContent');
+      if(p && !p.innerHTML.includes('FortyUp te puede avisar')) p.innerHTML += `<p style="font-size:.74rem;color:var(--muted);line-height:1.45;margin-top:.6rem">🔔 Cuando alguien toque “Asistiré”, FortyUp puede avisarle 24 h antes si aceptó notificaciones del navegador/app.</p>`;
+    },80);
+  };
+
+  function availableSuperReal(){
+    if(typeof window.availableSuper==='function'){
+      const n=Number(window.availableSuper()); return isNaN(n)?0:n;
+    }
+    try{return JSON.parse(localStorage.getItem('fu_last_super')||'null')?0:1}catch(e){return 0}
+  }
+  function updateSuperCards(){
+    const n=availableSuperReal();
+    const home=byId('superCount'); if(home)home.textContent=n;
+    const me=byId('meSuperCount'); if(me){me.textContent=n; me.classList.toggle('super-zero',n<=0); me.classList.toggle('super-ok',n>0);}
+  }
+  window.showSuperPanel=function(){
+    const n=availableSuperReal();
+    const pc=byId('panelContent'); if(!pc)return;
+    pc.innerHTML=`<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:${n>0?'var(--g)':'var(--muted)'}">${n}</div><div style="font-size:.78rem;color:var(--muted)">${n===1?'disponible hoy':'disponibles hoy'}</div></div>${n<=0?'<p style="font-size:.75rem;color:var(--muted);margin-top:.8rem">Ya usaste tu Súper Diamante de hoy. Volvé mañana 💎</p>':''}</div>`;
+    byId('profilePanel')?.classList.add('open');
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function') window.go=function(id){const r=oldGo.apply(this,arguments);setTimeout(()=>{startPublicEventListener();updateSuperCards();if(id==='plans')window.renderPlans(byId('plansTextSearch')?.value||'');},120);return r;};
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{startPublicEventListener();updateSuperCards();},600);});
+  setTimeout(()=>{startPublicEventListener();updateSuperCards();},1400);
+  window.__FORTYUP_REAL_EVENTS_INTERACTION__='NO_RANDOM_EVENTS_SUPER_FIX_REMINDERS_2026_05_02';
+})();
+</script>
+
 </body>
 </html>
