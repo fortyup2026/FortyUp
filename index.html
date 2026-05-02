@@ -3413,5 +3413,438 @@ html,body{overscroll-behavior:none;}
 })();
 </script>
 
+
+<style id="fuEventosProStyle">
+.fu-event-main-btn{
+  width:100%;margin:.2rem 0 1rem;border:none;border-radius:999px;
+  padding:1rem 1.1rem;background:linear-gradient(135deg,#F2B705,#FFD75A);
+  color:#064E3B;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:1000;
+  box-shadow:0 12px 28px rgba(242,183,5,.30);cursor:pointer;
+}
+.fu-event-main-btn:active{transform:scale(.98)}
+.fu-event-card{cursor:pointer}
+.fu-event-card .plan-card-body{position:relative}
+.fu-event-badge{
+  display:inline-flex;align-items:center;gap:.25rem;background:#ECFDF5;border:1px solid var(--line);
+  color:var(--g);border-radius:999px;padding:.18rem .52rem;font-size:.68rem;font-weight:1000;margin-bottom:.4rem
+}
+.fu-event-badge.real{background:#E0F2FE;border-color:#BAE6FD;color:#075985}
+.fu-event-badge.user{background:#FEF3C7;border-color:#FDE68A;color:#7C4A03}
+.fu-event-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.65rem}
+.fu-event-actions .btn{padding:.55rem .85rem;font-size:.78rem}
+.fu-event-panel-hero{border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:var(--sh2);margin-bottom:1rem}
+.fu-event-panel-hero img{width:100%;height:155px;object-fit:cover;display:block;background:var(--soft)}
+.fu-event-panel-body{padding:1rem}
+.fu-event-panel-body h2{font-family:'Playfair Display',serif;color:var(--g);font-size:1.25rem;line-height:1.2;margin-bottom:.35rem}
+.fu-event-meta{display:grid;gap:.35rem;font-size:.82rem;color:var(--muted);font-weight:800;margin:.65rem 0}
+.fu-event-note{background:#ECFDF5;border:1px solid var(--line);border-radius:18px;padding:.75rem;font-size:.8rem;line-height:1.45;color:var(--txt);font-weight:700;margin:.75rem 0}
+.fu-match-box{background:#FFF8DB;border:1px solid #FDE68A;color:#6B4A00;border-radius:18px;padding:.7rem .8rem;font-size:.78rem;font-weight:900;line-height:1.45;margin:.75rem 0}
+.fu-create-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.fu-create-grid .full{grid-column:1/-1}
+.fu-create-grid label{display:block;font-size:.76rem;font-weight:900;color:var(--g);margin-bottom:.28rem}
+.fu-create-grid input,.fu-create-grid textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:18px;padding:.65rem .8rem;
+  font-family:'Nunito',sans-serif;font-size:.86rem;background:#fff;outline:none;color:var(--txt)
+}
+.fu-create-grid textarea{height:88px;resize:none}
+.fu-event-chat-box{height:285px;overflow-y:auto;background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:.75rem;display:flex;flex-direction:column;gap:.55rem;margin-bottom:.65rem}
+.fu-event-chat-msg{max-width:82%;background:#fff;border:1px solid var(--line);box-shadow:var(--sh2);border-radius:16px;padding:.55rem .7rem;font-size:.82rem;line-height:1.42}
+.fu-event-chat-msg.mine{align-self:flex-end;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border-color:transparent}
+.fu-event-chat-name{font-size:.68rem;font-weight:1000;opacity:.75;margin-bottom:.15rem}
+.fu-event-chat-row{display:flex;gap:.45rem}
+.fu-event-chat-row input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:.65rem .85rem;font-family:'Nunito',sans-serif;background:#fff;outline:none}
+.fu-event-chat-row button{border:0;border-radius:999px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;font-weight:1000;padding:.65rem .95rem;font-family:'Nunito',sans-serif}
+.fu-empty-strong{background:#fff;border:1px solid var(--line);border-radius:22px;padding:1rem;text-align:center;box-shadow:var(--sh2)}
+.fu-empty-strong h3{font-family:'Playfair Display',serif;color:var(--g);margin-bottom:.35rem}
+.fu-empty-strong p{font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:.85rem}
+@media(max-width:420px){.fu-create-grid{grid-template-columns:1fr}.fu-create-grid .full{grid-column:auto}.fu-event-actions{flex-direction:column}.fu-event-actions .btn{width:100%}}
+</style>
+
+<script id="fuEventosProFinalScript">
+/* === FortyUp EVENTOS PRO FINAL: eventos reales/usuarios + card + chat por evento + coincidencias === */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const clean=v=>String(v||'').trim();
+  const low=v=>clean(v).toLowerCase();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+  const db=()=>window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null);
+  const auth=()=>window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null);
+  const me=()=>{try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}};
+  const currentUid=()=>auth()&&auth().currentUser?auth().currentUser.uid:(me()?.uid||me()?.id||'');
+  const userName=()=>me()?.name||me()?.n||auth()?.currentUser?.displayName||'Usuario';
+  const userPhoto=()=>me()?.photo||me()?.img||'';
+  const serverTime=()=>firebase.firestore.FieldValue.serverTimestamp();
+  const arrUnion=v=>firebase.firestore.FieldValue.arrayUnion(v);
+  const arrRemove=v=>firebase.firestore.FieldValue.arrayRemove(v);
+  let userEvents=[];
+  let attendance={};
+  let users=[];
+  let unsubEvents=null, unsubAttendance=null, unsubUsers=null, unsubEventChat=null;
+  window.fuEventRegistry={};
+
+  function realUserCity(){
+    const u=me();
+    return clean((u&&(u.city||u.c))||'Buenos Aires').split(',')[0]||'Buenos Aires';
+  }
+  function getOverride(){try{return localStorage.getItem('fu_plan_city_override')||''}catch(e){return ''}}
+  function activeCity(){return getOverride()||realUserCity()}
+  function normalizeCity(c){
+    const s=low(c).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(s.includes('cataratas')||s.includes('iguazu')) return 'puerto iguazu';
+    if(s.includes('caba')||s.includes('capital')||s.includes('buenos')) return 'buenos aires';
+    if(s.includes('cordoba')) return 'cordoba';
+    if(s.includes('ushuaia')) return 'ushuaia';
+    return s;
+  }
+  function eventDocId(raw){return String(raw||'ev').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,120)||'evento'}
+  function titleDateId(title,when,city){return eventDocId('ev_'+title+'_'+when+'_'+city)}
+  function dateWithinYear(e){
+    if(!e.dateISO) return true;
+    const d=new Date(e.dateISO+'T00:00:00');
+    if(isNaN(d)) return true;
+    const now=new Date(); now.setHours(0,0,0,0);
+    const max=new Date(now); max.setFullYear(max.getFullYear()+1);
+    return d>=now && d<=max;
+  }
+
+  function curatedEvents(){
+    let out=[];
+    try{
+      if(Array.isArray(plans)){
+        plans.forEach(p=>{
+          const link=p[8]||'';
+          if(!link) return; // solo curados/reales, no planes inventados
+          const id=titleDateId(p[0],p[1],p[7]);
+          out.push({
+            id, source:'curated', public:true, real:true, title:p[0], when:p[1], desc:p[2], img:p[3],
+            icon:p[4]||'🎟️', place:p[5]||p[7]||'', city:p[7]||'Buenos Aires', link, creatorName:'FortyUp'
+          });
+        });
+      }
+    }catch(e){}
+    return out;
+  }
+  function allEvents(){
+    const pub=userEvents.map(e=>({
+      id:e.id||eventDocId(e.title+'_'+e.dateISO+'_'+e.city),
+      source:'user', public:true, real:false,
+      title:e.title||'Evento FortyUp', when:e.when||(e.dateISO&&e.time?`${e.dateISO} · ${e.time}`:(e.dateISO||'Fecha a confirmar')),
+      desc:e.desc||e.description||'', img:e.img||'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop',
+      icon:e.icon||'🎟️', place:e.place||e.location||e.city||'', city:e.city||'Buenos Aires', link:e.link||'', creatorName:e.creatorName||'Usuario', dateISO:e.dateISO||''
+    })).filter(dateWithinYear);
+    const map=new Map();
+    [...curatedEvents(),...pub].forEach(e=>map.set(e.id,e));
+    return [...map.values()];
+  }
+  function eventAttendance(id){return attendance[id]||{attendees:[], attendeeNames:{}, attendeePhotos:{}}}
+  function isAttending(id){return (eventAttendance(id).attendees||[]).includes(currentUid())}
+  function attendeeCount(id){return (eventAttendance(id).attendees||[]).length}
+  function saveLocalEvent(e, remove=false){
+    try{
+      const arr=typeof window.getEvents==='function'?window.getEvents():JSON.parse(localStorage.getItem('fu_events')||'[]');
+      const next=remove?arr.filter(x=>x.id!==e.id):[...arr.filter(x=>x.id!==e.id),{id:e.id,title:e.title,when:e.when,img:e.img,city:e.city,link:e.link||'',source:e.real?'Evento real':'Evento FortyUp'}];
+      if(typeof window.setEvents==='function') window.setEvents(next); else localStorage.setItem('fu_events',JSON.stringify(next));
+    }catch(_e){}
+  }
+  function registerEvent(e){window.fuEventRegistry[e.id]=e; return e.id;}
+
+  function startRealtime(){
+    const d=db(); if(!d) return;
+    if(!unsubEvents){
+      unsubEvents=d.collection('publicEvents').where('public','==',true).onSnapshot(s=>{
+        userEvents=[]; s.forEach(doc=>userEvents.push({id:doc.id,...doc.data()}));
+        safeRender();
+      },err=>console.warn('publicEvents',err));
+    }
+    if(!unsubAttendance){
+      unsubAttendance=d.collection('eventAttendance').onSnapshot(s=>{
+        attendance={}; s.forEach(doc=>attendance[doc.id]=doc.data()||{});
+        safeRender();
+      },err=>console.warn('eventAttendance',err));
+    }
+    if(!unsubUsers){
+      unsubUsers=d.collection('users').onSnapshot(s=>{
+        users=[]; s.forEach(doc=>users.push({id:doc.id,uid:doc.id,...doc.data()}));
+        safeRender();
+      },err=>console.warn('users',err));
+    }
+  }
+  function safeRender(){
+    if(document.getElementById('plans')?.classList.contains('active') && typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||'');
+    if(document.getElementById('home')?.classList.contains('active') && typeof window.renderHome==='function') window.renderHome();
+  }
+
+  function ensureCreateButton(){
+    const list=byId('plansList');
+    if(!list || byId('fuEventCreateBtn')) return;
+    list.insertAdjacentHTML('beforebegin',`<button id="fuEventCreateBtn" class="fu-event-main-btn" onclick="showCreateEventPanel()">＋ Crear evento público</button>`);
+  }
+
+  function eventCard(e, compact=false){
+    registerEvent(e);
+    const att=attendeeCount(e.id);
+    const going=isAttending(e.id);
+    const badge=e.real?'🌐 Evento real curado':'🙋 Evento creado por usuario';
+    const badgeClass=e.real?'real':'user';
+    const img=e.img||'';
+    return `
+    <div class="card plan-card fu-event-card" onclick="openFuEventCard('${e.id}')">
+      ${img?`<img src="${esc(img)}" loading="lazy" alt="${esc(e.title)}" style="width:100%;height:${compact?'110':'160'}px;object-fit:cover">`:''}
+      <div class="plan-card-body">
+        <span class="fu-event-badge ${badgeClass}">${badge}</span>
+        <h3>${esc(e.icon||'🎟️')} ${esc(e.title)}</h3>
+        <div class="plan-cat">${esc(e.when||'Fecha a confirmar')}</div>
+        <p>${esc(e.desc||'Evento para conectar con gente de FortyUp.')}</p>
+        <div class="plan-meta"><span>📍 ${esc(e.place||e.city)}</span><span>👥 ${att} asistirán</span></div>
+        <div class="fu-event-actions">
+          <button class="btn btn-green attend-btn ${going?'attending':''}" onclick="event.stopPropagation();toggleFuEventAttend('${e.id}')">${going?'✓ Asistiré':'Asistiré'}</button>
+          <button class="btn btn-out" onclick="event.stopPropagation();openFuEventCard('${e.id}')">Ver evento</button>
+          ${e.link?`<button class="event-link-btn" onclick="event.stopPropagation();window.open('${esc(e.link)}','_blank')">Ver fuente</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function externalSearchBox(city){
+    const google=`https://www.google.com/search?q=${encodeURIComponent('eventos '+city+' Argentina próximos meses')}`;
+    const eventbrite=`https://www.eventbrite.com.ar/d/argentina/${encodeURIComponent(city)}/events/`;
+    return `<div class="live-events-box"><h3>🔎 Buscar eventos reales en ${esc(city)}</h3><p>Si no aparece lo que buscás, podés buscarlo afuera y después crear un evento público para que otros se sumen.</p><div class="live-actions"><button class="live-google" onclick="window.open('${google}','_blank')">Google eventos</button><button class="live-eventbrite" onclick="window.open('${eventbrite}','_blank')">Eventbrite</button></div></div>`;
+  }
+
+  window.renderPlans=function(q=''){
+    startRealtime();
+    ensureCreateButton();
+    if(typeof window.renderChips==='function') window.renderChips();
+    const city=activeCity();
+    const override=getOverride();
+    const cityTop=byId('cityTop'); if(cityTop) cityTop.textContent=override?`Viajás a ${city}`:city;
+    const input=byId('planCityInput'); if(input && document.activeElement!==input) input.value=override||'';
+    q=low(q);
+    const target=normalizeCity(city);
+    let events=allEvents().filter(e=>{
+      const cityOk=normalizeCity(e.city)===target || low(e.title+' '+e.place+' '+e.desc).includes(target);
+      const textOk=!q || low(e.title+' '+e.when+' '+e.desc+' '+e.place+' '+e.city).includes(q);
+      return cityOk && textOk;
+    });
+    // Si no hay exactos, para que Home/Planes no se contradigan, mostramos reales/usuarios que coincidan por texto o próximos curados.
+    if(!events.length && q){
+      events=allEvents().filter(e=>low(e.title+' '+e.when+' '+e.desc+' '+e.place+' '+e.city).includes(q));
+    }
+    const list=byId('plansList'); if(!list) return;
+    const mode=`<div class="plan-mode-pill">${override?'🧳 Buscando para viaje':'📍 Según tu ubicación'} · ${esc(city)} · próximos 12 meses</div>`;
+    if(!events.length){
+      list.innerHTML=mode+`
+      <div class="fu-empty-strong">
+        <h3>No hay eventos cargados para ${esc(city)} todavía</h3>
+        <p>Podés crear uno público tipo “voy a tal show, ¿quién se suma?” y la gente de esa ciudad lo ve.</p>
+        <button class="fu-event-main-btn" onclick="showCreateEventPanel()">＋ Crear evento público</button>
+      </div>`+externalSearchBox(city);
+      return;
+    }
+    list.innerHTML=mode+events.map(e=>eventCard(e)).join('')+externalSearchBox(city);
+  };
+
+  const oldRenderHome=window.renderHome;
+  window.renderHome=function(){
+    startRealtime();
+    if(typeof oldRenderHome==='function') oldRenderHome();
+    const box=byId('homePlans'); if(!box) return;
+    const city=realUserCity();
+    const target=normalizeCity(city);
+    let evs=allEvents().filter(e=>normalizeCity(e.city)===target).slice(0,5);
+    if(!evs.length) evs=allEvents().slice(0,5);
+    box.innerHTML=evs.map(e=>{
+      registerEvent(e);
+      return `<div class="plan-mini card" onclick="openFuEventCard('${e.id}')">
+        <div class="plan-mini-img" style="background-image:url('${esc(e.img||'')}')"></div>
+        <div class="plan-mini-info">
+          <p>${esc(e.icon||'🎟️')} ${esc(e.title)}</p>
+          <small>${esc(e.city)} · ${attendeeCount(e.id)} van</small>
+        </div>
+      </div>`;
+    }).join('') || `<div class="fu-empty-strong"><h3>Creá el primer evento</h3><p>Publicá un plan y otros usuarios pueden sumarse.</p></div>`;
+  };
+
+  window.toggleFuEventAttend=async function(eventId){
+    const e=window.fuEventRegistry[eventId]; if(!e) return toast('No encontré ese evento.');
+    const u=currentUid(); if(!u) return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Iniciá sesión primero'));
+    const d=db(); if(!d) return toast('Firebase no está conectado.');
+    const ref=d.collection('eventAttendance').doc(eventId);
+    const going=isAttending(eventId);
+    try{
+      if(going){
+        await ref.set({attendees:arrRemove(u), updatedAt:serverTime()},{merge:true});
+        try{await ref.update({['attendeeNames.'+u]:firebase.firestore.FieldValue.delete(),['attendeePhotos.'+u]:firebase.firestore.FieldValue.delete()});}catch(_e){}
+        saveLocalEvent(e,true);
+        toast('Cancelaste tu asistencia');
+      }else{
+        await ref.set({attendees:arrUnion(u), ['attendeeNames.'+u]:userName(), ['attendeePhotos.'+u]:userPhoto(), updatedAt:serverTime()},{merge:true});
+        saveLocalEvent(e,false);
+        toast('Te anotaste al evento ✅');
+      }
+      setTimeout(()=>{ if(typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||''); },150);
+      if(byId('profilePanel')?.classList.contains('open')) setTimeout(()=>window.openFuEventCard(eventId),180);
+    }catch(err){console.error(err);toast('No pude actualizar la asistencia.');}
+  };
+
+  // Compatibilidad con botones viejos de Asistiré
+  window.toggleAttend=function(eventId,title,when,img,city,link){
+    const e={id:eventId,title,when,img,city,link,desc:'Evento para compartir con usuarios de FortyUp.',icon:'🎟️',place:city,real:!!link,source:link?'curated':'user'};
+    registerEvent(e);
+    return window.toggleFuEventAttend(eventId);
+  };
+
+  window.openFuEventCard=function(eventId){
+    startRealtime();
+    const e=window.fuEventRegistry[eventId] || allEvents().find(x=>x.id===eventId);
+    if(!e) return toast('No encontré ese evento.');
+    registerEvent(e);
+    const att=eventAttendance(e.id);
+    const names=att.attendeeNames||{};
+    const ids=att.attendees||[];
+    const others=ids.filter(id=>id!==currentUid()).map(id=>names[id]||'Usuario');
+    const going=isAttending(e.id);
+    const match=others.length?`Vos y ${esc(others.slice(0,2).join(', '))}${others.length>2?' y más usuarios':''} van a asistir al mismo evento: ${esc(e.title)}.`:'Cuando otros usuarios pongan Asistiré, van a aparecer acá.';
+    byId('panelContent').innerHTML=`
+      <div class="fu-event-panel-hero">
+        ${e.img?`<img src="${esc(e.img)}" alt="${esc(e.title)}">`:''}
+        <div class="fu-event-panel-body">
+          <span class="fu-event-badge ${e.real?'real':'user'}">${e.real?'🌐 Evento real curado':'🙋 Evento creado por usuario'}</span>
+          <h2>${esc(e.icon||'🎟️')} ${esc(e.title)}</h2>
+          <div class="fu-event-meta">
+            <div>🗓️ ${esc(e.when||'Fecha a confirmar')}</div>
+            <div>📍 ${esc(e.place||e.city)}</div>
+            <div>👥 ${ids.length} asistentes FortyUp</div>
+            ${e.creatorName?`<div>✍️ Publicado por ${esc(e.creatorName)}</div>`:''}
+          </div>
+          <p style="font-size:.86rem;line-height:1.65;color:var(--txt)">${esc(e.desc||'Evento para conectar con gente de FortyUp.')}</p>
+          <div class="fu-match-box">🎟️ ${match}</div>
+          <div class="fu-event-actions">
+            <button class="btn btn-green ${going?'attending':''}" onclick="toggleFuEventAttend('${e.id}')">${going?'✓ Asistiré':'Asistiré'}</button>
+            <button class="btn btn-out" onclick="openFuEventChat('${e.id}')">💬 Chat del evento</button>
+            ${e.link?`<button class="btn btn-out" onclick="window.open('${esc(e.link)}','_blank')">Ver fuente / entradas</button>`:''}
+          </div>
+          <div class="fu-event-note">El chat del evento se habilita para quienes marcaron <strong>Asistiré</strong>. Sirve para coordinar: “¿vas solo/a?”, “¿en qué sector estás?”, “¿nos encontramos antes?”.</div>
+        </div>
+      </div>`;
+    byId('profilePanel')?.classList.add('open');
+  };
+
+  window.openFuEventChat=function(eventId){
+    const e=window.fuEventRegistry[eventId] || allEvents().find(x=>x.id===eventId);
+    if(!e) return toast('No encontré ese evento.');
+    if(!isAttending(eventId)) return toast('Primero marcá Asistiré para entrar al chat del evento.');
+    byId('panelContent').innerHTML=`
+      <div class="panel-title">💬 Chat · ${esc(e.title)}</div>
+      <div class="fu-event-chat-box" id="fuEventChatBox"><div class="empty"><p>Cargando chat...</p></div></div>
+      <div class="fu-event-chat-row">
+        <input id="fuEventChatInput" placeholder="Escribí en el chat del evento..." onkeydown="if(event.key==='Enter')sendFuEventMessage('${eventId}')">
+        <button onclick="sendFuEventMessage('${eventId}')">Enviar</button>
+      </div>
+      <button class="btn btn-out" style="width:100%;margin-top:.7rem" onclick="openFuEventCard('${eventId}')">← Volver al evento</button>`;
+    byId('profilePanel')?.classList.add('open');
+    listenEventChat(eventId);
+  };
+
+  function listenEventChat(eventId){
+    const d=db(); if(!d) return;
+    if(unsubEventChat){try{unsubEventChat()}catch(e){} unsubEventChat=null;}
+    unsubEventChat=d.collection('eventChats').doc(eventId).collection('messages').orderBy('createdAt','asc').limit(80).onSnapshot(s=>{
+      const box=byId('fuEventChatBox'); if(!box) return;
+      let html='';
+      s.forEach(doc=>{
+        const m=doc.data()||{};
+        const mine=m.uid===currentUid();
+        html+=`<div class="fu-event-chat-msg ${mine?'mine':''}"><div class="fu-event-chat-name">${mine?'Vos':esc(m.name||'Usuario')}</div>${esc(m.text||'')}</div>`;
+      });
+      box.innerHTML=html || '<div class="empty"><p>Todavía no hay mensajes. Sé el primero en coordinar.</p></div>';
+      box.scrollTop=box.scrollHeight;
+    },err=>{console.warn(err);});
+  }
+  window.sendFuEventMessage=async function(eventId){
+    const inp=byId('fuEventChatInput'); const text=clean(inp?.value||'');
+    if(!text) return;
+    const d=db(); const u=currentUid();
+    if(!d||!u) return toast('Iniciá sesión para escribir.');
+    if(!isAttending(eventId)) return toast('Solo asistentes pueden escribir en este chat.');
+    inp.value='';
+    await d.collection('eventChats').doc(eventId).collection('messages').add({uid:u,name:userName(),photo:userPhoto(),text,createdAt:serverTime()});
+  };
+
+  window.showCreateEventPanel=function(){
+    const city=activeCity();
+    byId('panelContent').innerHTML=`
+      <div class="panel-title">＋ Crear evento público</div>
+      <div class="fu-event-note">Publicá un plan real: “voy a ver a tal artista”, “salida a tal lugar”, “café grupal”. Otros usuarios de esa ciudad pueden tocar <strong>Asistiré</strong> y chatear en el evento.</div>
+      <div class="fu-create-grid">
+        <div class="full"><label>Título *</label><input id="fuNewEventTitle" placeholder="Ej: Voy a ver a Fito Páez"></div>
+        <div><label>Fecha *</label><input id="fuNewEventDate" type="date"></div>
+        <div><label>Hora</label><input id="fuNewEventTime" type="time"></div>
+        <div><label>Ciudad *</label><input id="fuNewEventCity" value="${esc(city)}" placeholder="Ej: Córdoba"></div>
+        <div><label>Lugar</label><input id="fuNewEventPlace" placeholder="Ej: Movistar Arena"></div>
+        <div class="full"><label>Mensaje / descripción *</label><textarea id="fuNewEventDesc" placeholder="Ej: voy a este show, ¿quién se suma?"></textarea></div>
+        <div class="full"><label>Link del evento o entradas (opcional)</label><input id="fuNewEventLink" placeholder="https://..."></div>
+      </div>
+      <button class="fu-event-main-btn" onclick="saveFuPublicEvent()">Publicar evento</button>`;
+    byId('profilePanel')?.classList.add('open');
+  };
+  window.saveFuPublicEvent=async function(){
+    const d=db(); const u=currentUid();
+    if(!d||!u) return toast('Iniciá sesión para crear un evento.');
+    const title=clean(byId('fuNewEventTitle')?.value);
+    const dateISO=clean(byId('fuNewEventDate')?.value);
+    const time=clean(byId('fuNewEventTime')?.value);
+    const city=clean(byId('fuNewEventCity')?.value)||activeCity();
+    const place=clean(byId('fuNewEventPlace')?.value)||city;
+    const desc=clean(byId('fuNewEventDesc')?.value);
+    const link=clean(byId('fuNewEventLink')?.value);
+    if(!title||!dateISO||!desc) return toast('Completá título, fecha y descripción.');
+    const id=eventDocId('user_'+title+'_'+dateISO+'_'+city+'_'+u);
+    const when=time?`${dateISO} · ${time}`:dateISO;
+    const data={title,dateISO,time,when,city,place,desc,description:desc,link,public:true,creatorUid:u,creatorName:userName(),createdAt:serverTime(),updatedAt:serverTime(),img:'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop',icon:'🎟️'};
+    try{
+      await d.collection('publicEvents').doc(id).set(data,{merge:true});
+      const e={id,source:'user',...data,real:false};
+      registerEvent(e);
+      await d.collection('eventAttendance').doc(id).set({attendees:arrUnion(u), ['attendeeNames.'+u]:userName(), ['attendeePhotos.'+u]:userPhoto(), updatedAt:serverTime()},{merge:true});
+      saveLocalEvent(e,false);
+      toast('Evento publicado ✅');
+      setTimeout(()=>openFuEventCard(id),350);
+    }catch(err){console.error(err);toast('No pude publicar el evento.');}
+  };
+
+  window.showEventosPanel=function(){
+    startRealtime();
+    const uid=currentUid();
+    const evs=allEvents().filter(e=>(eventAttendance(e.id).attendees||[]).includes(uid));
+    byId('panelContent').innerHTML=`
+      <div class="panel-title">📅 Mis eventos</div>
+      ${evs.length?evs.map(e=>`
+        <div class="my-event-card" onclick="openFuEventCard('${e.id}')" style="cursor:pointer">
+          <img src="${esc(e.img||'')}" alt="">
+          <div style="flex:1">
+            <h4>${esc(e.title)}</h4>
+            <p>${esc(e.when)} · ${esc(e.city||'')}</p>
+            <p>${attendeeCount(e.id)} asistentes · tocar para ver chat</p>
+          </div>
+        </div>`).join(''):`<div class="empty"><div class="empty-ico">📅</div><p>Todavía no marcaste asistencia a ningún evento.</p><button class="fu-event-main-btn" onclick="showCreateEventPanel()">＋ Crear evento público</button></div>`}`;
+    byId('profilePanel')?.classList.add('open');
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function'){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      if(id==='plans') setTimeout(()=>{startRealtime();ensureCreateButton();window.renderPlans(byId('plansTextSearch')?.value||'');},120);
+      return r;
+    };
+  }
+  setInterval(()=>{ if(!unsubEvents) startRealtime(); },1200);
+  setTimeout(()=>{startRealtime(); ensureCreateButton();},700);
+  window.__FORTYUP_EVENTOS_PRO_FINAL__='EVENTOS_PRO_CARD_CHAT_COINCIDENCIAS_2026_05_02';
+})();
+</script>
+
 </body>
 </html>
