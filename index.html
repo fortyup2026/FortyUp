@@ -2668,3 +2668,307 @@ function openGoogleEvents(){
 
 </body>
 </html>
+
+<!-- === FortyUp FINAL REAL v4 — tarjeta sin cierre + mensajería Firebase en tiempo real === -->
+<script>
+(function(){
+  const VERSION = 'FortyUp FINAL REAL v4 - chat realtime + panel estable';
+  window.FORTYUP_VERSION = VERSION;
+
+  let currentChatUnsub = null;
+  let conversationsUnsub = null;
+  window.fu_conversations_cache = window.fu_conversations_cache || [];
+  window.fu_current_chat_messages = window.fu_current_chat_messages || [];
+
+  function ready(){ return !!(window.fuAuth && window.fuDb); }
+  function safeToast(msg){ try{ toast(msg); }catch(e){ console.log(msg); } }
+  function curUser(){ try{ return typeof me === 'function' ? me() : null; }catch(e){ return null; } }
+  function uid(){ const u=curUser(); return (window.fuAuth && fuAuth.currentUser && fuAuth.currentUser.uid) || (u && u.id) || ''; }
+  function normalize(v){ return String(v||'').trim().toLowerCase(); }
+  function esc(v){ try{ return escHtml(v); }catch(e){ return String(v||'').replace(/[&<>\"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); } }
+  function asProfile(raw){
+    raw = raw || {};
+    const name = raw.n || raw.name || raw.displayName || 'Usuario';
+    const photo = raw.img || raw.photo || '';
+    return {
+      id: raw.id || raw.uid || raw.userId || '',
+      n: name, name,
+      a: Number(raw.a || raw.age || 40), age: Number(raw.age || raw.a || 40),
+      c: raw.c || raw.city || 'Buenos Aires', city: raw.city || raw.c || 'Buenos Aires',
+      img: photo, photo,
+      email: normalize(raw.email),
+      bio: raw.bio || '', intent: raw.intent || '',
+      lat: raw.lat || null, lng: raw.lng || null,
+      tags: Array.isArray(raw.tags) ? raw.tags : []
+    };
+  }
+  function getAll(){ try{ return allProfiles().map(asProfile); }catch(e){ return []; } }
+  function findProfile(pid){
+    pid = String(pid||'');
+    let p = getAll().find(x=>String(x.id)===pid || normalize(x.email)===normalize(pid));
+    if(p) return p;
+    const conv = (window.fu_conversations_cache||[]).find(c=>String(c.otherId)===pid);
+    if(conv) return asProfile({id:conv.otherId, name:conv.otherName, photo:conv.otherPhoto});
+    return {id:pid,n:'Usuario',name:'Usuario',img:'',photo:'',a:'',age:'',c:'',city:''};
+  }
+  function chatIdFor(a,b){ return [String(a||''), String(b||'')].sort().join('__'); }
+  function nowLabel(ts){
+    try{
+      const d = ts && ts.toDate ? ts.toDate() : (ts ? new Date(ts) : new Date());
+      return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }catch(e){ return ''; }
+  }
+
+  window.openPanel = function(p){
+    p = asProfile(p);
+    const photo = p.img || p.photo || '';
+    const initial = (p.n || p.name || '?')[0].toUpperCase();
+    const content = $('panelContent');
+    if(!content) return;
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:1rem">
+        <div style="width:112px;height:112px;border-radius:50%;margin:0 auto .8rem;background:var(--soft) center/cover no-repeat;border:4px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:3rem;color:var(--g);font-weight:800;${photo?`background-image:url('${photo}')`:''}">${photo?'':esc(initial)}</div>
+        <h2 style="font-family:'Playfair Display',serif;color:var(--g);font-size:1.45rem">${esc(p.n||p.name)} ${p.a||p.age?`<span style="font-weight:400;color:var(--muted)">${p.a||p.age}</span>`:''}</h2>
+        <p style="color:var(--muted);font-weight:800;margin-top:.15rem">📍 ${esc(p.c||p.city||'')}</p>
+        ${p.intent?`<p style="color:var(--g2);font-weight:800;margin-top:.3rem">${esc(p.intent)}</p>`:''}
+      </div>
+      ${p.bio?`<div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:.85rem;margin-bottom:.8rem;font-size:.88rem;line-height:1.5">${esc(p.bio)}</div>`:''}
+      <div style="display:grid;gap:.55rem">
+        <button class="btn btn-green" style="width:100%" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Mandar Forti</button>
+        <button class="btn btn-green" style="width:100%;background:linear-gradient(135deg,#1d6faa,var(--blue))" onclick="event.stopPropagation();sendSuper('${p.id}')">💎 Mandar Súper Diamante</button>
+        <button class="btn btn-out" style="width:100%" onclick="event.stopPropagation();closePanel();startChatById('${p.id}')">💬 Enviar mensaje</button>
+        <button class="btn btn-out" style="width:100%;border-color:var(--red)!important;color:var(--red)" onclick="event.stopPropagation();reportProfile('${p.id}')">Reportar / bloquear</button>
+      </div>`;
+    $('profilePanel').classList.add('open');
+  };
+
+  window.renderProfiles = function(){
+    const list = $('profilesList');
+    if(!list) return;
+    const profs = getAll();
+    const favs = (typeof getFavs === 'function') ? getFavs() : [];
+    if(!profs.length){
+      list.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles disponibles todavía</p></div>';
+      return;
+    }
+    list.innerHTML = profs.map(p=>{
+      const dl = (typeof distLabel === 'function') ? distLabel(p) : '';
+      const isFav = favs.includes(p.id);
+      const photo = p.img || p.photo || '';
+      const initial = (p.n || p.name || '?')[0].toUpperCase();
+      return `<div class="card profile-card" onclick="openPanelById('${p.id}')">
+        <div class="profile-photo" style="${photo?`background-image:url('${photo}')`:''}">
+          ${!photo?`<div class="initial-fallback">${esc(initial)}</div>`:''}
+          ${dl?`<span class="distance">📍 ${dl}</span>`:''}
+        </div>
+        <div class="profile-info">
+          <h2>${esc(p.n||p.name)} <span>${p.a||p.age||''}</span></h2>
+          <b>📍 ${esc(p.c||p.city||'')}</b>
+          ${p.intent?`<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">${esc(p.intent)}</div>`:''}
+          <div class="profile-actions">
+            <button class="btn-forti" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Forti</button>
+            <button class="btn-super" onclick="event.stopPropagation();sendSuper('${p.id}')">💎</button>
+            <button class="btn-chat" onclick="event.stopPropagation();startChatById('${p.id}')">💬</button>
+            <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  window.openPanelById = function(pid){ openPanel(findProfile(pid)); };
+  window.startChatById = function(pid){ startChat(findProfile(pid)); };
+
+  function stopChatListener(){ try{ if(currentChatUnsub) currentChatUnsub(); }catch(e){} currentChatUnsub = null; }
+
+  window.startChat = function(p){
+    p = asProfile(p);
+    if(!p.id) return safeToast('No se pudo abrir el chat de ese perfil');
+    chatWith = p;
+    const av=$('chatAvatar'); if(av) av.src = p.img || p.photo || '';
+    const nm=$('chatName'); if(nm) nm.textContent = p.n || p.name || 'Chat';
+    go('chat');
+    const box=$('chatBox'); if(box) box.innerHTML = '<div class="empty"><div class="empty-ico">💬</div><p>Abriendo conversación...</p></div>';
+    const input=$('chatInput');
+    if(input){ input.disabled=false; input.placeholder='Escribile a '+(p.n||p.name||'esta persona')+'...'; setTimeout(()=>input.focus(),80); }
+    listenCurrentChat(p);
+  };
+
+  function listenCurrentChat(p){
+    stopChatListener();
+    const meId = uid();
+    if(!ready() || !meId || !p.id || String(p.id).startsWith('p')){
+      window.fu_current_chat_messages = ((typeof getChats==='function'?getChats():{})[p.id]||[]);
+      renderChatBubbles();
+      return;
+    }
+    const cid = chatIdFor(meId, p.id);
+    currentChatUnsub = fuDb.collection('conversations').doc(cid).collection('messages').orderBy('createdAt','asc').onSnapshot(snap=>{
+      const msgs=[];
+      snap.forEach(d=>msgs.push({id:d.id, ...d.data()}));
+      window.fu_current_chat_messages = msgs;
+      renderChatBubbles();
+      updateMsgDot();
+    }, err=>{
+      console.warn('chat realtime falló', err);
+      safeToast('El chat tardó en cargar. Cerrá y abrí mensajes otra vez.');
+    });
+  }
+
+  window.renderChatBubbles = function(){
+    if(!chatWith) return;
+    const meId = uid();
+    let msgs = window.fu_current_chat_messages || [];
+    if(!msgs.length && (!ready() || String(chatWith.id).startsWith('p'))){
+      try{ msgs = (getChats()[chatWith.id]||[]); }catch(e){ msgs=[]; }
+    }
+    const cname = esc(chatWith.n || chatWith.name || '');
+    const box = $('chatBox'); if(!box) return;
+    box.innerHTML = msgs.length ? msgs.map(m=>{
+      const mine = (m.from === 'me') || (m.fromId && String(m.fromId) === String(meId));
+      const txt = m.photo ? `<img src="${m.photo}" style="max-width:200px;border-radius:12px;display:block">` : esc(m.text || '');
+      return `<div class="bubble ${mine?'mine':'theirs'}">${txt}</div>`;
+    }).join('') : `<div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+      <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
+      <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${cname}!</p>
+      <p style="font-size:.82rem">Sé el primero en escribir</p>
+      <button class="btn btn-green" style="margin-top:1rem" onclick="$('chatInput').value='Hola!';$('chatInput').focus()">Escribir hola</button>
+    </div>`;
+    setTimeout(()=>{ try{ box.scrollTop = box.scrollHeight; }catch(e){} }, 40);
+  };
+
+  window.sendMsg = async function(){
+    const inp=$('chatInput');
+    const text=(inp && inp.value ? inp.value.trim() : '');
+    if(!text || !chatWith) return;
+    const u = curUser();
+    const meId = uid();
+    const p = asProfile(chatWith);
+    inp.value='';
+    if(!ready() || !meId || !p.id || String(p.id).startsWith('p')){
+      const chats = (typeof getChats==='function') ? getChats() : {};
+      if(!chats[p.id]) chats[p.id]=[];
+      const now = new Date();
+      chats[p.id].push({from:'me',text,time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+      if(typeof setChats==='function') setChats(chats);
+      window.fu_current_chat_messages = chats[p.id];
+      renderChatBubbles();
+      renderMessages();
+      return;
+    }
+    try{
+      const cid = chatIdFor(meId, p.id);
+      const myName = u?.name || u?.n || 'Yo';
+      const myPhoto = u?.photo || u?.img || '';
+      const convRef = fuDb.collection('conversations').doc(cid);
+      await convRef.set({
+        id:cid,
+        participants:[meId, p.id],
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastText:text,
+        lastFrom:meId,
+        people:{
+          [meId]:{id:meId,name:myName,photo:myPhoto,email:u?.email||''},
+          [p.id]:{id:p.id,name:p.name||p.n||'Usuario',photo:p.photo||p.img||'',email:p.email||''}
+        }
+      }, {merge:true});
+      await convRef.collection('messages').add({
+        fromId:meId,
+        toId:p.id,
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        localCreatedAt:new Date().toISOString()
+      });
+    }catch(e){
+      console.error('sendMsg Firebase falló', e);
+      safeToast('No se pudo enviar el mensaje. Probá otra vez.');
+      if(inp) inp.value=text;
+    }
+  };
+
+  window.renderMessages = function(){
+    const list=$('msgList'); if(!list) return;
+    const convs = window.fu_conversations_cache || [];
+    const localChats = (typeof getChats==='function') ? getChats() : {};
+    const localEntries = Object.entries(localChats).map(([pid,msgs])=>{
+      const p=findProfile(pid); const last=msgs[msgs.length-1]||{};
+      return {otherId:pid, otherName:p.n||p.name||pid, otherPhoto:p.img||p.photo||'', lastText:last.text||'', lastAtText:last.time||'', local:true};
+    });
+    const merged = [...convs, ...localEntries.filter(l=>!convs.some(c=>String(c.otherId)===String(l.otherId)))];
+    if(!merged.length){
+      if(ready() && uid()) startConversationsRealtime();
+      list.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés conversaciones.<br>Escribile a alguien desde perfiles.</p></div>';
+      return;
+    }
+    list.innerHTML = merged.map(c=>`
+      <button class="msg-item" type="button" onclick="startChatById('${c.otherId}')" style="width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;font-family:inherit">
+        <img class="msg-avatar" src="${c.otherPhoto||''}" alt="" onerror="this.style.background='var(--soft)'">
+        <div class="msg-info">
+          <div class="msg-name">${esc(c.otherName||'Usuario')}</div>
+          <div class="msg-preview">${esc(c.lastText||'Abrir conversación')}</div>
+        </div>
+        <div class="msg-time">${esc(c.lastAtText||'')}</div>
+      </button>`).join('');
+  };
+
+  window.updateMsgDot = function(){
+    const has = (window.fu_conversations_cache && window.fu_conversations_cache.length) || (typeof getChats==='function' && Object.keys(getChats()).length>0);
+    const dot=$('msgDot'); if(dot) dot.classList.toggle('show', !!has);
+  };
+
+  window.startConversationsRealtime = function(){
+    const meId = uid();
+    if(!ready() || !meId) return;
+    try{ if(conversationsUnsub) conversationsUnsub(); }catch(e){}
+    conversationsUnsub = fuDb.collection('conversations').where('participants','array-contains',meId).onSnapshot(snap=>{
+      const arr=[];
+      snap.forEach(doc=>{
+        const d = doc.data() || {};
+        const otherId = (d.participants||[]).find(x=>String(x)!==String(meId)) || '';
+        const person = (d.people && d.people[otherId]) || {};
+        const fallback = findProfile(otherId);
+        arr.push({
+          id:doc.id,
+          otherId,
+          otherName:person.name || fallback.name || fallback.n || 'Usuario',
+          otherPhoto:person.photo || fallback.photo || fallback.img || '',
+          lastText:d.lastText || '',
+          updatedAt:d.updatedAt || null,
+          lastAtText: nowLabel(d.updatedAt)
+        });
+      });
+      arr.sort((a,b)=>{
+        const ta = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
+        const tb = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
+        return tb-ta;
+      });
+      window.fu_conversations_cache = arr;
+      renderMessages();
+      updateMsgDot();
+    }, err=>{
+      console.warn('conversaciones realtime falló', err);
+      const list=$('msgList');
+      if(list) list.innerHTML='<div class="empty"><div class="empty-ico">⚠️</div><p>No pude cargar mensajes en tiempo real.<br>Revisá Firebase y volvé a intentar.</p></div>';
+    });
+  };
+
+  const oldGo = window.go;
+  window.go = function(id){
+    if(id !== 'chat') stopChatListener();
+    if(typeof oldGo === 'function') oldGo(id);
+    if(id === 'messages') setTimeout(()=>{ startConversationsRealtime(); renderMessages(); }, 80);
+    if(id === 'profiles') setTimeout(()=>{ try{ renderProfiles(); }catch(e){} }, 80);
+  };
+
+  const oldBoot = window.boot;
+  window.boot = function(){
+    if(typeof oldBoot === 'function') oldBoot();
+    setTimeout(()=>{ startConversationsRealtime(); updateMsgDot(); }, 700);
+  };
+
+  if(ready()){
+    fuAuth.onAuthStateChanged(()=>setTimeout(()=>{ startConversationsRealtime(); updateMsgDot(); }, 700));
+  }
+  setTimeout(()=>{ startConversationsRealtime(); updateMsgDot(); }, 1200);
+})();
+</script>
