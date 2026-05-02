@@ -638,6 +638,18 @@ body.chat-open #bottomNav{
   font-weight:800;
 }
 
+
+/* === FIX FortyUp: Forti único amarillo + SuperDiamante concordante === */
+.match-icon.forti-single{
+  color:#F2B705!important;
+  text-shadow:0 0 18px rgba(242,183,5,.55), 0 8px 28px rgba(0,0,0,.25);
+  letter-spacing:0!important;
+}
+.forti-yellow-text{
+  color:#F2B705;
+  font-weight:900;
+}
+
 </style>
 </head>
 <body>
@@ -702,14 +714,6 @@ body.chat-open #bottomNav{
       <span style="font-size:1rem">🔍</span>
       <input type="text" placeholder="Buscar planes..." oninput="renderPlans(this.value)">
     </div>
-    <div class="live-events-box">
-      <h3>Eventos en vivo en tu zona</h3>
-      <p>Estos eventos son externos, pero FortyUp te permite marcar “Asistiré” dentro de la app y verlos en Mis eventos.</p>
-      <div class="live-actions">
-        <button class="live-eventbrite" onclick="openEventbrite()">Eventbrite</button>
-        <button class="live-google" onclick="openGoogleEvents()">Google eventos</button>
-      </div>
-    </div>
     <div id="plansList"></div>
   </div>
 </div>
@@ -767,7 +771,7 @@ body.chat-open #bottomNav{
       <div class="me-name" id="meNameAge">Nombre, 00</div>
       <div class="me-city" id="meCity">Ciudad</div>
       <div class="me-stats">
-        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Fortis enviados</div></div>
+        <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="sentFortis">0</div><div class="me-stat-l">Forti enviados</div></div>
         <div class="me-stat" onclick="showFortisPanel()" style="cursor:pointer"><div class="me-stat-n" id="recFortis">0</div><div class="me-stat-l">Fortis recibidos</div></div>
         <div class="me-stat" onclick="showSuperPanel()" style="cursor:pointer"><div class="me-stat-n" id="meSuperCount">1</div><div class="me-stat-l">Súper Diamantes</div></div>
       </div>
@@ -1033,8 +1037,8 @@ function boot(){
     $('mePhoto').src=u.photo||'';
     $('meNameAge').textContent=`${u.name}, ${u.age}`;
     $('meCity').textContent=u.city;
-    $('sentFortis').textContent=u.fortisSent||0;
-    $('recFortis').textContent=u.fortisRec||0;
+    syncFortiCounts();
+    
     $('superCount').textContent=availableSuper();
     $('meSuperCount').textContent=availableSuper();
     
@@ -1047,6 +1051,7 @@ function boot(){
     // Check unread messages
     updateMsgDot();
     syncSuperUI();
+    syncFortiCounts();
     if(!u.lat) setTimeout(requestGPS,1500);
     // Restore last page on refresh
     let lastPage='home';
@@ -1268,8 +1273,8 @@ function renderMe(){
   $('mePhoto').src=u.photo||'';
   $('meNameAge').textContent=`${u.name}, ${u.age}`;
   $('meCity').textContent=u.city;
-  $('sentFortis').textContent=u.fortisSent||0;
-  $('recFortis').textContent=u.fortisRec||0;
+  syncFortiCounts();
+  
   $('meSuperCount').textContent=availableSuper();
 }
 
@@ -1513,23 +1518,75 @@ function updateMsgDot(){
 }
 
 // ── Fortis & Super ──
+
+function getFortiRecords(){
+  return load('fu_forti_records',{sent:[],received:[]});
+}
+function setFortiRecords(v){
+  store('fu_forti_records',v);
+}
+function getProfileById(pid){
+  return allProfiles().find(p=>p.id===pid)||null;
+}
+function syncFortiCounts(){
+  const u=me();
+  if(!u)return;
+  const r=getFortiRecords();
+  u.fortisSent=(r.sent||[]).length;
+  u.fortisRec=(r.received||[]).length;
+  setMe(u);
+  const sent=$('sentFortis'); if(sent) sent.textContent=u.fortisSent;
+  const rec=$('recFortis'); if(rec) rec.textContent=u.fortisRec;
+}
+function showFortiSentPopup(profile){
+  $('matchIcon').textContent='◆';
+  $('matchIcon').classList.add('forti-single');
+  $('matchTitle').textContent='Forti enviado';
+  $('matchText').innerHTML=`Le enviaste un <span class="forti-yellow-text">Forti</span> a ${escHtml(profile.n||profile.name||'esta persona')}.`;
+  $('matchPopup').classList.add('show');
+}
+function showFortiMatchPopup(profile){
+  $('matchIcon').textContent='◆';
+  $('matchIcon').classList.add('forti-single');
+  $('matchTitle').textContent='¡Match de Forti!';
+  $('matchText').innerHTML=`${escHtml(profile.n||profile.name||'Esta persona')} también te envió un <span class="forti-yellow-text">Forti</span>.`;
+  $('matchPopup').classList.add('show');
+}
+
 function sendForti(pid){
   const u=me();
-  if(!u) return openAuth();
-  const fortis=getFortis();
-  if(fortis.includes(pid)){toast('Ya le mandaste un Forti ◆');return}
-  fortis.push(pid);
-  setFortis(fortis);
-  u.fortisSent=(u.fortisSent||0)+1;
-  setMe(u);
-  renderMe();
-  toast('¡Forti enviado! ◆');
-  // Check mutual forti (simplified)
-  const profs=allProfiles();
-  const other=profs.find(p=>p.id===pid);
-  if(other&&Math.random()>0.5){
-    setTimeout(()=>showMatch(other),800);
+  if(!u) return openAuth('log');
+
+  const p=getProfileById(pid);
+  if(!p){
+    toast('No se encontró el perfil');
+    return;
   }
+
+  const r=getFortiRecords();
+  r.sent=r.sent||[];
+  r.received=r.received||[];
+
+  if(r.sent.includes(pid)){
+    toast(`Ya le mandaste un Forti a ${p.n||p.name}`);
+    return;
+  }
+
+  r.sent.push(pid);
+
+  // Demo local: simula que esa persona también te manda un Forti para probar el match.
+  // En versión real esto vendrá del otro usuario/Firebase.
+  if(!r.received.includes(pid)){
+    r.received.push(pid);
+    setTimeout(()=>showFortiMatchPopup(p),900);
+  }
+
+  setFortiRecords(r);
+  setFortis(r.sent);
+  syncFortiCounts();
+  renderMe();
+  showFortiSentPopup(p);
+  toast(`Forti enviado a ${p.n||p.name}`);
 }
 
 function canSendSuper(){
@@ -1547,39 +1604,36 @@ function syncSuperUI(){
     u.super=available;
     setMe(u);
   }
-  const sc=$('superCount'); if(sc) sc.textContent=available;
-  const mc=$('meSuperCount'); if(mc) mc.textContent=available;
+  const home=$('superCount'); if(home) home.textContent=available;
+  const meCount=$('meSuperCount'); if(meCount) meCount.textContent=available;
 }
 function sendSuper(pid){
   const u=me();
-  if(!u) return openAuth();
+  if(!u) return openAuth('log');
+
+  syncSuperUI();
 
   if(!canSendSuper()){
-    syncSuperUI();
-    toast('Ya usaste tu Súper Diamante de hoy. Volvé mañana 💎');
+    toast('No tenés más Súper Diamantes. Volvé mañana 💎');
     return;
   }
 
-  const toUser = profilesForCity().find(p => p.id === pid);
-  if(!toUser){
-    toast('Error al enviar');
+  const p=getProfileById(pid);
+  if(!p){
+    toast('No se encontró el perfil');
     return;
   }
 
-  store('fu_last_super', new Date().toISOString());
-
-  u.super = 0;
+  store('fu_last_super',new Date().toISOString());
+  u.super=0;
   setMe(u);
   syncSuperUI();
 
-  addNoti(
-    'super',
-    'Súper diamante enviado',
-    `Le enviaste un 💎 a ${toUser.n}`,
-    { id: toUser.id, n: toUser.n, img: toUser.img }
-  );
+  const sent=load('fu_super_sent',[]);
+  sent.push({to:pid,name:p.n||p.name,img:p.img||p.photo||'',at:new Date().toISOString()});
+  store('fu_super_sent',sent);
 
-  toast(`💎 Enviado a ${toUser.n}`);
+  toast(`Súper Diamante enviado a ${p.n||p.name} 💎`);
 }
 
 function toggleFav(pid){
@@ -1610,7 +1664,7 @@ function showMatch(p){
   $('matchText').textContent=`Vos y ${p.n||p.name} se mandaron un Forti mutuamente. ¡Chateá ahora!`;
   $('matchPopup').classList.add('show');
 }
-function closeMatch(){$('matchPopup').classList.remove('show')}
+function closeMatch(){$('matchPopup').classList.remove('show');$('matchIcon').classList.remove('forti-single')}
 
 // ── Profile panel ──
 function openPanel(p){
@@ -1644,17 +1698,25 @@ function closePanel(){$('profilePanel').classList.remove('open')}
 
 // ── Mi perfil panels ──
 function showFortisPanel(){
-  const fortis=getFortis();
+  const r=getFortiRecords();
   const profs=allProfiles();
+  const row=(pid,label)=>{
+    const p=profs.find(x=>x.id===pid)||{n:pid,img:''};
+    return `<div class="msg-item">
+      <img class="msg-avatar" src="${p.img||''}" alt="">
+      <div class="msg-info">
+        <div class="msg-name">${escHtml(p.n||p.name||pid)}</div>
+        <div class="msg-preview"><span class="forti-yellow-text">◆</span> ${label}</div>
+      </div>
+    </div>`;
+  };
   $('panelContent').innerHTML=`
-    <div class="panel-title">◆ Mis Fortis</div>
-    ${fortis.length?fortis.map(pid=>{
-      const p=profs.find(x=>x.id===pid)||{n:pid,img:''};
-      return `<div class="msg-item">
-        <img class="msg-avatar" src="${p.img||''}" alt="">
-        <div class="msg-info"><div class="msg-name">${escHtml(p.n||p.name||pid)}</div><div class="msg-preview">◆ Forti enviado</div></div>
-      </div>`;
-    }).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no mandaste Fortis</p></div>'}`;
+    <div class="panel-title"><span class="forti-yellow-text">◆</span> Mis Fortis</div>
+    <div style="font-weight:900;color:var(--g);margin:.5rem 0">Enviados (${(r.sent||[]).length})</div>
+    ${(r.sent||[]).length?(r.sent||[]).map(pid=>row(pid,'Forti enviado')).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no mandaste Fortis</p></div>'}
+    <div style="font-weight:900;color:var(--g);margin:1rem 0 .5rem">Recibidos (${(r.received||[]).length})</div>
+    ${(r.received||[]).length?(r.received||[]).map(pid=>row(pid,'Forti recibido')).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no recibiste Fortis</p></div>'}
+  `;
   $('profilePanel').classList.add('open');
 }
 
