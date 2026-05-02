@@ -650,6 +650,107 @@ body.chat-open #bottomNav{
   font-weight:900;
 }
 
+
+
+/* === FortyUp: buscador de ciudad para planes futuros === */
+.plan-city-box{
+  background:linear-gradient(135deg,#ECFDF5,#FFFDF7);
+  border:1.5px solid var(--line);
+  border-radius:22px;
+  padding:.9rem;
+  margin:0 0 1rem;
+  box-shadow:var(--sh2);
+}
+.plan-city-title{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1rem;
+  font-weight:800;
+  margin-bottom:.25rem;
+}
+.plan-city-sub{
+  color:var(--muted);
+  font-size:.76rem;
+  font-weight:700;
+  line-height:1.35;
+  margin-bottom:.65rem;
+}
+.plan-city-row{
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+}
+.plan-city-row input{
+  flex:1;
+  border:1.5px solid var(--line);
+  border-radius:50px;
+  padding:.62rem .85rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.86rem;
+  background:#fff;
+  outline:none;
+  min-width:0;
+}
+.plan-city-row input:focus{border-color:var(--g3)}
+.plan-city-row button{
+  border:none;
+  border-radius:50px;
+  padding:.62rem .85rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  white-space:nowrap;
+}
+.plan-city-chips{
+  display:flex;
+  gap:.4rem;
+  overflow-x:auto;
+  padding:.65rem .05rem .05rem;
+  scrollbar-width:none;
+}
+.plan-city-chips::-webkit-scrollbar{display:none}
+.plan-city-chip{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--g);
+  border-radius:999px;
+  padding:.35rem .65rem;
+  font-size:.72rem;
+  font-weight:900;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.plan-city-chip.active{
+  background:var(--g);
+  color:#fff;
+  border-color:var(--g);
+}
+.plan-city-reset{
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  border:1.5px solid var(--line)!important;
+}
+.plan-mode-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  margin:.25rem 0 .75rem;
+  background:var(--soft);
+  border:1px solid var(--line);
+  color:var(--g);
+  border-radius:999px;
+  padding:.25rem .65rem;
+  font-size:.72rem;
+  font-weight:900;
+}
+@media(max-width:420px){
+  .plan-city-row{flex-wrap:wrap}
+  .plan-city-row button{flex:1}
+}
+
 </style>
 </head>
 <body>
@@ -710,9 +811,30 @@ body.chat-open #bottomNav{
     <div style="font-size:.8rem;font-weight:800;color:var(--muted)" id="cityTop">Tu ciudad</div>
   </div>
   <div class="screen-inner">
+    <div class="plan-city-box">
+      <div class="plan-city-title">📍 Buscar planes por ciudad</div>
+      <div class="plan-city-sub">Tu ubicación se detecta sola, pero también podés mirar planes de una ciudad a la que vas a viajar.</div>
+      <div class="plan-city-row">
+        <input id="planCityInput" list="planCityOptions" type="text" placeholder="Ej: Ushuaia, Córdoba, Cataratas..." onkeydown="if(event.key==='Enter')setPlanCitySearch(this.value)">
+        <datalist id="planCityOptions">
+          <option value="Buenos Aires"></option>
+          <option value="Córdoba"></option>
+          <option value="Ushuaia"></option>
+          <option value="Puerto Iguazú"></option>
+          <option value="Mendoza"></option>
+          <option value="Rosario"></option>
+          <option value="Bariloche"></option>
+          <option value="Mar del Plata"></option>
+          <option value="Salta"></option>
+        </datalist>
+        <button onclick="setPlanCitySearch(document.getElementById('planCityInput').value)">Buscar</button>
+        <button class="plan-city-reset" onclick="clearPlanCitySearch()">Mi ubicación</button>
+      </div>
+      <div class="plan-city-chips" id="planCityChips"></div>
+    </div>
     <div class="search-bar">
       <span style="font-size:1rem">🔍</span>
-      <input type="text" placeholder="Buscar planes..." oninput="renderPlans(this.value)">
+      <input id="plansTextSearch" type="text" placeholder="Buscar dentro de los planes..." oninput="renderPlans(this.value)">
     </div>
     <div id="plansList"></div>
   </div>
@@ -2683,6 +2805,138 @@ html,body{overscroll-behavior:none;}
   }
 
   window.__FORTYUP_LOCATION_VERSION__='LOCATION_AUTO_REGISTER_2026_05_02';
+})();
+</script>
+
+
+<script>
+/* === FortyUp: planes por ubicación GPS o ciudad de viaje === */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const norm=v=>String(v||'').trim();
+  const normLower=v=>norm(v).toLowerCase();
+  const quickCities=['Mi ubicación','Buenos Aires','Córdoba','Ushuaia','Puerto Iguazú','Mendoza','Rosario','Bariloche','Mar del Plata','Salta'];
+
+  function getPlanOverride(){
+    try{return localStorage.getItem('fu_plan_city_override')||'';}catch(e){return '';}
+  }
+  function setPlanOverride(city){
+    try{
+      if(city) localStorage.setItem('fu_plan_city_override',city);
+      else localStorage.removeItem('fu_plan_city_override');
+    }catch(e){}
+  }
+  function realUserCity(){
+    try{
+      const u=typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null');
+      return (u&&(u.city||u.c)||'Buenos Aires').split(',')[0].trim();
+    }catch(e){return 'Buenos Aires';}
+  }
+  function activePlanCity(){return getPlanOverride()||realUserCity();}
+
+  window.setPlanCitySearch=function(city){
+    city=norm(city);
+    if(!city) return window.clearPlanCitySearch();
+    setPlanOverride(city);
+    const input=byId('planCityInput'); if(input) input.value=city;
+    if(typeof window.toast==='function') window.toast('Viendo planes en '+city+' 📍');
+    if(typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||'');
+  };
+  window.clearPlanCitySearch=function(){
+    setPlanOverride('');
+    const input=byId('planCityInput'); if(input) input.value='';
+    if(typeof window.toast==='function') window.toast('Volviste a tu ubicación actual 📍');
+    if(typeof window.renderPlans==='function') window.renderPlans(byId('plansTextSearch')?.value||'');
+  };
+
+  function renderChips(){
+    const box=byId('planCityChips'); if(!box) return;
+    const active=getPlanOverride()||'Mi ubicación';
+    box.innerHTML=quickCities.map(c=>{
+      const isActive=(c==='Mi ubicación'&&!getPlanOverride()) || normLower(c)===normLower(active);
+      return `<button type="button" class="plan-city-chip ${isActive?'active':''}" onclick="${c==='Mi ubicación'?'clearPlanCitySearch()':`setPlanCitySearch('${c.replace(/'/g,"\\'")}')`}">${esc(c)}</button>`;
+    }).join('');
+  }
+
+  function eventIdFromPlanSafe(p){
+    if(typeof window.eventIdFromPlan==='function') return window.eventIdFromPlan(p);
+    return ('ev_'+p[0]+'_'+p[1]+'_'+p[7]).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  }
+  function currentUserAttendingSafe(id){return typeof window.currentUserAttending==='function'?window.currentUserAttending(id):false;}
+  function attendingCountSafe(id,base){return typeof window.attendingCount==='function'?window.attendingCount(id,base):base;}
+
+  window.renderPlans=function(q=''){
+    renderChips();
+    const city=activePlanCity();
+    const override=getPlanOverride();
+    const cityTop=byId('cityTop');
+    if(cityTop) cityTop.textContent=override?`Viajás a ${city}`:city;
+    const input=byId('planCityInput');
+    if(input && document.activeElement!==input) input.value=override||'';
+
+    q=normLower(q);
+    const all=Array.isArray(window.plans)?window.plans:[];
+    const matchText=p=>!q || p.join(' ').toLowerCase().includes(q);
+    const exact=all.filter(p=>normLower(p[7])===normLower(city)&&matchText(p));
+    const byText=all.filter(p=>p.join(' ').toLowerCase().includes(normLower(city))&&matchText(p));
+    const show=(exact.length?exact:byText.length?byText:all.filter(matchText));
+    const list=byId('plansList'); if(!list) return;
+
+    if(!show.length){
+      list.innerHTML=`<div class="empty"><div class="empty-ico">📅</div><p>No encontramos planes para ${esc(city)}.</p></div>${externalSearchBox(city)}`;
+      return;
+    }
+    const mode=`<div class="plan-mode-pill">${override?'🧳 Buscando para viaje':'📍 Según tu ubicación'} · ${esc(city)}</div>`;
+    list.innerHTML=mode+show.map(p=>{
+      const eventId=eventIdFromPlanSafe(p);
+      const isAtt=currentUserAttendingSafe(eventId);
+      const base=parseInt(String(p[6]).match(/\d+/)?.[0]||0);
+      const count=attendingCountSafe(eventId,base);
+      const link=p[8]||'';
+      const safeTitle=String(p[0]).replace(/'/g,"\\'");
+      const safeWhen=String(p[1]).replace(/'/g,"\\'");
+      const safeImg=String(p[3]).replace(/'/g,"\\'");
+      const safeCity=String(p[7]||city).replace(/'/g,"\\'");
+      const safeLink=String(link).replace(/'/g,"\\'");
+      return `
+      <div class="card plan-card">
+        <img src="${p[3]}" loading="lazy" alt="${esc(p[0])}" style="width:100%;height:160px;object-fit:cover">
+        <div class="plan-card-body">
+          <span class="event-source">${link?'🌐 Evento real curado':'🌿 Plan FortyUp'}</span>
+          <h3>${p[4]} ${esc(p[0])}</h3>
+          <div class="plan-cat">${esc(p[1])}</div>
+          <p>${esc(p[2])}</p>
+          <div class="plan-meta"><span>📍 ${esc(p[5]||p[7]||city)}</span><span>👥 ${count} asistirán</span></div>
+          <div class="attendee-mini">
+            <div class="attendee-dots"><span>Tú</span><span>+${Math.max(count-1,0)}</span></div>
+            <span>${isAtt?'Estás anotado':'Anotate y aparece en Mis eventos'}</span>
+          </div>
+          <button class="btn btn-green attend-btn ${isAtt?'attending':''}"
+            onclick="toggleAttend('${eventId}','${safeTitle}','${safeWhen}','${safeImg}','${safeCity}','${safeLink}')">
+            ${isAtt?'✓ Asistiré':'Asistiré'}
+          </button>
+          ${link?`<button class="event-link-btn" onclick="openExternalEvent('${safeLink}')">Ver entradas / fuente</button>`:''}
+        </div>
+      </div>`;
+    }).join('')+externalSearchBox(city);
+  };
+
+  function externalSearchBox(city){
+    const google=`https://www.google.com/search?q=${encodeURIComponent('eventos hoy esta semana '+city+' Argentina')}`;
+    const eventbrite=`https://www.eventbrite.com.ar/d/argentina/${encodeURIComponent(city)}/events/`;
+    return `<div class="live-events-box"><h3>🔎 Buscar más eventos en ${esc(city)}</h3><p>Ideal si viajás y querés ver qué se mueve antes de llegar.</p><div class="live-actions"><button class="live-google" onclick="window.open('${google}','_blank')">Google eventos</button><button class="live-eventbrite" onclick="window.open('${eventbrite}','_blank')">Eventbrite</button></div></div>`;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function'){
+    window.go=function(id){
+      oldGo(id);
+      if(id==='plans') setTimeout(()=>window.renderPlans(byId('plansTextSearch')?.value||''),80);
+    };
+  }
+  document.addEventListener('DOMContentLoaded',()=>{renderChips();});
+  window.__FORTYUP_PLAN_CITY_SEARCH__='PLANES_GPS_Y_VIAJE_2026_05_02';
 })();
 </script>
 
