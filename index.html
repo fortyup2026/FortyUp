@@ -4110,5 +4110,320 @@ body{padding-bottom:70px!important}
 })();
 </script>
 
+
+<style id="fuPremiumFixStyle">
+/* === FortyUp Premium Fix Sebas - app completa === */
+body{padding-bottom:70px!important}
+#bottomNav{position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:9999!important}
+#plans .screen-inner{padding-bottom:6.5rem!important}
+
+.fu-sebas-citybar{
+  display:grid!important;
+  grid-template-columns:1fr auto auto!important;
+  align-items:center!important;
+  gap:.45rem!important;
+  margin:.65rem 0 .9rem!important;
+}
+.fu-sebas-citybar input{
+  height:42px!important;
+  line-height:42px!important;
+  padding:0 .9rem!important;
+  box-sizing:border-box!important;
+}
+.fu-sebas-citybar button{
+  height:42px!important;
+  min-width:74px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0 .8rem!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+.fu-sebas-citybar button:last-child{
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  border:1.5px solid var(--line)!important;
+}
+.fu-panel-close-premium{
+  position:absolute!important;
+  top:.8rem!important;
+  right:1rem!important;
+  width:34px!important;
+  height:34px!important;
+  border-radius:50%!important;
+  border:1px solid var(--line)!important;
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  font-size:1rem!important;
+  font-weight:1000!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+  z-index:5!important;
+}
+#profilePanel .panel{position:relative!important}
+.fu-tabs-events button.active{
+  background:linear-gradient(135deg,var(--g),var(--g3))!important;
+  color:#fff!important;
+}
+.fu-events-tab-body{display:none}
+.fu-events-tab-body.active{display:block}
+.fu-noti-dot-mini{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;border-radius:999px;background:var(--red);color:#fff;
+  font-size:.68rem;font-weight:1000;margin-left:.35rem;padding:0 .28rem;
+}
+@media(max-width:420px){
+  .fu-sebas-citybar{grid-template-columns:1fr!important}
+  .fu-sebas-citybar button{width:100%!important}
+}
+</style>
+
+<script id="fuPremiumFixScript">
+/* === FortyUp Premium Fix Sebas: cierres, mis eventos, avisos de asistencia === */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const safe=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const clean=v=>String(v||'').trim();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+  const db=()=>window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null);
+  const auth=()=>window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null);
+  const currentUser=()=>auth()&&auth().currentUser?auth().currentUser:null;
+  const me=()=>{try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}};
+  const uid=()=>currentUser()?.uid || me()?.uid || me()?.id || '';
+  const uname=()=>me()?.name || currentUser()?.email?.split('@')[0] || 'Usuario';
+  const serverTime=()=>firebase.firestore.FieldValue.serverTimestamp();
+
+  window.closeAnyPanelPremium=function(){
+    const p=byId('profilePanel');
+    if(p)p.classList.remove('open');
+    const a=byId('auth');
+    if(a)a.classList.remove('open');
+  };
+
+  function addCloseToPanel(){
+    const panel=byId('profilePanel')?.querySelector('.panel');
+    if(!panel)return;
+    if(!panel.querySelector('.fu-panel-close-premium')){
+      const b=document.createElement('button');
+      b.className='fu-panel-close-premium';
+      b.innerHTML='✕';
+      b.onclick=window.closeAnyPanelPremium;
+      panel.appendChild(b);
+    }
+  }
+
+  if(!window.__fuGoPremiumWrapped && typeof window.go==='function'){
+    window.__fuGoPremiumWrapped=true;
+    const oldGo=window.go;
+    window.go=function(id){
+      window.closeAnyPanelPremium();
+      return oldGo.apply(this,arguments);
+    };
+  }
+
+  const p=byId('profilePanel');
+  if(p && !p.__fuPremiumCloseBound){
+    p.__fuPremiumCloseBound=true;
+    p.addEventListener('click',function(ev){
+      if(ev.target===p) p.classList.remove('open');
+    });
+  }
+  const obsTarget=byId('profilePanel');
+  if(obsTarget && !obsTarget.__fuPremiumObserver){
+    obsTarget.__fuPremiumObserver=true;
+    new MutationObserver(addCloseToPanel).observe(obsTarget,{attributes:true,childList:true,subtree:true});
+  }
+  setTimeout(addCloseToPanel,300);
+
+  window.setPlanCitySearch=function(v){
+    v=clean(v);
+    try{v?localStorage.setItem('fu_plan_city_override',v):localStorage.removeItem('fu_plan_city_override')}catch(e){}
+    if(typeof window.renderPlans==='function') window.renderPlans();
+    toast(v?`Mostrando planes de ${v}`:'Mostrando tu ubicación');
+  };
+  window.clearPlanCitySearch=function(){
+    try{localStorage.removeItem('fu_plan_city_override')}catch(e){}
+    if(typeof window.renderPlans==='function') window.renderPlans();
+    toast('Volviste a tu ubicación');
+  };
+
+  if(!window.__fuRenderPlansPremiumWrapped && typeof window.renderPlans==='function'){
+    window.__fuRenderPlansPremiumWrapped=true;
+    const oldRenderPlans=window.renderPlans;
+    window.renderPlans=function(){
+      const r=oldRenderPlans.apply(this,arguments);
+      setTimeout(()=>{
+        const input=byId('fuCityInlineInput');
+        if(input && !input.__fuEnterBound){
+          input.__fuEnterBound=true;
+          input.addEventListener('keydown',ev=>{
+            if(ev.key==='Enter')window.setPlanCitySearch(input.value);
+          });
+        }
+      },80);
+      return r;
+    };
+  }
+
+  async function notifyCreatorIfNeeded(eventId, joiningUid, joiningName){
+    const d=db(); if(!d||!joiningUid)return;
+    try{
+      const ev=await d.collection('publicEvents').doc(eventId).get();
+      if(!ev.exists)return;
+      const e=ev.data()||{};
+      if(!e.creatorId || e.creatorId===joiningUid)return;
+      const notiId=`event_join_${eventId}_${joiningUid}`;
+      await d.collection('userNotifications').doc(e.creatorId).collection('items').doc(notiId).set({
+        type:'event_join',
+        eventId,
+        eventTitle:e.title||'tu evento',
+        fromUid:joiningUid,
+        fromName:joiningName||'Un usuario',
+        text:`${joiningName||'Un usuario'} se sumó a tu evento: ${e.title||'tu evento'}`,
+        read:false,
+        createdAt:serverTime()
+      },{merge:true});
+    }catch(err){console.warn('notifyCreatorIfNeeded',err);}
+  }
+
+  if(!window.__fuAttendPremiumWrapped && typeof window.toggleFuEventAttend==='function'){
+    window.__fuAttendPremiumWrapped=true;
+    const oldToggle=window.toggleFuEventAttend;
+    window.toggleFuEventAttend=async function(id){
+      const wasAttending=(typeof window.isAttending==='function')?window.isAttending(id):false;
+      await oldToggle.apply(this,arguments);
+      const user=currentUser();
+      if(user && !wasAttending){
+        await notifyCreatorIfNeeded(id,user.uid,uname());
+      }
+      setTimeout(()=>{
+        if(byId('profilePanel')?.classList.contains('open') && byId('fuEventsPanelRoot')) {
+          window.showEventosPanel();
+        }
+      },350);
+    };
+  }
+
+  function listenMyNotifications(){
+    const d=db(), user=currentUser();
+    if(!d||!user||window.__fuMyNotiUnsub)return;
+    let first=true;
+    window.__fuMyNotiUnsub=d.collection('userNotifications').doc(user.uid).collection('items')
+      .where('read','==',false)
+      .onSnapshot(snap=>{
+        const count=snap.size||0;
+        const cardTitle=[...document.querySelectorAll('.me-card-title')].find(el=>/eventos/i.test(el.textContent||''));
+        if(cardTitle){
+          let dot=cardTitle.querySelector('.fu-noti-dot-mini');
+          if(count>0 && !dot){dot=document.createElement('span');dot.className='fu-noti-dot-mini';cardTitle.appendChild(dot);}
+          if(dot) dot.textContent=count;
+          if(count===0 && dot) dot.remove();
+        }
+        if(!first){
+          snap.docChanges().forEach(ch=>{
+            if(ch.type==='added'){
+              const n=ch.doc.data()||{};
+              toast(n.text||'Nueva actividad en tus eventos');
+            }
+          });
+        }
+        first=false;
+      },err=>console.warn('notifications listener',err));
+  }
+  setTimeout(listenMyNotifications,1000);
+  if(auth()){
+    auth().onAuthStateChanged(()=>setTimeout(listenMyNotifications,500));
+  }
+
+  async function markEventNotificationsRead(){
+    const d=db(), user=currentUser(); if(!d||!user)return;
+    try{
+      const qs=await d.collection('userNotifications').doc(user.uid).collection('items').where('read','==',false).get();
+      const batch=d.batch();
+      qs.forEach(doc=>batch.set(doc.ref,{read:true,readAt:serverTime()},{merge:true}));
+      if(!qs.empty) await batch.commit();
+    }catch(e){console.warn('mark read',e);}
+  }
+
+  function getEventDataLists(){
+    const reg=window.fuEventRegistry||{};
+    const values=Object.values(reg);
+    const publicVals=values.filter(e=>e && e.kind==='public');
+    const curatedVals=values.filter(e=>e && e.kind==='curated');
+    return {publicVals,curatedVals,all:[...curatedVals,...publicVals]};
+  }
+  function getAttendanceDoc(id){
+    const all=window.eventAttendance || window.fuEventAttendance || {};
+    return all[id] || {};
+  }
+  function attendeesOf(id){
+    const d=getAttendanceDoc(id);
+    return Array.isArray(d.attendees)?d.attendees:[];
+  }
+  function isAtt(id){
+    if(typeof window.isAttending==='function')return window.isAttending(id);
+    return attendeesOf(id).includes(uid());
+  }
+  function card(e){
+    const mine=e.creatorId===uid();
+    return `<div class="fu-profile-event-card">
+      <h4>${safe(e.icon||'🎟️')} ${safe(e.title||'Evento')}</h4>
+      <p style="font-size:.78rem;color:var(--muted);font-weight:800">📍 ${safe(e.place||e.city||'')} · ${safe(e.when||'')}</p>
+      <div class="fu-sebas-actions">
+        <button class="fu-sebas-chat" onclick="openFuEventCard('${safe(e.id)}')">Ver</button>
+        <button class="fu-sebas-chat" onclick="openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+        ${mine?`<button class="fu-sebas-chat fu-danger-btn" onclick="deleteMyPublicEvent('${safe(e.id)}')">🗑 Borrar</button>`:''}
+      </div>
+    </div>`;
+  }
+
+  window.showEventosPanel=function(){
+    addCloseToPanel();
+    markEventNotificationsRead();
+    const lists=getEventDataLists();
+    const created=lists.publicVals.filter(e=>e.creatorId===uid());
+    const attending=lists.all.filter(e=>isAtt(e.id));
+    const panel=byId('profilePanel'), content=byId('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`<div id="fuEventsPanelRoot">
+      <div class="panel-title">📅 Mis eventos</div>
+      <div class="fu-tabs-events">
+        <button id="fuTabAttend" class="active" onclick="fuShowEventTab('attend')">Asistiré (${attending.length})</button>
+        <button id="fuTabCreated" onclick="fuShowEventTab('created')">Creados por mí (${created.length})</button>
+      </div>
+      <div id="fuEventsAttend" class="fu-events-tab-body active">
+        ${attending.length?attending.map(card).join(''):`<div class="empty"><div class="empty-ico">📅</div><p>Todavía no marcaste asistencia a ningún evento.</p></div>`}
+      </div>
+      <div id="fuEventsCreated" class="fu-events-tab-body">
+        ${created.length?created.map(card).join(''):`<div class="empty"><div class="empty-ico">＋</div><p>Todavía no creaste eventos públicos.</p><button class="fu-sebas-create-btn" onclick="showCreateEventPanel()">Crear evento público</button></div>`}
+      </div>
+    </div>`;
+    panel.classList.add('open');
+    setTimeout(addCloseToPanel,20);
+  };
+  window.fuShowEventTab=function(tab){
+    const attend=byId('fuEventsAttend'), created=byId('fuEventsCreated'), ta=byId('fuTabAttend'), tc=byId('fuTabCreated');
+    if(!attend||!created)return;
+    const showCreated=tab==='created';
+    attend.classList.toggle('active',!showCreated);
+    created.classList.toggle('active',showCreated);
+    ta?.classList.toggle('active',!showCreated);
+    tc?.classList.toggle('active',showCreated);
+  };
+
+  if(!window.__fuCreatePanelPremiumWrapped && typeof window.showCreateEventPanel==='function'){
+    window.__fuCreatePanelPremiumWrapped=true;
+    const oldCreatePanel=window.showCreateEventPanel;
+    window.showCreateEventPanel=function(){
+      oldCreatePanel.apply(this,arguments);
+      setTimeout(addCloseToPanel,30);
+    };
+  }
+})();
+</script>
+
 </body>
 </html>
