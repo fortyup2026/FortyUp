@@ -2580,7 +2580,11 @@ html,body{overscroll-behavior:none;}
     if(!p||!p.id){ toastSafe('No pude abrir ese chat'); return; }
     currentPeer=p; currentChatId=chatIdFor(meId,p.id); window.chatWith=p;
     if(chatUnsub) { chatUnsub(); chatUnsub=null; }
-    const av=byId('chatAvatar'); if(av) av.src=profilePhoto(p);
+    const av=byId('chatAvatarCircle');
+    if(av){
+      const photo=profilePhoto(p);
+      av.innerHTML=photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':profileName(p)[0].toUpperCase();
+    }
     const nm=byId('chatName'); if(nm) nm.textContent=profileName(p);
     const box=byId('chatBox'); if(box) box.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Cargando mensajes...</p></div>';
     if(typeof window.go==='function') window.go('chat');
@@ -4170,7 +4174,7 @@ body{padding-bottom:70px!important}
   color:var(--g)!important;
   border:1.5px solid var(--line)!important;
 }
-.fu-panel-close-premium{
+.fu-panel-close-premium{display:none!important;
   position:absolute!important;
   top:.8rem!important;
   right:1rem!important;
@@ -4231,13 +4235,7 @@ body{padding-bottom:70px!important}
   function addCloseToPanel(){
     const panel=byId('profilePanel')?.querySelector('.panel');
     if(!panel)return;
-    if(!panel.querySelector('.fu-panel-close-premium')){
-      const b=document.createElement('button');
-      b.className='fu-panel-close-premium';
-      b.innerHTML='✕';
-      b.onclick=window.closeAnyPanelPremium;
-      panel.appendChild(b);
-    }
+// close button handled by fu-x-close
   }
 
   if(!window.__fuGoPremiumWrapped && typeof window.go==='function'){
