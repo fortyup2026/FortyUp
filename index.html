@@ -5173,5 +5173,61 @@ body{padding-bottom:76px!important}
 })();
 </script>
 
+
+<style id="fuCloseDedupFinal">
+/* === FortyUp: una sola X en paneles === */
+#profilePanel .fu-panel-close-premium{
+  display:none!important;
+}
+#profilePanel .fu-x-close{
+  position:absolute!important;
+  top:.8rem!important;
+  right:.8rem!important;
+  left:auto!important;
+  margin:0!important;
+  z-index:80!important;
+  display:flex!important;
+}
+#profilePanel .panel{
+  padding-top:2.4rem!important;
+}
+#profilePanel .panel > .fu-x-close ~ .fu-x-close{
+  display:none!important;
+}
+</style>
+
+<script id="fuCloseDedupFinalScript">
+(function(){
+  function dedupeClose(){
+    const panel = document.querySelector('#profilePanel .panel');
+    if(!panel) return;
+
+    panel.querySelectorAll('.fu-panel-close-premium').forEach(el => el.remove());
+
+    const xs = Array.from(panel.querySelectorAll('.fu-x-close'));
+    xs.forEach((el, idx) => {
+      if(idx === 0){
+        el.style.display = 'flex';
+        el.style.position = 'absolute';
+        el.style.top = '.8rem';
+        el.style.right = '.8rem';
+        el.style.left = 'auto';
+        el.style.margin = '0';
+      }else{
+        el.remove();
+      }
+    });
+  }
+
+  const target = document.getElementById('profilePanel');
+  if(target){
+    new MutationObserver(dedupeClose).observe(target, {childList:true, subtree:true, attributes:true});
+  }
+
+  setInterval(dedupeClose, 500);
+  setTimeout(dedupeClose, 100);
+})();
+</script>
+
 </body>
 </html>
