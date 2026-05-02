@@ -892,10 +892,36 @@ body.chat-open #bottomNav{
 // ═══════════════════════════════════════════
 
 const $=id=>document.getElementById(id);
-const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function store(k,v){
+  try{localStorage.setItem(k,JSON.stringify(v));return true}
+  catch(err){console.error('FortyUp localStorage error:',err);toast('No se pudo guardar. Probá con una foto más liviana.');return false}
+}
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
 function readFileAsDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-function previewRegisterPhoto(input){const f=input.files&&input.files[0];const img=$('rPhotoPreview');if(!f||!img)return;readFileAsDataURL(f).then(src=>{img.src=src;img.style.display='block'}).catch(()=>toast('No se pudo previsualizar la foto'))}
+function resizeImageFile(file,maxSize=900,quality=.78){
+  return new Promise(resolve=>{
+    if(!file)return resolve('');
+    if(!file.type || !file.type.startsWith('image/')) return resolve('');
+    const img=new Image();
+    const reader=new FileReader();
+    reader.onload=e=>{
+      img.onload=()=>{
+        const ratio=Math.min(maxSize/img.width,maxSize/img.height,1);
+        const w=Math.round(img.width*ratio), h=Math.round(img.height*ratio);
+        const canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.onerror=()=>resolve(e.target.result||'');
+      img.src=e.target.result;
+    };
+    reader.onerror=()=>resolve('');
+    reader.readAsDataURL(file);
+  });
+}
+function previewRegisterPhoto(input){const f=input.files&&input.files[0];const img=$('rPhotoPreview');if(!f||!img)return;resizeImageFile(f,300,.8).then(src=>{img.src=src;img.style.display='block'}).catch(()=>toast('No se pudo previsualizar la foto'))}
 
 // ── Data ──
 const plans=[
@@ -1322,6 +1348,9 @@ function updateGPS(){
   requestGPS();
 }
 async function register(){
+  const btn=document.querySelector('#regFields .auth-btn');
+  if(btn){btn.disabled=true;btn.textContent='Creando perfil...';btn.style.opacity='.75'}
+  try{
   migrateCurrentUserToUsers();
 
   const n=$('rName').value.trim();
@@ -1352,7 +1381,7 @@ async function register(){
   }
 
   const photoFile=$('rPhoto') ? $('rPhoto').files[0] : null;
-  const photo=await fileToDataURL(photoFile);
+  const photo=await resizeImageFile(photoFile,900,.78);
 
   const newUser={
     id:'u_'+Date.now(),
@@ -1372,11 +1401,18 @@ async function register(){
   };
 
   users.push(newUser);
-  saveSavedUsers(users);
-  setMe(newUser);
+  if(!saveSavedUsers(users)) throw new Error('No se pudo guardar el usuario');
+  if(!setMe(newUser)) throw new Error('No se pudo iniciar sesión');
   closeAuth();
   boot();
   toast(`¡Bienvenido/a a FortyUp, ${n}! 🌿`);
+  setTimeout(requestGPS,1500);
+  }catch(err){
+    console.error('FortyUp register error:',err);
+    toast('No se pudo crear el perfil. Revisá los datos o probá una foto más chica.');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Crear mi perfil';btn.style.opacity='1'}
+  }
 }
 
 function login(){
@@ -1450,13 +1486,20 @@ function logout(){
 function deleteAccount(){
   const u=me();
   if(!u) return;
-  const users=getSavedUsers().filter(x=>normalizeEmail(x.email)!==normalizeEmail(u.email));
+  const uid=u.id;
+  const email=normalizeEmail(u.email);
+  const users=getSavedUsers().filter(x=>x.id!==uid && normalizeEmail(x.email)!==email);
   saveSavedUsers(users);
-  store('fu_user',null);
-  ['fu_fortis','fu_notis','fu_favs'].forEach(k=>localStorage.removeItem(k));
+
+  // Limpieza completa de datos locales vinculados a la cuenta.
+  const localKeys=['fu_user','fu_fortis','fu_notis','fu_favs','fu_events','fu_event_attendees','fu_chats','fu_blocked','fu_reported'];
+  localKeys.forEach(k=>localStorage.removeItem(k));
   try{sessionStorage.removeItem('fu_page')}catch(e){}
+
+  // Nota: este archivo no tiene configuración Firebase incluida.
+  // Si se conecta Firebase, borrar también Auth/Firestore/Storage desde la consola o desde backend seguro.
   boot();
-  toast('Cuenta eliminada');
+  toast('Cuenta eliminada y datos locales borrados');
 }
 
 // ── Chat ──
@@ -1773,27 +1816,25 @@ function saveEdit(){
   toast('¡Perfil actualizado! 🌿');
 }
 
-function saveNewPhoto(input){
+async function saveNewPhoto(input){
   const file=input.files[0];
   if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const u=me();
-    if(!u) return;
-    u.photo=e.target.result;
-    const users=getUsers();
-    const idx=users.findIndex(x=>x.id===u.id);
-    if(idx>=0) users[idx].photo=u.photo;
-    setUsers(users);
-    setMe(u);
-    $('mePhoto').src=u.photo;
-    $('topAvatar').src=u.photo;
-    $('navAvatarIcon').src=u.photo;
-    $('navAvatarIcon').style.display='block';
-    $('navAvatarFallback').style.display='none';
-    toast('Foto actualizada ✓');
-  };
-  reader.readAsDataURL(file);
+  const u=me();
+  if(!u) return;
+  const photo=await resizeImageFile(file,900,.78);
+  if(!photo)return toast('No se pudo leer la foto');
+  u.photo=photo;
+  const users=getUsers();
+  const idx=users.findIndex(x=>x.id===u.id);
+  if(idx>=0) users[idx].photo=u.photo;
+  setUsers(users);
+  setMe(u);
+  $('mePhoto').src=u.photo;
+  $('topAvatar').src=u.photo;
+  $('navAvatarIcon').src=u.photo;
+  $('navAvatarIcon').style.display='block';
+  $('navAvatarFallback').style.display='none';
+  toast('Foto actualizada ✓');
 }
 
 
