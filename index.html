@@ -704,7 +704,7 @@ body.chat-open #bottomNav{
     </div>
     <div class="live-events-box">
       <h3>Eventos en vivo en tu zona</h3>
-      <p>Buscá eventos actuales según tu ciudad. Eventbrite y Google se abren con tu ubicación/zona para ver opciones reales.</p>
+      <p>Estos eventos son externos, pero FortyUp te permite marcar “Asistiré” dentro de la app y verlos en Mis eventos.</p>
       <div class="live-actions">
         <button class="live-eventbrite" onclick="openEventbrite()">Eventbrite</button>
         <button class="live-google" onclick="openGoogleEvents()">Google eventos</button>
@@ -721,10 +721,7 @@ body.chat-open #bottomNav{
     <div style="font-size:.8rem;font-weight:800;color:var(--muted)">Cerca de vos</div>
   </div>
   <div class="screen-inner">
-    <div class="firebase-note" id="realUsersNote" style="display:none">
-      Para ver personas reales registradas desde otros celulares, esta pantalla debe estar conectada a Firebase/Supabase. En esta versión se muestran usuarios guardados en este navegador + perfiles demo.
-    </div>
-    <div class="profiles-grid" id="profilesList"></div>
+<div class="profiles-grid" id="profilesList"></div>
   </div>
 </div>
 
@@ -905,11 +902,18 @@ const plans=[
   ['Asado en grupo','Sábado 13:00','Juntamos gente para un asado tranqui.','https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop','🔥','4 km','6 confirmados','Rosario'],
 ];
 
-plans.forEach(p=>{
-  if(!p[8]){
-    const q=encodeURIComponent(p[0]+' '+p[7]+' evento');
-    p[8]=`https://www.google.com/search?q=${q}&ibp=htl;events`;
-  }
+
+
+const curatedRealEvents=[
+  ['Martin Garrix','Movistar Arena · 16 mayo 2026, 21:00','Show internacional de música electrónica. Evento real con entradas desde la web oficial del Movistar Arena.','https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop','🎧','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/show/e3fd9108-83fe-46b2-8779-f6cbb651eeee'],
+  ['Jonas Brothers','Movistar Arena · 05 mayo 2026','Concierto en Buenos Aires. Ideal para quienes buscan una salida musical grande.','https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop','🎵','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+  ['Divididos','Movistar Arena · 09 mayo 2026','Rock argentino en vivo en Movistar Arena.','https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=900&auto=format&fit=crop','🎸','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+  ['Fito Páez','Movistar Arena · 20 mayo 2026','Show musical en Buenos Aires.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop','🎹','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+  ['Mon Laferte','Movistar Arena · 21 mayo 2026','Concierto en Buenos Aires.','https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?q=80&w=900&auto=format&fit=crop','🎤','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
+  ['Vinito Sessions','Eventbrite · 23 mayo 2026, 21:00','Vino, música y momentos. Evento externo curado para usarlo como plan dentro de FortyUp.','https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=900&auto=format&fit=crop','🍷','Buenos Aires','0 asistirán','Buenos Aires','https://www.eventbrite.com.ar/d/argentina--buenos-aires/mayo/']
+];
+curatedRealEvents.forEach(ev=>{
+  if(!plans.some(p=>p[0]===ev[0] && p[7]===ev[7])) plans.unshift(ev);
 });
 
 const defaultProfiles=[
@@ -1101,8 +1105,6 @@ function distKm(la1,lo1,la2,lo2){if(!la1||!lo1||!la2||!lo2)return null;const R=6
 function distLabel(p){const u=me();if(!u||!u.lat||!p.lat)return '';const d=distKm(u.lat,u.lng,p.lat,p.lng);if(!d)return '';return d<0.5?'<500m':d<1?'<1 km':d.toFixed(1)+' km';}
 function allProfiles(){
   const u=me();
-  const note=$('realUsersNote');
-  if(note) note.style.display='block';
   const blocked=getBlocked();
   const reg=getUsers().filter(usr=>(!u||usr.id!==u.id)&&!blocked.includes(usr.id));
   const rp=reg.map(usr=>({id:usr.id,n:usr.name,a:usr.age,c:usr.city,img:usr.photo||'',tags:[],bio:usr.bio||'',intent:usr.intent||'',lat:usr.lat||null,lng:usr.lng||null}));
@@ -1183,7 +1185,7 @@ function renderPlans(q=''){
     <div class="card plan-card">
       <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
       <div class="plan-card-body">
-        <span class="event-source">${link?'🌐 Evento externo':'🌿 Plan FortyUp'}</span>
+        <span class="event-source">${link?'🌐 Evento real curado':'🌿 Plan FortyUp'}</span>
         <h3>${p[4]} ${escHtml(p[0])}</h3>
         <div class="plan-cat">${p[1]}</div>
         <p>${escHtml(p[2])}</p>
@@ -1196,7 +1198,7 @@ function renderPlans(q=''){
           onclick="toggleAttend('${eventId}','${p[0].replace(/'/g,"\'")}','${p[1].replace(/'/g,"\'")}','${p[3]}','${p[7]}','${link}')">
           ${isAtt?'✓ Asistiré':'Asistiré'}
         </button>
-        ${link?`<button class="event-link-btn" onclick="openExternalEvent('${link}')">Ver fuente</button>`:''}
+        ${link?`<button class="event-link-btn" onclick="openExternalEvent('${link}')">Ver entradas / fuente</button>`:''}
       </div>
     </div>`}).join('')
   :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
@@ -1880,7 +1882,7 @@ function openEventbrite(){
 function openGoogleEvents(){
   const city=encodeURIComponent(userCity()||'Argentina');
   const q=encodeURIComponent(`eventos hoy esta semana ${userCity()} salidas teatro música vino`);
-  window.open(`https://www.google.com/search?q=${q}&ibp=htl;events`,'_blank');
+  window.open(`https://www.google.com/search?q=${q}`,'_blank');
 }
 
 </script>
