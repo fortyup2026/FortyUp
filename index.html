@@ -2284,5 +2284,387 @@ function openGoogleEvents(){
 })();
 </script>
 
+
+
+<!-- === FortyUp Firebase REAL SYNC + FORTI FIX v2 === -->
+<script>
+(function(){
+  function ready(){ return window.fuAuth && window.fuDb; }
+  function safeToast2(msg){ try{ toast(msg); }catch(e){ alert(msg); } }
+  function asProfile(u){
+    return {
+      id: u.id || u.uid || '',
+      n: u.n || u.name || 'Usuario',
+      name: u.name || u.n || 'Usuario',
+      a: u.a || u.age || 40,
+      age: u.age || u.a || 40,
+      c: u.c || u.city || 'Buenos Aires',
+      city: u.city || u.c || 'Buenos Aires',
+      img: u.img || u.photo || '',
+      photo: u.photo || u.img || '',
+      tags: u.tags || [],
+      bio: u.bio || '',
+      intent: u.intent || '',
+      lat: u.lat || null,
+      lng: u.lng || null,
+      email: (u.email || '').toLowerCase()
+    };
+  }
+  async function ensureMyFirestoreProfile(){
+    if(!ready()) return;
+    const fbUser = fuAuth.currentUser;
+    const local = (typeof me === 'function') ? me() : null;
+    if(!fbUser && !local) return;
+    const id = fbUser ? fbUser.uid : local.id;
+    if(!id) return;
+    let base = local || {id, name:(fbUser.email||'Usuario').split('@')[0], email:fbUser.email||'', age:40, city:'Buenos Aires', super:1};
+    base = {...base, id, email:(base.email || fbUser?.email || '').toLowerCase(), updatedAt:new Date().toISOString()};
+    try{
+      await fuDb.collection('users').doc(id).set(base, {merge:true});
+      setMe(base);
+    }catch(e){ console.warn('ensure profile failed', e); }
+  }
+  window.syncFirebaseUsersToLocal = async function(){
+    if(!ready()) return (typeof getUsers==='function'?getUsers():[]);
+    try{
+      await ensureMyFirestoreProfile();
+      const snap = await fuDb.collection('users').get();
+      const arr=[];
+      snap.forEach(doc=>arr.push(asProfile({id:doc.id, ...doc.data()})));
+      setUsers(arr.map(x=>({
+        id:x.id,name:x.name,age:x.age,city:x.city,email:x.email,photo:x.photo,
+        bio:x.bio,intent:x.intent,lat:x.lat,lng:x.lng,super:x.super||1
+      })));
+      try{ window.fu_all_profiles_cache = arr; }catch(e){}
+      if(document.getElementById('profilesList')) renderProfiles();
+      if(document.getElementById('homeProfiles')) renderHome();
+      return arr;
+    }catch(e){ console.warn('sync users failed', e); return typeof getUsers==='function'?getUsers():[]; }
+  };
+  window.allProfiles = function(){
+    const u = (typeof me === 'function') ? me() : null;
+    const blocked = (typeof getBlocked === 'function') ? getBlocked() : [];
+    const users = (typeof getUsers === 'function' ? getUsers() : []).map(asProfile);
+    const real = users.filter(p=>{
+      if(!p.id) return false;
+      if(blocked.includes(p.id)) return false;
+      if(u && (String(p.id)===String(u.id) || String(p.email||'').toLowerCase()===String(u.email||'').toLowerCase())) return false;
+      return true;
+    });
+    const demo = (window.defaultProfiles || []).filter(p=>!blocked.includes(p.id));
+    return [...real, ...demo];
+  };
+  async function syncFortisFirebase(){
+    if(!ready()) return;
+    const u = me();
+    if(!u || !u.id) return;
+    try{
+      const sentSnap = await fuDb.collection('fortis').where('from','==',u.id).get();
+      const recSnap = await fuDb.collection('fortis').where('to','==',u.id).get();
+      const sent=[], received=[];
+      sentSnap.forEach(d=>{ const x=d.data(); if(x.to) sent.push(x.to); });
+      recSnap.forEach(d=>{ const x=d.data(); if(x.from) received.push(x.from); });
+      const r = {sent:[...new Set(sent)], received:[...new Set(received)]};
+      if(typeof setFortiRecords==='function') setFortiRecords(r);
+      if(typeof setFortis==='function') setFortis(r.sent);
+      if(typeof syncFortiCounts==='function') syncFortiCounts();
+      if(typeof renderMe==='function' && document.getElementById('me')?.classList.contains('active')) renderMe();
+    }catch(e){ console.warn('sync fortis failed', e); }
+  }
+  window.sendForti = async function(pid){
+    const u = me();
+    if(!u) return openAuth('log');
+    const p = getProfileById(pid);
+    if(!p) return safeToast2('No se encontró el perfil');
+    if(String(pid).startsWith('p')){
+      safeToast2('Forti enviado a ' + (p.n||p.name) + ' ◆');
+      return;
+    }
+    const r = (typeof getFortiRecords==='function') ? getFortiRecords() : {sent:[],received:[]};
+    r.sent = r.sent || [];
+    r.received = r.received || [];
+    if(r.sent.includes(pid)) return safeToast2('Ya le mandaste un Forti a ' + (p.n||p.name));
+    try{
+      if(!ready()) throw new Error('Firebase no está listo');
+      const from = fuAuth.currentUser?.uid || u.id;
+      const id = from + '_' + pid;
+      await fuDb.collection('fortis').doc(id).set({from, to:pid, fromName:u.name||u.n||'', toName:p.name||p.n||'', createdAt:new Date().toISOString()}, {merge:true});
+      r.sent.push(pid);
+      if(typeof setFortiRecords==='function') setFortiRecords(r);
+      if(typeof setFortis==='function') setFortis(r.sent);
+      if(typeof syncFortiCounts==='function') syncFortiCounts();
+      try{ showFortiSentPopup(p); }catch(e){}
+      safeToast2('Forti enviado a ' + (p.n||p.name));
+      const reverse = await fuDb.collection('fortis').doc(pid + '_' + from).get();
+      if(reverse.exists){
+        if(!r.received.includes(pid)) r.received.push(pid);
+        if(typeof setFortiRecords==='function') setFortiRecords(r);
+        try{ showFortiMatchPopup(p); }catch(e){}
+      }
+    }catch(e){ console.error(e); safeToast2('No se pudo mandar el Forti. Probá de nuevo.'); }
+  };
+  const oldStartChat = window.startChat;
+  window.startChat = async function(p){
+    try{ await syncFirebaseUsersToLocal(); }catch(e){}
+    return oldStartChat ? oldStartChat(p) : null;
+  };
+  fuAuth?.onAuthStateChanged(async function(user){
+    if(user){ await ensureMyFirestoreProfile(); }
+    await syncFirebaseUsersToLocal();
+    await syncFortisFirebase();
+  });
+  setTimeout(async()=>{ await syncFirebaseUsersToLocal(); await syncFortisFirebase(); }, 1000);
+  setInterval(async()=>{ await syncFirebaseUsersToLocal(); await syncFortisFirebase(); }, 8000);
+})();
+</script>
+
+
+
+<!-- === FortyUp FINAL BASE v3 — sync real estable + Forti real === -->
+<script>
+(function(){
+  const FINAL_VERSION = 'FortyUp FINAL BASE v3 - Firebase usuarios + Forti real';
+  window.FORTYUP_VERSION = FINAL_VERSION;
+
+  function safeToast(msg){ try{ toast(msg); }catch(e){ alert(msg); } }
+  function isReady(){ return !!(window.fuAuth && window.fuDb); }
+  function currentLocalUser(){ try{ return typeof me === 'function' ? me() : null; }catch(e){ return null; } }
+  function localBlocked(){ try{ return typeof getBlocked === 'function' ? getBlocked() : []; }catch(e){ return []; } }
+  function getDemoProfiles(){ try{ return (typeof defaultProfiles !== 'undefined' && Array.isArray(defaultProfiles)) ? defaultProfiles : []; }catch(e){ return []; } }
+  function normalizeEmailFinal(v){ return String(v||'').trim().toLowerCase(); }
+
+  function finalNormalizeProfile(raw){
+    raw = raw || {};
+    const id = raw.id || raw.uid || raw.userId || '';
+    const name = raw.name || raw.n || raw.displayName || 'Usuario';
+    const age = Number(raw.age || raw.a || 40);
+    const city = raw.city || raw.c || 'Buenos Aires';
+    const photo = raw.photo || raw.img || '';
+    return {
+      id,
+      n:name,
+      name,
+      a:age,
+      age,
+      c:city,
+      city,
+      img:photo,
+      photo,
+      tags:Array.isArray(raw.tags)?raw.tags:[],
+      bio:raw.bio || '',
+      intent:raw.intent || '',
+      lat:raw.lat || null,
+      lng:raw.lng || null,
+      email:normalizeEmailFinal(raw.email),
+      super: raw.super == null ? 1 : raw.super,
+      createdAt: raw.createdAt || '',
+      updatedAt: raw.updatedAt || ''
+    };
+  }
+
+  function finalSaveUsers(arr){
+    const clean = [];
+    const seen = new Set();
+    (arr||[]).forEach(x=>{
+      const p = finalNormalizeProfile(x);
+      const key = p.id || p.email;
+      if(!key || seen.has(key)) return;
+      seen.add(key);
+      clean.push({
+        id:p.id,
+        name:p.name,
+        age:p.age,
+        city:p.city,
+        email:p.email,
+        photo:p.photo,
+        bio:p.bio,
+        intent:p.intent,
+        lat:p.lat,
+        lng:p.lng,
+        super:p.super,
+        createdAt:p.createdAt,
+        updatedAt:p.updatedAt
+      });
+    });
+    try{ setUsers(clean); }catch(e){ localStorage.setItem('fu_users', JSON.stringify(clean)); }
+    window.fu_all_profiles_cache = clean.map(finalNormalizeProfile);
+    return clean;
+  }
+
+  function finalUpsertLocalUser(user){
+    const p = finalNormalizeProfile(user);
+    let arr = [];
+    try{ arr = typeof getUsers === 'function' ? getUsers() : JSON.parse(localStorage.getItem('fu_users')||'[]'); }catch(e){ arr = []; }
+    const idx = arr.findIndex(x => String(x.id||'') === String(p.id||'') || normalizeEmailFinal(x.email) === p.email);
+    const compact = {id:p.id,name:p.name,age:p.age,city:p.city,email:p.email,photo:p.photo,bio:p.bio,intent:p.intent,lat:p.lat,lng:p.lng,super:p.super,createdAt:p.createdAt,updatedAt:p.updatedAt};
+    if(idx >= 0) arr[idx] = {...arr[idx], ...compact}; else arr.push(compact);
+    finalSaveUsers(arr);
+    return compact;
+  }
+
+  async function finalEnsureMeInFirestore(){
+    if(!isReady()) return;
+    const fb = fuAuth.currentUser;
+    let u = currentLocalUser();
+    if(!fb && !u) return;
+    const uid = fb?.uid || u?.id;
+    if(!uid) return;
+    const base = finalNormalizeProfile({...u, id:uid, email: u?.email || fb?.email || '', updatedAt:new Date().toISOString()});
+    try{
+      await fuDb.collection('users').doc(uid).set({
+        id:uid,
+        name:base.name,
+        age:base.age,
+        city:base.city,
+        email:base.email,
+        photo:base.photo,
+        bio:base.bio,
+        intent:base.intent,
+        lat:base.lat,
+        lng:base.lng,
+        super:base.super,
+        createdAt:base.createdAt || new Date().toISOString(),
+        updatedAt:new Date().toISOString()
+      }, {merge:true});
+      finalUpsertLocalUser(base);
+      try{ setMe({...u, id:uid, name:base.name, age:base.age, city:base.city, email:base.email, photo:base.photo, bio:base.bio, intent:base.intent, lat:base.lat, lng:base.lng, super:base.super}); }catch(e){}
+    }catch(e){ console.warn('finalEnsureMeInFirestore falló', e); }
+  }
+
+  window.syncFirebaseUsersToLocal = async function(){
+    if(!isReady()) return (typeof getUsers === 'function' ? getUsers() : []);
+    try{
+      await finalEnsureMeInFirestore();
+      const snap = await fuDb.collection('users').get();
+      const arr = [];
+      snap.forEach(doc => arr.push(finalNormalizeProfile({id:doc.id, ...doc.data()})));
+      finalSaveUsers(arr);
+      if(document.getElementById('profilesList')) renderProfiles();
+      if(document.getElementById('homeProfiles')) renderHome();
+      return arr;
+    }catch(e){
+      console.warn('sync final falló', e);
+      return typeof getUsers === 'function' ? getUsers() : [];
+    }
+  };
+
+  window.allProfiles = function(){
+    const u = currentLocalUser();
+    const blocked = localBlocked();
+    let real = [];
+    try{ real = (window.fu_all_profiles_cache && window.fu_all_profiles_cache.length ? window.fu_all_profiles_cache : (getUsers()||[])).map(finalNormalizeProfile); }catch(e){ real = []; }
+    real = real.filter(p=>{
+      if(!p.id && !p.email) return false;
+      if(blocked.includes(p.id)) return false;
+      if(u && (String(p.id) === String(u.id) || normalizeEmailFinal(p.email) === normalizeEmailFinal(u.email))) return false;
+      return true;
+    });
+    const demos = getDemoProfiles().filter(p=>!blocked.includes(p.id));
+    return [...real, ...demos];
+  };
+
+  window.getProfileById = function(pid){
+    try{ return allProfiles().find(p => String(p.id) === String(pid)) || null; }catch(e){ return null; }
+  };
+
+  async function finalSyncFortis(){
+    if(!isReady()) return;
+    const u = currentLocalUser();
+    const uid = fuAuth.currentUser?.uid || u?.id;
+    if(!uid) return;
+    try{
+      const sentSnap = await fuDb.collection('fortis').where('from','==',uid).get();
+      const recSnap = await fuDb.collection('fortis').where('to','==',uid).get();
+      const sent = [], received = [];
+      sentSnap.forEach(d=>{ const x=d.data(); if(x.to) sent.push(x.to); });
+      recSnap.forEach(d=>{ const x=d.data(); if(x.from) received.push(x.from); });
+      const r = {sent:[...new Set(sent)], received:[...new Set(received)]};
+      try{ setFortiRecords(r); }catch(e){}
+      try{ setFortis(r.sent); }catch(e){}
+      try{ syncFortiCounts(); }catch(e){}
+      return r;
+    }catch(e){ console.warn('fortis final sync falló', e); }
+  }
+
+  window.sendForti = async function(pid){
+    const u = currentLocalUser();
+    if(!u) return openAuth('log');
+    const p = getProfileById(pid);
+    if(!p) return safeToast('No se encontró el perfil');
+    if(!isReady()) return safeToast('Firebase todavía no cargó. Cerrá y abrí la app otra vez.');
+    const from = fuAuth.currentUser?.uid || u.id;
+    if(!from) return safeToast('Tenés que iniciar sesión para mandar Forti');
+    if(String(from) === String(pid)) return safeToast('No podés mandarte Forti a vos mismo');
+    try{
+      const id = from + '_' + pid;
+      const already = await fuDb.collection('fortis').doc(id).get();
+      if(already.exists) return safeToast('Ya le mandaste un Forti a ' + (p.n||p.name));
+      await fuDb.collection('fortis').doc(id).set({
+        from,
+        to:pid,
+        fromName:u.name || u.n || '',
+        toName:p.name || p.n || '',
+        fromPhoto:u.photo || u.img || '',
+        toPhoto:p.photo || p.img || '',
+        createdAt:new Date().toISOString()
+      }, {merge:true});
+      const r = await finalSyncFortis();
+      try{ showFortiSentPopup(p); }catch(e){}
+      safeToast('Forti enviado a ' + (p.n||p.name));
+      const reverse = await fuDb.collection('fortis').doc(pid + '_' + from).get();
+      if(reverse.exists){
+        try{ showFortiMatchPopup(p); }catch(e){}
+        safeToast('¡Match de Forti con ' + (p.n||p.name) + '!');
+      }
+      try{ renderMe(); }catch(e){}
+    }catch(e){
+      console.error('sendForti final falló', e);
+      safeToast('No se pudo mandar el Forti. Probá de nuevo.');
+    }
+  };
+
+  let usersUnsub = null;
+  let fortisSentUnsub = null;
+  let fortisRecUnsub = null;
+  async function startRealtime(){
+    if(!isReady()) return;
+    try{ if(usersUnsub) usersUnsub(); }catch(e){}
+    usersUnsub = fuDb.collection('users').onSnapshot(snap=>{
+      const arr=[];
+      snap.forEach(doc=>arr.push(finalNormalizeProfile({id:doc.id, ...doc.data()})));
+      finalSaveUsers(arr);
+      try{ if(document.getElementById('profilesList')) renderProfiles(); }catch(e){}
+      try{ if(document.getElementById('homeProfiles')) renderHome(); }catch(e){}
+    }, e=>console.warn('users realtime falló', e));
+
+    try{ if(fortisSentUnsub) fortisSentUnsub(); if(fortisRecUnsub) fortisRecUnsub(); }catch(e){}
+    const u = currentLocalUser();
+    const uid = fuAuth.currentUser?.uid || u?.id;
+    if(uid){
+      fortisSentUnsub = fuDb.collection('fortis').where('from','==',uid).onSnapshot(()=>finalSyncFortis(), e=>console.warn(e));
+      fortisRecUnsub = fuDb.collection('fortis').where('to','==',uid).onSnapshot(()=>finalSyncFortis(), e=>console.warn(e));
+    }
+  }
+
+  const oldBootFinal = window.boot;
+  window.boot = function(){
+    if(typeof oldBootFinal === 'function') oldBootFinal();
+    setTimeout(async()=>{ await syncFirebaseUsersToLocal(); await finalSyncFortis(); startRealtime(); }, 600);
+  };
+
+  if(isReady()){
+    fuAuth.onAuthStateChanged(async user=>{
+      if(user){ await finalEnsureMeInFirestore(); }
+      await syncFirebaseUsersToLocal();
+      await finalSyncFortis();
+      startRealtime();
+    });
+  }
+
+  setTimeout(async()=>{ await syncFirebaseUsersToLocal(); await finalSyncFortis(); startRealtime(); }, 800);
+  setInterval(async()=>{ await syncFirebaseUsersToLocal(); await finalSyncFortis(); }, 12000);
+})();
+</script>
+
 </body>
 </html>
