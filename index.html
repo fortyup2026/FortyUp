@@ -3846,5 +3846,223 @@ html,body{overscroll-behavior:none;}
 })();
 </script>
 
+
+<style id="fuPlanesOrdenadosFinalStyle">
+/* === FortyUp PLANES ORDENADOS FINAL === */
+#plans #fuEventCreateBtn{display:none!important}
+.fu-plans-layout{display:flex;flex-direction:column;gap:1rem}
+.fu-plans-block{background:#fff;border:1.5px solid var(--line);border-radius:24px;padding:1rem;box-shadow:var(--sh2)}
+.fu-plans-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.8rem}
+.fu-plans-head h3{font-family:'Playfair Display',serif;color:var(--g);font-size:1.12rem;margin:0;line-height:1.2}
+.fu-plans-head p{font-size:.78rem;color:var(--muted);font-weight:800;line-height:1.45;margin:.25rem 0 0}
+.fu-plans-chip{display:inline-flex;align-items:center;gap:.25rem;border:1px solid var(--line);background:var(--soft);color:var(--g);border-radius:999px;padding:.25rem .55rem;font-size:.68rem;font-weight:1000;white-space:nowrap}
+.fu-create-plan-hero{border:0;border-radius:26px;padding:1rem;background:linear-gradient(135deg,#FFF7CC,#FFE58A);box-shadow:0 12px 26px rgba(242,183,5,.22);color:#064E3B;text-align:left}
+.fu-create-plan-hero h3{font-family:'Playfair Display',serif;font-size:1.15rem;margin:0 0 .3rem;color:#064E3B}
+.fu-create-plan-hero p{font-size:.82rem;line-height:1.5;font-weight:800;margin:0 0 .85rem;color:rgba(6,78,59,.78)}
+.fu-create-plan-main-btn{width:100%;border:0;border-radius:999px;padding:.95rem 1rem;background:#F2B705;color:#064E3B;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:1000;box-shadow:0 8px 18px rgba(242,183,5,.28);cursor:pointer}
+.fu-create-plan-main-btn:active{transform:scale(.98)}
+.fu-event-search-row{display:flex;gap:.5rem;align-items:center;margin:.65rem 0 .85rem}
+.fu-event-search-row input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:.7rem .9rem;font-family:'Nunito',sans-serif;background:var(--soft);outline:none;color:var(--txt);font-weight:800}
+.fu-event-search-row button{border:0;border-radius:999px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;font-family:'Nunito',sans-serif;font-weight:1000;padding:.72rem .9rem;cursor:pointer}
+.fu-event-search-small{font-size:.73rem;color:var(--muted);font-weight:800;line-height:1.4;margin-top:-.35rem;margin-bottom:.65rem}
+.fu-events-list{display:flex;flex-direction:column;gap:.85rem}
+.fu-events-list .plan-card{margin-bottom:0!important}
+.fu-card-actions-clean{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin-top:.65rem}
+.fu-card-actions-clean .btn{margin-top:0!important}
+.fu-no-dup-note{font-size:.73rem;color:var(--muted);font-weight:800;line-height:1.45;margin-top:.55rem}
+@media(max-width:420px){.fu-plans-head{flex-direction:column}.fu-event-search-row{flex-direction:column;align-items:stretch}.fu-event-search-row button{width:100%}.fu-card-actions-clean{flex-direction:column}.fu-card-actions-clean .btn,.fu-card-actions-clean .event-link-btn{width:100%;text-align:center}}
+</style>
+<script id="fuPlanesOrdenadosFinalScript">
+/* === FortyUp PLANES ORDENADOS FINAL: pantalla Planes completa, sin parches === */
+(function(){
+  const byId=id=>document.getElementById(id);
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const clean=v=>String(v||'').trim();
+  const low=v=>clean(v).toLowerCase();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+  const db=()=>window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null);
+  const auth=()=>window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null);
+  const me=()=>{try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}};
+  const uid=()=>auth()&&auth().currentUser?auth().currentUser.uid:(me()?.uid||me()?.id||'');
+  let publicEvents=[], attendance={}, unsubPublic=null, unsubAtt=null;
+
+  function userCity(){
+    const u=me();
+    return clean((u&&(u.city||u.c))||'Buenos Aires').split(',')[0]||'Buenos Aires';
+  }
+  function overrideCity(){try{return localStorage.getItem('fu_plan_city_override')||''}catch(e){return ''}}
+  function activeCity(){return overrideCity()||userCity()}
+  function normCity(c){
+    const s=low(c).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(s.includes('cataratas')||s.includes('iguazu')) return 'puerto iguazu';
+    if(s.includes('capital')||s.includes('caba')||s.includes('buenos')||s.includes('villab')) return 'buenos aires';
+    if(s.includes('cordoba')) return 'cordoba';
+    if(s.includes('ushuaia')) return 'ushuaia';
+    if(s.includes('mendoza')) return 'mendoza';
+    if(s.includes('rosario')) return 'rosario';
+    return s;
+  }
+  function eventId(raw){return String(raw||'ev').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,120)||'evento'}
+  function curatedId(p){return eventId('ev_'+p[0]+'_'+p[1]+'_'+p[7])}
+  function withinYear(e){
+    const d=e.dateISO||'';
+    if(!d) return true;
+    const dd=new Date(d+'T00:00:00');
+    if(isNaN(dd)) return true;
+    const now=new Date(); now.setHours(0,0,0,0);
+    const max=new Date(now); max.setFullYear(max.getFullYear()+1);
+    return dd>=now && dd<=max;
+  }
+  function startRealtime(){
+    const d=db(); if(!d) return;
+    if(!unsubPublic){
+      unsubPublic=d.collection('publicEvents').where('public','==',true).onSnapshot(s=>{
+        publicEvents=[]; s.forEach(doc=>publicEvents.push({id:doc.id,...doc.data()}));
+        rerenderIfPlans();
+      },err=>console.warn('publicEvents planes ordenados',err));
+    }
+    if(!unsubAtt){
+      unsubAtt=d.collection('eventAttendance').onSnapshot(s=>{
+        attendance={}; s.forEach(doc=>attendance[doc.id]=doc.data()||{});
+        rerenderIfPlans();
+      },err=>console.warn('eventAttendance planes ordenados',err));
+    }
+  }
+  function rerenderIfPlans(){
+    if(byId('plans')?.classList.contains('active')) setTimeout(()=>window.renderPlans(byId('plansTextSearch')?.value||''),60);
+  }
+  function curatedEvents(){
+    const out=[];
+    try{
+      if(Array.isArray(window.plans||plans)){
+        (window.plans||plans).forEach(p=>{
+          const link=p[8]||'';
+          if(!link) return;
+          out.push({
+            id:curatedId(p), source:'curated', real:true, public:true,
+            title:p[0], when:p[1], desc:p[2], img:p[3], icon:p[4]||'🎟️', place:p[5]||p[7]||'', city:p[7]||'Buenos Aires', link, creatorName:'FortyUp'
+          });
+        });
+      }
+    }catch(e){}
+    return out;
+  }
+  function userCreatedEvents(){
+    return publicEvents.map(e=>({
+      id:e.id, source:'user', real:false, public:true,
+      title:e.title||'Plan público',
+      when:e.when||(e.dateISO&&e.time?`${e.dateISO} · ${e.time}`:(e.dateISO||'Fecha a confirmar')),
+      dateISO:e.dateISO||'',
+      desc:e.desc||e.description||'Plan público creado en FortyUp.',
+      img:e.img||'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop',
+      icon:e.icon||'🎟️', place:e.place||e.location||e.city||'', city:e.city||'Buenos Aires', link:e.link||'', creatorName:e.creatorName||'Usuario'
+    })).filter(withinYear);
+  }
+  function allEvents(){
+    const map=new Map();
+    [...curatedEvents(),...userCreatedEvents()].forEach(e=>map.set(e.id,e));
+    return [...map.values()];
+  }
+  function attObj(id){return attendance[id]||{attendees:[],attendeeNames:{}}}
+  function count(id){return (attObj(id).attendees||[]).length}
+  function attending(id){return (attObj(id).attendees||[]).includes(uid())}
+  function register(e){
+    window.fuEventRegistry=window.fuEventRegistry||{};
+    window.fuEventRegistry[e.id]=e;
+    return e;
+  }
+  function nearbyEvents(){
+    const target=normCity(activeCity());
+    let evs=allEvents().filter(e=>normCity(e.city)===target || low(e.place+' '+e.city).includes(target));
+    // Si el GPS devuelve localidad chica del AMBA, igual mostramos los curados de Buenos Aires para no dejar vacío.
+    if(!evs.length && target!=='buenos aires' && !overrideCity()) evs=allEvents().filter(e=>normCity(e.city)==='buenos aires');
+    return evs;
+  }
+  function searchedEvents(query){
+    query=low(query);
+    const target=normCity(activeCity());
+    let evs=allEvents().filter(e=>normCity(e.city)===target || low(e.title+' '+e.city+' '+e.place+' '+e.desc).includes(target));
+    if(query) evs=allEvents().filter(e=>low(e.title+' '+e.when+' '+e.desc+' '+e.place+' '+e.city+' '+e.creatorName).includes(query));
+    return evs;
+  }
+  function card(e){
+    register(e);
+    const is=attending(e.id);
+    const c=count(e.id);
+    const badge=e.real?'🌐 Evento real curado':'🙋 Plan público FortyUp';
+    const badgeClass=e.real?'real':'user';
+    return `<div class="card plan-card fu-event-card" onclick="openFuEventCard('${esc(e.id)}')">
+      ${e.img?`<img src="${esc(e.img)}" loading="lazy" alt="${esc(e.title)}" style="width:100%;height:155px;object-fit:cover">`:''}
+      <div class="plan-card-body">
+        <span class="fu-event-badge ${badgeClass}">${badge}</span>
+        <h3>${esc(e.icon||'🎟️')} ${esc(e.title)}</h3>
+        <div class="plan-cat">${esc(e.when||'Fecha a confirmar')}</div>
+        <p>${esc(e.desc||'Evento para conectar con gente de FortyUp.')}</p>
+        <div class="plan-meta"><span>📍 ${esc(e.place||e.city)}</span><span>👥 ${c} asistirán</span></div>
+        <div class="fu-no-dup-note">${is?'Estás anotado. Ya podés entrar al chat del evento.':'Tocá Asistiré para sumarte y habilitar el chat del evento.'}</div>
+        <div class="fu-card-actions-clean">
+          <button class="btn btn-green attend-btn ${is?'attending':''}" onclick="event.stopPropagation();toggleFuEventAttend('${esc(e.id)}')">${is?'✓ Asistiré':'Asistiré'}</button>
+          <button class="btn btn-out" onclick="event.stopPropagation();openFuEventCard('${esc(e.id)}')">Ver card</button>
+          <button class="btn btn-out" onclick="event.stopPropagation();openFuEventChat('${esc(e.id)}')">💬 Chat</button>
+          ${e.link?`<button class="event-link-btn" onclick="event.stopPropagation();window.open('${esc(e.link)}','_blank')">Ver fuente</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }
+  function eventSearchBox(city){
+    return `<div class="fu-event-search-row">
+      <input id="fuPublicEventSearch" type="text" placeholder="Buscar por artista, ciudad, lugar o plan..." value="${esc(byId('fuPublicEventSearch')?.value||'')}" oninput="renderPlans(this.value)">
+      <button onclick="renderPlans(byId('fuPublicEventSearch')?.value||'')">Buscar</button>
+    </div>
+    <div class="fu-event-search-small">Busca eventos públicos creados por usuarios de FortyUp y eventos reales curados. Ciudad actual: <strong>${esc(city)}</strong>.</div>`;
+  }
+  function externalSearchBox(city){
+    const google=`https://www.google.com/search?q=${encodeURIComponent('eventos '+city+' Argentina próximos meses')}`;
+    const eventbrite=`https://www.eventbrite.com.ar/d/argentina/${encodeURIComponent(city)}/events/`;
+    return `<div class="live-events-box" style="margin-top:.9rem"><h3>🔎 Buscar eventos reales afuera</h3><p>Si encontrás un evento que todavía no aparece, crealo como plan público para que otros usuarios de FortyUp se sumen.</p><div class="live-actions"><button class="live-google" onclick="window.open('${google}','_blank')">Google eventos</button><button class="live-eventbrite" onclick="window.open('${eventbrite}','_blank')">Eventbrite</button></div></div>`;
+  }
+  window.renderPlans=function(q=''){
+    startRealtime();
+    if(typeof window.renderChips==='function') window.renderChips();
+    const city=activeCity();
+    const cityTop=byId('cityTop'); if(cityTop) cityTop.textContent=overrideCity()?`Viajás a ${city}`:city;
+    const input=byId('planCityInput'); if(input && document.activeElement!==input) input.value=overrideCity()||'';
+    const plansList=byId('plansList'); if(!plansList) return;
+    const top=nearbyEvents();
+    const search=searchedEvents(q);
+    const createBlock=`<section class="fu-create-plan-hero">
+      <h3>＋ Crear plan público</h3>
+      <p>Publicá algo real: “voy a tal show”, “salida en tal lugar”, “¿quién se suma?”. La gente de esa ciudad puede tocar Asistiré y participar del chat.</p>
+      <button class="fu-create-plan-main-btn" onclick="showCreateEventPanel()">Crear plan público</button>
+    </section>`;
+    const topHtml=top.length?top.map(card).join(''):`<div class="fu-empty-strong"><h3>No hay planes cercanos cargados todavía</h3><p>Creá el primero o buscá por otra ciudad.</p></div>`;
+    const searchHtml=search.length?search.map(card).join(''):`<div class="fu-empty-strong"><h3>No encontramos eventos con esa búsqueda</h3><p>Podés buscar en la web y crear el plan público para invitar gente.</p></div>`;
+    plansList.innerHTML=`<div class="fu-plans-layout">
+      <section class="fu-plans-block">
+        <div class="fu-plans-head"><div><h3>📍 Planes cerca tuyo</h3><p>Eventos reales y planes públicos próximos, visibles de acá a un año. Podés poner Asistiré y entrar al chat del evento.</p></div><span class="fu-plans-chip">${esc(city)} · 12 meses</span></div>
+        <div class="fu-events-list">${topHtml}</div>
+      </section>
+      ${createBlock}
+      <section class="fu-plans-block">
+        <div class="fu-plans-head"><div><h3>🌍 Buscar eventos públicos</h3><p>Buscá eventos por ciudad, artista, lugar o planes creados por usuarios de FortyUp.</p></div><span class="fu-plans-chip">sin duplicados</span></div>
+        ${eventSearchBox(city)}
+        <div class="fu-events-list">${searchHtml}</div>
+        ${externalSearchBox(city)}
+      </section>
+    </div>`;
+  };
+  const oldGo=window.go;
+  if(typeof oldGo==='function'){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      if(id==='plans') setTimeout(()=>{startRealtime(); window.renderPlans(byId('plansTextSearch')?.value||'');},160);
+      return r;
+    };
+  }
+  setTimeout(()=>{startRealtime(); if(byId('plans')?.classList.contains('active')) window.renderPlans('');},700);
+  window.__FORTYUP_PLANES_ORDENADOS_FINAL__='PLANES_ORDENADOS_COMPLETO_2026_05_02';
+})();
+</script>
+
 </body>
 </html>
