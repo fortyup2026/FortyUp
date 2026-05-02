@@ -23,10 +23,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 /* ── SCREENS ── */
 .screen{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column}
 .screen.active{display:flex}
-#chat.screen.active{display:grid!important;grid-template-rows:56px 1fr auto;overflow:hidden!important;height:100dvh;height:100vh}
-#chat .chat-topbar{grid-row:1}
-#chat .chat-messages{grid-row:2;overflow-y:auto}
-#chat .chat-input-area{grid-row:3;position:relative;z-index:5}
+#chat.screen.active{display:flex!important;flex-direction:column!important;height:100dvh!important;height:100vh!important;overflow:hidden!important}
 .screen-inner{flex:1;padding:1rem 1rem 5rem}
 
 /* ── TOP BAR ── */
@@ -778,6 +775,8 @@ body.chat-open #bottomNav{
 .fu-empty-local strong{color:var(--g);}
 @media(max-width:420px){.fu-featured-row .fu-event-card{flex-basis:88%;}.fu-plans-head-final{flex-direction:column}.fu-city-mini{flex-wrap:wrap}.fu-city-mini button{flex:1}.fu-city-mini input{flex-basis:100%;}}
 
+
+@keyframes bIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -889,18 +888,26 @@ body.chat-open #bottomNav{
 </div>
 
 <!-- ══ CHAT ══ -->
-<div id="chat" class="screen chat-screen">
-  <div class="chat-topbar">
-    <button class="chat-back" onclick="go('messages')">←</button>
-    <img id="chatAvatar" class="top-avatar" src="" alt="">
-    <span id="chatName">Chat</span>
+<div id="chat" class="screen" style="display:none;flex-direction:column;height:100dvh;height:100vh;overflow:hidden;background:#edf7f2">
+  <div style="flex-shrink:0;display:flex;align-items:center;gap:.65rem;padding:.6rem 1rem;background:#fff;border-bottom:1.5px solid var(--line);box-shadow:0 2px 10px rgba(6,78,59,.08)">
+    <button onclick="go('messages')" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--g);padding:0 .3rem;line-height:1;flex-shrink:0">←</button>
+    <div id="chatAvatarCircle" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g3));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:800;color:#fff;font-size:1rem;flex-shrink:0;overflow:hidden;border:2.5px solid var(--g3)">?</div>
+    <div style="flex:1;min-width:0">
+      <div id="chatName" style="font-weight:900;font-size:.95rem;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
+      <div style="font-size:.65rem;color:var(--g3);font-weight:700">FortyUp</div>
+    </div>
   </div>
-  <div class="chat-messages" id="chatBox"></div>
-  <div class="chat-input-area">
-    <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0">📷</button>
+  <div id="chatBox" style="flex:1;overflow-y:auto;padding:.85rem .8rem;display:flex;flex-direction:column;gap:.4rem;min-height:0"></div>
+  <div style="flex-shrink:0;display:flex;align-items:flex-end;gap:.5rem;padding:.6rem .75rem calc(.6rem + env(safe-area-inset-bottom,0px));background:#fff;border-top:1.5px solid var(--line)">
+    <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.15rem;cursor:pointer;color:var(--muted);padding:.3rem;flex-shrink:0">📷</button>
     <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
-    <input type="text" id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
-    <button class="chat-send" onclick="sendMsg()">➤</button>
+    <div style="flex:1;display:flex;align-items:center;background:var(--soft);border:1.5px solid var(--line);border-radius:24px;padding:.4rem .75rem">
+      <textarea id="chatInput" rows="1" placeholder="Escribí un mensaje..."
+        style="flex:1;border:none;outline:none;background:none;font-family:'Nunito',sans-serif;font-size:.9rem;color:var(--txt);resize:none;max-height:96px;min-height:22px;line-height:1.45;overflow-y:auto"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+    </div>
+    <button onclick="sendMsg()" style="width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(6,78,59,.3)">➤</button>
   </div>
 </div>
 
@@ -1618,55 +1625,69 @@ function deleteAccount(){
 
 // ── Chat ──
 function startChat(p){
+  if(p.id&&p.id.startsWith('u_')){var l=(typeof getSavedUsers==='function'?getSavedUsers():[]).find(function(x){return x.id===p.id;});if(l)p=Object.assign({},p,{img:l.photo||'',n:l.name,a:l.age,c:l.city});}
   chatWith=p;
-  $('chatAvatar').src=p.img||p.photo||'';
-  $('chatName').textContent=p.n||p.name;
+  var name=p.n||p.name||'Usuario';
+  var photo=p.img||p.photo||'';
+  var el=document.getElementById('chatAvatarCircle');
+  if(el){el.innerHTML=photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+name[0].toUpperCase()+'\'">':name[0].toUpperCase();}
+  document.getElementById('chatName').textContent=name;
   go('chat');
   renderChatBubbles();
-  setTimeout(()=>{
-    const input=$('chatInput');
-    if(input){
-      input.placeholder='Escribile a '+(p.n||p.name||'esta persona')+'...';
-      input.style.display='block';
-      input.disabled=false;
-      input.focus();
-    }
-    const box=$('chatBox');
-    if(box) box.scrollTop=box.scrollHeight;
-  },150);
+  setTimeout(function(){var inp=document.getElementById('chatInput');if(inp)inp.placeholder='Escribile a '+name+'...';var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;},100);
 }
 
 function renderChatBubbles(){
-  if(!chatWith) return;
-  const chats=getChats();
-  const msgs=chats[chatWith.id]||[];
-  const _cname=escHtml(chatWith.n||chatWith.name||'');
-  $('chatBox').innerHTML=msgs.length?msgs.map(m=>`
-    <div class="bubble ${m.from==='me'?'mine':'theirs'}">
-      ${m.photo?`<img src="${m.photo}" style="max-width:200px;border-radius:12px;display:block">`:escHtml(m.text)}
-    </div>`).join('')
-  :`<div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
-      <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
-      <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${_cname}!</p>
-      <p style="font-size:.82rem">Sé el primero en escribir</p>
-      <button class="btn btn-green" style="margin-top:1rem" onclick="$('chatInput').value='Hola!';$('chatInput').focus()">Escribir hola</button>
-    </div>`;
-  setTimeout(()=>{$('chatBox').scrollTop=$('chatBox').scrollHeight},50);
+  if(!chatWith)return;
+  var msgs=(getChats()[chatWith.id])||[];
+  var box=document.getElementById('chatBox');
+  if(!box)return;
+  var name=escHtml(chatWith.n||chatWith.name||'');
+  var photo=chatWith.img||chatWith.photo||'';
+  var initial=(chatWith.n||chatWith.name||'?')[0].toUpperCase();
+  if(!msgs.length){
+    box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;color:var(--muted);min-height:200px">'
+      +'<div style="font-size:3.5rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">&#128075;</div>'
+      +'<div style="font-weight:800;color:var(--g);font-size:.95rem;margin-bottom:.3rem">&iexcl;Salud&aacute; a '+name+'!</div>'
+      +'<div style="font-size:.8rem">S&eacute; el primero en escribir</div></div>';
+    return;
+  }
+  var lastDate='',html='';
+  msgs.forEach(function(m){
+    var mine=m.from==='me';
+    var d=m.date||'Hoy';
+    if(d!==lastDate){html+='<div style="text-align:center;font-size:.62rem;font-weight:800;color:var(--muted);margin:.5rem 0;text-transform:uppercase;letter-spacing:.04em">'+escHtml(d)+'</div>';lastDate=d;}
+    var content=m.photo?'<img src="'+m.photo+'" style="max-width:200px;border-radius:12px;display:block">':escHtml(m.text);
+    var time=m.time||'';
+    var meta='<div style="font-size:.6rem;opacity:.55;margin-top:.2rem;text-align:'+(mine?'right':'left')+'">'+time+(mine?' &#10003;&#10003;':'')+'</div>';
+    var avHtml=photo
+      ?'<div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;align-self:flex-end"><img src="'+photo+'" style="width:100%;height:100%;object-fit:cover"></div>'
+      :'<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g3));flex-shrink:0;align-self:flex-end;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#fff">'+initial+'</div>';
+    if(mine){
+      html+='<div style="display:flex;justify-content:flex-end"><div style="max-width:78%;background:linear-gradient(135deg,#064E3B,#009B6B);color:#fff;border-radius:18px 4px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 3px 12px rgba(6,78,59,.22)">'+content+meta+'</div></div>';
+    }else{
+      html+='<div style="display:flex;align-items:flex-end;gap:.45rem">'+avHtml+'<div style="max-width:75%;background:#fff;color:var(--txt);border-radius:4px 18px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 2px 8px rgba(0,0,0,.08)">'+content+meta+'</div></div>';
+    }
+  });
+  box.innerHTML=html;
+  box.scrollTop=box.scrollHeight;
 }
 
 function sendMsg(){
-  const inp=$('chatInput');
-  const text=inp.value.trim();
-  if(!text||!chatWith) return;
-  const chats=getChats();
-  if(!chats[chatWith.id]) chats[chatWith.id]=[];
-  const now=new Date();
-  chats[chatWith.id].push({from:'me',text,time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+  var inp=document.getElementById('chatInput');
+  var text=(inp.value||'').trim();
+  if(!text||!chatWith)return;
+  var now=new Date();
+  var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  var date=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  var chats=getChats();
+  if(!chats[chatWith.id])chats[chatWith.id]=[];
+  chats[chatWith.id].push({from:'me',text:text,time:time,date:date});
   setChats(chats);
-  inp.value='';
+  inp.value='';inp.style.height='auto';
   renderChatBubbles();
-  setTimeout(()=>{$('chatInput').focus(); const box=$('chatBox'); if(box) box.scrollTop=box.scrollHeight;},50);
-  updateMsgDot();
+  var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;
+  if(typeof updateMsgDot==='function')updateMsgDot();
 }
 
 function updateMsgDot(){
@@ -1979,20 +2000,24 @@ function showEventosPanel(){
   $('profilePanel').classList.add('open');
 }
 function sendChatPhoto(input){
-  const file=input.files[0];
-  if(!file||!chatWith) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const chats=getChats();
-    if(!chats[chatWith.id]) chats[chatWith.id]=[];
-    const now=new Date();
-    chats[chatWith.id].push({from:'me',photo:e.target.result,text:'',time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+  var file=input.files&&input.files[0];
+  if(!file||!chatWith)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var now=new Date();
+    var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+    var date=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+    var chats=getChats();
+    if(!chats[chatWith.id])chats[chatWith.id]=[];
+    chats[chatWith.id].push({from:'me',photo:e.target.result,text:'',time:time,date:date});
     setChats(chats);
     renderChatBubbles();
+    var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;
   };
   reader.readAsDataURL(file);
   input.value='';
 }
+
 function showPrivacyPanel(){
   const bl=getBlocked();
   const rep=getReported();
@@ -2935,9 +2960,9 @@ html,body{overscroll-behavior:none;}
       if(id==='plans') setTimeout(()=>window.renderPlans(byId('plansTextSearch')?.value||''),80);
     };
   }
-  document.addEventListener('DOMContentLoaded',()=>{renderChips();});
+  document.addEventListener('DOMContentLoaded',()=>{if(typeof window.renderChips==='function')window.renderChips();});
   window.__FORTYUP_PLAN_CITY_SEARCH__='PLANES_GPS_Y_VIAJE_2026_05_02';
-})();
+}})();
 </script>
 
 
@@ -4445,7 +4470,6 @@ body{padding-bottom:76px!important}
   justify-content:center!important;
 }
 .panel-overlay .panel{
-  padding-top:2.2rem!important;
   position:relative!important;
   width:100%!important;
   max-width:520px!important;
@@ -4462,7 +4486,7 @@ body{padding-bottom:76px!important}
 
 /* Universal close button */
 .fu-x-close{
-  position:absolute!important;
+  position:sticky!important;
   top:.35rem!important;
   margin-left:auto!important;
   width:36px!important;height:36px!important;
@@ -5170,62 +5194,6 @@ body{padding-bottom:76px!important}
   setTimeout(listenNotifications, 900);
   if(auth()) auth().onAuthStateChanged(() => setTimeout(() => { listenNotifications(); startData(); }, 500));
   setInterval(cleanupExpiredEvents, 60 * 1000);
-})();
-</script>
-
-
-<style id="fuCloseDedupFinal">
-/* === FortyUp: una sola X en paneles === */
-#profilePanel .fu-panel-close-premium{
-  display:none!important;
-}
-#profilePanel .fu-x-close{
-  position:absolute!important;
-  top:.8rem!important;
-  right:.8rem!important;
-  left:auto!important;
-  margin:0!important;
-  z-index:80!important;
-  display:flex!important;
-}
-#profilePanel .panel{
-  padding-top:2.4rem!important;
-}
-#profilePanel .panel > .fu-x-close ~ .fu-x-close{
-  display:none!important;
-}
-</style>
-
-<script id="fuCloseDedupFinalScript">
-(function(){
-  function dedupeClose(){
-    const panel = document.querySelector('#profilePanel .panel');
-    if(!panel) return;
-
-    panel.querySelectorAll('.fu-panel-close-premium').forEach(el => el.remove());
-
-    const xs = Array.from(panel.querySelectorAll('.fu-x-close'));
-    xs.forEach((el, idx) => {
-      if(idx === 0){
-        el.style.display = 'flex';
-        el.style.position = 'absolute';
-        el.style.top = '.8rem';
-        el.style.right = '.8rem';
-        el.style.left = 'auto';
-        el.style.margin = '0';
-      }else{
-        el.remove();
-      }
-    });
-  }
-
-  const target = document.getElementById('profilePanel');
-  if(target){
-    new MutationObserver(dedupeClose).observe(target, {childList:true, subtree:true, attributes:true});
-  }
-
-  setInterval(dedupeClose, 500);
-  setTimeout(dedupeClose, 100);
 })();
 </script>
 
