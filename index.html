@@ -503,6 +503,59 @@ body.chat-open #bottomNav{
   height:42px!important;
 }
 
+
+/* === FortyUp v11: perfiles reales + eventos externos === */
+.live-events-box{
+  margin:.75rem 0 1rem;
+  padding:1rem;
+  border-radius:22px;
+  background:linear-gradient(135deg,#ECFDF5,#FFFDF7);
+  border:1.5px solid var(--line);
+  box-shadow:var(--sh2);
+}
+.live-events-box h3{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.05rem;
+  margin-bottom:.35rem;
+}
+.live-events-box p{
+  color:var(--muted);
+  font-size:.8rem;
+  line-height:1.45;
+  margin-bottom:.75rem;
+}
+.live-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.55rem;
+}
+.live-actions button{
+  border:0;
+  border-radius:50px;
+  padding:.65rem .75rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.live-eventbrite{background:#FF5A1F;color:#fff}
+.live-google{background:var(--g);color:#fff}
+.firebase-note{
+  background:#FFF8DB;
+  border:1px solid #FDE68A;
+  color:#6B4A00;
+  border-radius:18px;
+  padding:.8rem;
+  font-size:.78rem;
+  font-weight:800;
+  line-height:1.45;
+  margin-bottom:1rem;
+}
+@media(max-width:420px){
+  .live-actions{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -567,6 +620,14 @@ body.chat-open #bottomNav{
       <span style="font-size:1rem">🔍</span>
       <input type="text" placeholder="Buscar planes..." oninput="renderPlans(this.value)">
     </div>
+    <div class="live-events-box">
+      <h3>Eventos en vivo en tu zona</h3>
+      <p>Buscá eventos actuales según tu ciudad. Eventbrite y Google se abren con tu ubicación/zona para ver opciones reales.</p>
+      <div class="live-actions">
+        <button class="live-eventbrite" onclick="openEventbrite()">Eventbrite</button>
+        <button class="live-google" onclick="openGoogleEvents()">Google eventos</button>
+      </div>
+    </div>
     <div id="plansList"></div>
   </div>
 </div>
@@ -578,6 +639,9 @@ body.chat-open #bottomNav{
     <div style="font-size:.8rem;font-weight:800;color:var(--muted)">Cerca de vos</div>
   </div>
   <div class="screen-inner">
+    <div class="firebase-note" id="realUsersNote" style="display:none">
+      Para ver personas reales registradas desde otros celulares, esta pantalla debe estar conectada a Firebase/Supabase. En esta versión se muestran usuarios guardados en este navegador + perfiles demo.
+    </div>
     <div class="profiles-grid" id="profilesList"></div>
   </div>
 </div>
@@ -947,7 +1011,10 @@ function renderHome(){
 function distKm(la1,lo1,la2,lo2){if(!la1||!lo1||!la2||!lo2)return null;const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)*Math.sin(dO/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 function distLabel(p){const u=me();if(!u||!u.lat||!p.lat)return '';const d=distKm(u.lat,u.lng,p.lat,p.lng);if(!d)return '';return d<0.5?'<500m':d<1?'<1 km':d.toFixed(1)+' km';}
 function allProfiles(){
-  const u=me();const blocked=getBlocked();
+  const u=me();
+  const note=$('realUsersNote');
+  if(note) note.style.display='block';
+  const blocked=getBlocked();
   const reg=getUsers().filter(usr=>(!u||usr.id!==u.id)&&!blocked.includes(usr.id));
   const rp=reg.map(usr=>({id:usr.id,n:usr.name,a:usr.age,c:usr.city,img:usr.photo||'',tags:[],bio:usr.bio||'',intent:usr.intent||'',lat:usr.lat||null,lng:usr.lng||null}));
   return [...rp,...defaultProfiles.filter(p=>!blocked.includes(p.id))];
@@ -1335,17 +1402,33 @@ function syncSuperUI(){
 function sendSuper(pid){
   const u=me();
   if(!u) return openAuth();
+
   if(!canSendSuper()){
     syncSuperUI();
     toast('Ya usaste tu Súper Diamante de hoy. Volvé mañana 💎');
     return;
   }
-  store('fu_last_super',new Date().toISOString());
-  u.super=0;
+
+  const toUser = profilesForCity().find(p => p.id === pid);
+  if(!toUser){
+    toast('Error al enviar');
+    return;
+  }
+
+  store('fu_last_super', new Date().toISOString());
+
+  u.super = 0;
   setMe(u);
   syncSuperUI();
-  toast('¡Súper Diamante enviado! 💎');
-  setTimeout(()=>showSuperDiamondPopup('Vos'),500);
+
+  addNoti(
+    'super',
+    'Súper diamante enviado',
+    `Le enviaste un 💎 a ${toUser.n}`,
+    { id: toUser.id, n: toUser.n, img: toUser.img }
+  );
+
+  toast(`💎 Enviado a ${toUser.n}`);
 }
 
 function toggleFav(pid){
@@ -1637,6 +1720,18 @@ window.addEventListener('resize',setVh);
 
 // ── Start ──
 boot();
+
+function openEventbrite(){
+  const city=encodeURIComponent(userCity()||'Argentina');
+  const q=encodeURIComponent('eventos mayores de 40 salidas vino teatro música');
+  window.open(`https://www.eventbrite.com.ar/d/argentina--${city}/events/?q=${q}`,'_blank');
+}
+function openGoogleEvents(){
+  const city=encodeURIComponent(userCity()||'Argentina');
+  const q=encodeURIComponent(`eventos hoy esta semana ${userCity()} salidas teatro música vino`);
+  window.open(`https://www.google.com/search?q=${q}&ibp=htl;events`,'_blank');
+}
+
 </script>
 </body>
 </html>
