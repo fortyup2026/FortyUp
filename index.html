@@ -4425,5 +4425,752 @@ body{padding-bottom:70px!important}
 })();
 </script>
 
+
+<style id="fuSebasFinalUXFix2026">
+/* === FortyUp Sebas Final UX Fix 2026: app completa, no parche === */
+
+/* Bottom nav always visible and content never hidden behind it */
+body{padding-bottom:76px!important}
+#bottomNav{
+  position:fixed!important;
+  left:0!important;right:0!important;bottom:0!important;
+  z-index:99999!important;
+}
+.screen-inner{padding-bottom:7rem!important}
+
+/* Panels: premium full bottom sheet, scrollable, no half-hidden content */
+.panel-overlay.open{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+.panel-overlay .panel{
+  position:relative!important;
+  width:100%!important;
+  max-width:520px!important;
+  max-height:92dvh!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding-bottom:calc(2.5rem + env(safe-area-inset-bottom,0px))!important;
+}
+.panel-overlay .panel::after{
+  content:"";
+  display:block;
+  height:1.2rem;
+}
+
+/* Universal close button */
+.fu-x-close{
+  position:sticky!important;
+  top:.35rem!important;
+  margin-left:auto!important;
+  width:36px!important;height:36px!important;
+  border-radius:999px!important;
+  border:1px solid var(--line)!important;
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:1.05rem!important;font-weight:1000!important;
+  z-index:50!important;
+  cursor:pointer!important;
+}
+
+/* Edit profile save button visible */
+.fu-sticky-save,
+#profilePanel .panel button[onclick="saveEdit()"],
+#profilePanel .panel button[onclick="savePublicEvent()"]{
+  position:sticky!important;
+  bottom:calc(.6rem + env(safe-area-inset-bottom,0px))!important;
+  z-index:40!important;
+  box-shadow:0 10px 24px rgba(6,78,59,.24)!important;
+}
+
+/* Better city search alignment */
+.fu-sebas-citybar{
+  display:grid!important;
+  grid-template-columns:1fr auto auto!important;
+  gap:.5rem!important;
+  align-items:center!important;
+}
+.fu-sebas-citybar input{
+  min-height:44px!important;
+}
+.fu-sebas-citybar button{
+  min-height:44px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+}
+@media(max-width:430px){
+  .fu-sebas-citybar{grid-template-columns:1fr!important}
+  .fu-sebas-citybar button{width:100%!important}
+}
+
+/* Event details card */
+.fu-event-detail-full{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:1rem;
+  box-shadow:var(--sh2);
+}
+.fu-event-detail-full h3{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.25rem;
+  margin:.2rem 0 .45rem;
+}
+.fu-event-detail-full p{
+  font-size:.86rem;
+  line-height:1.55;
+}
+.fu-event-status-ended{
+  background:#fff0f0;
+  color:#991b1b;
+  border:1px solid #fecaca;
+  border-radius:999px;
+  display:inline-flex;
+  padding:.28rem .65rem;
+  font-size:.72rem;
+  font-weight:1000;
+  margin:.35rem 0;
+}
+.fu-event-status-live{
+  background:var(--soft);
+  color:var(--g);
+  border:1px solid var(--line);
+  border-radius:999px;
+  display:inline-flex;
+  padding:.28rem .65rem;
+  font-size:.72rem;
+  font-weight:1000;
+  margin:.35rem 0;
+}
+</style>
+
+<script id="fuSebasFinalUXFix2026">
+/* === FortyUp Sebas Final UX Fix 2026 === */
+(function(){
+  const $ = id => document.getElementById(id);
+  const safe = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const clean = v => String(v ?? '').trim();
+  const toast = msg => typeof window.toast === 'function' ? window.toast(msg) : alert(msg);
+  const db = () => window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null);
+  const auth = () => window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null);
+  const currentUser = () => auth() && auth().currentUser ? auth().currentUser : null;
+  const me = () => { try { return typeof window.me === 'function' ? window.me() : JSON.parse(localStorage.getItem('fu_user') || 'null'); } catch(e){ return null; } };
+  const uid = () => currentUser()?.uid || me()?.uid || me()?.id || '';
+  const uname = () => me()?.name || me()?.n || currentUser()?.email?.split('@')[0] || 'Usuario';
+  const serverTime = () => firebase.firestore.FieldValue.serverTimestamp();
+  const arrUnion = v => firebase.firestore.FieldValue.arrayUnion(v);
+  const arrRemove = v => firebase.firestore.FieldValue.arrayRemove(v);
+  const delField = () => firebase.firestore.FieldValue.delete();
+
+  let publicEvents = [];
+  let attendance = {};
+  let unsubPublic = null;
+  let unsubAttendance = null;
+  let unsubNotifications = null;
+  let firstNoti = true;
+
+  function closePanel(){
+    const p = $('profilePanel');
+    if(p) p.classList.remove('open');
+    const authEl = $('auth');
+    if(authEl) authEl.classList.remove('open');
+  }
+  window.closeAnyPanelPremium = closePanel;
+  window.closePanel = closePanel;
+
+  function ensureCloseButton(){
+    const panel = $('profilePanel')?.querySelector('.panel');
+    if(!panel) return;
+    if(!panel.querySelector('.fu-x-close')){
+      const b = document.createElement('button');
+      b.className = 'fu-x-close';
+      b.type = 'button';
+      b.innerHTML = '✕';
+      b.onclick = closePanel;
+      panel.insertBefore(b, panel.firstChild);
+    }
+  }
+
+  function openPanel(html){
+    const p = $('profilePanel'), c = $('panelContent');
+    if(!p || !c) return;
+    c.innerHTML = html;
+    p.classList.add('open');
+    setTimeout(ensureCloseButton, 20);
+  }
+
+  // Close panels when user navigates, no stuck card over Home.
+  if(!window.__fuSebasFinalGoWrap && typeof window.go === 'function'){
+    window.__fuSebasFinalGoWrap = true;
+    const oldGo = window.go;
+    window.go = function(id){
+      closePanel();
+      return oldGo.apply(this, arguments);
+    };
+  }
+  const profilePanel = $('profilePanel');
+  if(profilePanel && !profilePanel.__fuSebasFinalClose){
+    profilePanel.__fuSebasFinalClose = true;
+    profilePanel.addEventListener('click', ev => {
+      if(ev.target === profilePanel) closePanel();
+    });
+    new MutationObserver(ensureCloseButton).observe(profilePanel, {childList:true, subtree:true, attributes:true});
+  }
+
+  function startData(){
+    const d = db();
+    if(!d) return;
+    if(!unsubPublic){
+      unsubPublic = d.collection('publicEvents').where('public','==',true).onSnapshot(s => {
+        publicEvents = [];
+        s.forEach(doc => publicEvents.push({id:doc.id, ...doc.data(), kind:'public'}));
+        cleanupExpiredEvents();
+        refreshVisible();
+      }, err => console.warn('publicEvents final fix', err));
+    }
+    if(!unsubAttendance){
+      unsubAttendance = d.collection('eventAttendance').onSnapshot(s => {
+        attendance = {};
+        s.forEach(doc => attendance[doc.id] = doc.data() || {});
+        window.fuEventAttendance = attendance;
+        refreshVisible();
+      }, err => console.warn('eventAttendance final fix', err));
+    }
+  }
+
+  function listenNotifications(){
+    const d = db(), u = currentUser();
+    if(!d || !u || unsubNotifications) return;
+    unsubNotifications = d.collection('userNotifications').doc(u.uid).collection('items')
+      .where('read','==',false)
+      .onSnapshot(snap => {
+        const count = snap.size || 0;
+        const cardTitle = [...document.querySelectorAll('.me-card-title')].find(el => /eventos/i.test(el.textContent || ''));
+        if(cardTitle){
+          let dot = cardTitle.querySelector('.fu-noti-dot-mini');
+          if(count > 0 && !dot){
+            dot = document.createElement('span');
+            dot.className = 'fu-noti-dot-mini';
+            cardTitle.appendChild(dot);
+          }
+          if(dot) dot.textContent = count;
+          if(count === 0 && dot) dot.remove();
+        }
+        if(!firstNoti){
+          snap.docChanges().forEach(ch => {
+            if(ch.type === 'added'){
+              const n = ch.doc.data() || {};
+              toast(n.text || 'Nueva actividad en tus eventos');
+            }
+          });
+        }
+        firstNoti = false;
+      }, err => console.warn('notifications final fix', err));
+  }
+
+  function refreshVisible(){
+    if($('plans')?.classList.contains('active') && typeof window.renderPlans === 'function'){
+      setTimeout(() => window.renderPlans(), 70);
+    }
+    if($('profilePanel')?.classList.contains('open') && $('fuEventsPanelRoot')){
+      setTimeout(() => window.showEventosPanel(), 120);
+    }
+  }
+
+  function normalizeDate(e){
+    const date = e.dateISO || e.date || '';
+    const time = e.time || e.hour || '23:59';
+    if(!date) return null;
+    const dt = new Date(`${date}T${time || '23:59'}`);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+  function isEnded(e){
+    const dt = normalizeDate(e);
+    if(!dt) return false;
+    return dt.getTime() <= Date.now();
+  }
+  function withinOneYear(e){
+    const dt = normalizeDate(e);
+    if(!dt) return true;
+    const max = new Date();
+    max.setFullYear(max.getFullYear()+1);
+    return dt.getTime() <= max.getTime();
+  }
+
+  async function createNotification(userId, id, data){
+    const d = db();
+    if(!d || !userId) return;
+    try{
+      await d.collection('userNotifications').doc(userId).collection('items').doc(id).set({
+        read:false,
+        createdAt:serverTime(),
+        ...data
+      }, {merge:true});
+    }catch(e){ console.warn('createNotification', e); }
+  }
+
+  async function cleanupExpiredEvents(){
+    const d = db(), u = currentUser();
+    if(!d) return;
+    for(const e of publicEvents){
+      if(!isEnded(e)) continue;
+      const notified = !!e.endedNotified;
+      if(!notified && e.creatorId){
+        await createNotification(e.creatorId, `event_ended_${e.id}`, {
+          type:'event_ended',
+          eventId:e.id,
+          eventTitle:e.title || 'tu evento',
+          text:`Tu evento finalizó: ${e.title || 'tu evento'}`
+        });
+        await d.collection('publicEvents').doc(e.id).set({
+          public:false,
+          ended:true,
+          endedAt:serverTime(),
+          endedNotified:true
+        }, {merge:true}).catch(()=>{});
+      }
+    }
+  }
+
+  function att(id){ return attendance[id] || {attendees:[], attendeeNames:{}}; }
+  function attendees(id){ return Array.isArray(att(id).attendees) ? att(id).attendees : []; }
+  function attendeeNames(id){ return att(id).attendeeNames || {}; }
+  function isAttending(id){ return !!uid() && attendees(id).includes(uid()); }
+  window.isAttending = isAttending;
+
+  function userCity(){
+    const u = me();
+    return clean((u && (u.city || u.c)) || 'Buenos Aires').split(',')[0] || 'Buenos Aires';
+  }
+  function activeCity(){
+    try{ return localStorage.getItem('fu_plan_city_override') || userCity(); }catch(e){ return userCity(); }
+  }
+  function strip(v){ return clean(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+  function normCity(c){
+    const s = strip(c);
+    if(s.includes('cataratas') || s.includes('iguazu')) return 'puerto iguazu';
+    if(s.includes('villa bosch') || s.includes('villab') || s.includes('capital') || s.includes('caba') || s.includes('buenos')) return 'buenos aires';
+    if(s.includes('cordoba')) return 'cordoba';
+    if(s.includes('ushuaia')) return 'ushuaia';
+    if(s.includes('rosario')) return 'rosario';
+    if(s.includes('mendoza')) return 'mendoza';
+    return s;
+  }
+  function cityMatch(e, city){
+    const wanted = normCity(city);
+    const hay = normCity(`${e.city || ''} ${e.place || ''} ${e.location || ''}`);
+    return hay.includes(wanted) || wanted.includes(hay);
+  }
+
+  function eventId(raw){
+    return String(raw || 'ev').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,130) || 'evento';
+  }
+  function allCurated(){
+    let source = [];
+    try{ source = Array.isArray(window.plans) ? window.plans : (typeof plans !== 'undefined' ? plans : []); }catch(e){}
+    return source.filter(p => p && p[8]).map(p => ({
+      id:eventId(`curated_${p[0]}_${p[1]}_${p[7]}`),
+      kind:'curated',
+      title:p[0],
+      when:p[1],
+      desc:p[2],
+      img:p[3],
+      icon:p[4] || '🎟️',
+      place:p[5] || p[7] || '',
+      city:p[7] || 'Buenos Aires',
+      link:p[8] || '',
+      creatorId:'fortyup',
+      creatorName:'FortyUp'
+    }));
+  }
+  function allPublic(){
+    return publicEvents
+      .filter(e => !isEnded(e))
+      .filter(withinOneYear)
+      .map(e => ({
+        id:e.id,
+        kind:'public',
+        title:e.title || 'Plan público',
+        desc:e.desc || e.description || '',
+        dateISO:e.dateISO || e.date || '',
+        time:e.time || e.hour || '',
+        when:e.when || `${e.dateISO || e.date || 'Fecha'}${(e.time || e.hour) ? ' · ' + (e.time || e.hour) : ''}`,
+        city:e.city || 'Buenos Aires',
+        place:e.place || e.location || e.city || '',
+        img:e.img || '',
+        icon:e.icon || '🙋',
+        creatorId:e.creatorId || '',
+        creatorName:e.creatorName || 'Usuario'
+      }));
+  }
+  function allEvents(){ return [...allCurated(), ...allPublic()]; }
+  function register(e){
+    window.fuEventRegistry = window.fuEventRegistry || {};
+    window.fuEventRegistry[e.id] = e;
+    return e;
+  }
+
+  function cityBar(){
+    const override = (()=>{try{return localStorage.getItem('fu_plan_city_override')||''}catch(e){return ''}})();
+    return `<div class="fu-sebas-citybar">
+      <input id="fuCityInlineInput" placeholder="Mirar otra ciudad: Ushuaia, Córdoba..." value="${safe(override)}">
+      <button onclick="setPlanCitySearch(document.getElementById('fuCityInlineInput').value)">Buscar</button>
+      <button onclick="clearPlanCitySearch()">Mi ubicación</button>
+    </div>`;
+  }
+
+  window.setPlanCitySearch = function(v){
+    v = clean(v);
+    try{ v ? localStorage.setItem('fu_plan_city_override', v) : localStorage.removeItem('fu_plan_city_override'); }catch(e){}
+    toast(v ? `Mostrando planes de ${v}` : 'Mostrando tu ubicación');
+    window.renderPlans();
+  };
+  window.clearPlanCitySearch = function(){
+    try{ localStorage.removeItem('fu_plan_city_override'); }catch(e){}
+    toast('Volviste a tu ubicación');
+    window.renderPlans();
+  };
+
+  function featuredCard(e){
+    register(e);
+    const on = isAttending(e.id);
+    const count = attendees(e.id).length;
+    return `<div class="fu-sebas-featured-card" onclick="openFuEventCard('${safe(e.id)}')">
+      <div class="fu-sebas-featured-img" style="${e.img ? `background-image:url('${safe(e.img)}')` : ''}"></div>
+      <div class="fu-sebas-featured-body">
+        <h4>${safe(e.icon || '🎟️')} ${safe(e.title)}</h4>
+        <p>${safe(e.when || 'Fecha a confirmar')}<br>📍 ${safe(e.place || e.city)}</p>
+        <div class="fu-sebas-meta"><span>👥 ${count} asistirán</span></div>
+        <div class="fu-sebas-actions">
+          <button class="fu-sebas-attend ${on?'on':''}" onclick="event.stopPropagation();toggleFuEventAttend('${safe(e.id)}')">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-sebas-chat" onclick="event.stopPropagation();openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  function localCard(e){
+    register(e);
+    const on = isAttending(e.id);
+    const mine = e.creatorId === uid();
+    const count = attendees(e.id).length;
+    return `<div class="fu-sebas-local-card" onclick="openFuEventCard('${safe(e.id)}')" style="cursor:pointer">
+      <div class="fu-sebas-local-body">
+        <h4>${safe(e.icon || '🙋')} ${safe(e.title)}</h4>
+        <p>${safe(e.desc || 'Plan público creado en FortyUp.')}</p>
+        <div class="fu-sebas-meta">
+          <span>📍 ${safe(e.place || e.city)}</span>
+          <span>🕒 ${safe(e.when || 'Fecha a confirmar')}</span>
+          <span>👥 ${count} asistirán</span>
+        </div>
+        <div class="fu-sebas-actions">
+          <button class="fu-sebas-attend ${on?'on':''}" onclick="event.stopPropagation();toggleFuEventAttend('${safe(e.id)}')">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-sebas-chat" onclick="event.stopPropagation();openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+          ${mine ? `<button class="fu-sebas-chat fu-danger-btn" onclick="event.stopPropagation();deleteMyPublicEvent('${safe(e.id)}')">🗑 Borrar</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  window.renderPlans = function(){
+    startData();
+    const list = $('plansList');
+    if(!list) return;
+    const city = activeCity();
+    const cityTop = $('cityTop');
+    if(cityTop) cityTop.textContent = city;
+
+    const featured = allCurated().filter(e => cityMatch(e, city)).slice(0,12);
+    const featuredFinal = featured.length ? featured : allCurated().filter(e => normCity(e.city) === 'buenos aires').slice(0,12);
+    const local = allPublic().filter(e => cityMatch(e, city));
+
+    list.innerHTML = `<div class="fu-sebas-plans-wrap">
+      <section class="fu-sebas-block">
+        <div class="fu-sebas-head">
+          <div>
+            <h3>📍 Planes cerca tuyo</h3>
+            <p>Eventos próximos de acá a un año. Tocá Asistiré para sumarte y habilitar el chat.</p>
+          </div>
+          <span class="fu-sebas-chip">${safe(city)} · 12 meses</span>
+        </div>
+        ${cityBar()}
+        <div class="fu-sebas-featured-row">
+          ${featuredFinal.length ? featuredFinal.map(featuredCard).join('') : `<div class="fu-sebas-empty">No hay planes destacados para ${safe(city)} todavía.</div>`}
+        </div>
+      </section>
+
+      <section class="fu-sebas-create">
+        <h3>＋ Crear evento público</h3>
+        <p>Creá un plan real: tomar mate, ir a un show, caminar, cenar o juntarse. La gente cercana puede poner Asistiré y participar del chat.</p>
+        <button class="fu-sebas-create-btn" onclick="showCreateEventPanel()">Crear evento público</button>
+      </section>
+
+      <section class="fu-sebas-block">
+        <div class="fu-sebas-head">
+          <div>
+            <h3>🙋 Eventos cerca de tu ubicación</h3>
+            <p>Eventos públicos creados por usuarios de FortyUp.</p>
+          </div>
+          <span class="fu-sebas-chip">usuarios FortyUp</span>
+        </div>
+        <div class="fu-sebas-local-list">
+          ${local.length ? local.map(localCard).join('') : `<div class="fu-sebas-empty">No hay eventos cerca de tu ubicación. Cuando un usuario cree un evento público por ${safe(city)}, va a aparecer acá.</div>`}
+        </div>
+      </section>
+    </div>`;
+
+    setTimeout(() => {
+      const input = $('fuCityInlineInput');
+      if(input && !input.__enter){
+        input.__enter = true;
+        input.addEventListener('keydown', ev => {
+          if(ev.key === 'Enter') window.setPlanCitySearch(input.value);
+        });
+      }
+    }, 50);
+  };
+
+  window.showEditPanel = function(){
+    const u = me() || {};
+    openPanel(`<div class="panel-title">✏ Editar perfil</div>
+      <div class="form-group"><label>Nombre</label><input id="editName" value="${safe(u.name || u.n || '')}"></div>
+      <div class="form-group"><label>Ciudad</label><input id="editCity" value="${safe(u.city || u.c || '')}"></div>
+      <div class="form-group"><label>Soy</label>
+        <select id="editGender">
+          <option value="" ${!u.gender?'selected':''}>Elegir...</option>
+          <option value="hombre" ${u.gender==='hombre'?'selected':''}>Hombre</option>
+          <option value="mujer" ${u.gender==='mujer'?'selected':''}>Mujer</option>
+          <option value="otro" ${u.gender==='otro'?'selected':''}>Otro / prefiero no decir</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Me interesan</label>
+        <select id="editInterestedIn">
+          <option value="ambos" ${(!u.interestedIn || u.interestedIn==='ambos')?'selected':''}>Hombres y mujeres</option>
+          <option value="hombres" ${u.interestedIn==='hombres'?'selected':''}>Hombres</option>
+          <option value="mujeres" ${u.interestedIn==='mujeres'?'selected':''}>Mujeres</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Bio</label><textarea id="editBio">${safe(u.bio || '')}</textarea></div>
+      <button class="btn btn-green fu-sticky-save" style="width:100%" onclick="saveEdit()">Guardar perfil</button>`);
+  };
+
+  window.showCreateEventPanel = function(){
+    const city = activeCity();
+    const today = new Date().toISOString().slice(0,10);
+    openPanel(`<div class="panel-title">＋ Crear evento público</div>
+      <div class="fu-form-grid">
+        <div class="form-group full"><label>Qué querés hacer *</label><input id="evTitle" placeholder="Ej: Voy a ver a un artista, ¿quién se suma?"></div>
+        <div class="form-group full"><label>Mensaje / descripción *</label><textarea id="evDesc" placeholder="Contá el plan, si hay entradas, dónde se juntan, qué idea tenés..."></textarea></div>
+        <div class="form-group"><label>Ciudad *</label><input id="evCity" value="${safe(city)}" placeholder="Ej: Córdoba"></div>
+        <div class="form-group"><label>Lugar *</label><input id="evPlace" placeholder="Ej: bar, teatro, estadio, plaza..."></div>
+        <div class="form-group"><label>Día *</label><input id="evDate" type="date" min="${today}"></div>
+        <div class="form-group"><label>Hora *</label><input id="evTime" type="time"></div>
+      </div>
+      <button class="btn btn-green fu-sticky-save" style="width:100%;margin-top:.75rem" onclick="savePublicEvent()">Crear evento</button>
+      <p style="font-size:.75rem;color:var(--muted);line-height:1.45;margin-top:.7rem">El evento será público. Otros usuarios podrán tocar “Asistiré” y entrar al chat del evento.</p>`);
+  };
+
+  window.savePublicEvent = async function(){
+    const d = db(), user = currentUser();
+    if(!d || !user) return toast('Primero iniciá sesión');
+    const title = clean($('evTitle')?.value);
+    const desc = clean($('evDesc')?.value);
+    const city = clean($('evCity')?.value);
+    const place = clean($('evPlace')?.value);
+    const dateISO = clean($('evDate')?.value);
+    const time = clean($('evTime')?.value);
+    if(!title || !desc || !city || !place || !dateISO || !time) return toast('Completá todos los datos del evento');
+
+    const dt = new Date(`${dateISO}T${time}`);
+    if(isNaN(dt.getTime()) || dt.getTime() <= Date.now()) return toast('Elegí una fecha y hora futura');
+
+    try{
+      const ref = await d.collection('publicEvents').add({
+        public:true,
+        ended:false,
+        title, desc, city, place, dateISO, time,
+        when:`${dateISO} · ${time}`,
+        creatorId:user.uid,
+        creatorName:uname(),
+        createdAt:serverTime(),
+        updatedAt:serverTime()
+      });
+      await d.collection('eventAttendance').doc(ref.id).set({
+        eventId:ref.id,
+        attendees:[user.uid],
+        attendeeNames:{[user.uid]:uname()},
+        updatedAt:serverTime()
+      }, {merge:true});
+      closePanel();
+      toast('Evento creado ✅');
+      setTimeout(() => window.renderPlans(), 250);
+    }catch(e){
+      console.error(e);
+      toast('No pude crear el evento');
+    }
+  };
+
+  async function notifyCreatorIfNeeded(eventId, joiningUid, joiningName){
+    const d = db();
+    if(!d || !joiningUid) return;
+    try{
+      const ev = await d.collection('publicEvents').doc(eventId).get();
+      if(!ev.exists) return;
+      const e = ev.data() || {};
+      if(!e.creatorId || e.creatorId === joiningUid) return;
+      await createNotification(e.creatorId, `event_join_${eventId}_${joiningUid}`, {
+        type:'event_join',
+        eventId,
+        eventTitle:e.title || 'tu evento',
+        fromUid:joiningUid,
+        fromName:joiningName || 'Un usuario',
+        text:`${joiningName || 'Un usuario'} se sumó a tu evento: ${e.title || 'tu evento'}`
+      });
+    }catch(err){ console.warn('notifyCreatorIfNeeded', err); }
+  }
+
+  window.toggleFuEventAttend = async function(id){
+    const d = db(), user = currentUser();
+    if(!d || !user) return toast('Primero iniciá sesión');
+
+    const on = isAttending(id);
+    try{
+      const payload = on
+        ? {attendees:arrRemove(user.uid), [`attendeeNames.${user.uid}`]:delField(), updatedAt:serverTime()}
+        : {attendees:arrUnion(user.uid), [`attendeeNames.${user.uid}`]:uname(), updatedAt:serverTime()};
+      await d.collection('eventAttendance').doc(id).set(payload, {merge:true});
+      if(!on) await notifyCreatorIfNeeded(id, user.uid, uname());
+      toast(on ? 'Cancelaste tu asistencia' : 'Te sumaste al evento ✅');
+      setTimeout(() => {
+        window.renderPlans();
+        if($('profilePanel')?.classList.contains('open') && $('fuEventsPanelRoot')) window.showEventosPanel();
+      }, 200);
+    }catch(e){
+      console.error(e);
+      toast('No pude actualizar asistencia');
+    }
+  };
+
+  window.deleteMyPublicEvent = async function(id){
+    const e = allPublic().find(x => x.id === id) || publicEvents.find(x => x.id === id);
+    if(!e || e.creatorId !== uid()) return toast('Solo podés borrar eventos creados por vos');
+    if(!confirm('¿Borrar este evento público?')) return;
+    try{
+      await db().collection('publicEvents').doc(id).delete();
+      await db().collection('eventAttendance').doc(id).delete().catch(()=>{});
+      toast('Evento borrado');
+      setTimeout(() => {
+        window.renderPlans();
+        if($('profilePanel')?.classList.contains('open')) window.showEventosPanel();
+      }, 250);
+    }catch(err){
+      console.error(err);
+      toast('No pude borrar el evento');
+    }
+  };
+
+  window.openFuEventCard = function(id){
+    const e = (window.fuEventRegistry || {})[id] || allEvents().find(x => x.id === id);
+    if(!e) return toast('No encontré el evento');
+    register(e);
+    const ended = isEnded(e);
+    const on = isAttending(id);
+    const names = Object.values(attendeeNames(id));
+    openPanel(`<div class="panel-title">🎟️ Evento</div>
+      <div class="fu-event-detail-full">
+        <h3>${safe(e.icon || '🎟️')} ${safe(e.title)}</h3>
+        <span class="${ended ? 'fu-event-status-ended' : 'fu-event-status-live'}">${ended ? 'Finalizado' : 'Disponible'}</span>
+        <p><strong>📍 Lugar:</strong> ${safe(e.place || e.city || 'Sin lugar')}</p>
+        <p><strong>🕒 Fecha y hora:</strong> ${safe(e.when || 'Fecha a confirmar')}</p>
+        <p>${safe(e.desc || 'Evento para conectar con usuarios de FortyUp.')}</p>
+        <p style="font-weight:900;color:var(--muted)">Asisten: ${names.length ? names.map(safe).join(', ') : attendees(id).length}</p>
+        <div class="fu-sebas-actions">
+          ${!ended ? `<button class="fu-sebas-attend ${on?'on':''}" onclick="toggleFuEventAttend('${safe(id)}')">${on?'✓ Asistiré':'Asistiré'}</button>` : ''}
+          ${!ended ? `<button class="fu-sebas-chat" onclick="openFuEventChat('${safe(id)}')">💬 Chat del evento</button>` : ''}
+          ${e.link ? `<button class="fu-sebas-chat" onclick="window.open('${safe(e.link)}','_blank')">Ver fuente</button>` : ''}
+          ${e.creatorId === uid() ? `<button class="fu-sebas-chat fu-danger-btn" onclick="deleteMyPublicEvent('${safe(id)}')">🗑 Borrar</button>` : ''}
+        </div>
+      </div>`);
+  };
+
+  window.openFuEventChat = function(id){
+    const e = (window.fuEventRegistry || {})[id] || allEvents().find(x => x.id === id);
+    if(!e) return toast('No encontré el evento');
+    if(isEnded(e)) return toast('Este evento ya finalizó');
+    if(!isAttending(id)) return toast('Primero tocá Asistiré para entrar al chat del evento');
+    const names = Object.values(attendeeNames(id));
+    openPanel(`<div class="panel-title">💬 Chat del evento</div>
+      <div class="fu-event-detail-full">
+        <h3>${safe(e.title)}</h3>
+        <p style="font-weight:900;color:var(--muted)">Van: ${names.length ? names.map(safe).join(', ') : 'Todavía no hay otros usuarios anotados.'}</p>
+        <div class="empty"><div class="empty-ico">💬</div><p>Chat del evento habilitado. Próximo paso: mensajes en tiempo real dentro de este evento.</p></div>
+        <button class="btn btn-out" style="width:100%;margin-top:.7rem" onclick="openFuEventCard('${safe(id)}')">← Volver al evento</button>
+      </div>`);
+  };
+
+  async function markNotificationsRead(){
+    const d = db(), u = currentUser();
+    if(!d || !u) return;
+    try{
+      const qs = await d.collection('userNotifications').doc(u.uid).collection('items').where('read','==',false).get();
+      if(qs.empty) return;
+      const batch = d.batch();
+      qs.forEach(doc => batch.set(doc.ref, {read:true, readAt:serverTime()}, {merge:true}));
+      await batch.commit();
+    }catch(e){ console.warn('markNotificationsRead', e); }
+  }
+
+  function eventProfileCard(e){
+    const mine = e.creatorId === uid();
+    return `<div class="fu-profile-event-card">
+      <h4>${safe(e.icon || '🎟️')} ${safe(e.title)}</h4>
+      <p style="font-size:.78rem;color:var(--muted);font-weight:800">📍 ${safe(e.place || e.city || '')} · ${safe(e.when || '')}</p>
+      <div class="fu-sebas-actions">
+        <button class="fu-sebas-chat" onclick="openFuEventCard('${safe(e.id)}')">Ver</button>
+        <button class="fu-sebas-chat" onclick="openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+        ${mine ? `<button class="fu-sebas-chat fu-danger-btn" onclick="deleteMyPublicEvent('${safe(e.id)}')">🗑 Borrar</button>` : ''}
+      </div>
+    </div>`;
+  }
+
+  window.showEventosPanel = function(){
+    startData();
+    markNotificationsRead();
+    const created = allPublic().filter(e => e.creatorId === uid());
+    const attending = allEvents().filter(e => isAttending(e.id));
+    openPanel(`<div id="fuEventsPanelRoot">
+      <div class="panel-title">📅 Mis eventos</div>
+      <div class="fu-tabs-events">
+        <button id="fuTabAttend" class="active" onclick="fuShowEventTab('attend')">Asistiré (${attending.length})</button>
+        <button id="fuTabCreated" onclick="fuShowEventTab('created')">Creados por mí (${created.length})</button>
+      </div>
+      <div id="fuEventsAttend" class="fu-events-tab-body active">
+        ${attending.length ? attending.map(eventProfileCard).join('') : `<div class="empty"><div class="empty-ico">📅</div><p>Todavía no marcaste asistencia a ningún evento.</p></div>`}
+      </div>
+      <div id="fuEventsCreated" class="fu-events-tab-body">
+        ${created.length ? created.map(eventProfileCard).join('') : `<div class="empty"><div class="empty-ico">＋</div><p>Todavía no creaste eventos públicos.</p><button class="fu-sebas-create-btn" onclick="showCreateEventPanel()">Crear evento público</button></div>`}
+      </div>
+    </div>`);
+  };
+
+  window.fuShowEventTab = function(tab){
+    const showCreated = tab === 'created';
+    $('fuEventsAttend')?.classList.toggle('active', !showCreated);
+    $('fuEventsCreated')?.classList.toggle('active', showCreated);
+    $('fuTabAttend')?.classList.toggle('active', !showCreated);
+    $('fuTabCreated')?.classList.toggle('active', showCreated);
+  };
+
+  startData();
+  setTimeout(listenNotifications, 900);
+  if(auth()) auth().onAuthStateChanged(() => setTimeout(() => { listenNotifications(); startData(); }, 500));
+  setInterval(cleanupExpiredEvents, 60 * 1000);
+})();
+</script>
+
 </body>
 </html>
