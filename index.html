@@ -638,6 +638,63 @@ body.chat-open #bottomNav{
   font-weight:800;
 }
 
+
+/* === FortyUp FINAL: eventos limpios, paginación, fortis amarillos === */
+.plans-toolbar{
+  display:grid;
+  grid-template-columns:1.2fr .85fr .85fr;
+  gap:.65rem;
+  margin:.8rem 0 1rem;
+}
+.plans-toolbar input,.plans-toolbar select{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  padding:.75rem .9rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.86rem;
+  color:var(--txt);
+  outline:none;
+}
+.plans-toolbar input:focus,.plans-toolbar select:focus{
+  border-color:#10B981;
+  box-shadow:0 0 0 3px rgba(16,185,129,.12);
+}
+.event-count{
+  color:var(--muted);
+  font-size:.78rem;
+  font-weight:900;
+  margin:.25rem 0 .7rem;
+}
+.plans-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  margin:1rem 0 5.8rem;
+  flex-wrap:wrap;
+}
+.page-btn{
+  min-width:38px;height:38px;border-radius:50px;
+  border:1.5px solid var(--line);
+  background:#fff;color:var(--g);
+  font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;box-shadow:0 6px 18px rgba(6,78,59,.06);
+}
+.page-btn.active{
+  background:linear-gradient(135deg,#064E3B,#10B981);
+  color:#fff;border-color:transparent;
+}
+.page-btn:disabled{opacity:.35;cursor:not-allowed}
+.match-icon.forti-yellow{
+  color:#F2B705;
+  text-shadow:0 0 18px rgba(242,183,5,.55), 0 5px 18px rgba(0,0,0,.25);
+  letter-spacing:-.35rem;
+}
+.forti-yellow-text{color:#F2B705;font-weight:900}
+@media(max-width:640px){.plans-toolbar{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -702,15 +759,9 @@ body.chat-open #bottomNav{
       <span style="font-size:1rem">🔍</span>
       <input type="text" placeholder="Buscar planes..." oninput="renderPlans(this.value)">
     </div>
-    <div class="live-events-box">
-      <h3>Eventos en vivo en tu zona</h3>
-      <p>Estos eventos son externos, pero FortyUp te permite marcar “Asistiré” dentro de la app y verlos en Mis eventos.</p>
-      <div class="live-actions">
-        <button class="live-eventbrite" onclick="openEventbrite()">Eventbrite</button>
-        <button class="live-google" onclick="openGoogleEvents()">Google eventos</button>
-      </div>
-    </div>
+    <div id="plansControls"></div>
     <div id="plansList"></div>
+    <div id="plansPagination"></div>
   </div>
 </div>
 
@@ -895,26 +946,24 @@ function previewRegisterPhoto(input){const f=input.files&&input.files[0];const i
 
 // ── Data ──
 const plans=[
-  ['Degustación de vinos','Bodega X · Hoy, 20:00','Una experiencia para disfrutar buenos vinos y conocer gente copada.','https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=600&auto=format&fit=crop','🍷','1.8 km','12 asistirán','Córdoba'],
-  ['Café tranqui','Hoy, 18:00 · Centro','Me gustaría charlar tranqui esta tarde. ¿Te sumás?','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop','☕','Centro','3 interesados','Córdoba'],
-  ['Caminata suave','Mañana, 10:00 · Parque','Busco compañeros/as para una caminata suave.','https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=600&auto=format&fit=crop','🌿','3.2 km','5 anotados','Mendoza'],
-  ['Clase de tango','Miércoles, 19:00','Principiantes bienvenidos. Aprendemos juntos.','https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop','💃','500 m','8 inscriptos','Buenos Aires'],
-  ['Asado en grupo','Sábado 13:00','Juntamos gente para un asado tranqui.','https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop','🔥','4 km','6 confirmados','Rosario'],
+  ['Martin Garrix','Movistar Arena · 16 mayo 2026, 21:00','Show internacional de música electrónica. Evento real con entradas desde la web oficial del Movistar Arena.','https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop','🎧','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/show/e3fd9108-83fe-46b2-8779-f6cbb651eeee','2026-05-16T21:00:00','Música'],
+  ['Jonas Brothers','Movistar Arena · 05 mayo 2026','Concierto en Buenos Aires. Ideal para quienes buscan una salida musical grande.','https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop','🎵','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows','2026-05-05T21:00:00','Música'],
+  ['Divididos','Movistar Arena · 09 mayo 2026','Rock argentino en vivo en Movistar Arena.','https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=900&auto=format&fit=crop','🎸','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows','2026-05-09T21:00:00','Música'],
+  ['Fito Páez','Movistar Arena · 20 mayo 2026','Show musical en Buenos Aires.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop','🎹','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows','2026-05-20T21:00:00','Música'],
+  ['Mon Laferte','Movistar Arena · 21 mayo 2026','Concierto en Buenos Aires.','https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?q=80&w=900&auto=format&fit=crop','🎤','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows','2026-05-21T21:00:00','Música'],
+  ['Teatro y salida después','Teatro Metropolitan · 25 mayo 2026, 20:00','Plan cultural para ir acompañado y compartir algo después.','https://images.unsplash.com/photo-1503095396549-807759245b35?q=80&w=900&auto=format&fit=crop','🎭','Buenos Aires','0 asistirán','Buenos Aires','https://www.plateanet.com/','2026-05-25T20:00:00','Teatro'],
+  ['Café con historias','Centro Cultural Borges · 24 mayo 2026, 18:00','Encuentro cultural ideal para charla, café y nuevas conexiones.','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=900&auto=format&fit=crop','☕','Buenos Aires','0 asistirán','Buenos Aires','https://www.ccborges.org.ar/','2026-05-24T18:00:00','Café'],
+  ['Noche de tango','CABA · 26 mayo 2026, 21:00','Cena, música y tango para compartir una salida diferente.','https://images.unsplash.com/photo-1519923834699-ef0b7cde4712?q=80&w=900&auto=format&fit=crop','💃','Buenos Aires','0 asistirán','Buenos Aires','https://www.google.com/search?q=noche+de+tango+buenos+aires+mayo+2026','2026-05-26T21:00:00','Música'],
+  ['Feria gastronómica','Palermo · 27 mayo 2026, 19:00','Recorrido gastronómico para conocer gente y probar algo distinto.','https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=900&auto=format&fit=crop','🍽️','Buenos Aires','0 asistirán','Buenos Aires','https://www.google.com/search?q=feria+gastronomica+palermo+mayo+2026','2026-05-27T19:00:00','Gastronomía'],
+  ['Cata de vinos','Mendoza · 18 mayo 2026, 19:30','Cata guiada para compartir una experiencia tranquila.','https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=900&auto=format&fit=crop','🍷','Mendoza','0 asistirán','Mendoza','https://www.google.com/search?q=cata+de+vinos+mendoza+mayo+2026','2026-05-18T19:30:00','Vino'],
+  ['Música en vivo','Mendoza · 22 mayo 2026, 21:00','Música, copa y charla para mayores de 40.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop','🎵','Mendoza','0 asistirán','Mendoza','https://www.google.com/search?q=musica+en+vivo+mendoza+mayo+2026','2026-05-22T21:00:00','Música'],
+  ['Caminata urbana','Parque General San Martín · 23 mayo 2026, 10:00','Plan al aire libre para conectar sin presión.','https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=900&auto=format&fit=crop','🥾','Mendoza','0 asistirán','Mendoza','https://www.google.com/search?q=caminata+parque+san+martin+mendoza','2026-05-23T10:00:00','Aire libre'],
+  ['Café frente al Beagle','Ushuaia · 19 mayo 2026, 17:30','Café y charla para conocer gente de la zona.','https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=900&auto=format&fit=crop','☕','Ushuaia','0 asistirán','Ushuaia','https://www.google.com/search?q=cafe+ushuaia+eventos+mayo+2026','2026-05-19T17:30:00','Café'],
+  ['Caminata por la costa','Ushuaia · 24 mayo 2026, 11:00','Plan simple para compartir aire libre y conversación.','https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=900&auto=format&fit=crop','🥾','Ushuaia','0 asistirán','Ushuaia','https://www.google.com/search?q=caminata+ushuaia+mayo+2026','2026-05-24T11:00:00','Aire libre']
 ];
+let currentPlansPage=1;
+const plansPerPage=4;
 
-
-
-const curatedRealEvents=[
-  ['Martin Garrix','Movistar Arena · 16 mayo 2026, 21:00','Show internacional de música electrónica. Evento real con entradas desde la web oficial del Movistar Arena.','https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop','🎧','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/show/e3fd9108-83fe-46b2-8779-f6cbb651eeee'],
-  ['Jonas Brothers','Movistar Arena · 05 mayo 2026','Concierto en Buenos Aires. Ideal para quienes buscan una salida musical grande.','https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop','🎵','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
-  ['Divididos','Movistar Arena · 09 mayo 2026','Rock argentino en vivo en Movistar Arena.','https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=900&auto=format&fit=crop','🎸','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
-  ['Fito Páez','Movistar Arena · 20 mayo 2026','Show musical en Buenos Aires.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop','🎹','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
-  ['Mon Laferte','Movistar Arena · 21 mayo 2026','Concierto en Buenos Aires.','https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?q=80&w=900&auto=format&fit=crop','🎤','Buenos Aires','0 asistirán','Buenos Aires','https://www.movistararena.com.ar/shows'],
-  ['Vinito Sessions','Eventbrite · 23 mayo 2026, 21:00','Vino, música y momentos. Evento externo curado para usarlo como plan dentro de FortyUp.','https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=900&auto=format&fit=crop','🍷','Buenos Aires','0 asistirán','Buenos Aires','https://www.eventbrite.com.ar/d/argentina--buenos-aires/mayo/']
-];
-curatedRealEvents.forEach(ev=>{
-  if(!plans.some(p=>p[0]===ev[0] && p[7]===ev[7])) plans.unshift(ev);
-});
 
 const defaultProfiles=[
   {id:'p1',n:'Carmen',a:52,c:'Córdoba',img:'https://randomuser.me/api/portraits/women/68.jpg',tags:['Viajes','Cocina'],bio:'Me encanta cocinar y conocer gente nueva.',intent:'Hacer planes'},
@@ -1033,8 +1082,8 @@ function boot(){
     $('mePhoto').src=u.photo||'';
     $('meNameAge').textContent=`${u.name}, ${u.age}`;
     $('meCity').textContent=u.city;
-    $('sentFortis').textContent=u.fortisSent||0;
-    $('recFortis').textContent=u.fortisRec||0;
+    syncFortiCounts();
+    
     $('superCount').textContent=availableSuper();
     $('meSuperCount').textContent=availableSuper();
     
@@ -1047,6 +1096,7 @@ function boot(){
     // Check unread messages
     updateMsgDot();
     syncSuperUI();
+    syncFortiCounts();
     if(!u.lat) setTimeout(requestGPS,1500);
     // Restore last page on refresh
     let lastPage='home';
@@ -1171,9 +1221,54 @@ function openExternalEvent(url){
 function renderPlans(q=''){
   const city=userCity();
   $('cityTop').textContent=city;
-  q=(q||'').toLowerCase();
-  const filtered=plans.filter(p=>p[7]===city&&p.join(' ').toLowerCase().includes(q));
-  const show=filtered.length?filtered:plans.filter(p=>p.join(' ').toLowerCase().includes(q));
+
+  const controls=$('plansControls');
+  if(controls && !controls.dataset.ready){
+    controls.dataset.ready='1';
+    controls.innerHTML=`
+      <div class="plans-toolbar">
+        <input id="eventSearch" placeholder="Buscar evento..." oninput="currentPlansPage=1;renderPlans()">
+        <select id="eventCity" onchange="currentPlansPage=1;renderPlans()">
+          <option value="actual">Mi ciudad / zona</option>
+          <option value="todas">Todas las ciudades</option>
+          <option value="Buenos Aires">Buenos Aires</option>
+          <option value="Mendoza">Mendoza</option>
+          <option value="Ushuaia">Ushuaia</option>
+        </select>
+        <select id="eventCat" onchange="currentPlansPage=1;renderPlans()">
+          <option value="">Todas las categorías</option>
+          <option value="Música">Música</option>
+          <option value="Teatro">Teatro</option>
+          <option value="Café">Café</option>
+          <option value="Vino">Vino</option>
+          <option value="Gastronomía">Gastronomía</option>
+          <option value="Aire libre">Aire libre</option>
+        </select>
+      </div>
+      <div class="event-count" id="eventCount"></div>
+    `;
+  }
+
+  const now=new Date();
+  const search=(($('eventSearch')&&$('eventSearch').value)||q||'').toLowerCase();
+  const cityFilter=($('eventCity')&&$('eventCity').value)||'actual';
+  const catFilter=($('eventCat')&&$('eventCat').value)||'';
+
+  let filtered=plans.filter(p=>{
+    const eventDate=new Date(p[9]);
+    const isFuture=!isNaN(eventDate) && eventDate>=now;
+    const matchCity=cityFilter==='todas' ? true : cityFilter==='actual' ? p[7]===city : p[7]===cityFilter;
+    const matchCat=!catFilter || (p[10]||'').toLowerCase()===catFilter.toLowerCase();
+    const matchSearch=!search || p.join(' ').toLowerCase().includes(search);
+    return isFuture && matchCity && matchCat && matchSearch;
+  }).sort((a,b)=>new Date(a[9])-new Date(b[9]));
+
+  const totalPages=Math.max(1,Math.ceil(filtered.length/plansPerPage));
+  if(currentPlansPage>totalPages) currentPlansPage=totalPages;
+  const start=(currentPlansPage-1)*plansPerPage;
+  const show=filtered.slice(start,start+plansPerPage);
+
+  if($('eventCount')) $('eventCount').textContent=`${filtered.length} eventos futuros encontrados · Página ${currentPlansPage} de ${totalPages}`;
 
   $('plansList').innerHTML=show.length?show.map(p=>{
     const eventId=eventIdFromPlan(p);
@@ -1185,7 +1280,7 @@ function renderPlans(q=''){
     <div class="card plan-card">
       <img src="${p[3]}" loading="lazy" alt="${escHtml(p[0])}" style="width:100%;height:160px;object-fit:cover">
       <div class="plan-card-body">
-        <span class="event-source">${link?'🌐 Evento real curado':'🌿 Plan FortyUp'}</span>
+        <span class="event-source">🌐 Evento real curado</span>
         <h3>${p[4]} ${escHtml(p[0])}</h3>
         <div class="plan-cat">${p[1]}</div>
         <p>${escHtml(p[2])}</p>
@@ -1195,13 +1290,24 @@ function renderPlans(q=''){
           <span>${isAtt?'Estás anotado':'Anotate y aparece en Mis eventos'}</span>
         </div>
         <button class="btn btn-green attend-btn ${isAtt?'attending':''}"
-          onclick="toggleAttend('${eventId}','${p[0].replace(/'/g,"\'")}','${p[1].replace(/'/g,"\'")}','${p[3]}','${p[7]}','${link}')">
+          onclick="toggleAttend('${eventId}','${p[0].replace(/'/g,"\\'")}','${p[1].replace(/'/g,"\\'")}','${p[3]}','${p[7]}','${link}')">
           ${isAtt?'✓ Asistiré':'Asistiré'}
         </button>
         ${link?`<button class="event-link-btn" onclick="openExternalEvent('${link}')">Ver entradas / fuente</button>`:''}
       </div>
     </div>`}).join('')
-  :'<div class="empty"><div class="empty-ico">📅</div><p>No hay planes en tu ciudad todavía.<br>¡Sé el primero en crear uno!</p></div>';
+  :'<div class="empty"><div class="empty-ico">📅</div><p>No hay eventos futuros con esos filtros.</p></div>';
+
+  const pag=$('plansPagination');
+  if(pag){
+    pag.className='plans-pagination';
+    let buttons=`<button class="page-btn" ${currentPlansPage===1?'disabled':''} onclick="currentPlansPage--;renderPlans()">‹</button>`;
+    for(let i=1;i<=totalPages;i++){
+      buttons+=`<button class="page-btn ${i===currentPlansPage?'active':''}" onclick="currentPlansPage=${i};renderPlans()">${i}</button>`;
+    }
+    buttons+=`<button class="page-btn" ${currentPlansPage===totalPages?'disabled':''} onclick="currentPlansPage++;renderPlans()">›</button>`;
+    pag.innerHTML=buttons;
+  }
 }
 
 // ── Render Profiles ──
@@ -1268,8 +1374,8 @@ function renderMe(){
   $('mePhoto').src=u.photo||'';
   $('meNameAge').textContent=`${u.name}, ${u.age}`;
   $('meCity').textContent=u.city;
-  $('sentFortis').textContent=u.fortisSent||0;
-  $('recFortis').textContent=u.fortisRec||0;
+  syncFortiCounts();
+  
   $('meSuperCount').textContent=availableSuper();
 }
 
@@ -1513,23 +1619,64 @@ function updateMsgDot(){
 }
 
 // ── Fortis & Super ──
+
+function getFortiRecords(){
+  return load('fu_forti_records',{sent:[],received:[]});
+}
+function setFortiRecords(v){
+  store('fu_forti_records',v);
+}
+function syncFortiCounts(){
+  const u=me();
+  if(!u)return;
+  const r=getFortiRecords();
+  u.fortisSent=(r.sent||[]).length;
+  u.fortisRec=(r.received||[]).length;
+  setMe(u);
+  const s=$('sentFortis'); if(s)s.textContent=u.fortisSent;
+  const rec=$('recFortis'); if(rec)rec.textContent=u.fortisRec;
+}
+function getProfileById(pid){
+  return allProfiles().find(p=>p.id===pid)||null;
+}
+function showFortiMatch(p){
+  $('matchIcon').textContent='◆◆◆';
+  $('matchIcon').classList.add('forti-yellow');
+  $('matchTitle').textContent='¡Match de Fortis!';
+  $('matchText').innerHTML=`Vos y ${escHtml(p.n||p.name)} se mandaron <span class="forti-yellow-text">Fortis amarillos</span>. ¡Ya pueden charlar!`;
+  $('matchPopup').classList.add('show');
+}
+
 function sendForti(pid){
   const u=me();
   if(!u) return openAuth();
-  const fortis=getFortis();
-  if(fortis.includes(pid)){toast('Ya le mandaste un Forti ◆');return}
-  fortis.push(pid);
-  setFortis(fortis);
-  u.fortisSent=(u.fortisSent||0)+1;
-  setMe(u);
-  renderMe();
-  toast('¡Forti enviado! ◆');
-  // Check mutual forti (simplified)
-  const profs=allProfiles();
-  const other=profs.find(p=>p.id===pid);
-  if(other&&Math.random()>0.5){
-    setTimeout(()=>showMatch(other),800);
+
+  const p=getProfileById(pid);
+  if(!p){toast('No se encontró el perfil');return}
+
+  const r=getFortiRecords();
+  r.sent=r.sent||[];
+  r.received=r.received||[];
+
+  if(r.sent.includes(pid)){
+    toast('Ya le mandaste un Forti amarillo ◆');
+    return;
   }
+
+  r.sent.push(pid);
+
+  // Demo local: simulamos devolución del Forti de la misma persona para probar match.
+  // En Firebase real esto vendrá del otro usuario.
+  if(!r.received.includes(pid)){
+    r.received.push(pid);
+    setTimeout(()=>showFortiMatch(p),700);
+  }
+
+  setFortiRecords(r);
+  setFortis(r.sent);
+  syncFortiCounts();
+  renderMe();
+  toast(`Forti amarillo enviado a ${p.n||p.name} ◆`);
 }
 
 function canSendSuper(){
@@ -1554,32 +1701,29 @@ function sendSuper(pid){
   const u=me();
   if(!u) return openAuth();
 
+  syncSuperUI();
+
   if(!canSendSuper()){
-    syncSuperUI();
-    toast('Ya usaste tu Súper Diamante de hoy. Volvé mañana 💎');
+    toast('No tenés más Súper Diamantes. Volvé mañana 💎');
     return;
   }
 
-  const toUser = profilesForCity().find(p => p.id === pid);
+  const toUser=allProfiles().find(p=>p.id===pid);
   if(!toUser){
-    toast('Error al enviar');
+    toast('No se encontró el perfil');
     return;
   }
 
-  store('fu_last_super', new Date().toISOString());
-
-  u.super = 0;
+  store('fu_last_super',new Date().toISOString());
+  u.super=0;
   setMe(u);
   syncSuperUI();
 
-  addNoti(
-    'super',
-    'Súper diamante enviado',
-    `Le enviaste un 💎 a ${toUser.n}`,
-    { id: toUser.id, n: toUser.n, img: toUser.img }
-  );
+  const sent=load('fu_super_sent',[]);
+  sent.push({to:pid,name:toUser.n||toUser.name,img:toUser.img||toUser.photo||'',at:new Date().toISOString()});
+  store('fu_super_sent',sent);
 
-  toast(`💎 Enviado a ${toUser.n}`);
+  toast(`💎 Súper Diamante enviado a ${toUser.n||toUser.name}`);
 }
 
 function toggleFav(pid){
@@ -1605,12 +1749,9 @@ function reportProfile(pid){
 
 // ── Match popup ──
 function showMatch(p){
-  $('matchIcon').textContent='◆';
-  $('matchTitle').textContent='¡Conexión FortyUp!';
-  $('matchText').textContent=`Vos y ${p.n||p.name} se mandaron un Forti mutuamente. ¡Chateá ahora!`;
-  $('matchPopup').classList.add('show');
+  showFortiMatch(p);
 }
-function closeMatch(){$('matchPopup').classList.remove('show')}
+function closeMatch(){$('matchPopup').classList.remove('show');$('matchIcon').classList.remove('forti-yellow')}
 
 // ── Profile panel ──
 function openPanel(p){
@@ -1644,17 +1785,22 @@ function closePanel(){$('profilePanel').classList.remove('open')}
 
 // ── Mi perfil panels ──
 function showFortisPanel(){
-  const fortis=getFortis();
+  const r=getFortiRecords();
   const profs=allProfiles();
+  const row=(pid,label)=>{
+    const p=profs.find(x=>x.id===pid)||{n:pid,img:''};
+    return `<div class="msg-item">
+      <img class="msg-avatar" src="${p.img||''}" alt="">
+      <div class="msg-info"><div class="msg-name">${escHtml(p.n||p.name||pid)}</div><div class="msg-preview"><span class="forti-yellow-text">◆</span> ${label}</div></div>
+    </div>`;
+  };
   $('panelContent').innerHTML=`
-    <div class="panel-title">◆ Mis Fortis</div>
-    ${fortis.length?fortis.map(pid=>{
-      const p=profs.find(x=>x.id===pid)||{n:pid,img:''};
-      return `<div class="msg-item">
-        <img class="msg-avatar" src="${p.img||''}" alt="">
-        <div class="msg-info"><div class="msg-name">${escHtml(p.n||p.name||pid)}</div><div class="msg-preview">◆ Forti enviado</div></div>
-      </div>`;
-    }).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no mandaste Fortis</p></div>'}`;
+    <div class="panel-title"><span class="forti-yellow-text">◆</span> Mis Fortis</div>
+    <div style="font-weight:900;color:var(--g);margin:.5rem 0">Enviados (${(r.sent||[]).length})</div>
+    ${(r.sent||[]).length?(r.sent||[]).map(pid=>row(pid,'Forti enviado')).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no mandaste Fortis</p></div>'}
+    <div style="font-weight:900;color:var(--g);margin:1rem 0 .5rem">Recibidos (${(r.received||[]).length})</div>
+    ${(r.received||[]).length?(r.received||[]).map(pid=>row(pid,'Forti recibido')).join(''):'<div class="empty"><div class="empty-ico">◆</div><p>Todavía no recibiste Fortis</p></div>'}
+  `;
   $('profilePanel').classList.add('open');
 }
 
