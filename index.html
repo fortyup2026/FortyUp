@@ -8300,5 +8300,87 @@ button.fu-attend-fixed-on{
 })();
 </script>
 
+
+<script id="fuAttendUnified">
+(function(){
+  const LS_ATT = "fu_events_attending_v2";
+  const LS_CREATED = "fu_events_created_v2";
+
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+  function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+  function uid(){
+    try{
+      if(window.fuAuth && fuAuth.currentUser) return fuAuth.currentUser.uid;
+      if(window.firebase && firebase.auth().currentUser) return firebase.auth().currentUser.uid;
+    }catch(e){}
+    try{
+      const u = JSON.parse(localStorage.getItem("fu_user"));
+      return u?.uid || u?.id || "";
+    }catch(e){}
+    return "";
+  }
+
+  function getEventId(p){
+    return (p[0]+p[1]+p[7]).toLowerCase().replace(/[^a-z0-9]/g,"");
+  }
+
+  function attending(){ return load(LS_ATT,{}); }
+  function isAttending(id){
+    const u=uid();
+    return (attending()[id]||[]).includes(u);
+  }
+
+  function toggleAttend(id){
+    const u=uid();
+    if(!u){alert("Iniciá sesión");return;}
+    const data = attending();
+    data[id] = data[id] || [];
+    if(data[id].includes(u)){
+      data[id] = data[id].filter(x=>x!==u);
+    }else{
+      data[id].push(u);
+    }
+    save(LS_ATT,data);
+    renderPlans();
+    renderMyEvents();
+  }
+
+  function renderMyEvents(){
+    const container = document.getElementById("panelContent");
+    if(!container) return;
+    const att = attending();
+    let html = "<h3>📅 Mis eventos</h3><h4>Voy a ir</h4>";
+    (window.plans||[]).forEach(p=>{
+      const id=getEventId(p);
+      if(isAttending(id)){
+        html+=`<div>${p[0]} - ${p[1]}</div>`;
+      }
+    });
+    container.innerHTML = html;
+  }
+
+  window.toggleFuEventAttend = toggleAttend;
+
+  const oldRender = window.renderPlans;
+  window.renderPlans = function(){
+    oldRender();
+    setTimeout(()=>{
+      document.querySelectorAll(".plan-card").forEach((card,i)=>{
+        const p = plans[i];
+        const id = getEventId(p);
+        let btn = card.querySelector(".attend-btn");
+        if(!btn){
+          btn = document.createElement("button");
+          btn.className="attend-btn";
+          card.appendChild(btn);
+        }
+        btn.textContent = isAttending(id) ? "✓ Asistiré" : "Asistiré";
+        btn.onclick = ()=>toggleAttend(id);
+      });
+    },200);
+  };
+})();
+</script>
+
 </body>
 </html>
