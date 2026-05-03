@@ -6489,5 +6489,670 @@ setInterval(enhanceProfiles,1500);
 })();
 </script>
 
+
+<style id="fuNotifyProFinalStyle">
+/* === FortyUp Notificaciones PRO Final === */
+.fu-pro-bell{
+  position:fixed;
+  right:.85rem;
+  bottom:calc(4.75rem + env(safe-area-inset-bottom,0px));
+  width:46px;
+  height:46px;
+  border-radius:999px;
+  border:1.5px solid var(--line);
+  background:rgba(255,253,247,.96);
+  color:var(--g);
+  box-shadow:0 12px 28px rgba(6,78,59,.18);
+  z-index:99996;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:1.25rem;
+  cursor:pointer;
+  backdrop-filter:blur(16px);
+}
+.fu-pro-bell.show{display:flex}
+body.chat-open .fu-pro-bell{display:none!important}
+.fu-pro-bell-count{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  min-width:20px;
+  height:20px;
+  padding:0 .25rem;
+  border-radius:999px;
+  background:var(--red);
+  color:#fff;
+  border:2px solid var(--cream);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:.62rem;
+  font-weight:1000;
+}
+.fu-pro-bell-count.show{display:flex}
+.fu-pro-bell.pulse{
+  animation:fuBellPulse .7s ease both;
+}
+@keyframes fuBellPulse{
+  0%{transform:scale(1)}
+  35%{transform:scale(1.13)}
+  70%{transform:scale(.97)}
+  100%{transform:scale(1)}
+}
+.fu-pro-notify-panel{
+  position:fixed;
+  inset:0;
+  z-index:100001;
+  display:none;
+  align-items:flex-end;
+  background:rgba(4,47,37,.72);
+  backdrop-filter:blur(10px);
+}
+.fu-pro-notify-panel.open{display:flex}
+.fu-pro-notify-sheet{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  max-height:88dvh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--cream);
+  border-radius:30px 30px 0 0;
+  padding:1rem 1rem calc(1.5rem + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -16px 42px rgba(0,0,0,.22);
+}
+.fu-pro-notify-handle{
+  width:42px;
+  height:4px;
+  border-radius:999px;
+  background:var(--line);
+  margin:0 auto .9rem;
+}
+.fu-pro-notify-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.7rem;
+  margin-bottom:.9rem;
+}
+.fu-pro-notify-head h3{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.28rem;
+  margin:0;
+}
+.fu-pro-notify-head p{
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:800;
+  margin-top:.15rem;
+}
+.fu-pro-notify-actions{
+  display:flex;
+  gap:.38rem;
+  align-items:center;
+}
+.fu-pro-notify-actions button{
+  border:0;
+  border-radius:999px;
+  padding:.48rem .62rem;
+  font-family:'Nunito',sans-serif;
+  font-weight:1000;
+  font-size:.72rem;
+  cursor:pointer;
+}
+.fu-pro-read{
+  background:var(--soft);
+  color:var(--g);
+  border:1px solid var(--line)!important;
+}
+.fu-pro-close{
+  background:var(--g);
+  color:#fff;
+}
+.fu-pro-notify-list{
+  display:flex;
+  flex-direction:column;
+  gap:.68rem;
+}
+.fu-pro-notify-item{
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:20px;
+  padding:.78rem .82rem;
+  box-shadow:var(--sh2);
+  display:flex;
+  align-items:flex-start;
+  gap:.7rem;
+  cursor:pointer;
+}
+.fu-pro-notify-item.unread{
+  border-color:rgba(16,185,129,.55);
+  background:linear-gradient(135deg,#fff,#F3FFF8);
+}
+.fu-pro-notify-icon{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--soft);
+  color:var(--g);
+  display:grid;
+  place-items:center;
+  flex:0 0 38px;
+  font-size:1.1rem;
+}
+.fu-pro-notify-body{
+  flex:1;
+  min-width:0;
+}
+.fu-pro-notify-title{
+  font-weight:1000;
+  color:var(--txt);
+  font-size:.87rem;
+  margin-bottom:.13rem;
+}
+.fu-pro-notify-text{
+  color:var(--muted);
+  font-size:.77rem;
+  line-height:1.38;
+  font-weight:800;
+}
+.fu-pro-notify-time{
+  color:var(--muted);
+  font-size:.65rem;
+  font-weight:1000;
+  margin-top:.35rem;
+}
+.fu-pro-empty{
+  text-align:center;
+  padding:2.4rem 1rem;
+  color:var(--muted);
+}
+.fu-pro-empty div{
+  font-size:2.8rem;
+  margin-bottom:.65rem;
+}
+.fu-pro-empty h4{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.12rem;
+  margin-bottom:.2rem;
+}
+.fu-pro-empty p{
+  font-size:.84rem;
+  font-weight:800;
+  line-height:1.45;
+}
+.fu-pro-toast{
+  position:fixed;
+  left:50%;
+  top:calc(.9rem + env(safe-area-inset-top,0px));
+  transform:translateX(-50%) translateY(-12px);
+  width:calc(100% - 1.4rem);
+  max-width:400px;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-left:5px solid var(--g3);
+  border-radius:19px;
+  padding:.82rem .9rem;
+  z-index:100002;
+  box-shadow:0 18px 42px rgba(6,78,59,.2);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+}
+.fu-pro-toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+.fu-pro-toast strong{
+  display:block;
+  color:var(--g);
+  font-size:.87rem;
+  margin-bottom:.12rem;
+}
+.fu-pro-toast span{
+  display:block;
+  color:var(--muted);
+  font-size:.77rem;
+  line-height:1.35;
+  font-weight:800;
+}
+</style>
+
+<script id="fuNotifyProFinalScript">
+/* FortyUp Notificaciones PRO Final */
+(function(){
+  const KEY = 'fu_notify_pro_items_v2';
+  let unsubs = [];
+  let firstRemote = true;
+
+  function $(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function myName(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function nowIso(){return new Date().toISOString()}
+
+  function icon(type){
+    return {
+      message:'💬',
+      forti:'◆',
+      super:'💎',
+      event_join:'🎟️',
+      event_created:'📅',
+      event_ended:'⏰',
+      same_event:'🤝',
+      profile:'👤',
+      system:'🔔'
+    }[type] || '🔔';
+  }
+  function title(type){
+    return {
+      message:'Nuevo mensaje',
+      forti:'Nuevo Forti',
+      super:'Súper Diamante',
+      event_join:'Alguien se sumó',
+      event_created:'Evento creado',
+      event_ended:'Evento finalizado',
+      same_event:'Coincidencia en evento',
+      profile:'Perfil',
+      system:'FortyUp'
+    }[type] || 'Notificación';
+  }
+  function timeAgo(d){
+    const t=new Date(d).getTime();
+    if(!t)return '';
+    const s=Math.max(1,Math.floor((Date.now()-t)/1000));
+    if(s<60)return 'recién';
+    const m=Math.floor(s/60); if(m<60)return 'hace '+m+' min';
+    const h=Math.floor(m/60); if(h<24)return 'hace '+h+' h';
+    return 'hace '+Math.floor(h/24)+' d';
+  }
+  function normalize(raw){
+    const base = {
+      type: raw.type || 'system',
+      title: raw.title || title(raw.type),
+      text: raw.text || 'Tenés una novedad en FortyUp.',
+      from: raw.from || '',
+      fromName: raw.fromName || '',
+      to: raw.to || uid(),
+      profileId: raw.profileId || raw.from || '',
+      eventId: raw.eventId || '',
+      chatId: raw.chatId || '',
+      createdAt: raw.createdAtText || raw.createdAt || nowIso(),
+      read: !!raw.read
+    };
+    base.id = raw.id || (base.type+'_'+(base.from||'x')+'_'+(base.to||'y')+'_'+(base.eventId||'')+'_'+(base.chatId||'')+'_'+String(base.createdAt).replace(/\W/g,''));
+    return base;
+  }
+  function items(){
+    const arr=load(KEY,[]);
+    return Array.isArray(arr)?arr:[];
+  }
+  function setItems(arr){
+    const seen=new Set();
+    const out=[];
+    arr.forEach(n=>{
+      if(!n||!n.id||seen.has(n.id))return;
+      seen.add(n.id);
+      out.push(n);
+    });
+    out.sort((a,b)=>new Date(b.createdAt).getTime()-new Date(a.createdAt).getTime());
+    save(KEY,out.slice(0,120));
+  }
+  function add(raw, show){
+    const n=normalize(raw);
+    const arr=items();
+    const exists=arr.some(x=>x.id===n.id);
+    if(!exists) arr.unshift(n);
+    setItems(arr);
+    renderBell();
+    if(show) notifyNow(n);
+    return n;
+  }
+  window.fuNotifyProAdd = add;
+
+  async function remote(toUid, raw){
+    const d=db();
+    if(!d||!toUid)return;
+    const n=normalize({...raw,to:toUid,from:raw.from||uid(),fromName:raw.fromName||myName(),createdAtText:nowIso(),read:false});
+    try{
+      await d.collection('userNotifications').doc(toUid).collection('items').doc(n.id).set({
+        ...n,
+        createdAt:serverTime(),
+        read:false
+      },{merge:true});
+    }catch(e){console.warn('remote notification',e)}
+  }
+  window.fuNotifyProRemote = remote;
+
+  function play(type){
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      const ctx=new AC();
+      const now=ctx.currentTime;
+      const gain=ctx.createGain();
+      gain.gain.setValueAtTime(.0001,now);
+      gain.gain.exponentialRampToValueAtTime(type==='super'?0.22:0.11,now+.02);
+      gain.gain.exponentialRampToValueAtTime(.0001,now+.72);
+      gain.connect(ctx.destination);
+      const notes=type==='super'?[784,1174.66,1567.98]:[660,880];
+      notes.forEach((f,i)=>{
+        const osc=ctx.createOscillator();
+        osc.type='sine';
+        osc.frequency.setValueAtTime(f,now+i*.08);
+        osc.connect(gain);
+        osc.start(now+i*.08);
+        osc.stop(now+i*.08+.24);
+      });
+      setTimeout(()=>{try{ctx.close()}catch(e){}},1000);
+    }catch(e){}
+  }
+  function vibrate(type){
+    try{if(navigator.vibrate)navigator.vibrate(type==='super'?[90,45,130,45,190]:[65,35,90])}catch(e){}
+  }
+  function browser(n){
+    try{
+      if(!('Notification' in window))return;
+      if(Notification.permission==='granted'){
+        new Notification(n.title,{body:n.text,tag:n.id});
+      }
+    }catch(e){}
+  }
+  function notifyNow(n){
+    if(n.type==='super' && typeof window.showSuperDiamondPopup==='function'){
+      window.showSuperDiamondPopup(n.fromName||'Alguien especial');
+    }else{
+      topToast(n);
+    }
+    play(n.type);
+    vibrate(n.type);
+    browser(n);
+    const bell=$('fuProBell');
+    if(bell){
+      bell.classList.remove('pulse');
+      void bell.offsetWidth;
+      bell.classList.add('pulse');
+    }
+  }
+  function topToast(n){
+    document.querySelectorAll('.fu-pro-toast').forEach(x=>x.remove());
+    const el=document.createElement('div');
+    el.className='fu-pro-toast';
+    el.innerHTML='<strong>'+safe(n.title)+'</strong><span>'+safe(n.text)+'</span>';
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),260)},4300);
+  }
+
+  function ensureUI(){
+    if(!$('fuProBell')){
+      const b=document.createElement('button');
+      b.id='fuProBell';
+      b.className='fu-pro-bell';
+      b.type='button';
+      b.innerHTML='🔔<span id="fuProBellCount" class="fu-pro-bell-count"></span>';
+      b.onclick=openPanel;
+      document.body.appendChild(b);
+    }
+    if(!$('fuProNotifyPanel')){
+      const p=document.createElement('div');
+      p.id='fuProNotifyPanel';
+      p.className='fu-pro-notify-panel';
+      p.onclick=function(e){if(e.target===p)closePanel()};
+      p.innerHTML=`
+        <div class="fu-pro-notify-sheet">
+          <div class="fu-pro-notify-handle"></div>
+          <div class="fu-pro-notify-head">
+            <div>
+              <h3>🔔 Notificaciones</h3>
+              <p>Todo lo importante de FortyUp en un solo lugar.</p>
+            </div>
+            <div class="fu-pro-notify-actions">
+              <button class="fu-pro-read" onclick="fuProAskBrowser()">Avisos</button>
+              <button class="fu-pro-read" onclick="fuProMarkRead()">Leídas</button>
+              <button class="fu-pro-close" onclick="fuProCloseNotify()">✕</button>
+            </div>
+          </div>
+          <div id="fuProNotifyList" class="fu-pro-notify-list"></div>
+        </div>`;
+      document.body.appendChild(p);
+    }
+  }
+  function logged(){
+    return !!uid();
+  }
+  function renderBell(){
+    ensureUI();
+    const active=[...document.querySelectorAll('.screen.active')][0]?.id||'';
+    const bell=$('fuProBell');
+    if(bell) bell.classList.toggle('show', logged() && active!=='landing' && active!=='chat');
+    const unread=items().filter(n=>!n.read).length;
+    const c=$('fuProBellCount');
+    if(c){
+      c.textContent=unread>99?'99+':String(unread);
+      c.classList.toggle('show',unread>0);
+    }
+    const msgDot=$('msgDot');
+    if(msgDot && unread>0) msgDot.classList.add('show');
+  }
+  function renderList(){
+    ensureUI();
+    const list=$('fuProNotifyList');
+    if(!list)return;
+    const arr=items();
+    if(!arr.length){
+      list.innerHTML='<div class="fu-pro-empty"><div>🔔</div><h4>Sin notificaciones</h4><p>Cuando alguien te escriba, te mande Forti, Súper Diamante o se sume a tu evento, va a aparecer acá.</p></div>';
+      return;
+    }
+    list.innerHTML=arr.map(n=>`
+      <div class="fu-pro-notify-item ${n.read?'':'unread'}" onclick="fuProOpenNotify('${safe(n.id)}')">
+        <div class="fu-pro-notify-icon">${icon(n.type)}</div>
+        <div class="fu-pro-notify-body">
+          <div class="fu-pro-notify-title">${safe(n.title)}</div>
+          <div class="fu-pro-notify-text">${safe(n.text)}</div>
+          <div class="fu-pro-notify-time">${safe(timeAgo(n.createdAt))}</div>
+        </div>
+      </div>`).join('');
+  }
+  function openPanel(){
+    renderList();
+    $('fuProNotifyPanel')?.classList.add('open');
+  }
+  function closePanel(){
+    $('fuProNotifyPanel')?.classList.remove('open');
+  }
+  window.fuProCloseNotify=closePanel;
+  window.fuProMarkRead=function(){
+    setItems(items().map(n=>({...n,read:true})));
+    renderBell();
+    renderList();
+  };
+  window.fuProAskBrowser=async function(){
+    try{
+      if(!('Notification' in window))return toast('Tu navegador no permite avisos');
+      const r=await Notification.requestPermission();
+      toast(r==='granted'?'Avisos activados 🔔':'No se activaron los avisos');
+    }catch(e){toast('No se pudieron activar')}
+  };
+  window.fuProOpenNotify=function(id){
+    const arr=items();
+    const n=arr.find(x=>x.id===id);
+    if(!n)return;
+    n.read=true;
+    setItems(arr);
+    renderBell();
+    renderList();
+    if(n.type==='message' && n.profileId){
+      closePanel();
+      const p=(typeof window.allProfiles==='function'?window.allProfiles().find(x=>x.id===n.profileId):null);
+      if(p && typeof window.startChat==='function') window.startChat(p);
+    }else if((n.type==='event_join'||n.type==='event_created'||n.type==='event_ended'||n.type==='same_event') && typeof window.go==='function'){
+      closePanel();
+      window.go('me');
+      setTimeout(()=>{if(typeof window.showEventosPanel==='function')window.showEventosPanel()},350);
+    }
+  };
+
+  function listenRemote(){
+    const d=db(), u=uid();
+    unsubs.forEach(fn=>{try{fn()}catch(e){}});
+    unsubs=[];
+    firstRemote=true;
+    if(!d||!u)return;
+    try{
+      const unsub=d.collection('userNotifications').doc(u).collection('items')
+        .orderBy('createdAt','desc').limit(80)
+        .onSnapshot(snap=>{
+          snap.docChanges().forEach(ch=>{
+            const data=ch.doc.data()||{};
+            const n=normalize({...data,id:ch.doc.id,createdAt:data.createdAtText||nowIso()});
+            const show=ch.type==='added' && !firstRemote && !n.read;
+            add(n,show);
+          });
+          firstRemote=false;
+        },err=>console.warn('notificaciones listener',err));
+      unsubs.push(unsub);
+    }catch(e){console.warn('listenRemote',e)}
+  }
+
+  function profileById(id){
+    try{
+      if(typeof window.allProfiles==='function')return window.allProfiles().find(x=>x.id===id)||null;
+    }catch(e){}
+    return null;
+  }
+
+  function wrap(){
+    if(typeof window.sendForti==='function' && !window.sendForti.__fuNotifyPro){
+      const old=window.sendForti;
+      window.sendForti=function(pid){
+        const p=profileById(pid);
+        const r=old.apply(this,arguments);
+        if(p){
+          add({type:'forti',title:'Forti enviado',text:'Le mandaste un Forti a '+(p.n||p.name||'un perfil')+'.',profileId:pid,createdAt:nowIso()},false);
+          remote(pid,{type:'forti',title:'Nuevo Forti',text:myName()+' te mandó un Forti ◆',profileId:uid()});
+        }
+        return r;
+      };
+      window.sendForti.__fuNotifyPro=true;
+    }
+
+    if(typeof window.sendSuper==='function' && !window.sendSuper.__fuNotifyPro){
+      const old=window.sendSuper;
+      window.sendSuper=async function(pid){
+        const p=profileById(pid);
+        const r=await old.apply(this,arguments);
+        if(p){
+          add({type:'super',title:'Súper Diamante enviado',text:'Le mandaste un Súper Diamante a '+(p.n||p.name||'un perfil')+'.',profileId:pid,createdAt:nowIso()},false);
+          remote(pid,{type:'super',title:'¡Súper Diamante!',text:myName()+' te mandó un Súper Diamante 💎',profileId:uid()});
+        }
+        return r;
+      };
+      window.sendSuper.__fuNotifyPro=true;
+    }
+
+    if(typeof window.sendMsg==='function' && !window.sendMsg.__fuNotifyPro){
+      const old=window.sendMsg;
+      window.sendMsg=function(){
+        const peer=window.chatWith||null;
+        const text=($('chatInput')?.value||'').trim();
+        const r=old.apply(this,arguments);
+        if(peer && text){
+          remote(peer.id,{type:'message',title:'Nuevo mensaje',text:myName()+': '+text.slice(0,90),profileId:uid(),chatId:uid()});
+        }
+        return r;
+      };
+      window.sendMsg.__fuNotifyPro=true;
+    }
+
+    if(typeof window.savePublicEvent==='function' && !window.savePublicEvent.__fuNotifyPro){
+      const old=window.savePublicEvent;
+      window.savePublicEvent=async function(){
+        const title=($('evTitle')?.value||'').trim() || 'tu evento';
+        const r=await old.apply(this,arguments);
+        add({type:'event_created',title:'Evento creado',text:'Publicaste el evento: '+title+'.',eventId:title,createdAt:nowIso()},true);
+        return r;
+      };
+      window.savePublicEvent.__fuNotifyPro=true;
+    }
+
+    if(typeof window.fuToggleEventAttendFull==='function' && !window.fuToggleEventAttendFull.__fuNotifyPro){
+      const old=window.fuToggleEventAttendFull;
+      window.fuToggleEventAttendFull=async function(eventId){
+        const r=await old.apply(this,arguments);
+        add({type:'event_join',title:'Asistencia actualizada',text:'Se actualizó tu asistencia al evento.',eventId:eventId,createdAt:nowIso()},false);
+        return r;
+      };
+      window.fuToggleEventAttendFull.__fuNotifyPro=true;
+    }
+
+    if(typeof window.toggleFuEventAttend==='function' && !window.toggleFuEventAttend.__fuNotifyPro){
+      const old=window.toggleFuEventAttend;
+      window.toggleFuEventAttend=async function(eventId){
+        const r=await old.apply(this,arguments);
+        add({type:'event_join',title:'Asistencia actualizada',text:'Se actualizó tu asistencia al evento.',eventId:eventId,createdAt:nowIso()},false);
+        return r;
+      };
+      window.toggleFuEventAttend.__fuNotifyPro=true;
+    }
+  }
+
+  function checkEndedEvents(){
+    try{
+      const evs=typeof window.getEvents==='function'?window.getEvents():load('fu_events',[]);
+      if(!Array.isArray(evs))return;
+      evs.forEach(ev=>{
+        const date=ev.date||ev.dateISO;
+        const time=ev.time||ev.hour||'23:59';
+        if(!date)return;
+        const dt=new Date(date+'T'+time);
+        if(isNaN(dt.getTime())||dt.getTime()>Date.now())return;
+        const key='ended_'+(ev.id||ev.title||ev.name||'event')+'_'+date+'_'+time;
+        if(localStorage.getItem('fu_pro_notified_'+key))return;
+        localStorage.setItem('fu_pro_notified_'+key,'1');
+        add({id:key,type:'event_ended',title:'Evento finalizado',text:'Tu evento finalizó: '+(ev.title||ev.name||'evento')+'.',eventId:ev.id||'',createdAt:nowIso()},true);
+      });
+    }catch(e){}
+  }
+
+  function init(){
+    ensureUI();
+    renderBell();
+    wrap();
+    listenRemote();
+    checkEndedEvents();
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__fuNotifyPro){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(renderBell,150);
+      return r;
+    };
+    window.go.__fuNotifyPro=true;
+  }
+
+  setTimeout(init,900);
+  setInterval(wrap,1200);
+  setInterval(renderBell,1500);
+  setInterval(checkEndedEvents,60000);
+
+  try{
+    if(auth()) auth().onAuthStateChanged(()=>setTimeout(init,800));
+  }catch(e){}
+})();
+</script>
+
 </body>
 </html>
