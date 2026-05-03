@@ -23,10 +23,7 @@ html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background
 /* ── SCREENS ── */
 .screen{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column}
 .screen.active{display:flex}
-#chat.screen.active{display:grid!important;grid-template-rows:56px 1fr auto;overflow:hidden!important;height:100dvh;height:100vh}
-#chat .chat-topbar{grid-row:1}
-#chat .chat-messages{grid-row:2;overflow-y:auto}
-#chat .chat-input-area{grid-row:3;position:relative;z-index:5}
+#chat.screen.active{display:flex!important;flex-direction:column!important;height:100dvh!important;height:100vh!important;overflow:hidden!important}
 .screen-inner{flex:1;padding:1rem 1rem 5rem}
 
 /* ── TOP BAR ── */
@@ -778,6 +775,8 @@ body.chat-open #bottomNav{
 .fu-empty-local strong{color:var(--g);}
 @media(max-width:420px){.fu-featured-row .fu-event-card{flex-basis:88%;}.fu-plans-head-final{flex-direction:column}.fu-city-mini{flex-wrap:wrap}.fu-city-mini button{flex:1}.fu-city-mini input{flex-basis:100%;}}
 
+
+@keyframes bIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -889,18 +888,35 @@ body.chat-open #bottomNav{
 </div>
 
 <!-- ══ CHAT ══ -->
-<div id="chat" class="screen chat-screen">
-  <div class="chat-topbar">
-    <button class="chat-back" onclick="go('messages')">←</button>
-    <img id="chatAvatar" class="top-avatar" src="" alt="">
-    <span id="chatName">Chat</span>
+<div id="chat" class="screen" style="display:none;flex-direction:column;height:100dvh;height:100vh;overflow:hidden;background:linear-gradient(160deg,#042f25 0%,#064E3B 40%,#0a5a42 100%)">
+
+  <!-- Topbar oscuro premium -->
+  <div style="flex-shrink:0;display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;background:rgba(4,47,37,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.1)">
+    <button onclick="go('messages')" style="background:rgba(255,255,255,.1);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">←</button>
+    <div id="chatAvatarCircle" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10B981,#6ee7b7);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:800;color:#064E3B;font-size:1.1rem;flex-shrink:0;overflow:hidden;border:2.5px solid rgba(110,231,183,.5);box-shadow:0 0 0 3px rgba(16,185,129,.2)">?</div>
+    <div style="flex:1;min-width:0">
+      <div id="chatName" style="font-weight:900;font-size:.97rem;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
+      <div style="font-size:.65rem;color:#6ee7b7;font-weight:700;letter-spacing:.03em">FortyUp · En línea</div>
+    </div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0"></div>
   </div>
-  <div class="chat-messages" id="chatBox"></div>
-  <div class="chat-input-area">
-    <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;padding:.25rem;flex-shrink:0">📷</button>
-    <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
-    <input type="text" id="chatInput" placeholder="Escribí un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
-    <button class="chat-send" onclick="sendMsg()">➤</button>
+
+  <!-- Messages area con patrón de fondo sutil -->
+  <div id="chatBox" style="flex:1;overflow-y:auto;padding:1rem .85rem;display:flex;flex-direction:column;gap:.5rem;min-height:0;background:transparent"></div>
+
+  <!-- Input area flotante -->
+  <div style="flex-shrink:0;padding:.65rem .75rem calc(.65rem + env(safe-area-inset-bottom,0px));background:rgba(4,47,37,.9);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.08)">
+    <div style="display:flex;align-items:flex-end;gap:.5rem">
+      <button onclick="document.getElementById('chatPhotoIn').click()" style="background:rgba(255,255,255,.1);border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;color:#6ee7b7;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">📷</button>
+      <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
+      <div style="flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.15);border-radius:24px;padding:.45rem .85rem;transition:border-color .2s" onfocusin="this.style.borderColor='rgba(110,231,183,.6)'" onfocusout="this.style.borderColor='rgba(255,255,255,.15)'">
+        <textarea id="chatInput" rows="1" placeholder="Escribí un mensaje..."
+          style="width:100%;border:none;outline:none;background:none;font-family:'Nunito',sans-serif;font-size:.9rem;color:#fff;resize:none;max-height:96px;min-height:22px;line-height:1.45;overflow-y:auto;display:block"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      </div>
+      <button onclick="sendMsg()" style="width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#064E3B;border:none;cursor:pointer;font-size:1.1rem;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(16,185,129,.5);flex-shrink:0">➤</button>
+    </div>
   </div>
 </div>
 
@@ -1618,55 +1634,76 @@ function deleteAccount(){
 
 // ── Chat ──
 function startChat(p){
+  if(p.id&&p.id.startsWith('u_')){var l=(typeof getSavedUsers==='function'?getSavedUsers():[]).find(function(x){return x.id===p.id;});if(l)p=Object.assign({},p,{img:l.photo||'',n:l.name,a:l.age,c:l.city});}
   chatWith=p;
-  $('chatAvatar').src=p.img||p.photo||'';
-  $('chatName').textContent=p.n||p.name;
+  var name=p.n||p.name||'Usuario';
+  var photo=p.img||p.photo||'';
+  var el=document.getElementById('chatAvatarCircle');
+  if(el){el.innerHTML=photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentNode.textContent=\''+name[0].toUpperCase()+'\'">':name[0].toUpperCase();}
+  document.getElementById('chatName').textContent=name;
   go('chat');
   renderChatBubbles();
-  setTimeout(()=>{
-    const input=$('chatInput');
-    if(input){
-      input.placeholder='Escribile a '+(p.n||p.name||'esta persona')+'...';
-      input.style.display='block';
-      input.disabled=false;
-      input.focus();
-    }
-    const box=$('chatBox');
-    if(box) box.scrollTop=box.scrollHeight;
-  },150);
+  setTimeout(function(){var inp=document.getElementById('chatInput');if(inp)inp.placeholder='Escribile a '+name+'...';var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;},100);
 }
 
 function renderChatBubbles(){
-  if(!chatWith) return;
-  const chats=getChats();
-  const msgs=chats[chatWith.id]||[];
-  const _cname=escHtml(chatWith.n||chatWith.name||'');
-  $('chatBox').innerHTML=msgs.length?msgs.map(m=>`
-    <div class="bubble ${m.from==='me'?'mine':'theirs'}">
-      ${m.photo?`<img src="${m.photo}" style="max-width:200px;border-radius:12px;display:block">`:escHtml(m.text)}
-    </div>`).join('')
-  :`<div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
-      <div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">👋</div>
-      <p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">¡Saludá a ${_cname}!</p>
-      <p style="font-size:.82rem">Sé el primero en escribir</p>
-      <button class="btn btn-green" style="margin-top:1rem" onclick="$('chatInput').value='Hola!';$('chatInput').focus()">Escribir hola</button>
-    </div>`;
-  setTimeout(()=>{$('chatBox').scrollTop=$('chatBox').scrollHeight},50);
+  if(!chatWith)return;
+  var msgs=(getChats()[chatWith.id])||[];
+  var box=document.getElementById('chatBox');
+  if(!box)return;
+  var name=escHtml(chatWith.n||chatWith.name||'');
+  var photo=chatWith.img||chatWith.photo||'';
+  var initial=(chatWith.n||chatWith.name||'?')[0].toUpperCase();
+  if(!msgs.length){
+    box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;min-height:200px">'
+      +'<div style="font-size:4rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">&#128075;</div>'
+      +'<div style="font-weight:800;color:#6ee7b7;font-size:1rem;margin-bottom:.35rem">&iexcl;Salud&aacute; a '+name+'!</div>'
+      +'<div style="font-size:.82rem;color:rgba(255,255,255,.5)">S&eacute; el primero en escribir</div></div>';
+    return;
+  }
+  var lastDate='',html='';
+  msgs.forEach(function(m){
+    var mine=m.from==='me';
+    var d=m.date||'Hoy';
+    if(d!==lastDate){
+      html+='<div style="text-align:center;font-size:.6rem;font-weight:800;color:rgba(255,255,255,.4);margin:.5rem 0;text-transform:uppercase;letter-spacing:.06em;background:rgba(0,0,0,.15);border-radius:50px;padding:.2rem .75rem;width:fit-content;margin-left:auto;margin-right:auto">'+escHtml(d)+'</div>';
+      lastDate=d;
+    }
+    var content=m.photo?'<img src="'+m.photo+'" style="max-width:200px;border-radius:14px;display:block">':escHtml(m.text);
+    var time=m.time||'';
+    var meta='<div style="font-size:.58rem;margin-top:.25rem;text-align:'+(mine?'right':'left')+';opacity:.6;color:'+(mine?'rgba(255,255,255,.7)':'rgba(255,255,255,.5)')+'">'+(mine?'&#10003;&#10003; ':'')+time+'</div>';
+    var avHtml=photo
+      ?'<div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;align-self:flex-end;border:1.5px solid rgba(110,231,183,.4)"><img src="'+photo+'" style="width:100%;height:100%;object-fit:cover"></div>'
+      :'<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10B981,#6ee7b7);flex-shrink:0;align-self:flex-end;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#064E3B">'+initial+'</div>';
+    if(mine){
+      html+='<div style="display:flex;justify-content:flex-end">'
+        +'<div style="max-width:78%;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#042f25;border-radius:18px 4px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 4px 16px rgba(16,185,129,.35);font-weight:600">'
+        +content+meta+'</div></div>';
+    }else{
+      html+='<div style="display:flex;align-items:flex-end;gap:.45rem">'+avHtml
+        +'<div style="max-width:75%;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);color:#fff;border-radius:4px 18px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;border:1px solid rgba(255,255,255,.1);box-shadow:0 2px 8px rgba(0,0,0,.2)">'
+        +content+meta+'</div></div>';
+    }
+  });
+  box.innerHTML=html;
+  box.scrollTop=box.scrollHeight;
 }
 
 function sendMsg(){
-  const inp=$('chatInput');
-  const text=inp.value.trim();
-  if(!text||!chatWith) return;
-  const chats=getChats();
-  if(!chats[chatWith.id]) chats[chatWith.id]=[];
-  const now=new Date();
-  chats[chatWith.id].push({from:'me',text,time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+  var inp=document.getElementById('chatInput');
+  var text=(inp.value||'').trim();
+  if(!text||!chatWith)return;
+  var now=new Date();
+  var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  var date=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  var chats=getChats();
+  if(!chats[chatWith.id])chats[chatWith.id]=[];
+  chats[chatWith.id].push({from:'me',text:text,time:time,date:date});
   setChats(chats);
-  inp.value='';
+  inp.value='';inp.style.height='auto';
   renderChatBubbles();
-  setTimeout(()=>{$('chatInput').focus(); const box=$('chatBox'); if(box) box.scrollTop=box.scrollHeight;},50);
-  updateMsgDot();
+  var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;
+  if(typeof updateMsgDot==='function')updateMsgDot();
 }
 
 function updateMsgDot(){
@@ -1979,20 +2016,24 @@ function showEventosPanel(){
   $('profilePanel').classList.add('open');
 }
 function sendChatPhoto(input){
-  const file=input.files[0];
-  if(!file||!chatWith) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const chats=getChats();
-    if(!chats[chatWith.id]) chats[chatWith.id]=[];
-    const now=new Date();
-    chats[chatWith.id].push({from:'me',photo:e.target.result,text:'',time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`});
+  var file=input.files&&input.files[0];
+  if(!file||!chatWith)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var now=new Date();
+    var time=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+    var date=now.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+    var chats=getChats();
+    if(!chats[chatWith.id])chats[chatWith.id]=[];
+    chats[chatWith.id].push({from:'me',photo:e.target.result,text:'',time:time,date:date});
     setChats(chats);
     renderChatBubbles();
+    var box=document.getElementById('chatBox');if(box)box.scrollTop=box.scrollHeight;
   };
   reader.readAsDataURL(file);
   input.value='';
 }
+
 function showPrivacyPanel(){
   const bl=getBlocked();
   const rep=getReported();
@@ -2555,7 +2596,11 @@ html,body{overscroll-behavior:none;}
     if(!p||!p.id){ toastSafe('No pude abrir ese chat'); return; }
     currentPeer=p; currentChatId=chatIdFor(meId,p.id); window.chatWith=p;
     if(chatUnsub) { chatUnsub(); chatUnsub=null; }
-    const av=byId('chatAvatar'); if(av) av.src=profilePhoto(p);
+    const av=byId('chatAvatarCircle');
+    if(av){
+      const photo=profilePhoto(p);
+      av.innerHTML=photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':profileName(p)[0].toUpperCase();
+    }
     const nm=byId('chatName'); if(nm) nm.textContent=profileName(p);
     const box=byId('chatBox'); if(box) box.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Cargando mensajes...</p></div>';
     if(typeof window.go==='function') window.go('chat');
@@ -2935,9 +2980,9 @@ html,body{overscroll-behavior:none;}
       if(id==='plans') setTimeout(()=>window.renderPlans(byId('plansTextSearch')?.value||''),80);
     };
   }
-  document.addEventListener('DOMContentLoaded',()=>{renderChips();});
+  document.addEventListener('DOMContentLoaded',()=>{if(typeof window.renderChips==='function')window.renderChips();});
   window.__FORTYUP_PLAN_CITY_SEARCH__='PLANES_GPS_Y_VIAJE_2026_05_02';
-})();
+}})();
 </script>
 
 
@@ -4145,7 +4190,7 @@ body{padding-bottom:70px!important}
   color:var(--g)!important;
   border:1.5px solid var(--line)!important;
 }
-.fu-panel-close-premium{
+.fu-panel-close-premium{display:none!important;
   position:absolute!important;
   top:.8rem!important;
   right:1rem!important;
@@ -4206,13 +4251,7 @@ body{padding-bottom:70px!important}
   function addCloseToPanel(){
     const panel=byId('profilePanel')?.querySelector('.panel');
     if(!panel)return;
-    if(!panel.querySelector('.fu-panel-close-premium')){
-      const b=document.createElement('button');
-      b.className='fu-panel-close-premium';
-      b.innerHTML='✕';
-      b.onclick=window.closeAnyPanelPremium;
-      panel.appendChild(b);
-    }
+// close button handled by fu-x-close
   }
 
   if(!window.__fuGoPremiumWrapped && typeof window.go==='function'){
@@ -5169,746 +5208,6 @@ body{padding-bottom:76px!important}
   setTimeout(listenNotifications, 900);
   if(auth()) auth().onAuthStateChanged(() => setTimeout(() => { listenNotifications(); startData(); }, 500));
   setInterval(cleanupExpiredEvents, 60 * 1000);
-})();
-</script>
-
-
-<style id="fuSebasPremiumPolishFinal">
-/* === FortyUp Premium Polish Final sobre CASIELMEJOR === */
-
-/* General app stability */
-html,body{height:100%!important}
-body{padding-bottom:72px!important}
-.screen-inner{padding-bottom:7.2rem!important}
-#bottomNav{
-  position:fixed!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  z-index:99990!important;
-}
-
-/* Chat screen must stay usable */
-body.chat-open{padding-bottom:0!important}
-body.chat-open #bottomNav{display:none!important}
-#chat.screen.active{
-  display:flex!important;
-  flex-direction:column!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  overflow:hidden!important;
-}
-#chat .chat-topbar{flex:0 0 auto!important}
-#chat .chat-messages{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  padding-bottom:1rem!important;
-}
-#chat .chat-input-area{
-  flex:0 0 auto!important;
-  position:relative!important;
-  bottom:auto!important;
-  z-index:50!important;
-}
-.bubble small.fu-chat-time{
-  display:block;
-  margin-top:.22rem;
-  opacity:.72;
-  font-size:.62rem;
-  font-weight:800;
-}
-
-/* Premium panel shell: opens high enough, scrollable, no hidden buttons */
-.panel-overlay.open{
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:center!important;
-}
-.panel-overlay .panel{
-  position:relative!important;
-  width:100%!important;
-  max-width:520px!important;
-  max-height:92dvh!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  padding:2.55rem 1.25rem calc(2.3rem + env(safe-area-inset-bottom,0px))!important;
-}
-.panel-overlay .panel .panel-handle{
-  position:absolute!important;
-  top:.75rem!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  margin:0!important;
-}
-
-/* Single close button, always one */
-#profilePanel .fu-panel-close-premium,
-#profilePanel .fu-x-close{
-  display:none!important;
-}
-.fu-one-close{
-  position:absolute!important;
-  top:.75rem!important;
-  right:.85rem!important;
-  width:36px!important;
-  height:36px!important;
-  border-radius:999px!important;
-  border:1px solid var(--line)!important;
-  background:var(--soft)!important;
-  color:var(--g)!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  font-size:1.05rem!important;
-  font-weight:1000!important;
-  z-index:100!important;
-  cursor:pointer!important;
-}
-
-/* Any main action button inside panels stays reachable */
-#profilePanel .panel button[onclick="saveEdit()"],
-#profilePanel .panel button[onclick="savePublicEvent()"],
-#profilePanel .panel .fu-sticky-save,
-#profilePanel .panel .auth-btn,
-#profilePanel .panel .btn-green:last-child{
-  position:sticky!important;
-  bottom:calc(.65rem + env(safe-area-inset-bottom,0px))!important;
-  z-index:65!important;
-  box-shadow:0 12px 28px rgba(6,78,59,.24)!important;
-}
-
-/* Make forms easier to finish */
-#profilePanel .form-group textarea{min-height:96px!important}
-#profilePanel .form-group input,
-#profilePanel .form-group textarea,
-#profilePanel .form-group select{
-  font-size:16px!important; /* avoids mobile zoom */
-}
-
-/* Search buttons aligned */
-.fu-sebas-citybar,
-.fu-city-mini,
-.plan-city-row{
-  align-items:center!important;
-}
-.fu-sebas-citybar button,
-.fu-city-mini button,
-.plan-city-row button{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-height:42px!important;
-  margin:0!important;
-}
-
-/* Cards inside panels get breathing room */
-#profilePanel .fu-profile-event-card,
-#profilePanel .fu-event-detail-full,
-#profilePanel .msg-item,
-#profilePanel .me-section,
-#profilePanel .card{
-  margin-bottom:.75rem!important;
-}
-
-/* Loading overlay should never trap the app forever */
-#fuLoading{
-  pointer-events:none!important;
-}
-#fuLoading.fu-soft-hidden{
-  display:none!important;
-}
-</style>
-
-<script id="fuSebasPremiumPolishFinal">
-(function(){
-  const $ = id => document.getElementById(id);
-  const safeText = v => String(v ?? '');
-  const toast = msg => typeof window.toast === 'function' ? window.toast(msg) : alert(msg);
-  const db = () => window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null);
-  const auth = () => window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null);
-
-  function closePanel(){
-    const p = $('profilePanel');
-    if(p) p.classList.remove('open');
-  }
-  window.closePanel = closePanel;
-  window.closeAnyPanelPremium = function(){
-    closePanel();
-    const a = $('auth');
-    if(a) a.classList.remove('open');
-  };
-
-  function ensureOneClose(){
-    const panel = document.querySelector('#profilePanel .panel');
-    if(!panel) return;
-
-    panel.querySelectorAll('.fu-panel-close-premium,.fu-x-close').forEach(el => el.remove());
-
-    const old = Array.from(panel.querySelectorAll('.fu-one-close'));
-    old.slice(1).forEach(el => el.remove());
-
-    let btn = panel.querySelector('.fu-one-close');
-    if(!btn){
-      btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'fu-one-close';
-      btn.innerHTML = '✕';
-      btn.setAttribute('aria-label','Cerrar');
-      btn.onclick = closePanel;
-      panel.appendChild(btn);
-    }
-  }
-
-  function premiumPanelRefresh(){
-    ensureOneClose();
-    const p = $('profilePanel');
-    const panel = document.querySelector('#profilePanel .panel');
-    if(panel && p && p.classList.contains('open')){
-      setTimeout(()=>{ panel.scrollTop = 0; }, 30);
-    }
-  }
-
-  const profilePanel = $('profilePanel');
-  if(profilePanel && !profilePanel.__fuPremiumPolishBound){
-    profilePanel.__fuPremiumPolishBound = true;
-
-    profilePanel.addEventListener('click', ev => {
-      if(ev.target === profilePanel) closePanel();
-    });
-
-    new MutationObserver(()=>premiumPanelRefresh()).observe(profilePanel, {
-      childList:true,
-      subtree:true,
-      attributes:true
-    });
-  }
-
-  // Close any open card/panel when navigating: no stuck overlay over Inicio/Planes/etc.
-  if(!window.__fuGoPremiumPolish && typeof window.go === 'function'){
-    window.__fuGoPremiumPolish = true;
-    const oldGo = window.go;
-    window.go = function(id){
-      window.closeAnyPanelPremium();
-      return oldGo.apply(this, arguments);
-    };
-  }
-
-  // Make every major panel function receive a close button automatically.
-  [
-    'showEditPanel',
-    'showCreateEventPanel',
-    'showEventosPanel',
-    'showFavoritesPanel',
-    'showFortisPanel',
-    'showSuperPanel',
-    'showSecurityPanel',
-    'showPrivacyPanel',
-    'showHelpPanel',
-    'openFuEventCard',
-    'openFuEventChat'
-  ].forEach(name=>{
-    if(typeof window[name] === 'function' && !window[name].__fuPremiumPolished){
-      const original = window[name];
-      const wrapped = function(){
-        const result = original.apply(this, arguments);
-        setTimeout(premiumPanelRefresh, 35);
-        setTimeout(premiumPanelRefresh, 180);
-        return result;
-      };
-      wrapped.__fuPremiumPolished = true;
-      window[name] = wrapped;
-    }
-  });
-
-  // Make legacy profile-card panel also closable.
-  if(typeof window.openPanel === 'function' && !window.openPanel.__fuPremiumPolished){
-    const originalOpenPanel = window.openPanel;
-    window.openPanel = function(){
-      const result = originalOpenPanel.apply(this, arguments);
-      setTimeout(premiumPanelRefresh, 35);
-      return result;
-    };
-    window.openPanel.__fuPremiumPolished = true;
-  }
-
-  // Editing profile: after saving, stay consistent and refresh same profile screen if active.
-  if(typeof window.saveEdit === 'function' && !window.saveEdit.__fuPremiumPolished){
-    const originalSaveEdit = window.saveEdit;
-    window.saveEdit = function(){
-      const result = originalSaveEdit.apply(this, arguments);
-      setTimeout(()=>{
-        closePanel();
-        if($('me')?.classList.contains('active') && typeof window.renderMe === 'function') window.renderMe();
-      }, 80);
-      return result;
-    };
-    window.saveEdit.__fuPremiumPolished = true;
-  }
-
-  // Create event: after saving, refresh plans without moving the user away.
-  if(typeof window.savePublicEvent === 'function' && !window.savePublicEvent.__fuPremiumPolished){
-    const originalSavePublicEvent = window.savePublicEvent;
-    window.savePublicEvent = async function(){
-      const result = await originalSavePublicEvent.apply(this, arguments);
-      setTimeout(()=>{
-        closePanel();
-        if($('plans')?.classList.contains('active') && typeof window.renderPlans === 'function') window.renderPlans();
-        if($('me')?.classList.contains('active') && typeof window.renderMe === 'function') window.renderMe();
-      }, 250);
-      return result;
-    };
-    window.savePublicEvent.__fuPremiumPolished = true;
-  }
-
-  // Chat UX: close panels before entering, show a real loading state, autoscroll after live updates.
-  if(typeof window.startChat === 'function' && !window.startChat.__fuPremiumPolished){
-    const originalStartChat = window.startChat;
-    window.startChat = function(peer){
-      window.closeAnyPanelPremium();
-      const box = $('chatBox');
-      if(box){
-        box.innerHTML = '<div class="empty"><div class="empty-ico">💬</div><p>Abriendo conversación...</p></div>';
-      }
-      const result = originalStartChat.apply(this, arguments);
-      setTimeout(()=>{
-        const input = $('chatInput');
-        if(input){
-          input.disabled = false;
-          input.style.display = 'block';
-          input.focus();
-        }
-        const b = $('chatBox');
-        if(b) b.scrollTop = b.scrollHeight;
-      }, 250);
-      return result;
-    };
-    window.startChat.__fuPremiumPolished = true;
-  }
-
-  if(typeof window.sendMsg === 'function' && !window.sendMsg.__fuPremiumPolished){
-    const originalSendMsg = window.sendMsg;
-    window.sendMsg = async function(){
-      const btn = document.querySelector('.chat-send');
-      if(btn) btn.style.opacity = '.65';
-      try{
-        return await originalSendMsg.apply(this, arguments);
-      }finally{
-        setTimeout(()=>{
-          if(btn) btn.style.opacity = '1';
-          const box = $('chatBox');
-          if(box) box.scrollTop = box.scrollHeight;
-        }, 150);
-      }
-    };
-    window.sendMsg.__fuPremiumPolished = true;
-  }
-
-  // Make messages list tappable without lag: no panel overlay, no stale loading.
-  if(typeof window.renderMessages === 'function' && !window.renderMessages.__fuPremiumPolished){
-    const originalRenderMessages = window.renderMessages;
-    window.renderMessages = function(){
-      const result = originalRenderMessages.apply(this, arguments);
-      setTimeout(()=>{
-        document.querySelectorAll('#msgList .msg-item').forEach(item=>{
-          item.style.cursor = 'pointer';
-          item.style.touchAction = 'manipulation';
-        });
-      }, 30);
-      return result;
-    };
-    window.renderMessages.__fuPremiumPolished = true;
-  }
-
-  // Never let loading overlay block forever.
-  function unlockLoading(){
-    const l = $('fuLoading');
-    if(l) l.classList.add('fu-soft-hidden');
-  }
-  setTimeout(unlockLoading, 9000);
-  if(auth()){
-    try{
-      auth().onAuthStateChanged(()=>setTimeout(unlockLoading, 1200));
-    }catch(e){}
-  }
-
-  // Escape key closes panels on desktop/testing.
-  document.addEventListener('keydown', ev=>{
-    if(ev.key === 'Escape') window.closeAnyPanelPremium();
-  });
-
-  setTimeout(premiumPanelRefresh, 300);
-})();
-</script>
-
-
-<style id="fuQRProfileFinalStyle">
-/* === FortyUp QR Profile Card Final === */
-.fu-qr-card-wrap{
-  perspective:1200px;
-  margin:0 0 1rem;
-}
-.fu-qr-card{
-  position:relative;
-  width:100%;
-  min-height:290px;
-  transform-style:preserve-3d;
-  transition:transform .55s cubic-bezier(.2,.8,.2,1);
-}
-.fu-qr-card.flipped{transform:rotateY(180deg)}
-.fu-qr-face{
-  position:absolute;
-  inset:0;
-  backface-visibility:hidden;
-  border-radius:28px;
-  overflow:hidden;
-  border:1.5px solid var(--line);
-  box-shadow:var(--sh);
-  background:#fff;
-}
-.fu-qr-front{
-  background:linear-gradient(135deg,var(--g),var(--g2));
-  color:#fff;
-  padding:1.25rem;
-  text-align:center;
-}
-.fu-qr-back{
-  transform:rotateY(180deg);
-  background:linear-gradient(135deg,#FFFFFF,#F3FFF8);
-  padding:1.1rem;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-}
-.fu-qr-photo{
-  width:92px;height:92px;border-radius:50%;
-  object-fit:cover;
-  border:3px solid rgba(255,255,255,.55);
-  background:var(--soft);
-  margin:.25rem auto .7rem;
-}
-.fu-qr-name{
-  font-family:'Playfair Display',serif;
-  font-size:1.45rem;
-  font-weight:800;
-  margin-bottom:.15rem;
-}
-.fu-qr-city{font-size:.86rem;color:rgba(255,255,255,.78);font-weight:800}
-.fu-qr-mini{
-  display:inline-flex;
-  align-items:center;
-  gap:.35rem;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:999px;
-  padding:.35rem .7rem;
-  margin:.75rem 0 .9rem;
-  font-size:.78rem;
-  font-weight:900;
-}
-.fu-qr-flip-btn{
-  border:0;
-  border-radius:999px;
-  padding:.75rem 1rem;
-  background:#F2B705;
-  color:#064E3B;
-  font-family:'Nunito',sans-serif;
-  font-weight:1000;
-  cursor:pointer;
-  box-shadow:0 8px 18px rgba(242,183,5,.28);
-}
-.fu-qr-box{
-  width:174px;height:174px;
-  background:#fff;
-  border-radius:20px;
-  border:1px solid var(--line);
-  padding:.55rem;
-  display:grid;
-  place-items:center;
-  box-shadow:var(--sh2);
-  margin:.3rem auto .7rem;
-}
-.fu-qr-box img{width:100%;height:100%;display:block;border-radius:12px}
-.fu-qr-title{
-  font-family:'Playfair Display',serif;
-  color:var(--g);
-  font-size:1.18rem;
-  font-weight:800;
-  margin:.1rem 0 .25rem;
-}
-.fu-qr-text{
-  color:var(--muted);
-  font-size:.8rem;
-  line-height:1.45;
-  font-weight:800;
-  max-width:310px;
-  margin-bottom:.7rem;
-}
-.fu-qr-actions{
-  display:flex;
-  gap:.45rem;
-  width:100%;
-}
-.fu-qr-actions button{
-  flex:1;
-  border:0;
-  border-radius:999px;
-  padding:.68rem .55rem;
-  font-family:'Nunito',sans-serif;
-  font-weight:1000;
-  font-size:.78rem;
-  cursor:pointer;
-}
-.fu-qr-copy{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff}
-.fu-qr-backbtn{background:var(--soft);color:var(--g);border:1.5px solid var(--line)!important}
-.fu-qr-open-profile{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:1rem;
-  box-shadow:var(--sh2);
-}
-.fu-qr-open-profile h3{
-  font-family:'Playfair Display',serif;
-  color:var(--g);
-  margin:0 0 .35rem;
-}
-@media(max-width:420px){
-  .fu-qr-card{min-height:310px}
-  .fu-qr-actions{flex-direction:column}
-}
-</style>
-
-<script id="fuQRProfileFinalScript">
-/* === FortyUp QR Profile Card Final === */
-(function(){
-  const $ = id => document.getElementById(id);
-  const safe = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-  const toast = msg => typeof window.toast === 'function' ? window.toast(msg) : alert(msg);
-  const auth = () => window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null);
-  const db = () => window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null);
-  const me = () => { try { return typeof window.me === 'function' ? window.me() : JSON.parse(localStorage.getItem('fu_user') || 'null'); } catch(e){ return null; } };
-  const uid = () => (auth() && auth().currentUser && auth().currentUser.uid) || me()?.uid || me()?.id || '';
-  const nameOf = u => u?.name || u?.n || 'Usuario FortyUp';
-  const cityOf = u => u?.city || u?.c || 'FortyUp';
-
-  function profileUrl(id){
-    const base = location.origin && location.origin !== 'null'
-      ? location.origin + location.pathname
-      : location.href.split('?')[0].split('#')[0];
-    return `${base}?profile=${encodeURIComponent(id)}`;
-  }
-
-  function qrUrl(link){
-    return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=${encodeURIComponent(link)}`;
-  }
-
-  window.fuFlipMyQR = function(){
-    const card = $('fuMyQRCard');
-    if(card) card.classList.toggle('flipped');
-  };
-
-  window.fuCopyProfileLink = async function(){
-    const id = uid();
-    if(!id) return toast('Primero iniciá sesión');
-    const link = profileUrl(id);
-    try{
-      await navigator.clipboard.writeText(link);
-      toast('Link de tu perfil copiado ✅');
-    }catch(e){
-      prompt('Copiá tu link de perfil:', link);
-    }
-  };
-
-  window.fuOpenMyQrPanel = function(){
-    const u = me() || {};
-    const id = uid();
-    if(!id) return toast('Primero iniciá sesión');
-    const link = profileUrl(id);
-    const panel = $('profilePanel');
-    const content = $('panelContent');
-    if(!panel || !content) return;
-
-    content.innerHTML = `
-      <div class="panel-title">🔳 Mi QR FortyUp</div>
-      <div class="fu-qr-open-profile" style="text-align:center">
-        <h3>${safe(nameOf(u))}</h3>
-        <p style="font-size:.82rem;color:var(--muted);font-weight:800;margin-bottom:.75rem">Este QR es único e irrepetible para tu perfil.</p>
-        <div class="fu-qr-box"><img src="${qrUrl(link)}" alt="QR de perfil FortyUp"></div>
-        <p class="fu-qr-text">Si alguien escanea este QR, abre tu perfil en FortyUp. Si no inició sesión, primero entra y después puede verte.</p>
-        <div class="fu-qr-actions">
-          <button class="fu-qr-copy" onclick="fuCopyProfileLink()">Copiar link</button>
-          <button class="fu-qr-backbtn" onclick="closePanel()">Cerrar</button>
-        </div>
-      </div>`;
-    panel.classList.add('open');
-    setTimeout(()=> {
-      if(typeof window.closeAnyPanelPremium === 'function'){}
-      const close = document.querySelector('#profilePanel .fu-one-close, #profilePanel .fu-x-close');
-      if(close) close.style.display = 'flex';
-    }, 50);
-  };
-
-  function buildQRCard(){
-    const u = me();
-    const id = uid();
-    if(!u || !id) return '';
-    const link = profileUrl(id);
-    const photo = u.photo || u.img || '';
-    const initial = safe(nameOf(u).charAt(0).toUpperCase() || 'F');
-    return `
-      <div class="fu-qr-card-wrap">
-        <div class="fu-qr-card" id="fuMyQRCard">
-          <div class="fu-qr-face fu-qr-front">
-            ${photo ? `<img class="fu-qr-photo" src="${safe(photo)}" alt="">` : `<div class="fu-qr-photo" style="display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:2rem;background:rgba(255,255,255,.18)">${initial}</div>`}
-            <div class="fu-qr-name">${safe(nameOf(u))}</div>
-            <div class="fu-qr-city">📍 ${safe(cityOf(u))}</div>
-            <div class="fu-qr-mini">🔳 Perfil QR único</div>
-            <button class="fu-qr-flip-btn" onclick="fuFlipMyQR()">Ver mi QR FortyUp</button>
-          </div>
-          <div class="fu-qr-face fu-qr-back">
-            <div class="fu-qr-title">Escaneá mi perfil</div>
-            <div class="fu-qr-box"><img src="${qrUrl(link)}" alt="QR de perfil FortyUp"></div>
-            <p class="fu-qr-text">QR único de FortyUp. No muestra tu mail: usa tu ID privado de usuario.</p>
-            <div class="fu-qr-actions">
-              <button class="fu-qr-copy" onclick="fuCopyProfileLink()">Copiar link</button>
-              <button class="fu-qr-backbtn" onclick="fuFlipMyQR()">Volver</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  function injectQRCard(){
-    const meScreen = $('me');
-    if(!meScreen || !meScreen.classList.contains('active')) return;
-    if($('fuMyQRCard')) return;
-    const target = meScreen.querySelector('.me-cards');
-    if(!target) return;
-    const holder = document.createElement('div');
-    holder.id = 'fuQRCardHolder';
-    holder.innerHTML = buildQRCard();
-    target.parentNode.insertBefore(holder, target);
-  }
-
-  if(typeof window.renderMe === 'function' && !window.renderMe.__fuQRWrapped){
-    const oldRenderMe = window.renderMe;
-    window.renderMe = function(){
-      const result = oldRenderMe.apply(this, arguments);
-      setTimeout(injectQRCard, 80);
-      return result;
-    };
-    window.renderMe.__fuQRWrapped = true;
-  }
-
-  if(typeof window.go === 'function' && !window.go.__fuQRWrapped){
-    const oldGo = window.go;
-    window.go = function(id){
-      const result = oldGo.apply(this, arguments);
-      if(id === 'me') setTimeout(injectQRCard, 120);
-      return result;
-    };
-    window.go.__fuQRWrapped = true;
-  }
-
-  async function findProfileById(id){
-    if(!id) return null;
-    const d = db();
-    if(d){
-      const collections = ['users','profiles'];
-      for(const col of collections){
-        try{
-          const snap = await d.collection(col).doc(id).get();
-          if(snap.exists) return {id:snap.id, ...snap.data()};
-        }catch(e){}
-      }
-    }
-    try{
-      const localUsers = JSON.parse(localStorage.getItem('fu_users') || '[]');
-      return localUsers.find(u => u.id === id || u.uid === id) || null;
-    }catch(e){ return null; }
-  }
-
-  async function handleIncomingProfile(){
-    const params = new URLSearchParams(location.search);
-    const id = params.get('profile');
-    if(!id) return;
-
-    const openIt = async () => {
-      const u = await findProfileById(id);
-      if(!u){
-        toast('No encontré ese perfil todavía');
-        return;
-      }
-      const profile = {
-        id: u.id || id,
-        n: u.name || u.n || 'Usuario',
-        name: u.name || u.n || 'Usuario',
-        a: u.age || u.a || '',
-        age: u.age || u.a || '',
-        c: u.city || u.c || '',
-        city: u.city || u.c || '',
-        img: u.photo || u.img || '',
-        photo: u.photo || u.img || '',
-        bio: u.bio || '',
-        intent: u.intent || ''
-      };
-      if(typeof window.openPanel === 'function'){
-        window.openPanel(profile);
-      }else{
-        toast('Perfil FortyUp abierto');
-      }
-    };
-
-    // If not logged in, keep a pending profile and open auth.
-    const hasUser = (auth() && auth().currentUser) || me();
-    if(!hasUser){
-      try{ sessionStorage.setItem('fu_pending_profile', id); }catch(e){}
-      if(typeof window.openAuth === 'function') window.openAuth('log');
-      toast('Iniciá sesión para ver este perfil');
-      return;
-    }
-    setTimeout(openIt, 800);
-  }
-
-  function openPendingAfterLogin(){
-    let id = '';
-    try{ id = sessionStorage.getItem('fu_pending_profile') || ''; }catch(e){}
-    if(!id) return;
-    try{ sessionStorage.removeItem('fu_pending_profile'); }catch(e){}
-    setTimeout(async ()=>{
-      const u = await findProfileById(id);
-      if(u && typeof window.openPanel === 'function'){
-        window.openPanel({
-          id: u.id || id,
-          n: u.name || u.n || 'Usuario',
-          name: u.name || u.n || 'Usuario',
-          a: u.age || u.a || '',
-          age: u.age || u.a || '',
-          c: u.city || u.c || '',
-          city: u.city || u.c || '',
-          img: u.photo || u.img || '',
-          photo: u.photo || u.img || '',
-          bio: u.bio || '',
-          intent: u.intent || ''
-        });
-      }
-    }, 900);
-  }
-
-  if(auth()){
-    try{
-      auth().onAuthStateChanged(user => {
-        if(user) openPendingAfterLogin();
-      });
-    }catch(e){}
-  }
-
-  setTimeout(handleIncomingProfile, 900);
-  setTimeout(injectQRCard, 1200);
 })();
 </script>
 
