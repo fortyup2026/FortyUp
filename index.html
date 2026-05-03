@@ -6267,5 +6267,405 @@ body{padding-bottom:76px!important}
 })();
 </script>
 
+
+<style id="fuMessagingPremiumStyle">
+/* === FortyUp Mensajería Premium === */
+
+/* Lista de mensajes más app */
+#messages .screen-inner{
+  padding-top:.75rem!important;
+}
+#msgList{
+  display:flex;
+  flex-direction:column;
+  gap:.72rem;
+}
+#msgList .msg-item{
+  background:#fff!important;
+  border:1px solid var(--line)!important;
+  border-radius:22px!important;
+  padding:.82rem!important;
+  box-shadow:var(--sh2)!important;
+  margin:0!important;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+#msgList .msg-item:active{
+  transform:scale(.985);
+}
+#msgList .msg-avatar{
+  width:54px!important;
+  height:54px!important;
+  border:2px solid var(--g3)!important;
+  box-shadow:0 4px 12px rgba(6,78,59,.12)!important;
+}
+#msgList .msg-name{
+  font-size:.95rem!important;
+  color:var(--g)!important;
+  font-weight:1000!important;
+}
+#msgList .msg-preview{
+  font-size:.8rem!important;
+  font-weight:800!important;
+  color:var(--muted)!important;
+  margin-top:.18rem!important;
+}
+#msgList .msg-time{
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  border:1px solid var(--line)!important;
+  border-radius:999px!important;
+  padding:.18rem .45rem!important;
+  font-size:.62rem!important;
+  font-weight:1000!important;
+}
+.fu-msg-empty-premium{
+  text-align:center;
+  padding:3rem 1rem;
+  color:var(--muted);
+}
+.fu-msg-empty-premium div{
+  font-size:3rem;
+  margin-bottom:.7rem;
+}
+.fu-msg-empty-premium h3{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.15rem;
+  margin-bottom:.35rem;
+}
+.fu-msg-empty-premium p{
+  font-size:.86rem;
+  line-height:1.45;
+  font-weight:800;
+}
+
+/* Chat premium */
+#chat.screen.active{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at top left, rgba(16,185,129,.26), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(39,183,242,.18), transparent 32%),
+    linear-gradient(160deg,#042f25 0%,#064E3B 48%,#092f26 100%)!important;
+}
+body.chat-open #bottomNav{display:none!important}
+
+#chat .chat-topbar{
+  flex:0 0 auto!important;
+  position:relative!important;
+  top:auto!important;
+  z-index:40!important;
+  background:rgba(4,47,37,.88)!important;
+  color:#fff!important;
+  border-bottom:1px solid rgba(255,255,255,.1)!important;
+  backdrop-filter:blur(18px)!important;
+  padding:.68rem .9rem!important;
+}
+#chat .chat-back{
+  width:36px!important;
+  height:36px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.12)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#chat .top-avatar,
+#chatAvatar{
+  width:42px!important;
+  height:42px!important;
+  border:2.5px solid rgba(110,231,183,.75)!important;
+}
+#chatName{
+  color:#fff!important;
+  font-size:1rem!important;
+  font-weight:1000!important;
+}
+.fu-chat-subtitle{
+  font-size:.66rem;
+  color:#6ee7b7;
+  font-weight:900;
+  margin-top:.08rem;
+}
+
+#chat .chat-messages,
+#chatBox{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding:1rem .85rem!important;
+  gap:.6rem!important;
+  background:transparent!important;
+}
+#chat .chat-messages::before,
+#chatBox::before{
+  content:"";
+  position:fixed;
+  inset:56px 0 72px 0;
+  pointer-events:none;
+  opacity:.08;
+  background-image:
+    radial-gradient(circle at 10px 10px, #fff 1px, transparent 1px);
+  background-size:22px 22px;
+}
+.bubble{
+  max-width:78%!important;
+  padding:.72rem .92rem!important;
+  border-radius:20px!important;
+  font-size:.9rem!important;
+  line-height:1.45!important;
+  animation:fuBubbleIn .16s ease both;
+  position:relative!important;
+}
+.bubble.mine{
+  align-self:flex-end!important;
+  background:linear-gradient(135deg,#10B981,#059669)!important;
+  color:#fff!important;
+  border-bottom-right-radius:6px!important;
+  box-shadow:0 8px 18px rgba(16,185,129,.22)!important;
+}
+.bubble.theirs{
+  align-self:flex-start!important;
+  background:rgba(255,255,255,.96)!important;
+  color:var(--txt)!important;
+  border-bottom-left-radius:6px!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.12)!important;
+}
+.bubble img{
+  border-radius:16px!important;
+  max-width:230px!important;
+}
+.bubble small,
+.bubble .fu-chat-time{
+  display:block!important;
+  margin-top:.25rem!important;
+  opacity:.72!important;
+  font-size:.62rem!important;
+  font-weight:900!important;
+}
+
+/* Composer */
+#chat .chat-input-area{
+  flex:0 0 auto!important;
+  position:relative!important;
+  bottom:auto!important;
+  z-index:60!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  gap:.5rem!important;
+  background:rgba(4,47,37,.92)!important;
+  border-top:1px solid rgba(255,255,255,.1)!important;
+  backdrop-filter:blur(18px)!important;
+  padding:.7rem .75rem calc(.7rem + env(safe-area-inset-bottom,0px))!important;
+}
+#chat .chat-input-area button:first-child{
+  width:42px!important;
+  height:42px!important;
+  flex:0 0 42px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.12)!important;
+  color:#6ee7b7!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#chatInput{
+  min-height:42px!important;
+  max-height:104px!important;
+  flex:1 1 auto!important;
+  border:1.5px solid rgba(255,255,255,.14)!important;
+  border-radius:24px!important;
+  padding:.7rem .95rem!important;
+  background:rgba(255,255,255,.10)!important;
+  color:#fff!important;
+  outline:none!important;
+  font-family:'Nunito',sans-serif!important;
+  font-size:.92rem!important;
+  line-height:1.35!important;
+}
+#chatInput::placeholder{
+  color:rgba(255,255,255,.55)!important;
+}
+#chatInput:focus{
+  border-color:rgba(110,231,183,.65)!important;
+  background:rgba(255,255,255,.14)!important;
+}
+#chat .chat-send{
+  width:44px!important;
+  height:44px!important;
+  flex:0 0 44px!important;
+  border-radius:999px!important;
+  border:none!important;
+  background:linear-gradient(135deg,#6ee7b7,#10B981)!important;
+  color:#064E3B!important;
+  font-size:0!important;
+  font-weight:1000!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-shadow:0 6px 18px rgba(16,185,129,.38)!important;
+}
+#chat .chat-send::before{
+  content:"➤";
+  font-size:1.1rem;
+  line-height:1;
+}
+#chat .chat-send:active{
+  transform:scale(.94);
+}
+.fu-typing-pill{
+  align-self:flex-start;
+  background:rgba(255,255,255,.92);
+  border-radius:18px;
+  padding:.55rem .75rem;
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:900;
+  box-shadow:0 8px 18px rgba(0,0,0,.1);
+}
+.fu-typing-pill span{
+  display:inline-block;
+  animation:fuTyping 1.2s infinite;
+}
+.fu-typing-pill span:nth-child(2){animation-delay:.15s}
+.fu-typing-pill span:nth-child(3){animation-delay:.3s}
+@keyframes fuTyping{
+  0%,80%,100%{transform:translateY(0);opacity:.45}
+  40%{transform:translateY(-3px);opacity:1}
+}
+@keyframes fuBubbleIn{
+  from{opacity:0;transform:translateY(4px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+</style>
+
+<script id="fuMessagingPremiumScript">
+/* === FortyUp Mensajería Premium === */
+(function(){
+  function $(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function isChatActive(){return $('chat') && $('chat').classList.contains('active')}
+  function scrollChat(){
+    const box=$('chatBox');
+    if(box) box.scrollTop=box.scrollHeight;
+  }
+  function enhanceChatTop(){
+    const top=document.querySelector('#chat .chat-topbar');
+    if(!top || top.__fuPremiumEnhanced) return;
+    top.__fuPremiumEnhanced=true;
+    setTimeout(()=>{
+      const name=$('chatName');
+      if(name && !top.querySelector('.fu-chat-subtitle')){
+        const sub=document.createElement('div');
+        sub.className='fu-chat-subtitle';
+        sub.textContent='FortyUp · conversación privada';
+        if(name.parentElement && name.parentElement !== top){
+          name.parentElement.appendChild(sub);
+        }else{
+          const wrap=document.createElement('div');
+          wrap.style.flex='1';
+          wrap.style.minWidth='0';
+          name.parentNode.insertBefore(wrap,name);
+          wrap.appendChild(name);
+          wrap.appendChild(sub);
+        }
+      }
+    },60);
+  }
+  function enhanceInput(){
+    const input=$('chatInput');
+    if(!input || input.__fuPremiumEnhanced) return;
+    input.__fuPremiumEnhanced=true;
+
+    // Si es input text, lo dejamos usable y estilizado; si ya es textarea, también.
+    input.addEventListener('input',()=>{
+      if(input.tagName.toLowerCase()==='textarea'){
+        input.style.height='auto';
+        input.style.height=Math.min(input.scrollHeight,104)+'px';
+      }
+    });
+    input.addEventListener('focus',()=>setTimeout(scrollChat,220));
+  }
+
+  function enhanceMessageList(){
+    const list=$('msgList');
+    if(!list) return;
+    if(!list.children.length){
+      list.innerHTML='<div class="fu-msg-empty-premium"><div>💬</div><h3>Sin mensajes todavía</h3><p>Cuando conectes con alguien, tus conversaciones van a aparecer acá.</p></div>';
+    }
+  }
+
+  function enhanceChat(){
+    if(!isChatActive()) return;
+    enhanceChatTop();
+    enhanceInput();
+    setTimeout(scrollChat,80);
+    setTimeout(scrollChat,260);
+  }
+
+  if(typeof window.go==='function' && !window.go.__fuMessagingPremium){
+    const oldGo=window.go;
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(()=>{
+        if(id==='chat') enhanceChat();
+        if(id==='messages') enhanceMessageList();
+      },120);
+      return r;
+    };
+    window.go.__fuMessagingPremium=true;
+  }
+
+  if(typeof window.startChat==='function' && !window.startChat.__fuMessagingPremium){
+    const oldStart=window.startChat;
+    window.startChat=function(){
+      const r=oldStart.apply(this,arguments);
+      setTimeout(enhanceChat,120);
+      setTimeout(enhanceChat,420);
+      return r;
+    };
+    window.startChat.__fuMessagingPremium=true;
+  }
+
+  if(typeof window.renderMessages==='function' && !window.renderMessages.__fuMessagingPremium){
+    const oldRender=window.renderMessages;
+    window.renderMessages=function(){
+      const r=oldRender.apply(this,arguments);
+      setTimeout(enhanceMessageList,60);
+      return r;
+    };
+    window.renderMessages.__fuMessagingPremium=true;
+  }
+
+  if(typeof window.sendMsg==='function' && !window.sendMsg.__fuMessagingPremium){
+    const oldSend=window.sendMsg;
+    window.sendMsg=function(){
+      const btn=document.querySelector('#chat .chat-send');
+      if(btn) btn.style.opacity='.65';
+      const r=oldSend.apply(this,arguments);
+      setTimeout(()=>{
+        if(btn) btn.style.opacity='1';
+        const input=$('chatInput');
+        if(input && input.tagName.toLowerCase()==='textarea') input.style.height='auto';
+        scrollChat();
+      },130);
+      return r;
+    };
+    window.sendMsg.__fuMessagingPremium=true;
+  }
+
+  setInterval(()=>{
+    if(isChatActive()) enhanceChat();
+    if($('messages') && $('messages').classList.contains('active')) enhanceMessageList();
+  },1000);
+})();
+</script>
+
 </body>
 </html>
