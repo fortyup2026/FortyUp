@@ -7714,5 +7714,219 @@ button.fu-forti-sent{
 })();
 </script>
 
+
+<style id="fuBellNoFlickerFinalStyle">
+/* === FortyUp campanita estable final === */
+#fuProBellCount.fu-zero,
+#fuNotifyCount.fu-zero{
+  display:none!important;
+}
+</style>
+
+<script id="fuBellNoFlickerFinalScript">
+/* === FortyUp campanita estable final: solo recibidas, sin titileo por enviados === */
+(function(){
+  const KEYS = ['fu_notify_pro_items_v2','fu_notifications_all_v1'];
+  const currentUserId = () => {
+    try{
+      if(window.fuAuth && window.fuAuth.currentUser) return window.fuAuth.currentUser.uid;
+      if(window.firebase && firebase.auth && firebase.auth().currentUser) return firebase.auth().currentUser.uid;
+    }catch(e){}
+    try{
+      const u = typeof window.me === 'function' ? window.me() : JSON.parse(localStorage.getItem('fu_user')||'null');
+      return (u && (u.uid || u.id)) || '';
+    }catch(e){return ''}
+  };
+  const isLogged = () => !!currentUserId();
+  const load = (k,d) => {try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}};
+  const save = (k,v) => {try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const $ = id => document.getElementById(id);
+
+  function isOutgoingNoise(n){
+    if(!n) return true;
+    const my = currentUserId();
+    const type = String(n.type||'').toLowerCase();
+    const title = String(n.title||'').toLowerCase();
+    const text = String(n.text||'').toLowerCase();
+
+    if(title.includes('enviado')) return true;
+    if(text.includes('le mandaste')) return true;
+    if(text.includes('mandaste un forti')) return true;
+    if(text.includes('mandaste un súper')) return true;
+    if(text.includes('mandaste un super')) return true;
+    if(title.includes('asistencia actualizada')) return true;
+    if(text.includes('se actualizó tu asistencia')) return true;
+    if(type === 'event_join' && title.includes('te sumaste')) return true;
+
+    // Si explícitamente está dirigido a mí, se queda.
+    if(n.to && my && n.to === my) return false;
+
+    // Si soy el emisor y no soy receptor, NO va a campanita.
+    if(n.from && my && n.from === my && (!n.to || n.to !== my)) return true;
+
+    return false;
+  }
+
+  function cleanAllNotificationStores(){
+    KEYS.forEach(key=>{
+      const arr = load(key,[]);
+      if(!Array.isArray(arr)) return;
+      const clean = arr.filter(n=>!isOutgoingNoise(n));
+      if(clean.length !== arr.length) save(key, clean);
+    });
+  }
+
+  function getReceivedItems(){
+    cleanAllNotificationStores();
+    const merged = [];
+    const seen = new Set();
+    KEYS.forEach(key=>{
+      const arr = load(key,[]);
+      if(!Array.isArray(arr)) return;
+      arr.forEach(n=>{
+        if(!n || !n.id) return;
+        if(isOutgoingNoise(n)) return;
+        if(seen.has(n.id)) return;
+        seen.add(n.id);
+        merged.push(n);
+      });
+    });
+    return merged;
+  }
+
+  function setBellCountStable(){
+    const unread = getReceivedItems().filter(n=>!n.read).length;
+    const ids = ['fuProBellCount','fuNotifyCount'];
+    ids.forEach(id=>{
+      const c = $(id);
+      if(!c) return;
+      c.textContent = unread > 99 ? '99+' : String(unread);
+      c.classList.toggle('show', unread > 0);
+      c.classList.toggle('fu-zero', unread <= 0);
+      if(unread <= 0) c.style.display = 'none';
+      else c.style.display = 'flex';
+    });
+
+    const bells = ['fuProBell','fuNotifyBell'];
+    bells.forEach(id=>{
+      const bell = $(id);
+      if(!bell) return;
+      const active = [...document.querySelectorAll('.screen.active')][0]?.id || '';
+      const should = isLogged() && active !== 'landing' && active !== 'chat';
+      bell.classList.toggle('show', should);
+      bell.style.display = should ? 'flex' : 'none';
+    });
+
+    const msgDot = $('msgDot');
+    if(msgDot && unread <= 0) msgDot.classList.remove('show');
+  }
+
+  function scrubPanelVisual(){
+    cleanAllNotificationStores();
+    const lists = ['fuProNotifyList','fuNotifyList'];
+    lists.forEach(id=>{
+      const list = $(id);
+      if(!list) return;
+      [...list.children].forEach(item=>{
+        const txt = (item.textContent||'').toLowerCase();
+        if(
+          txt.includes('enviado') ||
+          txt.includes('le mandaste') ||
+          txt.includes('asistencia actualizada') ||
+          txt.includes('se actualizó tu asistencia')
+        ){
+          item.remove();
+        }
+      });
+      if(!list.children.length){
+        list.innerHTML = '<div class="fu-pro-empty"><div>🔔</div><h4>Sin notificaciones</h4><p>Acá van a aparecer Fortis recibidos, Súper Diamantes recibidos, mensajes, eventos y coincidencias.</p></div>';
+      }
+    });
+  }
+
+  // Blindar funciones de agregar notificaciones: si es envío propio, no entra nunca.
+  ['fuNotifyProAdd','fuNotify'].forEach(fnName=>{
+    if(typeof window[fnName] === 'function' && !window[fnName].__noOutgoingNoiseHard){
+      const old = window[fnName];
+      window[fnName] = function(raw, show){
+        if(isOutgoingNoise(raw)){
+          setTimeout(setBellCountStable, 20);
+          return raw;
+        }
+        return old.apply(this, arguments);
+      };
+      window[fnName].__noOutgoingNoiseHard = true;
+    }
+  });
+
+  // Neutraliza el pulso/contador cuando tocás botones de envío propio.
+  document.addEventListener('click', function(ev){
+    const target = ev.target && ev.target.closest ? ev.target.closest('button,[onclick]') : null;
+    if(!target) return;
+    const action = String(target.getAttribute('onclick')||'').toLowerCase();
+    const text = String(target.textContent||'').toLowerCase();
+    if(
+      action.includes('sendforti') ||
+      action.includes('sendsuper') ||
+      text.includes('forti') ||
+      text.includes('diamante') ||
+      text.includes('asistiré')
+    ){
+      setTimeout(()=>{cleanAllNotificationStores(); setBellCountStable(); scrubPanelVisual();}, 40);
+      setTimeout(()=>{cleanAllNotificationStores(); setBellCountStable(); scrubPanelVisual();}, 250);
+      setTimeout(()=>{cleanAllNotificationStores(); setBellCountStable(); scrubPanelVisual();}, 900);
+    }
+  }, true);
+
+  // Si otros scripts intentan cambiar el contador, lo corregimos enseguida.
+  function installBellObserver(){
+    ['fuProBellCount','fuNotifyCount'].forEach(id=>{
+      const node = $(id);
+      if(!node || node.__stableObserver) return;
+      node.__stableObserver = true;
+      new MutationObserver(()=>setTimeout(setBellCountStable, 10)).observe(node, {
+        childList:true,
+        characterData:true,
+        subtree:true,
+        attributes:true
+      });
+    });
+  }
+
+  const oldSetItem = localStorage.setItem.bind(localStorage);
+  if(!localStorage.__fuNoFlickerSetItem){
+    localStorage.setItem = function(k,v){
+      const result = oldSetItem(k,v);
+      if(KEYS.includes(k)){
+        setTimeout(()=>{cleanAllNotificationStores(); setBellCountStable();}, 10);
+      }
+      return result;
+    };
+    localStorage.__fuNoFlickerSetItem = true;
+  }
+
+  const oldGo = window.go;
+  if(typeof oldGo === 'function' && !oldGo.__bellNoFlickerFinal){
+    window.go = function(id){
+      const r = oldGo.apply(this, arguments);
+      setTimeout(()=>{installBellObserver(); setBellCountStable(); scrubPanelVisual();}, 120);
+      return r;
+    };
+    window.go.__bellNoFlickerFinal = true;
+  }
+
+  function init(){
+    cleanAllNotificationStores();
+    installBellObserver();
+    setBellCountStable();
+    scrubPanelVisual();
+  }
+
+  setTimeout(init, 300);
+  setTimeout(init, 1000);
+  setInterval(init, 1200);
+})();
+</script>
+
 </body>
 </html>
