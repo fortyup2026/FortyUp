@@ -5662,5 +5662,736 @@ setTimeout(enhanceEvents,1500);
 })();
 </script>
 
+
+<style id="fuEventChatFullStyle">
+/* === FortyUp EVENTOS COMPLETOS: asistentes + chat por evento === */
+.fu-event-full-btn{
+  border:0;
+  border-radius:999px;
+  padding:.55rem .78rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.76rem;
+  font-weight:1000;
+  cursor:pointer;
+  background:var(--soft);
+  color:var(--g);
+  border:1.5px solid var(--line)!important;
+}
+.fu-event-full-btn.primary{
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  border:0!important;
+}
+.fu-event-full-btn.gold{
+  background:#F2B705;
+  color:#064E3B;
+  border:0!important;
+}
+.fu-event-attendees-row{
+  display:flex;
+  gap:.38rem;
+  align-items:center;
+  margin:.52rem 0 .7rem;
+  min-height:28px;
+}
+.fu-event-attendee-dot{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:2px solid #fff;
+  background:var(--soft);
+  color:var(--g);
+  display:grid;
+  place-items:center;
+  font-size:.72rem;
+  font-weight:1000;
+  margin-left:-8px;
+  overflow:hidden;
+  box-shadow:0 4px 10px rgba(6,78,59,.12);
+}
+.fu-event-attendee-dot:first-child{margin-left:0}
+.fu-event-attendee-dot img{width:100%;height:100%;object-fit:cover}
+.fu-event-attendees-text{
+  font-size:.74rem;
+  color:var(--muted);
+  font-weight:900;
+  margin-left:.25rem;
+}
+.fu-event-sheet-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:1rem;
+  box-shadow:var(--sh2);
+  margin-bottom:.8rem;
+}
+.fu-event-sheet-card h3{
+  font-family:'Playfair Display',serif;
+  color:var(--g);
+  font-size:1.25rem;
+  line-height:1.18;
+  margin-bottom:.35rem;
+}
+.fu-event-sheet-card p{
+  color:var(--muted);
+  font-size:.84rem;
+  line-height:1.5;
+  font-weight:800;
+  margin:.35rem 0;
+}
+.fu-event-sheet-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45rem;
+  margin-top:.85rem;
+}
+.fu-event-attendee-list{
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+  margin-top:.65rem;
+}
+.fu-event-attendee-item{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:.65rem;
+  box-shadow:var(--sh2);
+}
+.fu-event-attendee-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--soft);
+  object-fit:cover;
+  display:grid;
+  place-items:center;
+  color:var(--g);
+  font-family:'Playfair Display',serif;
+  font-weight:900;
+  flex:0 0 42px;
+  overflow:hidden;
+}
+.fu-event-attendee-avatar img{width:100%;height:100%;object-fit:cover}
+.fu-event-attendee-info{
+  flex:1;
+  min-width:0;
+}
+.fu-event-attendee-name{
+  font-weight:1000;
+  color:var(--txt);
+  font-size:.9rem;
+}
+.fu-event-attendee-sub{
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:800;
+}
+.fu-event-chat-screen{
+  position:fixed;
+  inset:0;
+  z-index:100003;
+  display:none;
+  flex-direction:column;
+  background:
+    radial-gradient(circle at top left, rgba(16,185,129,.24), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(39,183,242,.18), transparent 34%),
+    linear-gradient(160deg,#042f25 0%,#064E3B 48%,#092f26 100%);
+}
+.fu-event-chat-screen.open{display:flex}
+.fu-event-chat-top{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  padding:.72rem .9rem;
+  background:rgba(4,47,37,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  color:#fff;
+}
+.fu-event-chat-back{
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  border:0;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:1.15rem;
+  cursor:pointer;
+  flex:0 0 38px;
+}
+.fu-event-chat-icon{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#10B981,#6ee7b7);
+  color:#064E3B;
+  display:grid;
+  place-items:center;
+  font-size:1.3rem;
+  flex:0 0 42px;
+  box-shadow:0 0 0 3px rgba(16,185,129,.2);
+}
+.fu-event-chat-title{
+  flex:1;
+  min-width:0;
+}
+.fu-event-chat-title b{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.96rem;
+}
+.fu-event-chat-title span{
+  display:block;
+  color:#6ee7b7;
+  font-size:.67rem;
+  font-weight:900;
+  margin-top:.06rem;
+}
+.fu-event-chat-box{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:1rem .85rem;
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+}
+.fu-event-msg{
+  max-width:82%;
+  padding:.7rem .86rem;
+  border-radius:19px;
+  font-size:.88rem;
+  line-height:1.43;
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+  animation:fuEventMsgIn .16s ease both;
+  word-break:break-word;
+}
+.fu-event-msg.mine{
+  align-self:flex-end;
+  background:linear-gradient(135deg,#10B981,#059669);
+  color:#fff;
+  border-bottom-right-radius:6px;
+}
+.fu-event-msg.theirs{
+  align-self:flex-start;
+  background:rgba(255,255,255,.96);
+  color:var(--txt);
+  border-bottom-left-radius:6px;
+}
+.fu-event-msg small{
+  display:block;
+  margin-top:.25rem;
+  opacity:.72;
+  font-size:.62rem;
+  font-weight:900;
+}
+.fu-event-msg-author{
+  font-size:.69rem;
+  font-weight:1000;
+  margin-bottom:.16rem;
+  opacity:.78;
+}
+.fu-event-chat-input{
+  flex:0 0 auto;
+  display:flex;
+  align-items:flex-end;
+  gap:.5rem;
+  padding:.7rem .75rem calc(.7rem + env(safe-area-inset-bottom,0px));
+  background:rgba(4,47,37,.92);
+  border-top:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(18px);
+}
+.fu-event-chat-input textarea{
+  flex:1;
+  min-height:42px;
+  max-height:104px;
+  border:1.5px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  padding:.7rem .95rem;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  outline:none;
+  font-family:'Nunito',sans-serif;
+  font-size:.92rem;
+  line-height:1.35;
+  resize:none;
+}
+.fu-event-chat-input textarea::placeholder{color:rgba(255,255,255,.55)}
+.fu-event-chat-input textarea:focus{
+  border-color:rgba(110,231,183,.65);
+  background:rgba(255,255,255,.14);
+}
+.fu-event-chat-send{
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
+  border:0;
+  border-radius:999px;
+  background:linear-gradient(135deg,#6ee7b7,#10B981);
+  color:#064E3B;
+  font-size:1.1rem;
+  font-weight:1000;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(16,185,129,.38);
+}
+.fu-event-chat-empty{
+  text-align:center;
+  color:rgba(255,255,255,.75);
+  padding:2.5rem 1rem;
+  font-weight:800;
+  line-height:1.45;
+}
+.fu-event-chat-empty div{font-size:3rem;margin-bottom:.65rem}
+@keyframes fuEventMsgIn{
+  from{opacity:0;transform:translateY(4px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+</style>
+
+<script id="fuEventChatFullScript">
+/* === FortyUp EVENTOS COMPLETOS: asistentes + chat por evento === */
+(function(){
+  const LS_ATT='fu_event_attendees_full_v1';
+  const LS_MSG='fu_event_chat_full_v1';
+  let currentEventChatId='';
+  let eventChatUnsub=null;
+
+  function $(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function myName(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function myPhoto(){const u=me();return (u&&(u.photo||u.img))||''}
+  function nowIso(){return new Date().toISOString()}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function eventKey(id){return String(id||'event').replace(/[^\w-]/g,'_')}
+  function timeLabel(d){
+    const dt=new Date(d);
+    if(isNaN(dt.getTime()))return '';
+    return dt.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  function registry(){
+    window.fuEventRegistry=window.fuEventRegistry||{};
+    return window.fuEventRegistry;
+  }
+  function normalizeTitleId(title){
+    return String(title||'evento').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,90)||'evento';
+  }
+  function registerEventFromPlan(p){
+    if(!p)return null;
+    const id=normalizeTitleId((p[0]||'evento')+'_'+(p[1]||'')+'_'+(p[7]||''));
+    const ev={
+      id,
+      kind:p[8]?'curated':'plan',
+      title:p[0]||'Evento',
+      when:p[1]||'Fecha a confirmar',
+      desc:p[2]||'',
+      img:p[3]||'',
+      icon:p[4]||'🎟️',
+      place:p[5]||p[7]||'',
+      city:p[7]||'',
+      link:p[8]||'',
+      creatorId:p.creatorId||'fortyup',
+      creatorName:p.creatorName||'FortyUp'
+    };
+    registry()[id]=ev;
+    return ev;
+  }
+  function getEvent(id){
+    if(registry()[id])return registry()[id];
+    try{
+      if(Array.isArray(window.plans)){
+        for(const p of window.plans){
+          const ev=registerEventFromPlan(p);
+          if(ev && ev.id===id)return ev;
+        }
+      }else if(typeof plans!=='undefined'){
+        for(const p of plans){
+          const ev=registerEventFromPlan(p);
+          if(ev && ev.id===id)return ev;
+        }
+      }
+    }catch(e){}
+    return {id,title:'Evento',when:'',desc:'',icon:'🎟️'};
+  }
+
+  function localAttendees(){
+    return load(LS_ATT,{});
+  }
+  function saveLocalAttendees(obj){
+    save(LS_ATT,obj);
+  }
+  function getAttendees(id){
+    const all=localAttendees();
+    const arr=Array.isArray(all[id])?all[id]:[];
+    // Compat con otros sistemas anteriores
+    try{
+      const a=window.fuEventAttendance || window.eventAttendance || {};
+      const remote=a[id] && Array.isArray(a[id].attendees) ? a[id].attendees : [];
+      remote.forEach(x=>{
+        if(!arr.some(y=>y.uid===x || y.id===x)){
+          arr.push({uid:x,id:x,name:'Usuario FortyUp',photo:''});
+        }
+      });
+    }catch(e){}
+    return arr;
+  }
+  function isAttendingLocal(id){
+    const u=uid();
+    if(!u)return false;
+    return getAttendees(id).some(x=>(x.uid||x.id)===u);
+  }
+  function setAttend(id,on=true){
+    const u=uid();
+    if(!u)return false;
+    const all=localAttendees();
+    all[id]=Array.isArray(all[id])?all[id]:[];
+    if(on){
+      if(!all[id].some(x=>(x.uid||x.id)===u)){
+        all[id].push({uid:u,id:u,name:myName(),photo:myPhoto(),joinedAt:nowIso()});
+      }
+    }else{
+      all[id]=all[id].filter(x=>(x.uid||x.id)!==u);
+    }
+    saveLocalAttendees(all);
+    return true;
+  }
+
+  async function remoteAttend(id,on=true){
+    const d=db(), u=uid();
+    if(!d||!u)return;
+    try{
+      const ref=d.collection('eventAttendance').doc(id);
+      if(on){
+        await ref.set({
+          eventId:id,
+          attendees:firebase.firestore.FieldValue.arrayUnion(u),
+          attendeeNames:{[u]:myName()},
+          attendeePhotos:{[u]:myPhoto()},
+          updatedAt:serverTime()
+        },{merge:true});
+      }else{
+        await ref.set({
+          attendees:firebase.firestore.FieldValue.arrayRemove(u),
+          [`attendeeNames.${u}`]:firebase.firestore.FieldValue.delete(),
+          [`attendeePhotos.${u}`]:firebase.firestore.FieldValue.delete(),
+          updatedAt:serverTime()
+        },{merge:true});
+      }
+    }catch(e){console.warn('remoteAttend',e)}
+  }
+
+  function renderAttendeeDots(id){
+    const arr=getAttendees(id);
+    const first=arr.slice(0,4);
+    return `
+      <div class="fu-event-attendees-row">
+        ${first.map(a=>{
+          const name=a.name||'Usuario';
+          const photo=a.photo||'';
+          return `<div class="fu-event-attendee-dot" title="${safe(name)}">${photo?`<img src="${safe(photo)}">`:safe(name.charAt(0).toUpperCase())}</div>`;
+        }).join('')}
+        <span class="fu-event-attendees-text">${arr.length?`${arr.length} van`:'Sé el primero en asistir'}</span>
+      </div>`;
+  }
+  function renderAttendeeList(id){
+    const arr=getAttendees(id);
+    if(!arr.length)return `<div class="empty"><div class="empty-ico">👥</div><p>Todavía no hay asistentes. Tocá Asistiré para sumarte.</p></div>`;
+    return `<div class="fu-event-attendee-list">${arr.map(a=>{
+      const name=a.name||'Usuario';
+      const photo=a.photo||'';
+      const aid=a.uid||a.id||'';
+      const isMe=aid===uid();
+      return `<div class="fu-event-attendee-item">
+        <div class="fu-event-attendee-avatar">${photo?`<img src="${safe(photo)}">`:safe(name.charAt(0).toUpperCase())}</div>
+        <div class="fu-event-attendee-info">
+          <div class="fu-event-attendee-name">${safe(name)} ${isMe?'(vos)':''}</div>
+          <div class="fu-event-attendee-sub">Asiste a este evento</div>
+        </div>
+        ${!isMe?`<button class="fu-event-full-btn" onclick="fuOpenPrivateFromEvent('${safe(aid)}')">Hablar</button>`:''}
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  window.fuOpenEventFull=function(id){
+    const ev=getEvent(id);
+    const attending=isAttendingLocal(id);
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`
+      <div class="panel-title">🎟️ Evento</div>
+      <div class="fu-event-sheet-card">
+        <h3>${safe(ev.icon||'🎟️')} ${safe(ev.title||'Evento')}</h3>
+        <p><strong>📍 Lugar:</strong> ${safe(ev.place||ev.city||'Sin lugar')}</p>
+        <p><strong>🕒 Fecha:</strong> ${safe(ev.when||'Fecha a confirmar')}</p>
+        <p>${safe(ev.desc||'Plan para conectar con gente de FortyUp.')}</p>
+        ${renderAttendeeDots(id)}
+        <div class="fu-event-sheet-actions">
+          <button class="fu-event-full-btn ${attending?'gold':'primary'}" onclick="fuToggleEventAttendFull('${safe(id)}')">${attending?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-event-full-btn" onclick="fuOpenEventChat('${safe(id)}')">💬 Chat del evento</button>
+          ${ev.link?`<button class="fu-event-full-btn" onclick="window.open('${safe(ev.link)}','_blank')">Ver info</button>`:''}
+        </div>
+      </div>
+      <div class="fu-event-sheet-card">
+        <h3>👥 Asistentes</h3>
+        ${renderAttendeeList(id)}
+      </div>`;
+    panel.classList.add('open');
+  };
+
+  window.fuToggleEventAttendFull=async function(id){
+    if(!uid())return toast('Primero iniciá sesión');
+    const attending=isAttendingLocal(id);
+    setAttend(id,!attending);
+    await remoteAttend(id,!attending);
+    const ev=getEvent(id);
+    if(!attending){
+      toast('Te sumaste al evento ✅');
+      try{
+        if(typeof window.fuNotify==='function'){
+          window.fuNotify({type:'event_join',title:'Te sumaste a un evento',text:'Vas a asistir a '+(ev.title||'un evento')+'.',eventId:id,createdAt:nowIso()},false);
+        }
+      }catch(e){}
+    }else{
+      toast('Cancelaste tu asistencia');
+    }
+    window.fuOpenEventFull(id);
+    refreshPlansLater();
+  };
+
+  window.fuOpenPrivateFromEvent=function(profileId){
+    const arr=getAttendees(currentEventChatId||'').concat(...Object.values(localAttendees()));
+    const a=arr.find(x=>(x.uid||x.id)===profileId);
+    if(!a)return toast('No encontré ese usuario todavía');
+    const profile={id:profileId,n:a.name||'Usuario',name:a.name||'Usuario',img:a.photo||'',photo:a.photo||'',c:'',city:'',a:'',age:''};
+    if(typeof window.startChat==='function'){
+      if($('profilePanel'))$('profilePanel').classList.remove('open');
+      window.startChat(profile);
+    }
+  };
+
+  function ensureChatScreen(){
+    if($('fuEventChatScreen'))return;
+    const el=document.createElement('div');
+    el.id='fuEventChatScreen';
+    el.className='fu-event-chat-screen';
+    el.innerHTML=`
+      <div class="fu-event-chat-top">
+        <button class="fu-event-chat-back" onclick="fuCloseEventChat()">←</button>
+        <div class="fu-event-chat-icon" id="fuEventChatIcon">🎟️</div>
+        <div class="fu-event-chat-title">
+          <b id="fuEventChatTitle">Chat del evento</b>
+          <span id="fuEventChatSub">Solo asistentes</span>
+        </div>
+      </div>
+      <div id="fuEventChatBox" class="fu-event-chat-box"></div>
+      <div class="fu-event-chat-input">
+        <textarea id="fuEventChatInput" rows="1" placeholder="Escribí en el chat del evento..." oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,104)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();fuSendEventMsg()}"></textarea>
+        <button class="fu-event-chat-send" onclick="fuSendEventMsg()">➤</button>
+      </div>`;
+    document.body.appendChild(el);
+  }
+
+  function localMessages(id){
+    const all=load(LS_MSG,{});
+    return Array.isArray(all[id])?all[id]:[];
+  }
+  function saveLocalMessage(id,msg){
+    const all=load(LS_MSG,{});
+    all[id]=Array.isArray(all[id])?all[id]:[];
+    all[id].push(msg);
+    all[id]=all[id].slice(-200);
+    save(LS_MSG,all);
+  }
+  function renderEventMessages(id,msgs=None){
+    const box=$('fuEventChatBox');
+    if(!box)return;
+    let arr=msgs;
+    if(!Array.isArray(arr))arr=localMessages(id);
+    arr.sort((a,b)=>new Date(a.createdAt).getTime()-new Date(b.createdAt).getTime());
+    if(!arr.length){
+      box.innerHTML=`<div class="fu-event-chat-empty"><div>💬</div><p>Todavía no hay mensajes.<br>Escribí el primero para coordinar el plan.</p></div>`;
+    }else{
+      box.innerHTML=arr.map(m=>{
+        const mine=(m.uid||m.from)===uid();
+        return `<div class="fu-event-msg ${mine?'mine':'theirs'}">
+          ${!mine?`<div class="fu-event-msg-author">${safe(m.name||m.fromName||'Usuario')}</div>`:''}
+          ${safe(m.text||'')}
+          <small>${safe(timeLabel(m.createdAt))}</small>
+        </div>`;
+      }).join('');
+    }
+    setTimeout(()=>{box.scrollTop=box.scrollHeight},60);
+  }
+  function listenRemoteEventChat(id){
+    const d=db();
+    if(eventChatUnsub){try{eventChatUnsub()}catch(e){}; eventChatUnsub=null;}
+    if(!d)return;
+    try{
+      eventChatUnsub=d.collection('eventChats').doc(id).collection('messages')
+        .orderBy('createdAt','asc').limit(200)
+        .onSnapshot(snap=>{
+          const arr=[];
+          snap.forEach(doc=>{
+            const data=doc.data()||{};
+            arr.push({
+              id:doc.id,
+              uid:data.uid||data.from||'',
+              name:data.name||data.fromName||'Usuario',
+              text:data.text||'',
+              createdAt:data.createdAtText||new Date().toISOString()
+            });
+          });
+          renderEventMessages(id,arr);
+        },err=>console.warn('event chat listener',err));
+    }catch(e){console.warn('listenRemoteEventChat',e)}
+  }
+
+  window.fuOpenEventChat=function(id){
+    if(!uid())return toast('Primero iniciá sesión');
+    if(!isAttendingLocal(id)){
+      toast('Primero tocá Asistiré para entrar al chat del evento');
+      return;
+    }
+    ensureChatScreen();
+    currentEventChatId=id;
+    const ev=getEvent(id);
+    $('fuEventChatIcon').textContent=ev.icon||'🎟️';
+    $('fuEventChatTitle').textContent=ev.title||'Chat del evento';
+    $('fuEventChatSub').textContent=(getAttendees(id).length||1)+' asistentes · solo los que van';
+    $('fuEventChatScreen').classList.add('open');
+    if($('profilePanel'))$('profilePanel').classList.remove('open');
+    renderEventMessages(id);
+    listenRemoteEventChat(id);
+    setTimeout(()=>$('fuEventChatInput')?.focus(),150);
+  };
+
+  window.fuCloseEventChat=function(){
+    $('fuEventChatScreen')?.classList.remove('open');
+    currentEventChatId='';
+    if(eventChatUnsub){try{eventChatUnsub()}catch(e){}; eventChatUnsub=null;}
+  };
+
+  window.fuSendEventMsg=async function(){
+    const id=currentEventChatId;
+    const input=$('fuEventChatInput');
+    const text=(input?.value||'').trim();
+    if(!id||!text)return;
+    if(!isAttendingLocal(id))return toast('Solo asistentes pueden escribir');
+    const msg={uid:uid(),name:myName(),photo:(me()&&(me().photo||me().img))||'',text,createdAt:nowIso()};
+    input.value='';
+    input.style.height='auto';
+    saveLocalMessage(id,msg);
+    renderEventMessages(id);
+    const d=db();
+    if(d){
+      try{
+        await d.collection('eventChats').doc(id).collection('messages').add({
+          ...msg,
+          createdAtText:msg.createdAt,
+          createdAt:serverTime()
+        });
+      }catch(e){console.warn('send event msg',e)}
+    }
+  };
+
+  function enhancePlanCards(){
+    // Register plan events and add buttons to rendered plan cards without changing original layout.
+    let planArr=[];
+    try{planArr=Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[])}catch(e){}
+    planArr.forEach(registerEventFromPlan);
+
+    const cards=[...document.querySelectorAll('.plan-card,.fu-event-card')];
+    cards.forEach((card,idx)=>{
+      if(card.__fuEventFullDone)return;
+      let ev=None;
+      // Try infer by text
+      const text=card.textContent||'';
+      ev=Object.values(registry()).find(e=>e.title && text.includes(e.title));
+      if(!ev && planArr[idx]) ev=registerEventFromPlan(planArr[idx]);
+      if(!ev)return;
+      card.__fuEventFullDone=true;
+
+      const holder=document.createElement('div');
+      holder.style.padding=card.classList.contains('fu-event-card')?'.2rem .8rem .8rem':'0 .95rem .9rem';
+      holder.innerHTML=`
+        ${renderAttendeeDots(ev.id)}
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="fu-event-full-btn primary" onclick="event.stopPropagation();fuOpenEventFull('${safe(ev.id)}')">Ver evento</button>
+          <button class="fu-event-full-btn" onclick="event.stopPropagation();fuOpenEventChat('${safe(ev.id)}')">💬 Chat</button>
+        </div>`;
+      card.appendChild(holder);
+      const oldClick=card.onclick;
+      card.onclick=function(e){
+        if(e.target && e.target.tagName==='BUTTON')return;
+        window.fuOpenEventFull(ev.id);
+      };
+    });
+  }
+  function refreshPlansLater(){
+    setTimeout(()=>{
+      try{if(typeof window.renderPlans==='function' && $('plans')?.classList.contains('active')) window.renderPlans()}catch(e){}
+      setTimeout(enhancePlanCards,180);
+    },150);
+  }
+
+  // Wrap existing attend function to sync with full system too.
+  if(typeof window.toggleFuEventAttend==='function' && !window.toggleFuEventAttend.__fuFullEventChatWrapped){
+    const old=window.toggleFuEventAttend;
+    window.toggleFuEventAttend=async function(id){
+      const before=isAttendingLocal(id);
+      const r=await old.apply(this,arguments);
+      if(!before) {
+        setAttend(id,true);
+        await remoteAttend(id,true);
+      }
+      refreshPlansLater();
+      return r;
+    };
+    window.toggleFuEventAttend.__fuFullEventChatWrapped=true;
+  }
+
+  // Public API for original code
+  window.fuEventAttendees=getAttendees;
+
+  function init(){
+    ensureChatScreen();
+    enhancePlanCards();
+  }
+
+  setInterval(enhancePlanCards,1200);
+  setTimeout(init,700);
+  setTimeout(init,1600);
+
+  if(typeof window.renderPlans==='function' && !window.renderPlans.__fuFullEventChatWrapped){
+    const oldRender=window.renderPlans;
+    window.renderPlans=function(){
+      const r=oldRender.apply(this,arguments);
+      setTimeout(enhancePlanCards,160);
+      return r;
+    };
+    window.renderPlans.__fuFullEventChatWrapped=true;
+  }
+})();
+</script>
+
 </body>
 </html>
