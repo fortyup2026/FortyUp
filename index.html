@@ -7928,5 +7928,377 @@ button.fu-forti-sent{
 })();
 </script>
 
+
+<style id="fuAttendFixSobreTuBaseStyle">
+.fu-attend-fixed-on,
+.attend-btn.attending,
+button.fu-attend-fixed-on{
+  background:linear-gradient(135deg,#F2B705,#FFD75A)!important;
+  color:#064E3B!important;
+  border:0!important;
+  box-shadow:0 8px 18px rgba(242,183,5,.25)!important;
+}
+.fu-attend-fixed-count{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  background:var(--soft);
+  color:var(--g);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:.22rem .52rem;
+  font-size:.7rem;
+  font-weight:1000;
+  margin:.35rem 0;
+}
+</style>
+
+<script id="fuAttendFixSobreTuBaseScript">
+(function(){
+  const LS_ATT='fu_event_attendees_full_v1';
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function uid(){
+    const a=auth();
+    return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||'';
+  }
+  function uname(){
+    const u=me();
+    return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario';
+  }
+  function uphoto(){
+    const u=me();
+    return (u&&(u.photo||u.img))||'';
+  }
+  function nowIso(){return new Date().toISOString()}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+
+  function eventIdFromText(raw){
+    return String(raw||'evento')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'_')
+      .replace(/^_|_$/g,'')
+      .slice(0,110)||'evento';
+  }
+
+  function registry(){
+    window.fuEventRegistry=window.fuEventRegistry||{};
+    return window.fuEventRegistry;
+  }
+
+  function registerPlan(p){
+    if(!p)return null;
+    const id=eventIdFromText((p[0]||'evento')+'_'+(p[1]||'')+'_'+(p[7]||''));
+    const ev={
+      id:id,
+      title:p[0]||'Evento',
+      when:p[1]||'Fecha a confirmar',
+      desc:p[2]||'',
+      img:p[3]||'',
+      icon:p[4]||'🎟️',
+      place:p[5]||p[7]||'',
+      city:p[7]||'',
+      link:p[8]||'',
+      creatorId:p.creatorId||'fortyup',
+      creatorName:p.creatorName||'FortyUp'
+    };
+    registry()[id]=Object.assign(registry()[id]||{},ev);
+    return registry()[id];
+  }
+
+  function registerAllPlans(){
+    try{
+      const arr=Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[]);
+      if(Array.isArray(arr))arr.forEach(registerPlan);
+    }catch(e){}
+  }
+
+  function allAttendance(){
+    const data=load(LS_ATT,{});
+    return data && typeof data==='object'?data:{};
+  }
+
+  function attendees(eventId){
+    const data=allAttendance();
+    return Array.isArray(data[eventId])?data[eventId]:[];
+  }
+
+  function saveAttendees(eventId,arr){
+    const data=allAttendance();
+    data[eventId]=arr;
+    save(LS_ATT,data);
+  }
+
+  function isAttending(eventId){
+    const id=uid();
+    if(!id)return false;
+    return attendees(eventId).some(a=>(a.uid||a.id)===id);
+  }
+
+  function setAttending(eventId,on){
+    const id=uid();
+    if(!id)return false;
+
+    let arr=attendees(eventId);
+    if(on){
+      if(!arr.some(a=>(a.uid||a.id)===id)){
+        arr.push({uid:id,id:id,name:uname(),photo:uphoto(),joinedAt:nowIso()});
+      }
+    }else{
+      arr=arr.filter(a=>(a.uid||a.id)!==id);
+    }
+    saveAttendees(eventId,arr);
+    return true;
+  }
+
+  async function syncRemote(eventId,on){
+    const d=db(), id=uid();
+    if(!d||!id)return;
+    try{
+      const ref=d.collection('eventAttendance').doc(eventId);
+      if(on){
+        await ref.set({
+          eventId:eventId,
+          attendees:firebase.firestore.FieldValue.arrayUnion(id),
+          attendeeNames:{[id]:uname()},
+          attendeePhotos:{[id]:uphoto()},
+          updatedAt:serverTime()
+        },{merge:true});
+      }else{
+        await ref.set({
+          attendees:firebase.firestore.FieldValue.arrayRemove(id),
+          ['attendeeNames.'+id]:firebase.firestore.FieldValue.delete(),
+          ['attendeePhotos.'+id]:firebase.firestore.FieldValue.delete(),
+          updatedAt:serverTime()
+        },{merge:true});
+      }
+    }catch(e){
+      console.warn('No se pudo sincronizar asistencia remota',e);
+    }
+  }
+
+  async function toggleAttend(eventId){
+    if(!uid()){
+      toast('Primero iniciá sesión');
+      return;
+    }
+    registerAllPlans();
+    const was=isAttending(eventId);
+    const next=!was;
+    setAttending(eventId,next);
+    await syncRemote(eventId,next);
+
+    const ev=registry()[eventId]||{title:'evento'};
+    toast(next?'Te sumaste al evento ✅':'Cancelaste tu asistencia');
+
+    updateButtons();
+    refreshProfileEvents();
+    try{
+      if(typeof window.renderMe==='function' && $('me') && $('me').classList.contains('active')) window.renderMe();
+    }catch(e){}
+  }
+
+  function inferEventFromCard(card,idx){
+    registerAllPlans();
+    const text=card.textContent||'';
+    let ev=Object.values(registry()).find(e=>e.title && text.includes(e.title));
+    if(ev)return ev;
+    try{
+      const arr=Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[]);
+      if(arr[idx])return registerPlan(arr[idx]);
+    }catch(e){}
+    return null;
+  }
+
+  function addControlsToCards(){
+    const cards=[...document.querySelectorAll('.plan-card,.fu-event-card,.plan-mini')];
+    cards.forEach((card,idx)=>{
+      const ev=inferEventFromCard(card,idx);
+      if(!ev)return;
+      card.dataset.eventId=ev.id;
+
+      let area=card.querySelector('.fu-attend-fixed-area');
+      if(!area){
+        area=document.createElement('div');
+        area.className='fu-attend-fixed-area';
+        area.style.display='flex';
+        area.style.gap='.42rem';
+        area.style.flexWrap='wrap';
+        area.style.alignItems='center';
+        area.style.padding=card.classList.contains('plan-mini')?'.2rem .65rem .65rem':'0 .9rem .85rem';
+        area.innerHTML=`
+          <span class="fu-attend-fixed-count"></span>
+          <button type="button" class="fu-event-full-btn fu-attend-fixed-btn" data-event-id="${ev.id}"></button>
+          <button type="button" class="fu-event-full-btn fu-open-event-fixed" data-event-id="${ev.id}">Ver evento</button>
+        `;
+        card.appendChild(area);
+      }
+
+      const btn=area.querySelector('.fu-attend-fixed-btn');
+      if(btn && !btn.__attendFixBound){
+        btn.__attendFixBound=true;
+        btn.onclick=function(e){
+          e.stopPropagation();
+          toggleAttend(ev.id);
+        };
+      }
+
+      const open=area.querySelector('.fu-open-event-fixed');
+      if(open && !open.__openFixBound){
+        open.__openFixBound=true;
+        open.onclick=function(e){
+          e.stopPropagation();
+          if(typeof window.fuOpenEventFull==='function') window.fuOpenEventFull(ev.id);
+          else toast(ev.title);
+        };
+      }
+    });
+    updateButtons();
+  }
+
+  function updateButtons(){
+    document.querySelectorAll('[data-event-id]').forEach(el=>{
+      const eventId=el.dataset.eventId;
+      if(!eventId)return;
+      const count=attendees(eventId).length;
+      const on=isAttending(eventId);
+
+      const container=el.closest('.plan-card,.fu-event-card,.plan-mini,[data-event-id]') || el;
+      const counts=container.querySelectorAll('.fu-attend-fixed-count,.fu-attend-mini-count');
+      counts.forEach(c=>c.textContent='👥 '+count+' van');
+
+      const buttons=container.querySelectorAll('.fu-attend-fixed-btn,.attend-btn,button[onclick*="Attend"],button[onclick*="Asist"]');
+      buttons.forEach(btn=>{
+        const txt=(btn.textContent||'').toLowerCase();
+        const click=(btn.getAttribute('onclick')||'').toLowerCase();
+        if(btn.classList.contains('fu-open-event-fixed'))return;
+        if(btn.classList.contains('fu-attend-fixed-btn') || txt.includes('asist') || click.includes('attend')){
+          btn.classList.toggle('fu-attend-fixed-on',on);
+          btn.classList.toggle('attending',on);
+          btn.textContent=on?'✓ Asistiré':'Asistiré';
+        }
+      });
+    });
+  }
+
+  function myEventIds(){
+    const data=allAttendance();
+    return Object.keys(data).filter(eid=>isAttending(eid));
+  }
+
+  function refreshProfileEvents(){
+    try{
+      const content=$('panelContent');
+      if(content && $('profilePanel') && $('profilePanel').classList.contains('open')){
+        const t=(content.textContent||'').toLowerCase();
+        if(t.includes('mis eventos') || t.includes('asistirás') || t.includes('asistiras')){
+          renderMyEventsPanel();
+        }
+      }
+    }catch(e){}
+  }
+
+  function eventById(id){
+    registerAllPlans();
+    return registry()[id]||{id:id,title:'Evento',when:'Fecha a confirmar',icon:'🎟️',place:''};
+  }
+
+  function renderMyEventsPanel(){
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    const ids=myEventIds();
+    content.innerHTML=`
+      <div class="panel-title">📅 Mis eventos</div>
+      ${ids.length?ids.map(id=>{
+        const ev=eventById(id);
+        return `<div class="my-event-card">
+          ${ev.img?`<img src="${ev.img}">`:`<div style="width:62px;height:62px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:1.6rem">${ev.icon||'🎟️'}</div>`}
+          <div style="flex:1;min-width:0">
+            <h4>${ev.title||'Evento'}</h4>
+            <p>${ev.when||'Fecha a confirmar'}</p>
+            <p>${ev.place||ev.city||''}</p>
+          </div>
+          <button class="fu-event-full-btn" onclick="fuAttendToggleFinal('${id}')">Cancelar</button>
+        </div>`;
+      }).join(''):`<div class="empty"><div class="empty-ico">📅</div><p>Todavía no marcaste asistencia a ningún evento.</p></div>`}
+    `;
+    panel.classList.add('open');
+  }
+
+  window.fuAttendToggleFinal=toggleAttend;
+  window.isAttending=function(eventId){return isAttending(eventId)};
+  window.fuEventAttendees=function(eventId){return attendees(eventId)};
+  window.toggleFuEventAttend=async function(eventId){return toggleAttend(eventId)};
+  window.fuToggleEventAttendFull=async function(eventId){
+    await toggleAttend(eventId);
+    if(typeof window.fuOpenEventFull==='function'){
+      setTimeout(()=>window.fuOpenEventFull(eventId),120);
+    }
+  };
+  window.togglePublicEventAttend=async function(type,eventId){return toggleAttend(eventId)};
+
+  if(typeof window.showEventosPanel==='function' && !window.showEventosPanel.__attendFixExactBase){
+    const old=window.showEventosPanel;
+    window.showEventosPanel=function(){
+      const r=old.apply(this,arguments);
+      setTimeout(()=>{
+        const ids=myEventIds();
+        const content=$('panelContent');
+        if(content && ids.length && (content.textContent||'').includes('Tocar')){
+          renderMyEventsPanel();
+        }
+      },160);
+      return r;
+    };
+    window.showEventosPanel.__attendFixExactBase=true;
+  }else{
+    window.showEventosPanel=renderMyEventsPanel;
+  }
+
+  if(typeof window.fuOpenEventChat==='function' && !window.fuOpenEventChat.__attendFixExactBase){
+    const oldChat=window.fuOpenEventChat;
+    window.fuOpenEventChat=function(eventId){
+      if(!isAttending(eventId)){
+        toast('Primero tocá Asistiré para entrar al chat del evento');
+        return;
+      }
+      return oldChat.apply(this,arguments);
+    };
+    window.fuOpenEventChat.__attendFixExactBase=true;
+  }
+
+  if(typeof window.renderPlans==='function' && !window.renderPlans.__attendFixExactBase){
+    const old=window.renderPlans;
+    window.renderPlans=function(){
+      const r=old.apply(this,arguments);
+      setTimeout(addControlsToCards,180);
+      return r;
+    };
+    window.renderPlans.__attendFixExactBase=true;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__attendFixExactBase){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(addControlsToCards,220);
+      return r;
+    };
+    window.go.__attendFixExactBase=true;
+  }
+
+  setTimeout(addControlsToCards,600);
+  setTimeout(addControlsToCards,1500);
+  setInterval(addControlsToCards,1800);
+})();
+</script>
+
 </body>
 </html>
