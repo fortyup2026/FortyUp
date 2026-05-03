@@ -5534,1136 +5534,131 @@ body{padding-bottom:76px!important}
 </script>
 
 
-<style id="fuNotifyAllStyle">
-/* === FortyUp NOTIFICACIONES TOTALES === */
-.fu-notify-bell{
-  position:fixed;
-  right:.85rem;
-  top:calc(.75rem + env(safe-area-inset-top,0px));
-  width:42px;
-  height:42px;
-  border-radius:999px;
-  border:1.5px solid var(--line);
-  background:rgba(255,253,247,.94);
-  color:var(--g);
-  box-shadow:var(--sh2);
-  z-index:99996;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-size:1.2rem;
-  cursor:pointer;
-  backdrop-filter:blur(14px);
-}
-.fu-notify-bell.show{display:flex}
-.fu-notify-count{
-  position:absolute;
-  top:-4px;
-  right:-4px;
-  min-width:19px;
-  height:19px;
-  padding:0 .25rem;
-  border-radius:999px;
-  background:var(--red);
-  color:#fff;
-  border:2px solid var(--cream);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-size:.62rem;
-  font-weight:1000;
-}
-.fu-notify-count.show{display:flex}
-.fu-notify-panel{
-  position:fixed;
-  inset:0;
-  z-index:100001;
-  display:none;
-  background:rgba(4,47,37,.72);
-  backdrop-filter:blur(10px);
-  align-items:flex-end;
-}
-.fu-notify-panel.open{display:flex}
-.fu-notify-sheet{
-  width:100%;
-  max-width:520px;
-  margin:0 auto;
-  max-height:86dvh;
-  overflow-y:auto;
-  background:var(--cream);
-  border-radius:28px 28px 0 0;
-  padding:1rem 1rem calc(1.6rem + env(safe-area-inset-bottom,0px));
-  box-shadow:0 -12px 34px rgba(0,0,0,.18);
-}
-.fu-notify-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:.75rem;
-  margin-bottom:.85rem;
-}
-.fu-notify-head h3{
-  font-family:'Playfair Display',serif;
-  color:var(--g);
-  font-size:1.25rem;
-}
-.fu-notify-head-actions{
-  display:flex;
-  align-items:center;
-  gap:.45rem;
-}
-.fu-notify-head-actions button{
-  border:0;
-  border-radius:999px;
-  padding:.5rem .68rem;
-  font-family:'Nunito',sans-serif;
-  font-weight:1000;
-  font-size:.76rem;
-  cursor:pointer;
-}
-.fu-notify-clear{background:var(--soft);color:var(--g);border:1px solid var(--line)!important}
-.fu-notify-close{background:var(--g);color:#fff}
-.fu-notify-list{
-  display:flex;
-  flex-direction:column;
-  gap:.65rem;
-}
-.fu-notify-item{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:.78rem .85rem;
-  box-shadow:var(--sh2);
-  display:flex;
-  gap:.7rem;
-  align-items:flex-start;
-  cursor:pointer;
-}
-.fu-notify-item.unread{
-  border-color:rgba(16,185,129,.5);
-  background:linear-gradient(135deg,#fff,#F3FFF8);
-}
-.fu-notify-ico{
-  width:36px;
-  height:36px;
-  flex:0 0 36px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:var(--soft);
-  color:var(--g);
-  font-size:1.05rem;
-}
-.fu-notify-body{flex:1;min-width:0}
-.fu-notify-title{
-  font-weight:1000;
-  color:var(--txt);
-  font-size:.86rem;
-  margin-bottom:.12rem;
-}
-.fu-notify-text{
-  color:var(--muted);
-  font-size:.77rem;
-  font-weight:800;
-  line-height:1.38;
-}
-.fu-notify-time{
-  color:var(--muted);
-  font-size:.66rem;
+<style id="fuEventsUsersPro">
+/* === Usuarios cerca + Eventos Pro === */
+.fu-user-distance{
+  font-size:.7rem;
+  color:#10B981;
   font-weight:900;
-  margin-top:.35rem;
 }
-.fu-notify-empty{
-  text-align:center;
-  padding:2.2rem 1rem;
-  color:var(--muted);
-}
-.fu-notify-empty div{font-size:2.5rem;margin-bottom:.55rem}
-.fu-notify-toast{
-  position:fixed;
-  left:50%;
-  top:calc(1rem + env(safe-area-inset-top,0px));
-  transform:translateX(-50%) translateY(-14px);
-  width:calc(100% - 1.5rem);
-  max-width:390px;
-  background:#fff;
-  border:1.5px solid var(--line);
-  border-left:5px solid var(--g3);
-  border-radius:18px;
-  padding:.78rem .85rem;
-  z-index:100002;
-  box-shadow:0 16px 34px rgba(6,78,59,.18);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s ease;
-}
-.fu-notify-toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-.fu-notify-toast strong{
-  display:block;
-  color:var(--g);
-  font-size:.86rem;
-  margin-bottom:.12rem;
-}
-.fu-notify-toast span{
-  display:block;
-  color:var(--muted);
-  font-size:.76rem;
-  font-weight:800;
-  line-height:1.35;
-}
-@media(max-width:430px){
-  .fu-notify-bell{
-    top:auto;
-    bottom:calc(4.65rem + env(safe-area-inset-bottom,0px));
-    right:.9rem;
-  }
-  body.chat-open .fu-notify-bell{display:none!important}
+.fu-event-users{
+  margin-top:.4rem;
+  font-size:.75rem;
+  color:#059669;
+  font-weight:900;
 }
 </style>
 
-<script id="fuNotifyAllScript">
-/* === FortyUp NOTIFICACIONES TOTALES === */
+<script id="fuEventsUsersProScript">
 (function(){
-  const STORAGE_KEY='fu_notifications_all_v1';
-  const READ_KEY='fu_notifications_read_v1';
-  let firestoreUnsubs=[];
-  let firstSnapshots={};
-  let pendingAction=null;
 
-  function $(id){return document.getElementById(id)}
-  function nowIso(){return new Date().toISOString()}
-  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
-  function load(key, fallback){try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}}
-  function store(key, val){try{localStorage.setItem(key, JSON.stringify(val))}catch(e){}}
-  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
-  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
-  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
-  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
-  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
-  function myName(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
-  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
-  function iconFor(type){
-    return ({
-      forti:'◆',
-      super:'💎',
-      message:'💬',
-      event_join:'🎟️',
-      event_created:'📅',
-      event_ended:'⏰',
-      profile:'👤',
-      system:'🔔',
-      favorite:'⭐'
-    })[type] || '🔔';
-  }
-  function titleFor(type){
-    return ({
-      forti:'Nuevo Forti',
-      super:'Súper Diamante',
-      message:'Nuevo mensaje',
-      event_join:'Alguien se sumó',
-      event_created:'Evento creado',
-      event_ended:'Evento finalizado',
-      profile:'Perfil actualizado',
-      system:'Notificación',
-      favorite:'Nuevo favorito'
-    })[type] || 'Notificación';
-  }
-  function notifId(n){
-    return n.id || (n.type+'_'+(n.from||'x')+'_'+(n.to||'y')+'_'+(n.eventId||'')+'_'+(n.chatId||'')+'_'+(n.createdAt||Date.now()));
-  }
-  function normalizeNotification(n){
-    const id=notifId(n);
-    return {
-      id,
-      type:n.type||'system',
-      title:n.title||titleFor(n.type),
-      text:n.text||'Tenés una novedad en FortyUp.',
-      from:n.from||'',
-      fromName:n.fromName||'',
-      to:n.to||uid(),
-      eventId:n.eventId||'',
-      profileId:n.profileId||n.from||'',
-      chatId:n.chatId||n.from||'',
-      createdAt:n.createdAtText||n.createdAt||nowIso(),
-      read:!!n.read,
-      action:n.action||''
-    };
-  }
-  function getLocalNotifications(){
-    const arr=load(STORAGE_KEY,[]);
-    return Array.isArray(arr)?arr:[];
-  }
-  function saveLocalNotifications(arr){
-    const uniq=[];
-    const seen=new Set();
-    arr.forEach(n=>{
-      if(!n||!n.id)return;
-      if(seen.has(n.id))return;
-      seen.add(n.id);
-      uniq.push(n);
-    });
-    uniq.sort((a,b)=>new Date(b.createdAt).getTime()-new Date(a.createdAt).getTime());
-    store(STORAGE_KEY, uniq.slice(0,100));
-  }
-  function addLocalNotification(raw, show=true){
-    const n=normalizeNotification(raw);
-    const arr=getLocalNotifications();
-    const exists=arr.some(x=>x.id===n.id);
-    if(!exists) arr.unshift(n);
-    saveLocalNotifications(arr);
-    renderBell();
-    if(show) notifyVisual(n);
-    return n;
-  }
-  async function createRemoteNotification(toUid, raw){
-    const d=db();
-    const fromUid=uid();
-    if(!d||!toUid)return addLocalNotification({...raw,to:toUid}, false);
-    const n=normalizeNotification({
-      ...raw,
-      to:toUid,
-      from:raw.from||fromUid,
-      fromName:raw.fromName||myName(),
-      createdAtText:nowIso()
-    });
-    try{
-      await d.collection('userNotifications').doc(toUid).collection('items').doc(n.id).set({
-        ...n,
-        read:false,
-        createdAt:serverTime()
-      },{merge:true});
-    }catch(e){
-      console.warn('createRemoteNotification',e);
-    }
-  }
-  window.fuNotify = function(raw, show=true){
-    return addLocalNotification(raw, show);
-  };
-  window.fuNotifyRemote = createRemoteNotification;
-
-  function playTinyBell(type){
-    try{
-      const AC=window.AudioContext||window.webkitAudioContext;
-      if(!AC)return;
-      const ctx=new AC();
-      const now=ctx.currentTime;
-      const gain=ctx.createGain();
-      gain.gain.setValueAtTime(.0001,now);
-      gain.gain.exponentialRampToValueAtTime(type==='super'?0.20:0.10,now+.02);
-      gain.gain.exponentialRampToValueAtTime(.0001,now+.6);
-      gain.connect(ctx.destination);
-      const notes=type==='super'?[880,1320,1760]:[660,880];
-      notes.forEach((f,i)=>{
-        const osc=ctx.createOscillator();
-        osc.type='sine';
-        osc.frequency.setValueAtTime(f,now+i*.09);
-        osc.connect(gain);
-        osc.start(now+i*.09);
-        osc.stop(now+i*.09+.22);
+function getLocation(){
+  return new Promise((res)=>{
+    if(!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(pos=>{
+      res({
+        lat:pos.coords.latitude,
+        lng:pos.coords.longitude
       });
-      setTimeout(()=>{try{ctx.close()}catch(e){}},800);
-    }catch(e){}
-  }
-  function vibrate(type){
-    try{if(navigator.vibrate)navigator.vibrate(type==='super'?[90,45,130,45,190]:[70,30,90])}catch(e){}
-  }
-  function browserNotify(n){
-    try{
-      if(!('Notification' in window))return;
-      if(Notification.permission==='granted'){
-        new Notification(n.title||titleFor(n.type), {body:n.text||'', tag:n.id, silent:false});
-      }
-    }catch(e){}
-  }
-  function notifyVisual(n){
-    if(n.type==='super' && typeof window.showSuperDiamondPopup==='function'){
-      window.showSuperDiamondPopup(n.fromName||'Alguien especial');
-    }else{
-      showTopToast(n);
-    }
-    playTinyBell(n.type);
-    vibrate(n.type);
-    browserNotify(n);
-  }
-  function showTopToast(n){
-    document.querySelectorAll('.fu-notify-toast').forEach(x=>x.remove());
-    const el=document.createElement('div');
-    el.className='fu-notify-toast';
-    el.innerHTML=`<strong>${safe(n.title||titleFor(n.type))}</strong><span>${safe(n.text||'Tenés una novedad.')}</span>`;
-    document.body.appendChild(el);
-    requestAnimationFrame(()=>el.classList.add('show'));
-    setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),260)},4200);
-  }
+    },()=>res(null));
+  });
+}
 
-  function ensureUI(){
-    if(!$('fuNotifyBell')){
-      const b=document.createElement('button');
-      b.id='fuNotifyBell';
-      b.className='fu-notify-bell';
-      b.type='button';
-      b.innerHTML='🔔<span id="fuNotifyCount" class="fu-notify-count"></span>';
-      b.onclick=openNotifications;
-      document.body.appendChild(b);
-    }
-    if(!$('fuNotifyPanel')){
-      const panel=document.createElement('div');
-      panel.id='fuNotifyPanel';
-      panel.className='fu-notify-panel';
-      panel.onclick=function(e){if(e.target===panel)closeNotifications()};
-      panel.innerHTML=`
-        <div class="fu-notify-sheet">
-          <div class="fu-notify-head">
-            <h3>🔔 Notificaciones</h3>
-            <div class="fu-notify-head-actions">
-              <button class="fu-notify-clear" onclick="fuRequestBrowserNotifications()">Permitir avisos</button>
-              <button class="fu-notify-clear" onclick="fuMarkNotificationsRead()">Marcar leídas</button>
-              <button class="fu-notify-close" onclick="fuCloseNotifications()">✕</button>
-            </div>
-          </div>
-          <div id="fuNotifyList" class="fu-notify-list"></div>
-        </div>`;
-      document.body.appendChild(panel);
-    }
-  }
-  function isLogged(){return !!me() || !!(auth()&&auth().currentUser)}
-  function renderBell(){
-    ensureUI();
-    const bell=$('fuNotifyBell');
-    const countEl=$('fuNotifyCount');
-    const activeScreen=[...document.querySelectorAll('.screen.active')][0]?.id||'';
-    if(bell) bell.classList.toggle('show', isLogged() && activeScreen!=='landing' && activeScreen!=='chat');
-    const unread=getLocalNotifications().filter(n=>!n.read).length;
-    if(countEl){
-      countEl.textContent=unread>99?'99+':String(unread);
-      countEl.classList.toggle('show', unread>0);
-    }
-    const msgDot=$('msgDot');
-    if(msgDot) msgDot.classList.toggle('show', unread>0 || msgDot.classList.contains('show'));
-  }
-  function renderList(){
-    ensureUI();
-    const list=$('fuNotifyList');
-    if(!list)return;
-    const arr=getLocalNotifications();
-    if(!arr.length){
-      list.innerHTML='<div class="fu-notify-empty"><div>🔔</div><p>Todavía no tenés notificaciones.</p></div>';
-      return;
-    }
-    list.innerHTML=arr.map(n=>`
-      <div class="fu-notify-item ${n.read?'':'unread'}" onclick="fuOpenNotification('${safe(n.id)}')">
-        <div class="fu-notify-ico">${iconFor(n.type)}</div>
-        <div class="fu-notify-body">
-          <div class="fu-notify-title">${safe(n.title||titleFor(n.type))}</div>
-          <div class="fu-notify-text">${safe(n.text||'Tenés una novedad en FortyUp.')}</div>
-          <div class="fu-notify-time">${safe(timeAgo(n.createdAt))}</div>
-        </div>
-      </div>`).join('');
-  }
-  function timeAgo(d){
-    const t=new Date(d).getTime();
-    if(!t)return '';
-    const s=Math.max(1,Math.floor((Date.now()-t)/1000));
-    if(s<60)return 'recién';
-    const m=Math.floor(s/60); if(m<60)return 'hace '+m+' min';
-    const h=Math.floor(m/60); if(h<24)return 'hace '+h+' h';
-    const days=Math.floor(h/24); return 'hace '+days+' d';
-  }
-  function openNotifications(){
-    ensureUI();
-    renderList();
-    $('fuNotifyPanel')?.classList.add('open');
-  }
-  function closeNotifications(){
-    $('fuNotifyPanel')?.classList.remove('open');
-  }
-  window.fuCloseNotifications=closeNotifications;
-  window.fuMarkNotificationsRead=function(){
-    const arr=getLocalNotifications().map(n=>({...n,read:true}));
-    saveLocalNotifications(arr);
-    renderBell();
-    renderList();
-  };
-  window.fuRequestBrowserNotifications=async function(){
-    try{
-      if(!('Notification' in window))return toast('Tu navegador no permite notificaciones');
-      const res=await Notification.requestPermission();
-      toast(res==='granted'?'Notificaciones activadas 🔔':'No se activaron las notificaciones');
-    }catch(e){toast('No se pudieron activar las notificaciones')}
-  };
-  window.fuOpenNotification=function(id){
-    const arr=getLocalNotifications();
-    const n=arr.find(x=>x.id===id);
-    if(!n)return;
-    n.read=true;
-    saveLocalNotifications(arr);
-    renderBell();
-    renderList();
-    if(n.type==='message' && n.profileId){
-      closeNotifications();
-      const p=(typeof window.allProfiles==='function'?window.allProfiles().find(x=>x.id===n.profileId):null);
-      if(p && typeof window.startChat==='function') window.startChat(p);
-    }else if((n.type==='event_join'||n.type==='event_created'||n.type==='event_ended') && typeof window.go==='function'){
-      closeNotifications();
-      window.go('me');
-      setTimeout(()=>{if(typeof window.showEventosPanel==='function')window.showEventosPanel()},350);
-    }
-  };
+function distance(a,b){
+  const R=6371;
+  const dLat=(b.lat-a.lat)*Math.PI/180;
+  const dLng=(b.lng-a.lng)*Math.PI/180;
+  const x=
+    Math.sin(dLat/2)**2+
+    Math.cos(a.lat*Math.PI/180)*
+    Math.cos(b.lat*Math.PI/180)*
+    Math.sin(dLng/2)**2;
+  return R*(2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)));
+}
 
-  async function markRemoteRead(docId){
-    const d=db(), u=uid();
-    if(!d||!u||!docId)return;
-    try{await d.collection('userNotifications').doc(u).collection('items').doc(docId).set({read:true},{merge:true})}catch(e){}
-  }
-  function listenRemoteNotifications(){
-    const d=db(), u=uid();
-    if(!d||!u)return;
-    firestoreUnsubs.forEach(fn=>{try{fn()}catch(e){}});
-    firestoreUnsubs=[];
-    firstSnapshots.userNotifications=true;
-    const unsub=d.collection('userNotifications').doc(u).collection('items')
-      .orderBy('createdAt','desc').limit(50)
-      .onSnapshot(snap=>{
-        snap.docChanges().forEach(ch=>{
-          const data=ch.doc.data()||{};
-          const n=normalizeNotification({...data,id:ch.doc.id,createdAt:data.createdAtText||nowIso()});
-          const shouldShow=ch.type==='added' && !firstSnapshots.userNotifications && !n.read;
-          addLocalNotification(n, shouldShow);
-        });
-        firstSnapshots.userNotifications=false;
-        renderBell();
-      },err=>console.warn('userNotifications listener',err));
-    firestoreUnsubs.push(unsub);
-  }
+async function enhanceUsers(){
+  const loc=await getLocation();
+  if(!loc) return;
 
-  function profileById(pid){
-    try{return typeof window.getProfileById==='function'?window.getProfileById(pid):(typeof window.allProfiles==='function'?window.allProfiles().find(p=>p.id===pid):null)}catch(e){return null}
-  }
+  if(typeof window.allProfiles!=='function') return;
 
-  function wrapFunctions(){
-    // Forti
-    if(typeof window.sendForti==='function' && !window.sendForti.__fuNotifyWrapped){
-      const old=window.sendForti;
-      window.sendForti=function(pid){
-        const p=profileById(pid);
-        const before=Date.now();
-        const result=old.apply(this,arguments);
-        if(p){
-          addLocalNotification({
-            id:'sent_forti_'+pid+'_'+before,
-            type:'forti',
-            title:'Forti enviado',
-            text:'Le mandaste un Forti a '+(p.n||p.name||'un perfil')+'.',
-            profileId:pid,
-            createdAt:nowIso(),
-            read:false
-          }, false);
-          createRemoteNotification(pid,{
-            id:'recv_forti_'+uid()+'_'+Date.now(),
-            type:'forti',
-            title:'Nuevo Forti',
-            text:myName()+' te mandó un Forti ◆',
-            profileId:uid(),
-            from:uid(),
-            fromName:myName()
-          });
-        }
-        renderBell();
-        return result;
-      };
-      window.sendForti.__fuNotifyWrapped=true;
-    }
+  const users=window.allProfiles();
 
-    // SuperDiamante
-    if(typeof window.sendSuper==='function' && !window.sendSuper.__fuNotifyWrapped){
-      const old=window.sendSuper;
-      window.sendSuper=async function(pid){
-        const p=profileById(pid);
-        const result=await old.apply(this,arguments);
-        if(p){
-          addLocalNotification({
-            id:'sent_super_'+pid+'_'+Date.now(),
-            type:'super',
-            title:'Súper Diamante enviado',
-            text:'Le mandaste un Súper Diamante a '+(p.n||p.name||'un perfil')+'.',
-            profileId:pid,
-            createdAt:nowIso(),
-            read:false
-          }, false);
-          createRemoteNotification(pid,{
-            id:'recv_super_'+uid()+'_'+Date.now(),
-            type:'super',
-            title:'¡Súper Diamante!',
-            text:myName()+' te mandó un Súper Diamante 💎',
-            profileId:uid(),
-            from:uid(),
-            fromName:myName()
-          });
-        }
-        renderBell();
-        return result;
-      };
-      window.sendSuper.__fuNotifyWrapped=true;
-    }
+  users.forEach(u=>{
+    if(!u.lat || !u.lng) return;
+    const d=distance(loc,{lat:u.lat,lng:u.lng});
+    u.distance=d.toFixed(1)+" km";
+  });
 
-    // Mensajes
-    if(typeof window.sendMsg==='function' && !window.sendMsg.__fuNotifyWrapped){
-      const old=window.sendMsg;
-      window.sendMsg=function(){
-        const peer=window.chatWith || null;
-        const txt=($('chatInput')?.value||'').trim();
-        const result=old.apply(this,arguments);
-        if(peer && txt){
-          createRemoteNotification(peer.id,{
-            id:'msg_'+uid()+'_'+Date.now(),
-            type:'message',
-            title:'Nuevo mensaje',
-            text:myName()+': '+txt.slice(0,80),
-            profileId:uid(),
-            chatId:uid(),
-            from:uid(),
-            fromName:myName()
-          });
-        }
-        return result;
-      };
-      window.sendMsg.__fuNotifyWrapped=true;
-    }
-
-    // Evento creado
-    if(typeof window.savePublicEvent==='function' && !window.savePublicEvent.__fuNotifyWrapped){
-      const old=window.savePublicEvent;
-      window.savePublicEvent=async function(){
-        const title=($('evTitle')?.value||'').trim();
-        const result=await old.apply(this,arguments);
-        if(title){
-          addLocalNotification({
-            id:'event_created_'+Date.now(),
-            type:'event_created',
-            title:'Evento creado',
-            text:'Publicaste el evento: '+title,
-            createdAt:nowIso(),
-            read:false
-          }, true);
-        }
-        return result;
-      };
-      window.savePublicEvent.__fuNotifyWrapped=true;
-    }
-
-    // Asistencia evento
-    if(typeof window.toggleFuEventAttend==='function' && !window.toggleFuEventAttend.__fuNotifyWrapped){
-      const old=window.toggleFuEventAttend;
-      window.toggleFuEventAttend=async function(eventId){
-        const registry=window.fuEventRegistry||{};
-        const e=registry[eventId]||{};
-        const was=typeof window.isAttending==='function'?window.isAttending(eventId):false;
-        const result=await old.apply(this,arguments);
-        const nowGoing=typeof window.isAttending==='function'?window.isAttending(eventId):!was;
-        if(!was && nowGoing){
-          addLocalNotification({
-            id:'attending_'+eventId+'_'+Date.now(),
-            type:'event_join',
-            title:'Te sumaste a un evento',
-            text:'Vas a asistir a '+(e.title||'un evento')+'.',
-            eventId,
-            createdAt:nowIso(),
-            read:false
-          }, false);
-          if(e.creatorId && e.creatorId!==uid()){
-            createRemoteNotification(e.creatorId,{
-              id:'event_join_'+eventId+'_'+uid(),
-              type:'event_join',
-              title:'Alguien se sumó a tu evento',
-              text:myName()+' va a asistir a '+(e.title||'tu evento')+'.',
-              eventId,
-              from:uid(),
-              fromName:myName()
-            });
+  if(typeof window.renderProfiles==='function'){
+    const old=window.renderProfiles;
+    window.renderProfiles=function(){
+      const r=old.apply(this,arguments);
+      setTimeout(()=>{
+        document.querySelectorAll('.card-user').forEach((card,i)=>{
+          const u=users[i];
+          if(u && u.distance){
+            if(!card.querySelector('.fu-user-distance')){
+              const div=document.createElement('div');
+              div.className='fu-user-distance';
+              div.textContent="📍 "+u.distance;
+              card.appendChild(div);
+            }
           }
-        }
-        renderBell();
-        return result;
-      };
-      window.toggleFuEventAttend.__fuNotifyWrapped=true;
-    }
-
-    // Compatibilidad con togglePublicEventAttend si existe
-    if(typeof window.togglePublicEventAttend==='function' && !window.togglePublicEventAttend.__fuNotifyWrapped){
-      const old=window.togglePublicEventAttend;
-      window.togglePublicEventAttend=async function(type,id){
-        const result=await old.apply(this,arguments);
-        addLocalNotification({
-          id:'event_action_'+type+'_'+id+'_'+Date.now(),
-          type:'event_join',
-          title:'Actividad de evento',
-          text:'Se actualizó tu asistencia a un evento.',
-          eventId:id,
-          createdAt:nowIso(),
-          read:false
-        }, false);
-        return result;
-      };
-      window.togglePublicEventAttend.__fuNotifyWrapped=true;
-    }
-  }
-
-  function checkEventEnded(){
-    try{
-      const created=(typeof window.getEvents==='function'?window.getEvents():JSON.parse(localStorage.getItem('fu_events')||'[]'))||[];
-      created.forEach(ev=>{
-        const date=ev.date||ev.dateISO;
-        const time=ev.time||ev.hour||'23:59';
-        if(!date)return;
-        const dt=new Date(date+'T'+time);
-        if(!dt || isNaN(dt.getTime()))return;
-        if(dt.getTime()<=Date.now()){
-          const key='fu_event_end_notified_'+(ev.id||ev.title||'ev')+'_'+date+'_'+time;
-          if(localStorage.getItem(key))return;
-          localStorage.setItem(key,'1');
-          addLocalNotification({
-            id:key,
-            type:'event_ended',
-            title:'Evento finalizado',
-            text:'Tu evento finalizó: '+(ev.title||ev.name||'evento'),
-            eventId:ev.id||'',
-            createdAt:nowIso(),
-            read:false
-          }, true);
-        }
-      });
-    }catch(e){}
-  }
-
-  function init(){
-    ensureUI();
-    renderBell();
-    wrapFunctions();
-    listenRemoteNotifications();
-    setInterval(wrapFunctions, 1000);
-    setInterval(renderBell, 1500);
-    setInterval(checkEventEnded, 60000);
-    checkEventEnded();
-  }
-
-  document.addEventListener('click', function(){}, {passive:true});
-  setTimeout(init, 800);
-  try{
-    if(auth()){
-      auth().onAuthStateChanged(()=>setTimeout(init, 800));
-    }
-  }catch(e){}
-  const oldGo=window.go;
-  if(typeof oldGo==='function' && !oldGo.__fuNotifyWrapped){
-    window.go=function(id){
-      const r=oldGo.apply(this,arguments);
-      setTimeout(renderBell,120);
+        });
+      },100);
       return r;
-    };
-    window.go.__fuNotifyWrapped=true;
+    }
   }
-})();
-</script>
-
-
-<style id="fuMessagingPremiumStyle">
-/* === FortyUp Mensajería Premium === */
-
-/* Lista de mensajes más app */
-#messages .screen-inner{
-  padding-top:.75rem!important;
-}
-#msgList{
-  display:flex;
-  flex-direction:column;
-  gap:.72rem;
-}
-#msgList .msg-item{
-  background:#fff!important;
-  border:1px solid var(--line)!important;
-  border-radius:22px!important;
-  padding:.82rem!important;
-  box-shadow:var(--sh2)!important;
-  margin:0!important;
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-#msgList .msg-item:active{
-  transform:scale(.985);
-}
-#msgList .msg-avatar{
-  width:54px!important;
-  height:54px!important;
-  border:2px solid var(--g3)!important;
-  box-shadow:0 4px 12px rgba(6,78,59,.12)!important;
-}
-#msgList .msg-name{
-  font-size:.95rem!important;
-  color:var(--g)!important;
-  font-weight:1000!important;
-}
-#msgList .msg-preview{
-  font-size:.8rem!important;
-  font-weight:800!important;
-  color:var(--muted)!important;
-  margin-top:.18rem!important;
-}
-#msgList .msg-time{
-  background:var(--soft)!important;
-  color:var(--g)!important;
-  border:1px solid var(--line)!important;
-  border-radius:999px!important;
-  padding:.18rem .45rem!important;
-  font-size:.62rem!important;
-  font-weight:1000!important;
-}
-.fu-msg-empty-premium{
-  text-align:center;
-  padding:3rem 1rem;
-  color:var(--muted);
-}
-.fu-msg-empty-premium div{
-  font-size:3rem;
-  margin-bottom:.7rem;
-}
-.fu-msg-empty-premium h3{
-  font-family:'Playfair Display',serif;
-  color:var(--g);
-  font-size:1.15rem;
-  margin-bottom:.35rem;
-}
-.fu-msg-empty-premium p{
-  font-size:.86rem;
-  line-height:1.45;
-  font-weight:800;
 }
 
-/* Chat premium */
-#chat.screen.active{
-  display:flex!important;
-  flex-direction:column!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  overflow:hidden!important;
-  background:
-    radial-gradient(circle at top left, rgba(16,185,129,.26), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(39,183,242,.18), transparent 32%),
-    linear-gradient(160deg,#042f25 0%,#064E3B 48%,#092f26 100%)!important;
-}
-body.chat-open #bottomNav{display:none!important}
+function enhanceEvents(){
+  if(!window.fuEventRegistry) return;
 
-#chat .chat-topbar{
-  flex:0 0 auto!important;
-  position:relative!important;
-  top:auto!important;
-  z-index:40!important;
-  background:rgba(4,47,37,.88)!important;
-  color:#fff!important;
-  border-bottom:1px solid rgba(255,255,255,.1)!important;
-  backdrop-filter:blur(18px)!important;
-  padding:.68rem .9rem!important;
-}
-#chat .chat-back{
-  width:36px!important;
-  height:36px!important;
-  border-radius:999px!important;
-  background:rgba(255,255,255,.12)!important;
-  color:#fff!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-}
-#chat .top-avatar,
-#chatAvatar{
-  width:42px!important;
-  height:42px!important;
-  border:2.5px solid rgba(110,231,183,.75)!important;
-}
-#chatName{
-  color:#fff!important;
-  font-size:1rem!important;
-  font-weight:1000!important;
-}
-.fu-chat-subtitle{
-  font-size:.66rem;
-  color:#6ee7b7;
-  font-weight:900;
-  margin-top:.08rem;
-}
+  Object.values(window.fuEventRegistry).forEach(ev=>{
+    ev.attendees = ev.attendees || [];
+  });
 
-#chat .chat-messages,
-#chatBox{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  padding:1rem .85rem!important;
-  gap:.6rem!important;
-  background:transparent!important;
-}
-#chat .chat-messages::before,
-#chatBox::before{
-  content:"";
-  position:fixed;
-  inset:56px 0 72px 0;
-  pointer-events:none;
-  opacity:.08;
-  background-image:
-    radial-gradient(circle at 10px 10px, #fff 1px, transparent 1px);
-  background-size:22px 22px;
-}
-.bubble{
-  max-width:78%!important;
-  padding:.72rem .92rem!important;
-  border-radius:20px!important;
-  font-size:.9rem!important;
-  line-height:1.45!important;
-  animation:fuBubbleIn .16s ease both;
-  position:relative!important;
-}
-.bubble.mine{
-  align-self:flex-end!important;
-  background:linear-gradient(135deg,#10B981,#059669)!important;
-  color:#fff!important;
-  border-bottom-right-radius:6px!important;
-  box-shadow:0 8px 18px rgba(16,185,129,.22)!important;
-}
-.bubble.theirs{
-  align-self:flex-start!important;
-  background:rgba(255,255,255,.96)!important;
-  color:var(--txt)!important;
-  border-bottom-left-radius:6px!important;
-  box-shadow:0 8px 18px rgba(0,0,0,.12)!important;
-}
-.bubble img{
-  border-radius:16px!important;
-  max-width:230px!important;
-}
-.bubble small,
-.bubble .fu-chat-time{
-  display:block!important;
-  margin-top:.25rem!important;
-  opacity:.72!important;
-  font-size:.62rem!important;
-  font-weight:900!important;
-}
-
-/* Composer */
-#chat .chat-input-area{
-  flex:0 0 auto!important;
-  position:relative!important;
-  bottom:auto!important;
-  z-index:60!important;
-  width:100%!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  gap:.5rem!important;
-  background:rgba(4,47,37,.92)!important;
-  border-top:1px solid rgba(255,255,255,.1)!important;
-  backdrop-filter:blur(18px)!important;
-  padding:.7rem .75rem calc(.7rem + env(safe-area-inset-bottom,0px))!important;
-}
-#chat .chat-input-area button:first-child{
-  width:42px!important;
-  height:42px!important;
-  flex:0 0 42px!important;
-  border-radius:999px!important;
-  background:rgba(255,255,255,.12)!important;
-  color:#6ee7b7!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-}
-#chatInput{
-  min-height:42px!important;
-  max-height:104px!important;
-  flex:1 1 auto!important;
-  border:1.5px solid rgba(255,255,255,.14)!important;
-  border-radius:24px!important;
-  padding:.7rem .95rem!important;
-  background:rgba(255,255,255,.10)!important;
-  color:#fff!important;
-  outline:none!important;
-  font-family:'Nunito',sans-serif!important;
-  font-size:.92rem!important;
-  line-height:1.35!important;
-}
-#chatInput::placeholder{
-  color:rgba(255,255,255,.55)!important;
-}
-#chatInput:focus{
-  border-color:rgba(110,231,183,.65)!important;
-  background:rgba(255,255,255,.14)!important;
-}
-#chat .chat-send{
-  width:44px!important;
-  height:44px!important;
-  flex:0 0 44px!important;
-  border-radius:999px!important;
-  border:none!important;
-  background:linear-gradient(135deg,#6ee7b7,#10B981)!important;
-  color:#064E3B!important;
-  font-size:0!important;
-  font-weight:1000!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  box-shadow:0 6px 18px rgba(16,185,129,.38)!important;
-}
-#chat .chat-send::before{
-  content:"➤";
-  font-size:1.1rem;
-  line-height:1;
-}
-#chat .chat-send:active{
-  transform:scale(.94);
-}
-.fu-typing-pill{
-  align-self:flex-start;
-  background:rgba(255,255,255,.92);
-  border-radius:18px;
-  padding:.55rem .75rem;
-  color:var(--muted);
-  font-size:.74rem;
-  font-weight:900;
-  box-shadow:0 8px 18px rgba(0,0,0,.1);
-}
-.fu-typing-pill span{
-  display:inline-block;
-  animation:fuTyping 1.2s infinite;
-}
-.fu-typing-pill span:nth-child(2){animation-delay:.15s}
-.fu-typing-pill span:nth-child(3){animation-delay:.3s}
-@keyframes fuTyping{
-  0%,80%,100%{transform:translateY(0);opacity:.45}
-  40%{transform:translateY(-3px);opacity:1}
-}
-@keyframes fuBubbleIn{
-  from{opacity:0;transform:translateY(4px) scale(.98)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-</style>
-
-<script id="fuMessagingPremiumScript">
-/* === FortyUp Mensajería Premium === */
-(function(){
-  function $(id){return document.getElementById(id)}
-  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-  function isChatActive(){return $('chat') && $('chat').classList.contains('active')}
-  function scrollChat(){
-    const box=$('chatBox');
-    if(box) box.scrollTop=box.scrollHeight;
-  }
-  function enhanceChatTop(){
-    const top=document.querySelector('#chat .chat-topbar');
-    if(!top || top.__fuPremiumEnhanced) return;
-    top.__fuPremiumEnhanced=true;
-    setTimeout(()=>{
-      const name=$('chatName');
-      if(name && !top.querySelector('.fu-chat-subtitle')){
-        const sub=document.createElement('div');
-        sub.className='fu-chat-subtitle';
-        sub.textContent='FortyUp · conversación privada';
-        if(name.parentElement && name.parentElement !== top){
-          name.parentElement.appendChild(sub);
-        }else{
-          const wrap=document.createElement('div');
-          wrap.style.flex='1';
-          wrap.style.minWidth='0';
-          name.parentNode.insertBefore(wrap,name);
-          wrap.appendChild(name);
-          wrap.appendChild(sub);
+  if(typeof window.toggleFuEventAttend==='function'){
+    const old=window.toggleFuEventAttend;
+    window.toggleFuEventAttend=function(id){
+      const ev=window.fuEventRegistry[id];
+      const me=window.me && window.me();
+      if(ev && me){
+        if(!ev.attendees.includes(me.id)){
+          ev.attendees.push(me.id);
         }
       }
-    },60);
-  }
-  function enhanceInput(){
-    const input=$('chatInput');
-    if(!input || input.__fuPremiumEnhanced) return;
-    input.__fuPremiumEnhanced=true;
-
-    // Si es input text, lo dejamos usable y estilizado; si ya es textarea, también.
-    input.addEventListener('input',()=>{
-      if(input.tagName.toLowerCase()==='textarea'){
-        input.style.height='auto';
-        input.style.height=Math.min(input.scrollHeight,104)+'px';
-      }
-    });
-    input.addEventListener('focus',()=>setTimeout(scrollChat,220));
-  }
-
-  function enhanceMessageList(){
-    const list=$('msgList');
-    if(!list) return;
-    if(!list.children.length){
-      list.innerHTML='<div class="fu-msg-empty-premium"><div>💬</div><h3>Sin mensajes todavía</h3><p>Cuando conectes con alguien, tus conversaciones van a aparecer acá.</p></div>';
+      return old.apply(this,arguments);
     }
   }
 
-  function enhanceChat(){
-    if(!isChatActive()) return;
-    enhanceChatTop();
-    enhanceInput();
-    setTimeout(scrollChat,80);
-    setTimeout(scrollChat,260);
-  }
-
-  if(typeof window.go==='function' && !window.go.__fuMessagingPremium){
-    const oldGo=window.go;
-    window.go=function(id){
-      const r=oldGo.apply(this,arguments);
+  if(typeof window.renderPlans==='function'){
+    const old=window.renderPlans;
+    window.renderPlans=function(){
+      const r=old.apply(this,arguments);
       setTimeout(()=>{
-        if(id==='chat') enhanceChat();
-        if(id==='messages') enhanceMessageList();
-      },120);
+        document.querySelectorAll('.plan-card').forEach((card,i)=>{
+          const ev=Object.values(window.fuEventRegistry)[i];
+          if(ev){
+            let el=card.querySelector('.fu-event-users');
+            if(!el){
+              el=document.createElement('div');
+              el.className='fu-event-users';
+              card.appendChild(el);
+            }
+            el.textContent="👥 "+ev.attendees.length+" van";
+          }
+        });
+      },100);
       return r;
-    };
-    window.go.__fuMessagingPremium=true;
+    }
   }
+}
 
-  if(typeof window.startChat==='function' && !window.startChat.__fuMessagingPremium){
-    const oldStart=window.startChat;
-    window.startChat=function(){
-      const r=oldStart.apply(this,arguments);
-      setTimeout(enhanceChat,120);
-      setTimeout(enhanceChat,420);
-      return r;
-    };
-    window.startChat.__fuMessagingPremium=true;
-  }
+setTimeout(enhanceUsers,1500);
+setTimeout(enhanceEvents,1500);
 
-  if(typeof window.renderMessages==='function' && !window.renderMessages.__fuMessagingPremium){
-    const oldRender=window.renderMessages;
-    window.renderMessages=function(){
-      const r=oldRender.apply(this,arguments);
-      setTimeout(enhanceMessageList,60);
-      return r;
-    };
-    window.renderMessages.__fuMessagingPremium=true;
-  }
-
-  if(typeof window.sendMsg==='function' && !window.sendMsg.__fuMessagingPremium){
-    const oldSend=window.sendMsg;
-    window.sendMsg=function(){
-      const btn=document.querySelector('#chat .chat-send');
-      if(btn) btn.style.opacity='.65';
-      const r=oldSend.apply(this,arguments);
-      setTimeout(()=>{
-        if(btn) btn.style.opacity='1';
-        const input=$('chatInput');
-        if(input && input.tagName.toLowerCase()==='textarea') input.style.height='auto';
-        scrollChat();
-      },130);
-      return r;
-    };
-    window.sendMsg.__fuMessagingPremium=true;
-  }
-
-  setInterval(()=>{
-    if(isChatActive()) enhanceChat();
-    if($('messages') && $('messages').classList.contains('active')) enhanceMessageList();
-  },1000);
 })();
 </script>
 
