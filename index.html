@@ -6393,5 +6393,101 @@ setTimeout(enhanceEvents,1500);
 })();
 </script>
 
+
+<style id="fuMatchEventStyle">
+.fu-match-event{
+  margin-top:.4rem;
+  padding:.45rem .6rem;
+  border-radius:12px;
+  background:#E8FFF6;
+  color:#047857;
+  font-size:.72rem;
+  font-weight:900;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:.4rem;
+}
+.fu-match-event button{
+  border:0;
+  border-radius:999px;
+  padding:.35rem .55rem;
+  font-size:.65rem;
+  font-weight:900;
+  background:#10B981;
+  color:#fff;
+}
+</style>
+
+<script id="fuMatchEventScript">
+(function(){
+
+function getMyEvents(){
+  try{
+    const data = JSON.parse(localStorage.getItem('fu_event_attendees_full_v1')||'{}');
+    const myId = (window.me && window.me()?.id) || '';
+    const events=[];
+    Object.keys(data).forEach(eid=>{
+      if(data[eid].some(x=> (x.uid||x.id)===myId)){
+        events.push(eid);
+      }
+    });
+    return events;
+  }catch(e){return[]}
+}
+
+function getUserEvents(uid){
+  try{
+    const data = JSON.parse(localStorage.getItem('fu_event_attendees_full_v1')||'{}');
+    const events=[];
+    Object.keys(data).forEach(eid=>{
+      if(data[eid].some(x=> (x.uid||x.id)===uid)){
+        events.push(eid);
+      }
+    });
+    return events;
+  }catch(e){return[]}
+}
+
+function enhanceProfiles(){
+  if(typeof window.allProfiles!=='function') return;
+
+  const myEvents = getMyEvents();
+  const users = window.allProfiles();
+
+  document.querySelectorAll('.card-user').forEach((card,i)=>{
+    const u = users[i];
+    if(!u) return;
+
+    const userEvents = getUserEvents(u.id);
+    const match = userEvents.find(e=> myEvents.includes(e));
+
+    if(match){
+      if(card.querySelector('.fu-match-event')) return;
+
+      const div = document.createElement('div');
+      div.className='fu-match-event';
+      div.innerHTML = `
+        🎟 Van al mismo evento
+        <button onclick="startChatFromMatch('${u.id}')">Hablar</button>
+      `;
+      card.appendChild(div);
+    }
+  });
+}
+
+window.startChatFromMatch = function(id){
+  const users = window.allProfiles();
+  const u = users.find(x=>x.id===id);
+  if(u && typeof window.startChat==='function'){
+    window.startChat(u);
+  }
+}
+
+setInterval(enhanceProfiles,1500);
+
+})();
+</script>
+
 </body>
 </html>
