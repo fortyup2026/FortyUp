@@ -7154,5 +7154,248 @@ body.chat-open .fu-pro-bell{display:none!important}
 })();
 </script>
 
+
+<style id="fuNotifyReceivedOnlyStyle">
+/* === FortyUp Notificaciones: solo recibidas / relevantes === */
+.fu-pro-notify-item.sent-noise{display:none!important}
+</style>
+
+<script id="fuNotifyReceivedOnlyScript">
+/* FortyUp: limpiar campanita para mostrar solo recibido/relevante */
+(function(){
+  const KEY='fu_notify_pro_items_v2';
+
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function $ (id){return document.getElementById(id)}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function myName(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function nowIso(){return new Date().toISOString()}
+
+  function isSentNoise(n){
+    const t=(n&&n.title||'').toLowerCase();
+    const tx=(n&&n.text||'').toLowerCase();
+    return (
+      t.includes('enviado') ||
+      tx.includes('le mandaste') ||
+      tx.includes('mandaste un forti') ||
+      tx.includes('mandaste un súper') ||
+      tx.includes('mandaste un super') ||
+      t.includes('asistencia actualizada')
+    );
+  }
+
+  function cleanNotifications(){
+    const arr=load(KEY,[]);
+    if(!Array.isArray(arr))return;
+    const clean=arr.filter(n=>!isSentNoise(n));
+    if(clean.length!==arr.length){
+      save(KEY,clean);
+    }
+    if(typeof window.fuProMarkRead==='function'){
+      // no marcamos leídas; solo refrescamos si existe render indirecto
+    }
+    refreshBell();
+  }
+
+  function refreshBell(){
+    const arr=load(KEY,[]);
+    const unread=Array.isArray(arr)?arr.filter(n=>!n.read && !isSentNoise(n)).length:0;
+    const c=$('fuProBellCount');
+    if(c){
+      c.textContent=unread>99?'99+':String(unread);
+      c.classList.toggle('show',unread>0);
+    }
+    const bell=$('fuProBell');
+    if(bell){
+      const active=[...document.querySelectorAll('.screen.active')][0]?.id||'';
+      bell.classList.toggle('show',!!uid() && active!=='landing' && active!=='chat');
+    }
+  }
+
+  // Reemplaza la función local de agregar notificaciones para ignorar ruido enviado.
+  if(typeof window.fuNotifyProAdd==='function' && !window.fuNotifyProAdd.__receivedOnly){
+    const oldAdd=window.fuNotifyProAdd;
+    window.fuNotifyProAdd=function(raw,show){
+      if(isSentNoise(raw)) {
+        setTimeout(cleanNotifications,100);
+        return raw;
+      }
+      return oldAdd.apply(this,arguments);
+    };
+    window.fuNotifyProAdd.__receivedOnly=true;
+  }
+
+  // Nueva función remota segura: intenta registrar aviso al receptor, pero nunca suma campanita local del emisor.
+  window.fuNotifyReceivedOnlyRemote = async function(toUid, raw){
+    const d=db();
+    if(!d||!toUid||toUid===uid())return;
+    const id=raw.id || ((raw.type||'notify')+'_'+uid()+'_'+Date.now());
+    try{
+      await d.collection('userNotifications').doc(toUid).collection('items').doc(id).set({
+        id,
+        type:raw.type||'system',
+        title:raw.title||'FortyUp',
+        text:raw.text||'Tenés una novedad en FortyUp.',
+        from:uid(),
+        fromName:myName(),
+        to:toUid,
+        profileId:raw.profileId||uid(),
+        eventId:raw.eventId||'',
+        chatId:raw.chatId||'',
+        createdAtText:nowIso(),
+        createdAt:serverTime(),
+        read:false
+      },{merge:true});
+    }catch(e){
+      // Si las reglas no permiten escribir notificaciones de otro usuario, no molestamos al emisor.
+      console.warn('No se pudo crear notificación remota',e);
+    }
+  };
+
+  // Enviar Forti: no genera notificación local. Solo intenta avisar al receptor si el envío real fue exitoso.
+  function wrapSendForti(){
+    if(typeof window.sendForti!=='function' || window.sendForti.__receivedOnlyFix)return;
+    const old=window.sendForti;
+    window.sendForti=function(pid){
+      const before=JSON.stringify(load(KEY,[]));
+      const result=old.apply(this,arguments);
+      // Limpiar cualquier notificación local creada por scripts anteriores.
+      setTimeout(cleanNotifications,150);
+      setTimeout(cleanNotifications,700);
+      // Aviso remoto al receptor, no local.
+      try{
+        window.fuNotifyReceivedOnlyRemote(pid,{
+          type:'forti',
+          title:'Nuevo Forti',
+          text:myName()+' te mandó un Forti ◆',
+          profileId:uid()
+        });
+      }catch(e){}
+      return result;
+    };
+    window.sendForti.__receivedOnlyFix=true;
+  }
+
+  // Enviar SuperDiamante: no genera campanita local si no hay cupo o si falla. Solo avisa al receptor tras función original.
+  function wrapSendSuper(){
+    if(typeof window.sendSuper!=='function' || window.sendSuper.__receivedOnlyFix)return;
+    const old=window.sendSuper;
+    window.sendSuper=async function(pid){
+      let result;
+      try{
+        result=await old.apply(this,arguments);
+      }finally{
+        setTimeout(cleanNotifications,150);
+        setTimeout(cleanNotifications,800);
+      }
+      try{
+        window.fuNotifyReceivedOnlyRemote(pid,{
+          type:'super',
+          title:'¡Súper Diamante!',
+          text:myName()+' te mandó un Súper Diamante 💎',
+          profileId:uid()
+        });
+      }catch(e){}
+      return result;
+    };
+    window.sendSuper.__receivedOnlyFix=true;
+  }
+
+  // Render del panel: filtra avisos enviados aunque hayan quedado guardados.
+  function wrapOpenPanel(){
+    if(typeof window.fuProOpenNotify==='function' && !window.fuProOpenNotify.__receivedOnlyFix){
+      const oldOpen=window.fuProOpenNotify;
+      window.fuProOpenNotify=function(id){
+        cleanNotifications();
+        return oldOpen.apply(this,arguments);
+      };
+      window.fuProOpenNotify.__receivedOnlyFix=true;
+    }
+  }
+
+  // Si el panel existe, corregimos la lista visual al abrir la campanita.
+  function hookBell(){
+    const bell=$('fuProBell');
+    if(bell && !bell.__receivedOnlyFix){
+      bell.__receivedOnlyFix=true;
+      bell.addEventListener('click',()=>setTimeout(()=>{
+        cleanNotifications();
+        const list=$('fuProNotifyList');
+        if(!list)return;
+        [...list.querySelectorAll('.fu-pro-notify-item')].forEach(item=>{
+          const text=(item.textContent||'').toLowerCase();
+          if(text.includes('enviado')||text.includes('le mandaste')||text.includes('asistencia actualizada')){
+            item.remove();
+          }
+        });
+        if(!list.children.length){
+          list.innerHTML='<div class="fu-pro-empty"><div>🔔</div><h4>Sin notificaciones</h4><p>Acá van a aparecer Fortis recibidos, Súper Diamantes recibidos, mensajes, eventos y coincidencias.</p></div>';
+        }
+      },120));
+    }
+  }
+
+  // Notificaciones recibidas desde superDiamonds: si llega un documento donde soy receptor, se muestra.
+  let superUnsub=null;
+  let firstSuper=true;
+  function listenSuperReceived(){
+    const d=db(), u=uid();
+    if(!d||!u||superUnsub)return;
+    try{
+      superUnsub=d.collection('superDiamonds').where('to','==',u).onSnapshot(snap=>{
+        snap.docChanges().forEach(ch=>{
+          if(ch.type!=='added')return;
+          if(firstSuper)return;
+          const data=ch.doc.data()||{};
+          const fromName=data.fromName||'Alguien especial';
+          if(typeof window.fuNotifyProAdd==='function'){
+            window.fuNotifyProAdd({
+              id:'recv_super_'+ch.doc.id,
+              type:'super',
+              title:'¡Súper Diamante!',
+              text:fromName+' te mandó un Súper Diamante 💎',
+              from:data.from||'',
+              fromName,
+              profileId:data.from||'',
+              createdAt:nowIso(),
+              read:false
+            },true);
+          }
+        });
+        firstSuper=false;
+      },err=>console.warn('super received listener',err));
+    }catch(e){}
+  }
+
+  // Limpia títulos/textos cada tanto y evita contador falso.
+  function init(){
+    wrapSendForti();
+    wrapSendSuper();
+    wrapOpenPanel();
+    hookBell();
+    listenSuperReceived();
+    cleanNotifications();
+  }
+
+  setTimeout(init,500);
+  setInterval(init,1200);
+  setInterval(cleanNotifications,2500);
+
+  try{
+    if(auth()){
+      auth().onAuthStateChanged(()=>{
+        if(superUnsub){try{superUnsub()}catch(e){};superUnsub=null;firstSuper=true;}
+        setTimeout(init,800);
+      });
+    }
+  }catch(e){}
+})();
+</script>
+
 </body>
 </html>
