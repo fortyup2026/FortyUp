@@ -7397,5 +7397,322 @@ body.chat-open .fu-pro-bell{display:none!important}
 })();
 </script>
 
+
+<style id="fuFortiNotifyStableStyle">
+/* FortyUp Forti estable + campanita sin titileo */
+.btn-forti.fu-forti-sent,
+button.fu-forti-sent{
+  background:#E8FFF6!important;
+  color:#047857!important;
+  border:1.5px solid #A7F3D0!important;
+  box-shadow:none!important;
+}
+.fu-forti-already-note{
+  position:fixed;
+  left:50%;
+  bottom:calc(5.2rem + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%) translateY(12px);
+  background:#064E3B;
+  color:#fff;
+  border-radius:999px;
+  padding:.62rem 1rem;
+  font-size:.82rem;
+  font-weight:900;
+  z-index:100004;
+  opacity:0;
+  transition:.22s ease;
+  box-shadow:0 12px 28px rgba(6,78,59,.25);
+  pointer-events:none;
+  max-width:92vw;
+  white-space:nowrap;
+}
+.fu-forti-already-note.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+</style>
+
+<script id="fuFortiNotifyStableScript">
+(function(){
+  const NOTI_KEY='fu_notify_pro_items_v2';
+  let renderLock=false;
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function myName(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function nowIso(){return new Date().toISOString()}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+
+  function fortiKey(pid){return 'fu_forti_sent_'+uid()+'_'+pid}
+
+  function sentFortiIds(){
+    const u=uid();
+    const ids=new Set();
+
+    try{
+      const fortis=load('fu_fortis',[]);
+      if(Array.isArray(fortis)){
+        fortis.forEach(f=>{
+          const from=f.from||f.sender||f.senderId||f.uid||f.me||'';
+          const to=f.to||f.receiver||f.receiverId||f.pid||f.profileId||f.id||'';
+          if((!from || from===u) && to) ids.add(to);
+        });
+      }
+    }catch(e){}
+
+    try{
+      const local=load('fu_forti_sent_ids_'+u,[]);
+      if(Array.isArray(local)) local.forEach(x=>ids.add(x));
+    }catch(e){}
+
+    try{
+      Object.keys(localStorage).forEach(k=>{
+        if(k.startsWith('fu_forti_sent_'+u+'_') && localStorage.getItem(k)==='1'){
+          ids.add(k.replace('fu_forti_sent_'+u+'_',''));
+        }
+      });
+    }catch(e){}
+
+    return ids;
+  }
+
+  function hasSentForti(pid){
+    if(!pid)return false;
+    return sentFortiIds().has(pid) || localStorage.getItem(fortiKey(pid))==='1';
+  }
+
+  function markFortiSent(pid){
+    if(!pid)return;
+    localStorage.setItem(fortiKey(pid),'1');
+    const k='fu_forti_sent_ids_'+uid();
+    const arr=load(k,[]);
+    if(!arr.includes(pid)){
+      arr.push(pid);
+      save(k,arr);
+    }
+  }
+
+  function showAlready(msg){
+    document.querySelectorAll('.fu-forti-already-note').forEach(x=>x.remove());
+    const el=document.createElement('div');
+    el.className='fu-forti-already-note';
+    el.textContent=msg||'Ya le enviaste un Forti ◆';
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('show'));
+    setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),260)},2300);
+  }
+
+  function isSentNoise(n){
+    const t=((n&&n.title)||'').toLowerCase();
+    const tx=((n&&n.text)||'').toLowerCase();
+    return (
+      t.includes('enviado') ||
+      tx.includes('le mandaste') ||
+      tx.includes('mandaste un forti') ||
+      tx.includes('mandaste un súper') ||
+      tx.includes('mandaste un super') ||
+      t.includes('asistencia actualizada') ||
+      tx.includes('se actualizó tu asistencia')
+    );
+  }
+
+  function cleanSentNoise(){
+    const arr=load(NOTI_KEY,[]);
+    if(!Array.isArray(arr))return [];
+    const clean=arr.filter(n=>!isSentNoise(n));
+    if(clean.length!==arr.length) save(NOTI_KEY,clean);
+    return clean;
+  }
+
+  function stableRenderBell(){
+    if(renderLock)return;
+    renderLock=true;
+    setTimeout(()=>{renderLock=false},180);
+
+    const arr=cleanSentNoise();
+    const unread=arr.filter(n=>!n.read).length;
+
+    const c=$('fuProBellCount') || $('fuNotifyCount');
+    if(c){
+      c.textContent=unread>99?'99+':String(unread);
+      c.classList.toggle('show',unread>0);
+    }
+
+    const bell=$('fuProBell') || $('fuNotifyBell');
+    if(bell){
+      const active=[...document.querySelectorAll('.screen.active')][0]?.id||'';
+      bell.classList.toggle('show',!!uid() && active!=='landing' && active!=='chat');
+    }
+
+    const msgDot=$('msgDot');
+    if(msgDot && unread===0) msgDot.classList.remove('show');
+  }
+
+  function getProfileName(pid){
+    try{
+      const p=typeof window.allProfiles==='function'?window.allProfiles().find(x=>x.id===pid):null;
+      return (p&&(p.n||p.name))||'este perfil';
+    }catch(e){return 'este perfil'}
+  }
+
+  async function notifyFortiReceiver(pid){
+    const d=db();
+    if(!d||!pid||pid===uid())return;
+    try{
+      await d.collection('userNotifications').doc(pid).collection('items').doc('forti_'+uid()+'_'+Date.now()).set({
+        type:'forti',
+        title:'Nuevo Forti',
+        text:myName()+' te mandó un Forti ◆',
+        from:uid(),
+        fromName:myName(),
+        to:pid,
+        profileId:uid(),
+        createdAtText:nowIso(),
+        createdAt:serverTime(),
+        read:false
+      },{merge:true});
+    }catch(e){
+      console.warn('No se pudo avisar Forti remoto',e);
+    }
+  }
+
+  function wrapForti(){
+    if(typeof window.sendForti!=='function' || window.sendForti.__fortiStableFinal)return;
+    const old=window.sendForti;
+
+    window.sendForti=function(pid){
+      if(!pid){
+        toast('No encontré ese perfil');
+        return;
+      }
+
+      if(hasSentForti(pid)){
+        showAlready('Ya le enviaste un Forti a '+getProfileName(pid)+' ◆');
+        updateFortiButtons();
+        stableRenderBell();
+        return;
+      }
+
+      let result;
+      try{
+        result=old.apply(this,arguments);
+      }catch(e){
+        console.warn(e);
+        toast('No se pudo mandar el Forti');
+        stableRenderBell();
+        return;
+      }
+
+      markFortiSent(pid);
+      notifyFortiReceiver(pid);
+
+      setTimeout(()=>{
+        cleanSentNoise();
+        updateFortiButtons();
+        stableRenderBell();
+      },120);
+
+      setTimeout(stableRenderBell,700);
+      return result;
+    };
+
+    window.sendForti.__fortiStableFinal=true;
+  }
+
+  function buttonPid(btn){
+    const onclick=btn.getAttribute('onclick')||'';
+    let m=onclick.match(/sendForti\(['"]([^'"]+)['"]\)/);
+    if(m)return m[1];
+    m=onclick.match(/sendForti\(([^)]+)\)/);
+    if(m)return String(m[1]).replace(/['"]/g,'').trim();
+    return btn.dataset.pid||btn.dataset.id||'';
+  }
+
+  function updateFortiButtons(){
+    const buttons=[...document.querySelectorAll('.btn-forti, button[onclick*="sendForti"]')];
+    buttons.forEach(btn=>{
+      const pid=buttonPid(btn);
+      if(!pid)return;
+
+      if(hasSentForti(pid)){
+        btn.classList.add('fu-forti-sent');
+        btn.textContent='✓ Forti enviado';
+        btn.title='Ya le enviaste un Forti';
+      }else{
+        btn.classList.remove('fu-forti-sent');
+        const txt=(btn.textContent||'').toLowerCase();
+        if(txt.includes('enviado') || txt.includes('✓')){
+          btn.textContent='◆ Forti';
+        }
+        btn.title='Enviar Forti';
+      }
+    });
+  }
+
+  if(typeof window.fuNotifyProAdd==='function' && !window.fuNotifyProAdd.__noSentNoiseFinal){
+    const oldAdd=window.fuNotifyProAdd;
+    window.fuNotifyProAdd=function(raw,show){
+      if(isSentNoise(raw)){
+        setTimeout(stableRenderBell,80);
+        return raw;
+      }
+      return oldAdd.apply(this,arguments);
+    };
+    window.fuNotifyProAdd.__noSentNoiseFinal=true;
+  }
+
+  function scrubPanel(){
+    cleanSentNoise();
+    const list=$('fuProNotifyList') || $('fuNotifyList');
+    if(!list)return;
+
+    [...list.children].forEach(item=>{
+      const text=(item.textContent||'').toLowerCase();
+      if(text.includes('enviado') || text.includes('le mandaste') || text.includes('asistencia actualizada')){
+        item.remove();
+      }
+    });
+
+    if(!list.children.length){
+      list.innerHTML='<div class="fu-pro-empty"><div>🔔</div><h4>Sin notificaciones</h4><p>Acá van a aparecer Fortis recibidos, Súper Diamantes recibidos, mensajes, eventos y coincidencias.</p></div>';
+    }
+  }
+
+  function init(){
+    wrapForti();
+    cleanSentNoise();
+    updateFortiButtons();
+    stableRenderBell();
+
+    const bell=$('fuProBell') || $('fuNotifyBell');
+    if(bell && !bell.__fortiStablePanel){
+      bell.__fortiStablePanel=true;
+      bell.addEventListener('click',()=>setTimeout(scrubPanel,120));
+    }
+  }
+
+  setTimeout(init,400);
+  setInterval(init,1200);
+  setInterval(stableRenderBell,2500);
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__fortiStableFinal){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(updateFortiButtons,180);
+      setTimeout(stableRenderBell,220);
+      return r;
+    };
+    window.go.__fortiStableFinal=true;
+  }
+})();
+</script>
+
 </body>
 </html>
