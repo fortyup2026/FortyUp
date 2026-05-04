@@ -7907,5 +7907,87 @@ setInterval(enhanceEvents,1500);
 })();
 </script>
 
+
+<style>
+/* === EVENTOS AJUSTADOS FORTYUP === */
+
+.fu-event-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  background:#ECFDF5;
+  color:#047857;
+  border:1px solid #A7F3D0;
+  border-radius:999px;
+  padding:.3rem .6rem;
+  font-size:.72rem;
+  font-weight:900;
+  margin-bottom:.6rem;
+}
+
+.fu-event-cta{
+  width:100%;
+  border:0;
+  border-radius:999px;
+  padding:.65rem;
+  font-weight:900;
+  background:linear-gradient(135deg,#10B981,#047857);
+  color:white;
+}
+</style>
+
+<script>
+(function(){
+
+function enhanceEvents(){
+  const cards = document.querySelectorAll('.plan-card');
+
+  cards.forEach(card=>{
+    if(card.classList.contains('fu-event-ajustado')) return;
+
+    card.classList.add('fu-event-ajustado');
+
+    const body = card.querySelector('.plan-card-body');
+    if(!body) return;
+
+    // Crear badge estilo FortyUp
+    const badge = document.createElement('div');
+    badge.className = 'fu-event-badge';
+
+    const textos = [
+      '◆ Ya hay movimiento',
+      '◆ Gente con tu estilo va',
+      '◆ Plan activo',
+      '◆ Se está armando',
+      '◆ Viene bien este plan'
+    ];
+
+    badge.innerText = textos[Math.floor(Math.random()*textos.length)];
+
+    const btn = body.querySelector('button');
+    if(btn){
+      btn.classList.add('fu-event-cta');
+      btn.innerText = 'Sumarme';
+    }
+
+    body.insertBefore(badge, body.firstChild);
+  });
+}
+
+// Hook
+const oldRenderPlans = window.renderPlans;
+if(oldRenderPlans){
+  window.renderPlans = function(){
+    const r = oldRenderPlans.apply(this, arguments);
+    setTimeout(enhanceEvents, 80);
+    return r;
+  }
+}
+
+setInterval(enhanceEvents,1200);
+
+})();
+</script>
+
 </body>
 </html>
