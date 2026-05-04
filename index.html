@@ -7846,5 +7846,66 @@ setInterval(updateUnreadUI,1000);
 })();
 </script>
 
+
+<style>
+.fu-event-premium{border-radius:22px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.12);background:#fff;margin-bottom:1rem}
+.fu-event-premium-body{padding:1rem}
+.fu-event-title{font-weight:900;font-size:1rem;margin-bottom:.3rem}
+.fu-event-meta{font-size:.8rem;color:#666;margin-bottom:.6rem}
+.fu-event-users{display:flex;align-items:center;gap:-10px;margin-bottom:.7rem}
+.fu-event-user{width:32px;height:32px;border-radius:50%;border:2px solid white;background:#eee;overflow:hidden}
+.fu-event-user img{width:100%;height:100%;object-fit:cover}
+.fu-event-count{font-size:.75rem;font-weight:900;color:#047857;margin-left:.4rem}
+.fu-event-cta{width:100%;border:0;border-radius:999px;padding:.65rem;font-weight:900;background:linear-gradient(135deg,#10B981,#047857);color:white}
+</style>
+
+<script>
+(function(){
+function enhanceEvents(){
+  const cards=document.querySelectorAll('.plan-card');
+  cards.forEach(card=>{
+    if(card.classList.contains('fu-event-premium'))return;
+    card.classList.add('fu-event-premium');
+    const body=card.querySelector('.plan-card-body');
+    if(!body)return;
+
+    const users=document.createElement('div');
+    users.className='fu-event-users';
+
+    for(let i=0;i<3;i++){
+      const u=document.createElement('div');
+      u.className='fu-event-user';
+      u.innerHTML='<img src="https://i.pravatar.cc/100?img='+(10+i)+'">';
+      users.appendChild(u);
+    }
+
+    const count=document.createElement('div');
+    count.className='fu-event-count';
+    count.innerText='+ personas se están sumando';
+    users.appendChild(count);
+
+    const btn=body.querySelector('button');
+    if(btn){
+      btn.classList.add('fu-event-cta');
+      btn.innerText='Sumarme ahora';
+    }
+
+    body.insertBefore(users, body.firstChild);
+  });
+}
+
+const oldRenderPlans=window.renderPlans;
+if(oldRenderPlans){
+  window.renderPlans=function(){
+    const r=oldRenderPlans.apply(this,arguments);
+    setTimeout(enhanceEvents,100);
+    return r;
+  }
+}
+
+setInterval(enhanceEvents,1500);
+})();
+</script>
+
 </body>
 </html>
