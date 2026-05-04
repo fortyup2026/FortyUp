@@ -8217,5 +8217,68 @@ setTimeout(enhanceEmptyStates,500);
 })();
 </script>
 
+
+<style>
+.fu-super-sent{background:#ddd!important;color:#666!important}
+.fu-bell-stable{opacity:1!important}
+</style>
+
+<script>
+(function(){
+
+const LS_SUPER='fu_super_sent';
+
+function loadS(){try{return JSON.parse(localStorage.getItem(LS_SUPER))||[]}catch(e){return []}}
+function saveS(v){localStorage.setItem(LS_SUPER,JSON.stringify(v))}
+
+/* SUPERDIAMANTE */
+const oldSuper=window.sendSuperDiamond;
+if(oldSuper){
+  window.sendSuperDiamond=function(pid){
+    const sent=loadS();
+    if(sent.includes(pid)){
+      if(window.toast) toast("Ya enviaste un SuperDiamante");
+      return;
+    }
+    const res=oldSuper.apply(this,arguments);
+    setTimeout(()=>{
+      sent.push(pid);
+      saveS(sent);
+      document.querySelectorAll("button").forEach(b=>{
+        if((b.getAttribute("onclick")||"").includes(pid)){
+          if(b.innerText.toLowerCase().includes("diamante")){
+            b.innerText="✓ Enviado";
+            b.classList.add("fu-super-sent");
+          }
+        }
+      });
+    },50);
+    return res;
+  }
+}
+
+/* CAMPANA */
+function fixBell(){
+  document.querySelectorAll('.msg-name').forEach(el=>{
+    if(el.innerHTML.includes('🔔')){
+      el.classList.add('fu-bell-stable');
+    }
+  });
+}
+
+const observer=new MutationObserver(()=>{fixBell()});
+
+setTimeout(()=>{
+  const msgList=document.getElementById('msgList');
+  if(msgList){
+    observer.observe(msgList,{childList:true,subtree:true});
+  }
+},500);
+
+setInterval(fixBell,1000);
+
+})();
+</script>
+
 </body>
 </html>
