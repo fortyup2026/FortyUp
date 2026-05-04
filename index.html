@@ -7491,5 +7491,196 @@ body.fu-no-flicker *{
 })();
 </script>
 
+
+<style id="fuMensajesHeaderFijoFinalStyle">
+/* === FortyUp Mensajes header fijo definitivo === */
+#messages .screen-inner{
+  padding-top:1rem!important;
+}
+#fuMsgFixedHeader{
+  display:flex!important;
+  gap:.45rem!important;
+  margin-bottom:.75rem!important;
+  flex-wrap:wrap!important;
+  min-height:38px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+#fuMsgFixedHeader button{
+  border:0!important;
+  border-radius:999px!important;
+  padding:.55rem .75rem!important;
+  font-family:'Nunito',sans-serif!important;
+  font-weight:1000!important;
+  font-size:.76rem!important;
+  cursor:pointer!important;
+  background:var(--soft)!important;
+  color:var(--g)!important;
+  border:1.5px solid var(--line)!important;
+  transition:none!important;
+  animation:none!important;
+}
+#msgList .fu-msg-top-actions{
+  display:none!important;
+}
+#msgList{
+  min-height:280px!important;
+  transition:none!important;
+  animation:none!important;
+}
+#msgList *{
+  animation:none!important;
+}
+body.fu-msg-stable #msgList,
+body.fu-msg-stable #fuMsgFixedHeader{
+  transition:none!important;
+  animation:none!important;
+}
+</style>
+
+<script id="fuMensajesHeaderFijoFinalScript">
+(function(){
+  const LS_CHATS='fu_chats';
+  const LS_ARCH='fu_archived_chats_v1';
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+
+  function chats(){
+    const c=load(LS_CHATS,{});
+    return c&&typeof c==='object'?c:{};
+  }
+
+  function archived(){
+    const a=load(LS_ARCH,[]);
+    return Array.isArray(a)?a:[];
+  }
+
+  function ensureFixedHeader(){
+    const screen=$('messages');
+    const inner=screen?screen.querySelector('.screen-inner'):null;
+    const list=$('msgList');
+    if(!inner||!list)return;
+
+    let h=$('fuMsgFixedHeader');
+    if(!h){
+      h=document.createElement('div');
+      h.id='fuMsgFixedHeader';
+      h.innerHTML='<button type="button" onclick="cleanBrokenChats()">Limpiar chats con error</button><button type="button" onclick="showArchivedChats()">Archivados</button>';
+      inner.insertBefore(h,list);
+    }
+  }
+
+  function buildOnlyRows(){
+    const c=chats();
+    const a=archived();
+    const rows=[];
+
+    Object.keys(c).forEach(pid=>{
+      if(a.includes(pid))return;
+      const arr=Array.isArray(c[pid])?c[pid]:[];
+      if(arr.length)rows.push({pid,arr,last:arr[arr.length-1]});
+    });
+
+    rows.sort((x,y)=>new Date(y.last.date||y.last.createdAt||0)-new Date(x.last.date||x.last.createdAt||0));
+
+    if(!rows.length){
+      return '<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. El chat se habilita con match de Forti, Súper Diamante o evento en común.</p></div>';
+    }
+
+    return rows.map(({pid,arr,last})=>{
+      const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible',img:''};
+      const error=!profile(pid);
+      return `<div class="msg-item ${error?'fu-msg-error':''}" onclick="startChatPremium('${safe(pid)}')" oncontextmenu="event.preventDefault();openChatMenu('${safe(pid)}')" onmousedown="fuChatHoldStart(event,'${safe(pid)}')" onmouseup="fuChatHoldEnd()" ontouchstart="fuChatHoldStart(event,'${safe(pid)}')" ontouchend="fuChatHoldEnd()">
+        <img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'">
+        <div class="msg-info">
+          <div class="msg-name">${safe(p.n||p.name||'Usuario')}</div>
+          <div class="msg-preview">${safe(last.text||'Mensaje')}</div>
+        </div>
+        <div class="msg-time">${safe(last.time||'')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderMessagesNoHeader(){
+    ensureFixedHeader();
+    const list=$('msgList');
+    if(!list)return;
+
+    const next=buildOnlyRows();
+    if(list.dataset.onlyRowsHtml===next)return;
+
+    list.dataset.onlyRowsHtml=next;
+    list.innerHTML=next;
+  }
+
+  window.renderMessages=function(){
+    document.body.classList.add('fu-msg-stable');
+    ensureFixedHeader();
+    renderMessagesNoHeader();
+    requestAnimationFrame(()=>{
+      ensureFixedHeader();
+      renderMessagesNoHeader();
+      document.body.classList.remove('fu-msg-stable');
+    });
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__msgHeaderFijoFinal){
+    window.go=function(id){
+      if(id==='messages'){
+        document.body.classList.add('fu-msg-stable');
+        ensureFixedHeader();
+        renderMessagesNoHeader();
+      }
+
+      const r=oldGo.apply(this,arguments);
+
+      if(id==='messages'){
+        ensureFixedHeader();
+        renderMessagesNoHeader();
+        requestAnimationFrame(()=>{
+          ensureFixedHeader();
+          renderMessagesNoHeader();
+          document.body.classList.remove('fu-msg-stable');
+        });
+        setTimeout(()=>{
+          ensureFixedHeader();
+          renderMessagesNoHeader();
+        },60);
+      }
+
+      return r;
+    };
+    window.go.__msgHeaderFijoFinal=true;
+  }
+
+  // Evita que otros scripts vuelvan a meter la cabecera dentro de msgList.
+  const observer = new MutationObserver(()=>{
+    const list=$('msgList');
+    if(!list)return;
+    const actions=list.querySelector('.fu-msg-top-actions');
+    if(actions){
+      actions.remove();
+      ensureFixedHeader();
+    }
+  });
+
+  setTimeout(()=>{
+    ensureFixedHeader();
+    const list=$('msgList');
+    if(list)observer.observe(list,{childList:true,subtree:true});
+    const active=[...document.querySelectorAll('.screen.active')][0]?.id||'';
+    if(active==='messages')renderMessagesNoHeader();
+  },400);
+})();
+</script>
+
 </body>
 </html>
