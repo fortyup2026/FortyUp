@@ -8095,5 +8095,127 @@ setTimeout(enhanceEmptyStates,500);
 })();
 </script>
 
+
+<style id="fuFortiTiempoFinoStyle">
+/* === FortyUp Forti humano + tiempo limpio === */
+.fu-time-clean{
+  color:var(--muted)!important;
+  font-size:.68rem!important;
+  font-weight:800!important;
+}
+</style>
+
+<script id="fuFortiTiempoFinoScript">
+(function(){
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function profile(pid){try{return (typeof window.allProfiles==='function'?window.allProfiles():[]).find(p=>p.id===pid)||null}catch(e){return null}}
+  function nowIso(){return new Date().toISOString()}
+
+  function cleanTime(value){
+    if(!value)return '';
+    const raw=String(value);
+    const d=new Date(raw);
+    if(isNaN(d.getTime())){
+      if(/^\d{1,2}:\d{2}/.test(raw)) return raw;
+      return raw;
+    }
+    const diff=Math.max(0,Date.now()-d.getTime());
+    const min=Math.floor(diff/60000);
+    if(min<1)return 'ahora';
+    if(min<60)return 'hace '+min+' min';
+    const h=Math.floor(min/60);
+    if(h<24)return 'hace '+h+' h';
+    if(h<48)return 'ayer';
+    return 'hace '+Math.floor(h/24)+' d';
+  }
+
+  function normalizeChatTimes(){
+    const chats=load('fu_chats',{});
+    let changed=false;
+    Object.keys(chats||{}).forEach(pid=>{
+      if(!Array.isArray(chats[pid]))return;
+      chats[pid]=chats[pid].map(m=>{
+        if(!m)return m;
+        if(!m.createdAt && m.date)m.createdAt=m.date;
+        if(!m.date && m.createdAt)m.date=m.createdAt;
+        return m;
+      });
+    });
+    if(changed)save('fu_chats',chats);
+  }
+
+  function applyTimeLabels(){
+    document.querySelectorAll('.msg-time').forEach(el=>{
+      const text=el.textContent||'';
+      if(!el.dataset.originalTime)el.dataset.originalTime=text;
+      el.textContent=cleanTime(el.dataset.originalTime);
+      el.classList.add('fu-time-clean');
+    });
+
+    document.querySelectorAll('.bubble small').forEach(el=>{
+      const text=el.textContent||'';
+      if(!el.dataset.originalTime)el.dataset.originalTime=text;
+      el.textContent=cleanTime(el.dataset.originalTime);
+      el.classList.add('fu-time-clean');
+    });
+  }
+
+  const oldSendForti=window.sendForti;
+  if(typeof oldSendForti==='function' && !oldSendForti.__fortiHumano){
+    window.sendForti=function(pid){
+      const p=profile(pid);
+      const before=JSON.stringify(load('fu_forti_records',{sent:[],received:[]}));
+      const res=oldSendForti.apply(this,arguments);
+      setTimeout(()=>{
+        const r=load('fu_forti_records',{sent:[],received:[]});
+        r.sent=Array.isArray(r.sent)?r.sent:[];
+        if(r.sent.includes(pid)){
+          toast('◆ Le dejaste un Forti a '+((p&&(p.n||p.name))||'este perfil'));
+        }
+      },60);
+      return res;
+    };
+    window.sendForti.__fortiHumano=true;
+  }
+
+  const oldSendMsg=window.sendMsg;
+  if(typeof oldSendMsg==='function' && !oldSendMsg.__timeClean){
+    window.sendMsg=function(){
+      const res=oldSendMsg.apply(this,arguments);
+      setTimeout(applyTimeLabels,50);
+      return res;
+    };
+    window.sendMsg.__timeClean=true;
+  }
+
+  const oldRenderMessages=window.renderMessages;
+  if(typeof oldRenderMessages==='function' && !oldRenderMessages.__timeClean){
+    window.renderMessages=function(){
+      const r=oldRenderMessages.apply(this,arguments);
+      setTimeout(applyTimeLabels,30);
+      return r;
+    };
+    window.renderMessages.__timeClean=true;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__timeClean){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(applyTimeLabels,80);
+      return r;
+    };
+    window.go.__timeClean=true;
+  }
+
+  normalizeChatTimes();
+  setTimeout(applyTimeLabels,500);
+  setInterval(applyTimeLabels,30000);
+})();
+</script>
+
 </body>
 </html>
