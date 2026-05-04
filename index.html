@@ -6686,10 +6686,57 @@ setTimeout(enhanceEvents,1500);
     const box=$('chatBox');
     if(!peer||!box)return;
     const arr=getChatArr(peer.id);
-    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
-    setTimeout(()=>box.scrollTop=box.scrollHeight,30);
+    const photo=peer.img||peer.photo||'';
+    const initial=(peer.n||peer.name||'?')[0].toUpperCase();
+    const avStyle='width:28px;height:28px;border-radius:50%;flex-shrink:0;align-self:flex-end;overflow:hidden';
+    const avInner=photo?('<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover">')
+      :('<div style="width:100%;height:100%;background:linear-gradient(135deg,#10B981,#6ee7b7);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#064E3B">'+initial+'</div>');
+    const miniAv='<div style="'+avStyle+'">'+avInner+'</div>';
+    if(!arr.length){
+      box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem 1.5rem;min-height:60vh">'
+        +'<div style="font-size:3.5rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">&#128075;</div>'
+        +'<div style="font-weight:800;color:#6ee7b7;font-size:1rem;margin-bottom:.3rem">&iexcl;Salud&aacute; a '+safe(peer.n||peer.name||'')+'!</div>'
+        +'<div style="font-size:.82rem;color:rgba(255,255,255,.5)">S&eacute; el primero en escribir</div></div>';
+      return;
+    }
+    var lastDate='',htm='';
+    arr.forEach(function(m,mi){
+      var mine=m.from==='me';
+      var d=m.date||'';
+      if(d&&d!==lastDate){
+        htm+='<div style="text-align:center;font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35);margin:.6rem 0;text-transform:uppercase;letter-spacing:.06em">'+safe(d)+'</div>';
+        lastDate=d;
+      }
+      var content=m.photo?('<img src="'+m.photo+'" style="max-width:200px;border-radius:14px;display:block">'):safe(m.text||'');
+      var meta='<div style="font-size:.58rem;margin-top:.25rem;opacity:.55;text-align:'+(mine?'right':'left')+'">'+safe(m.time||'')+(mine?' &#10003;&#10003;':'')+'</div>';
+      if(mine){
+        htm+='<div data-mi="'+mi+'" style="display:flex;justify-content:flex-end;margin-bottom:.4rem">'
+          +'<div style="max-width:78%;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#042f25;border-radius:18px 4px 18px 18px;padding:.65rem .95rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 4px 16px rgba(16,185,129,.35);font-weight:600">'
+          +content+meta+'</div></div>';
+      }else{
+        htm+='<div data-mi="'+mi+'" style="display:flex;align-items:flex-end;gap:.45rem;margin-bottom:.4rem">'+miniAv
+          +'<div style="max-width:75%;background:rgba(255,255,255,.11);color:#fff;border-radius:4px 18px 18px 18px;padding:.65rem .95rem;font-size:.87rem;line-height:1.5;word-break:break-word;border:1px solid rgba(255,255,255,.1)">'
+          +content+meta+'</div></div>';
+      }
+    });
+    box.innerHTML=htm;
+    box.scrollTop=box.scrollHeight;
+    // Long press to delete
+    box.querySelectorAll('[data-mi]').forEach(function(el){
+      var t;
+      el.addEventListener('touchstart',function(){t=setTimeout(function(){
+        if(confirm('Eliminar este mensaje?')){
+          var idx=parseInt(el.dataset.mi);
+          var arr2=getChatArr(peer.id);
+          arr2.splice(idx,1);
+          var c=chatStore();c[peer.id]=arr2;setChatStore(c);
+          renderChatFast();
+        }
+      },600);});
+      el.addEventListener('touchend',function(){clearTimeout(t);});
+      el.addEventListener('touchmove',function(){clearTimeout(t);});
+    });
   }
-  let chatUnsub=null;
   function listenChatRemote(peerId){
     const d=db(), u=uid();
     if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}
