@@ -7989,5 +7989,111 @@ setInterval(enhanceEvents,1200);
 })();
 </script>
 
+
+<style>
+/* === SCROLL SUAVE === */
+html{
+  scroll-behavior:smooth;
+}
+
+/* === EMPTY STATES MEJORADOS === */
+.fu-empty{
+  text-align:center;
+  padding:1.5rem;
+  color:#666;
+  font-weight:800;
+}
+.fu-empty strong{
+  color:#047857;
+}
+
+/* === QUICK REPLIES CHAT === */
+.fu-quick-replies{
+  display:flex;
+  gap:.4rem;
+  flex-wrap:wrap;
+  padding:.6rem;
+}
+.fu-quick-replies button{
+  border:1px solid #A7F3D0;
+  background:#ECFDF5;
+  color:#047857;
+  border-radius:999px;
+  padding:.4rem .6rem;
+  font-size:.7rem;
+  font-weight:900;
+  cursor:pointer;
+}
+</style>
+
+<script>
+(function(){
+
+/* ===== EMPTY STATES ===== */
+function enhanceEmptyStates(){
+  const msgList = document.getElementById('msgList');
+  if(msgList && msgList.innerHTML.includes('Todavía no tenés mensajes')){
+    msgList.innerHTML = `
+      <div class="fu-empty">
+        💬 Todavía no tenés mensajes<br>
+        <strong>Mandá un Forti y empezá una charla</strong>
+      </div>
+    `;
+  }
+}
+
+/* ===== QUICK REPLIES ===== */
+function addQuickReplies(){
+  const chat = document.getElementById('chat');
+  const input = document.getElementById('chatInput');
+  if(!chat || !input) return;
+
+  if(document.getElementById('fuQuickReplies')) return;
+
+  const box = document.createElement('div');
+  box.id = 'fuQuickReplies';
+  box.className = 'fu-quick-replies';
+
+  const frases = [
+    "Hola! ¿todo bien?",
+    "¿Vas a este plan?",
+    "¿De qué música sos?",
+    "¿Ya usabas FortyUp?"
+  ];
+
+  frases.forEach(f=>{
+    const btn = document.createElement('button');
+    btn.innerText = f;
+    btn.onclick = ()=>{
+      input.value = f;
+      input.focus();
+    };
+    box.appendChild(btn);
+  });
+
+  input.parentNode.insertBefore(box, input);
+}
+
+/* Hook navegación */
+const oldGo = window.go;
+if(oldGo){
+  window.go = function(id){
+    const r = oldGo.apply(this, arguments);
+    setTimeout(()=>{
+      enhanceEmptyStates();
+      if(id === 'chat'){
+        addQuickReplies();
+      }
+    },120);
+    return r;
+  }
+}
+
+/* Init */
+setTimeout(enhanceEmptyStates,500);
+
+})();
+</script>
+
 </body>
 </html>
