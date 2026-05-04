@@ -5663,113 +5663,629 @@ setTimeout(enhanceEvents,1500);
 </script>
 
 
-<style id="fuDefinitivaAccionesFinalStyle">
-/* FortyUp definitiva: acciones estables */
-.fu-action-ok{background:linear-gradient(135deg,#F2B705,#FFD75A)!important;color:#064E3B!important;border:0!important;box-shadow:0 8px 18px rgba(242,183,5,.25)!important}
-.fu-action-disabled{opacity:.8!important;filter:saturate(.75)!important}
-.fu-mini-pill{display:inline-flex;align-items:center;gap:.25rem;background:var(--soft);color:var(--g);border:1px solid var(--line);border-radius:999px;padding:.22rem .55rem;font-size:.7rem;font-weight:1000;margin:.35rem 0}
-.fu-action-toast{position:fixed;left:50%;bottom:calc(5.4rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(10px);background:#064E3B;color:#fff;border-radius:999px;padding:.65rem 1rem;font-size:.82rem;font-weight:900;z-index:100006;opacity:0;transition:.22s ease;box-shadow:0 12px 28px rgba(6,78,59,.26);max-width:92vw;white-space:nowrap;pointer-events:none}
-.fu-action-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+<style id="fuDefinitivaBotonesFinalStyle">
+/* === FortyUp DEFINITIVA: botones y lógica final === */
+.fu-final-btn{
+  border:0;
+  border-radius:999px;
+  padding:.62rem .9rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.82rem;
+  font-weight:1000;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  box-shadow:0 8px 18px rgba(6,78,59,.16);
+}
+.fu-final-btn.out{
+  background:#fff;
+  color:var(--g);
+  border:1.5px solid var(--line);
+  box-shadow:none;
+}
+.fu-final-btn.gold{
+  background:linear-gradient(135deg,#F2B705,#FFD75A);
+  color:#064E3B;
+}
+.fu-final-btn.blue{
+  background:linear-gradient(135deg,#27B7F2,#6ED8FF);
+  color:#064E3B;
+}
+.fu-final-btn.on,
+.attend-btn.attending{
+  background:linear-gradient(135deg,#F2B705,#FFD75A)!important;
+  color:#064E3B!important;
+}
+.fu-final-actions{
+  display:flex;
+  gap:.45rem;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:.75rem;
+}
+.fu-final-count{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  background:var(--soft);
+  color:var(--g);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:.22rem .52rem;
+  font-size:.7rem;
+  font-weight:1000;
+}
+.fu-event-chat-box-final{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:var(--sh2);
+}
+.fu-event-chat-head-final{
+  padding:.78rem .9rem;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  font-weight:1000;
+}
+.fu-event-chat-messages-final{
+  height:280px;
+  overflow-y:auto;
+  padding:.85rem;
+  background:var(--soft);
+  display:flex;
+  flex-direction:column;
+  gap:.45rem;
+}
+.fu-event-chat-msg-final{
+  max-width:82%;
+  padding:.58rem .72rem;
+  border-radius:16px;
+  background:#fff;
+  color:var(--txt);
+  box-shadow:var(--sh2);
+  font-size:.84rem;
+  line-height:1.35;
+}
+.fu-event-chat-msg-final.mine{
+  align-self:flex-end;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+}
+.fu-event-chat-msg-final small{
+  display:block;
+  margin-top:.2rem;
+  opacity:.7;
+  font-size:.62rem;
+  font-weight:900;
+}
+.fu-event-chat-input-final{
+  display:flex;
+  gap:.45rem;
+  padding:.65rem;
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+.fu-event-chat-input-final input{
+  flex:1;
+  min-width:0;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  padding:.62rem .85rem;
+  font-family:'Nunito',sans-serif;
+  outline:none;
+}
+.fu-event-chat-input-final button{
+  border:0;
+  border-radius:999px;
+  padding:.62rem .85rem;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  font-weight:1000;
+}
+.fu-final-form{
+  display:flex;
+  flex-direction:column;
+  gap:.7rem;
+}
+.fu-final-form input,.fu-final-form textarea{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  padding:.7rem .85rem;
+  font-family:'Nunito',sans-serif;
+  outline:none;
+  background:#fff;
+}
+.fu-final-form textarea{height:90px;resize:none}
+.fu-final-empty{
+  background:var(--soft);
+  border:1.5px dashed var(--line);
+  border-radius:20px;
+  padding:1rem;
+  text-align:center;
+  color:var(--muted);
+  font-weight:800;
+  line-height:1.45;
+}
+.fu-final-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  background:var(--soft);
+  border:1px solid var(--line);
+  color:var(--g);
+  border-radius:999px;
+  padding:.18rem .5rem;
+  font-size:.68rem;
+  font-weight:1000;
+  margin-bottom:.4rem;
+}
 </style>
-<script id="fuDefinitivaAccionesFinalScript">
-(function(){
-  'use strict';
-  const ATT='fu_event_attendees_final_v4';
-  const MY_EVENTS='fu_events_final_v4';
-  const FORTI='fu_forti_records_final_v4';
-  const SUPER_SENT='fu_super_sent_final_v4';
 
-  const $=id=>document.getElementById(id);
+<script id="fuDefinitivaBotonesFinalScript">
+(function(){
+  const LS_ATT='fu_final_attendance_v1';
+  const LS_CREATED='fu_final_created_events_v1';
+  const LS_EVENT_MSG='fu_final_event_messages_v1';
+  const LS_SUPER_SENT='fu_final_super_sent_v1';
+
+  function el(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
   function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
   function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-  function toastMsg(msg){ if(typeof window.toast==='function') window.toast(msg); else actionToast(msg); }
-  function actionToast(msg){document.querySelectorAll('.fu-action-toast').forEach(x=>x.remove());const el=document.createElement('div');el.className='fu-action-toast';el.textContent=msg;document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),260)},2400)}
-  function auth(){try{return window.fuAuth || (window.firebase&&firebase.auth?firebase.auth():null)}catch(e){return null}}
-  function db(){try{return window.fuDb || (window.firebase&&firebase.firestore?firebase.firestore():null)}catch(e){return null}}
-  function u(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
-  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(u()&&(u().uid||u().id||u().email))||''}
-  function uname(){const user=u();return (user&&(user.name||user.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
-  function uphoto(){const user=u();return (user&&(user.photo||user.img))||''}
-  function serverTime(){try{return firebase.firestore.FieldValue.serverTimestamp()}catch(e){return new Date().toISOString()}}
-  function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-  function profileName(p){return (p&&(p.n||p.name))||'Usuario'}
-  function profilePhoto(p){return (p&&(p.img||p.photo))||''}
-  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
-  function profileById(id){return profiles().find(p=>p.id===id)||null}
-  function chatIdFor(a,b){return [String(a||''),String(b||'')].sort().join('__')}
+  function toast(msg){if(typeof window.toast==='function') window.toast(msg); else alert(msg)}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function currentUser(){
+    try{
+      const a=auth();
+      if(a && a.currentUser){
+        const local=typeof window.me==='function'?window.me():load('fu_user',null);
+        return Object.assign({},local||{}, {id:a.currentUser.uid, uid:a.currentUser.uid, email:a.currentUser.email||local?.email||''});
+      }
+    }catch(e){}
+    try{return typeof window.me==='function'?window.me():load('fu_user',null)}catch(e){return null}
+  }
+  function uid(){const u=currentUser();return (u&&(u.uid||u.id||u.email))||''}
+  function uname(){
+    const u=currentUser();
+    return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario';
+  }
+  function uphoto(){const u=currentUser();return (u&&(u.photo||u.img))||''}
+  function now(){return new Date().toISOString()}
+  function time(){return new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
 
-  function normalizeEventId(raw){return ('ev_'+String(raw||'evento')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,130)||'ev_evento'}
-  function eventIdFromPlanFinal(p){return normalizeEventId([p&&p[0],p&&p[1],p&&p[7]].join('_'))}
-  function allPlans(){try{return Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[])}catch(e){return []}}
-  function eventFromPlan(p){if(!p)return null;return {id:eventIdFromPlanFinal(p),title:p[0]||'Evento',when:p[1]||'Fecha a confirmar',desc:p[2]||'',img:p[3]||'',icon:p[4]||'🎟️',place:p[5]||p[7]||'',city:p[7]||'',link:p[8]||'',source:p[8]?'Evento real curado':'FortyUp',creatorId:p.creatorId||'fortyup',createdByMe:false}}
-  function eventById(id){let e=allPlans().map(eventFromPlan).find(x=>x&&x.id===id);if(e)return e;const mine=load(MY_EVENTS,[]).find(x=>x.id===id);return mine||{id,title:'Evento',when:'Fecha a confirmar',icon:'🎟️',place:''}}
+  function profileList(){
+    try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}
+  }
+  function profile(pid){return profileList().find(p=>p.id===pid)||null}
+  function eventId(text){
+    return String(text||'evento').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,120)||'evento';
+  }
+  function planId(p){return eventId('ev_'+(p[0]||'')+'_'+(p[1]||'')+'_'+(p[7]||''))}
+  function basePlans(){
+    try{return Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[])}catch(e){return []}
+  }
+  function createdEvents(){const a=load(LS_CREATED,[]);return Array.isArray(a)?a:[]}
+  function setCreatedEvents(a){save(LS_CREATED,a)}
+  function allEvents(){
+    const fromPlans=basePlans().map(p=>({
+      id:planId(p),kind:'plan',title:p[0]||'Evento',when:p[1]||'Fecha a confirmar',desc:p[2]||'',img:p[3]||'',icon:p[4]||'🎟️',place:p[5]||'',countText:p[6]||'0 asistirán',city:p[7]||'',link:p[8]||'',creatorId:'fortyup'
+    }));
+    const created=createdEvents();
+    const map={};
+    [...created,...fromPlans].forEach(e=>{if(e&&e.id)map[e.id]=e});
+    return Object.values(map);
+  }
+  function eventById(id){return allEvents().find(e=>e.id===id)||{id,title:'Evento',when:'Fecha a confirmar',icon:'🎟️',place:'',city:''}}
 
-  function attAll(){const o=load(ATT,{});return o&&typeof o==='object'?o:{}}
-  function attList(id){const o=attAll();return Array.isArray(o[id])?o[id]:[]}
-  function isAttendingFinal(id){const my=uid();return !!my && attList(id).some(a=>(a.uid||a.id||a)===my)}
-  function setAtt(id,on){const my=uid();if(!my)return false;const o=attAll();let arr=Array.isArray(o[id])?o[id]:[];if(on){if(!arr.some(a=>(a.uid||a.id||a)===my))arr.push({uid:my,id:my,name:uname(),photo:uphoto(),joinedAt:new Date().toISOString()})}else{arr=arr.filter(a=>(a.uid||a.id||a)!==my)}o[id]=arr;save(ATT,o);return true}
-  function eventCount(id,base=0){return Math.max(base||0, attList(id).length)}
-  function myEventsStore(){return load(MY_EVENTS,[])}
-  function saveMyEvent(e){let arr=myEventsStore();if(!arr.some(x=>x.id===e.id))arr.push(e);save(MY_EVENTS,arr)}
-  function removeMyEvent(id){save(MY_EVENTS,myEventsStore().filter(e=>e.id!==id))}
-  async function syncAttendRemote(id,on){const d=db(),my=uid();if(!d||!my)return;try{const ref=d.collection('eventAttendance').doc(id);if(on){await ref.set({eventId:id,attendees:firebase.firestore.FieldValue.arrayUnion(my),attendeeNames:{[my]:uname()},attendeePhotos:{[my]:uphoto()},updatedAt:serverTime()},{merge:true})}else{await ref.set({attendees:firebase.firestore.FieldValue.arrayRemove(my),['attendeeNames.'+my]:firebase.firestore.FieldValue.delete(),['attendeePhotos.'+my]:firebase.firestore.FieldValue.delete(),updatedAt:serverTime()},{merge:true})}}catch(e){console.warn('attendance remote failed',e)}}
+  function attendStore(){const a=load(LS_ATT,{});return a&&typeof a==='object'?a:{}}
+  function setAttendStore(a){save(LS_ATT,a)}
+  function attendees(id){const a=attendStore();return Array.isArray(a[id])?a[id]:[]}
+  function isGoing(id){const u=uid();return !!u && attendees(id).some(x=>(x.uid||x.id||x)===u)}
+  function attendeeCount(id, fallback){
+    const base=parseInt(String(fallback||'0').match(/\d+/)?.[0]||'0');
+    return Math.max(base, attendees(id).length);
+  }
+  function setGoing(id,on){
+    const u=uid();
+    if(!u)return false;
+    const s=attendStore();
+    s[id]=Array.isArray(s[id])?s[id]:[];
+    if(on){
+      if(!s[id].some(x=>(x.uid||x.id||x)===u))s[id].push({uid:u,id:u,name:uname(),photo:uphoto(),joinedAt:now()});
+    }else{
+      s[id]=s[id].filter(x=>(x.uid||x.id||x)!==u);
+    }
+    setAttendStore(s);
+    return true;
+  }
+  async function syncAttend(id,on){
+    const d=db(), u=uid();
+    if(!d||!u)return;
+    try{
+      const payload=on
+        ? {eventId:id,attendees:firebase.firestore.FieldValue.arrayUnion(u),['attendeeNames.'+u]:uname(),updatedAt:serverTime()}
+        : {eventId:id,attendees:firebase.firestore.FieldValue.arrayRemove(u),['attendeeNames.'+u]:firebase.firestore.FieldValue.delete(),updatedAt:serverTime()};
+      await d.collection('eventAttendance').doc(id).set(payload,{merge:true});
+    }catch(e){console.warn('eventAttendance',e)}
+  }
+  async function finalAttend(id){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const on=!isGoing(id);
+    setGoing(id,on);
+    await syncAttend(id,on);
+    toast(on?'Te sumaste al evento ✅':'Cancelaste tu asistencia');
+    refreshAll();
+  }
+  window.toggleAttend=async function(id){return finalAttend(id)}
+  window.toggleFuEventAttend=async function(id){return finalAttend(id)}
+  window.fuToggleEventAttendFull=async function(id){return finalAttend(id)}
+  window.togglePublicEventAttend=async function(type,id){return finalAttend(id)}
+  window.isAttending=function(id){return isGoing(id)}
+  window.fuEventAttendees=function(id){return attendees(id)}
 
-  window.isAttending=function(id){return isAttendingFinal(id)};
-  window.fuEventAttendees=function(id){return attList(id)};
-  window.toggleFuEventAttend=async function(id){return toggleAttendFinal(id)};
-  window.fuToggleEventAttendFull=async function(id){await toggleAttendFinal(id); if(typeof window.openFuEventCard==='function')setTimeout(()=>window.openFuEventCard(id),120)};
-  window.togglePublicEventAttend=async function(type,id){return toggleAttendFinal(id)};
+  function cityNow(){
+    try{
+      const override=localStorage.getItem('fu_plan_city_override');
+      if(override)return override;
+      const u=currentUser();
+      return (u&&(u.city||u.c))||'Buenos Aires';
+    }catch(e){return 'Buenos Aires'}
+  }
+  function cityMatch(e,city){
+    return String(e.city||'').toLowerCase()===String(city||'').toLowerCase();
+  }
+  function planCard(e){
+    const on=isGoing(e.id);
+    const c=attendeeCount(e.id,e.countText);
+    return `<div class="card plan-card" data-event-id="${safe(e.id)}">
+      ${e.img?`<img src="${safe(e.img)}" loading="lazy" alt="${safe(e.title)}">`:''}
+      <div class="plan-card-body">
+        <span class="fu-final-badge">${e.kind==='created'?'🌿 Plan público':'🌐 Evento/Plan'}</span>
+        <h3>${safe(e.icon||'🎟️')} ${safe(e.title)}</h3>
+        <div class="plan-cat">${safe(e.when||'Fecha a confirmar')}</div>
+        <p>${safe(e.desc||'Plan para conectar con gente de FortyUp.')}</p>
+        <div class="plan-meta"><span>📍 ${safe(e.place||e.city||'')}</span><span>👥 ${c} asistirán</span></div>
+        <div class="fu-final-actions">
+          <span class="fu-final-count">👥 ${c} van</span>
+          <button class="fu-final-btn gold ${on?'on':''}" onclick="finalAttendFromButton('${safe(e.id)}')">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-final-btn out" onclick="openFuEventCard('${safe(e.id)}')">Ver evento</button>
+          <button class="fu-final-btn out" onclick="openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+          ${e.link?`<button class="fu-final-btn out" onclick="openExternalEvent('${safe(e.link)}')">Fuente</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }
+  window.finalAttendFromButton=function(id){finalAttend(id)}
+  window.renderPlans=function(q=''){
+    const list=el('plansList');
+    if(!list)return;
+    const city=cityNow();
+    const cityTop=el('cityTop'); if(cityTop)cityTop.textContent=city;
+    const query=String(q||el('plansTextSearch')?.value||'').toLowerCase();
+    let evs=allEvents().filter(e=>cityMatch(e,city));
+    if(!evs.length)evs=allEvents();
+    if(query)evs=evs.filter(e=>Object.values(e).join(' ').toLowerCase().includes(query));
+    list.innerHTML=`
+      <div class="fu-plans-layout-final">
+        <div class="fu-plans-block-final">
+          <div class="fu-plans-head-final">
+            <div><h3>Planes y eventos</h3><p>Marcá Asistiré para guardar el evento, ver asistentes y entrar al chat.</p></div>
+          </div>
+          <div class="fu-city-mini">
+            <input id="fuCityInlineInputFinal" placeholder="Buscar ciudad: Córdoba, Ushuaia..." value="${safe(localStorage.getItem('fu_plan_city_override')||'')}">
+            <button onclick="setPlanCitySearchFinal()">Buscar</button>
+            <button class="mini-reset" onclick="clearPlanCitySearchFinal()">Mi ubicación</button>
+          </div>
+        </div>
+        ${evs.map(planCard).join('') || `<div class="fu-final-empty">No hay eventos para mostrar.</div>`}
+        <div class="fu-create-plan-hero-final">
+          <h3>Crear plan público</h3>
+          <p>Publicá un plan para que otros usuarios se sumen y entren al chat del evento.</p>
+          <button class="fu-create-plan-main-btn-final" onclick="showCreateEventPanel()">＋ Crear evento público</button>
+        </div>
+      </div>`;
+  }
+  window.setPlanCitySearchFinal=function(){
+    const v=(el('fuCityInlineInputFinal')?.value||'').trim();
+    if(v)localStorage.setItem('fu_plan_city_override',v);
+    renderPlans();
+  }
+  window.clearPlanCitySearchFinal=function(){
+    localStorage.removeItem('fu_plan_city_override');
+    renderPlans();
+  }
+  window.setPlanCitySearch=function(v){if(v)localStorage.setItem('fu_plan_city_override',String(v).trim());renderPlans()}
+  window.clearPlanCitySearch=function(){localStorage.removeItem('fu_plan_city_override');renderPlans()}
+  window.openExternalEvent=function(url){if(url)window.open(url,'_blank');else toast('Este evento no tiene link externo')}
 
-  async function toggleAttendFinal(id){if(!uid()){toastMsg('Primero iniciá sesión');return}const ev=eventById(id);const next=!isAttendingFinal(id);setAtt(id,next);if(next){saveMyEvent({...ev,attending:true,createdByMe:ev.creatorId===uid()});toastMsg('Te sumaste al evento ✅')}else{removeMyEvent(id);toastMsg('Cancelaste tu asistencia')}updateAttendUI();renderMyEventsIfOpen();await syncAttendRemote(id,next)}
+  window.openFuEventCard=function(id){
+    const e=eventById(id);
+    const panel=el('profilePanel'), content=el('panelContent');
+    if(!panel||!content)return;
+    const on=isGoing(id);
+    const atts=attendees(id);
+    content.innerHTML=`<div class="panel-title">🎟️ Evento</div>
+      <div class="card" style="padding:1rem">
+        <h3 style="font-family:'Playfair Display',serif;color:var(--g);margin-bottom:.3rem">${safe(e.icon||'🎟️')} ${safe(e.title)}</h3>
+        <p style="color:var(--muted);font-weight:800;margin:.25rem 0">🕒 ${safe(e.when||'Fecha a confirmar')}</p>
+        <p style="color:var(--muted);font-weight:800;margin:.25rem 0">📍 ${safe(e.place||e.city||'')}</p>
+        <p style="margin:.7rem 0;color:var(--txt);line-height:1.45">${safe(e.desc||'Plan para conectar con gente de FortyUp.')}</p>
+        <div class="fu-final-actions">
+          <button class="fu-final-btn gold ${on?'on':''}" onclick="finalAttendFromButton('${safe(id)}');setTimeout(()=>openFuEventCard('${safe(id)}'),250)">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-final-btn out" onclick="openFuEventChat('${safe(id)}')">💬 Chat del evento</button>
+          ${e.link?`<button class="fu-final-btn out" onclick="openExternalEvent('${safe(e.link)}')">Ver fuente</button>`:''}
+        </div>
+      </div>
+      <div class="card" style="padding:1rem;margin-top:.75rem">
+        <h3 class="section-title">👥 Asistentes (${atts.length})</h3>
+        ${atts.length?atts.map(a=>`<div class="my-event-card"><div style="width:42px;height:42px;border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--g);font-weight:1000">${safe((a.name||'U')[0])}</div><div style="flex:1"><h4>${safe(a.name||'Usuario')}</h4><p>Va a asistir</p></div></div>`).join(''):`<div class="fu-final-empty">Todavía no hay asistentes. Sé el primero en sumarte.</div>`}
+      </div>`;
+    panel.classList.add('open');
+  }
 
-  function updateAttendUI(){document.querySelectorAll('[data-fu-event-id]').forEach(root=>{const id=root.getAttribute('data-fu-event-id');const on=isAttendingFinal(id);const base=parseInt(root.getAttribute('data-base-count')||'0',10)||0;root.querySelectorAll('.attend-btn,.fu-sebas-attend,.fu-attend-final').forEach(b=>{b.classList.toggle('attending',on);b.classList.toggle('fu-action-ok',on);b.textContent=on?'✓ Asistiré':'Asistiré'});root.querySelectorAll('.fu-att-count').forEach(c=>c.textContent='👥 '+eventCount(id,base)+' asistirán')})}
+  window.showCreateEventPanel=function(){
+    const panel=el('profilePanel'), content=el('panelContent');
+    if(!panel||!content)return;
+    const u=currentUser();
+    content.innerHTML=`<div class="panel-title">＋ Crear evento público</div>
+      <div class="fu-final-form">
+        <input id="fuNewEventTitle" placeholder="Título del plan o evento">
+        <input id="fuNewEventWhen" placeholder="Día y hora: sábado 21:00">
+        <input id="fuNewEventCity" placeholder="Ciudad" value="${safe(u?.city||u?.c||cityNow())}">
+        <input id="fuNewEventPlace" placeholder="Lugar">
+        <textarea id="fuNewEventDesc" placeholder="Descripción: quién se suma, qué plan es..."></textarea>
+        <button class="fu-final-btn" onclick="saveFinalPublicEvent()">Crear evento</button>
+      </div>`;
+    panel.classList.add('open');
+  }
+  window.saveFinalPublicEvent=function(){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const title=(el('fuNewEventTitle')?.value||'').trim();
+    if(!title)return toast('Poné un título para el evento');
+    const e={
+      id:eventId('created_'+uid()+'_'+title+'_'+Date.now()),
+      kind:'created',
+      title,
+      when:(el('fuNewEventWhen')?.value||'Fecha a confirmar').trim(),
+      city:(el('fuNewEventCity')?.value||cityNow()).trim(),
+      place:(el('fuNewEventPlace')?.value||'').trim(),
+      desc:(el('fuNewEventDesc')?.value||'').trim(),
+      icon:'🌿',
+      img:'',
+      creatorId:uid(),
+      creatorName:uname(),
+      createdAt:now()
+    };
+    const arr=createdEvents();
+    arr.unshift(e);
+    setCreatedEvents(arr);
+    toast('Evento creado ✅');
+    openFuEventCard(e.id);
+  }
 
-  function enhancePlanCards(){document.querySelectorAll('.plan-card,.fu-event-card,.plan-mini').forEach((card,idx)=>{if(card.__fuFinalEnhanced)return;let ev=null;const text=card.textContent||'';ev=allPlans().map(eventFromPlan).find(e=>e&&e.title&&text.includes(e.title));if(!ev&&allPlans()[idx])ev=eventFromPlan(allPlans()[idx]);if(!ev)return;card.__fuFinalEnhanced=true;card.setAttribute('data-fu-event-id',ev.id);const base=parseInt((text.match(/(\d+)\s*(asist|van|confirm|anot|interes)/i)||[])[1]||'0',10)||0;card.setAttribute('data-base-count',base);let holder=card.querySelector('.fu-final-event-actions');if(!holder){holder=document.createElement('div');holder.className='fu-final-event-actions';holder.style.cssText='display:flex;gap:.42rem;flex-wrap:wrap;align-items:center;padding:.15rem .9rem .85rem';holder.innerHTML=`<span class="fu-mini-pill fu-att-count">👥 ${eventCount(ev.id,base)} asistirán</span><button type="button" class="btn btn-green attend-btn fu-attend-final">${isAttendingFinal(ev.id)?'✓ Asistiré':'Asistiré'}</button><button type="button" class="btn btn-out fu-open-event-final">Ver evento</button>`;card.appendChild(holder)}holder.querySelector('.fu-attend-final').onclick=function(e){e.stopPropagation();toggleAttendFinal(ev.id)};holder.querySelector('.fu-open-event-final').onclick=function(e){e.stopPropagation();openEventCardFinal(ev.id)};updateAttendUI()})}
+  window.showEventosPanel=function(){
+    const panel=el('profilePanel'), content=el('panelContent');
+    if(!panel||!content)return;
+    const going=allEvents().filter(e=>isGoing(e.id));
+    const created=createdEvents().filter(e=>e.creatorId===uid());
+    const card=e=>`<div class="my-event-card">
+      ${e.img?`<img src="${safe(e.img)}">`:`<div style="width:62px;height:62px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:1.6rem">${safe(e.icon||'🎟️')}</div>`}
+      <div style="flex:1;min-width:0"><h4>${safe(e.title)}</h4><p>${safe(e.when||'Fecha a confirmar')}</p><p>${safe(e.place||e.city||'')}</p></div>
+      <button class="fu-final-btn out" onclick="openFuEventCard('${safe(e.id)}')">Abrir</button>
+    </div>`;
+    content.innerHTML=`<div class="panel-title">📅 Mis eventos</div>
+      <h3 class="section-title">Eventos a los que asistirás (${going.length})</h3>
+      ${going.length?going.map(card).join(''):`<div class="fu-final-empty">Todavía no marcaste asistencia a ningún evento.</div>`}
+      <h3 class="section-title" style="margin-top:1rem">Creados por vos (${created.length})</h3>
+      ${created.length?created.map(card).join(''):`<div class="fu-final-empty">Todavía no creaste eventos públicos.</div>`}
+      <button class="fu-final-btn" style="width:100%;margin-top:.75rem" onclick="showCreateEventPanel()">＋ Crear evento público</button>`;
+    panel.classList.add('open');
+  }
 
-  function openEventCardFinal(id){const ev=eventById(id),on=isAttendingFinal(id),names=attList(id).map(a=>a.name||'Usuario');const panel=$('profilePanel'),content=$('panelContent');if(!panel||!content)return;content.innerHTML=`<div class="panel-title">🎟️ Evento</div><div class="card" style="padding:1rem;border-radius:24px"><h3 style="font-family:'Playfair Display',serif;color:var(--g);margin-bottom:.35rem">${esc(ev.icon||'🎟️')} ${esc(ev.title)}</h3><p style="font-size:.82rem;color:var(--muted);font-weight:800;line-height:1.5">${esc(ev.when||'Fecha a confirmar')} · ${esc(ev.place||ev.city||'')}</p><p style="font-size:.84rem;line-height:1.5;margin:.5rem 0">${esc(ev.desc||'Plan para conectar con gente de FortyUp.')}</p><div class="fu-mini-pill">👥 ${eventCount(id)} asistirán</div><p style="font-size:.78rem;color:var(--muted);font-weight:900;margin:.55rem 0">${names.length?'Asisten: '+names.map(esc).join(', '):'Todavía no hay asistentes de FortyUp.'}</p><div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.75rem"><button class="btn btn-green ${on?'fu-action-ok':''}" onclick="toggleFuEventAttend('${esc(id)}');setTimeout(()=>openFuEventCard('${esc(id)}'),180)">${on?'✓ Asistiré':'Asistiré'}</button><button class="btn btn-out" onclick="openFuEventChat('${esc(id)}')">💬 Chat del evento</button>${ev.link?`<button class="btn btn-out" onclick="window.open('${esc(ev.link)}','_blank')">Ver fuente</button>`:''}</div></div>`;panel.classList.add('open')}
-  window.openFuEventCard=openEventCardFinal;
+  let currentEventChat='';
+  function msgStore(){const m=load(LS_EVENT_MSG,{});return m&&typeof m==='object'?m:{}}
+  function getEventMsgs(id){const m=msgStore();return Array.isArray(m[id])?m[id]:[]}
+  function addEventMsg(id,msg){const m=msgStore();m[id]=Array.isArray(m[id])?m[id]:[];m[id].push(msg);m[id]=m[id].slice(-200);save(LS_EVENT_MSG,m)}
+  function renderEventChat(id,msgs){
+    const box=el('fuEventChatMessagesFinal');
+    if(!box)return;
+    const arr=Array.isArray(msgs)?msgs:getEventMsgs(id);
+    box.innerHTML=arr.length?arr.map(m=>`<div class="fu-event-chat-msg-final ${m.uid===uid()?'mine':''}">${safe(m.text)}<small>${safe(m.name||'Usuario')} · ${safe(m.time||'')}</small></div>`).join(''):`<div class="fu-final-empty">Todavía no hay mensajes. Escribí el primero.</div>`;
+    setTimeout(()=>box.scrollTop=box.scrollHeight,40);
+  }
+  let eventChatUnsub=null;
+  function listenEventChat(id){
+    if(eventChatUnsub){try{eventChatUnsub()}catch(e){};eventChatUnsub=null}
+    const d=db();
+    if(!d)return;
+    try{
+      eventChatUnsub=d.collection('eventChats').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{
+        const arr=[];
+        s.forEach(doc=>{const x=doc.data()||{};arr.push({uid:x.uid||'',name:x.name||'Usuario',text:x.text||'',time:x.time||''})});
+        renderEventChat(id,arr);
+      },err=>console.warn('event chat listener',err));
+    }catch(e){}
+  }
+  window.openFuEventChat=function(id){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    if(!isGoing(id))return toast('Primero tocá Asistiré para entrar al chat del evento');
+    currentEventChat=id;
+    const e=eventById(id);
+    const panel=el('profilePanel'), content=el('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`<div class="panel-title">💬 Chat del evento</div>
+      <div class="fu-event-chat-box-final">
+        <div class="fu-event-chat-head-final">${safe(e.title||'Evento')}</div>
+        <div id="fuEventChatMessagesFinal" class="fu-event-chat-messages-final"></div>
+        <div class="fu-event-chat-input-final">
+          <input id="fuEventChatInputFinal" placeholder="Escribí en el chat del evento..." onkeydown="if(event.key==='Enter')sendFuEventChatMsgFinal()">
+          <button onclick="sendFuEventChatMsgFinal()">Enviar</button>
+        </div>
+      </div>
+      <button class="fu-final-btn out" style="width:100%;margin-top:.75rem" onclick="openFuEventCard('${safe(id)}')">← Volver al evento</button>`;
+    panel.classList.add('open');
+    renderEventChat(id);
+    listenEventChat(id);
+  }
+  window.sendFuEventChatMsgFinal=async function(){
+    const input=el('fuEventChatInputFinal');
+    const text=(input?.value||'').trim();
+    const id=currentEventChat;
+    if(!id||!text)return;
+    const msg={uid:uid(),name:uname(),text,time:time(),createdAt:now()};
+    input.value='';
+    addEventMsg(id,msg);
+    renderEventChat(id);
+    const d=db();
+    if(d){
+      try{await d.collection('eventChats').doc(id).collection('messages').add({...msg,createdAt:serverTime()})}catch(e){console.warn('event chat add',e)}
+    }
+  }
 
-  window.openFuEventChat=function(id){if(!isAttendingFinal(id)){toastMsg('Primero tocá Asistiré para entrar al chat del evento');return}toastMsg('Chat del evento habilitado 💬')};
+  function fortiRecords(){const r=load('fu_forti_records',{sent:[],received:[]});r.sent=Array.isArray(r.sent)?r.sent:[];r.received=Array.isArray(r.received)?r.received:[];return r}
+  function setFortiRecordsFinal(r){save('fu_forti_records',r);try{if(typeof window.setFortiRecords==='function')window.setFortiRecords(r)}catch(e){}}
+  window.sendForti=async function(pid){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+    const r=fortiRecords();
+    if(r.sent.includes(pid)){
+      toast('Ya le enviaste un Forti a '+(p.n||p.name||'este usuario'));
+      updateFortiUI();
+      return;
+    }
+    r.sent.push(pid);
+    setFortiRecordsFinal(r);
+    try{if(typeof window.syncFortiCounts==='function')window.syncFortiCounts()}catch(e){}
+    toast('Forti enviado a '+(p.n||p.name||'este usuario')+' ◆');
+    if(r.received.includes(pid)){
+      try{if(typeof window.showFortiMatchPopup==='function')window.showFortiMatchPopup(p)}catch(e){}
+      toast('¡Match de Forti con '+(p.n||p.name||'este usuario')+'!');
+    }
+    const d=db();
+    if(d){
+      try{await d.collection('fortis').doc(uid()+'_'+pid).set({from:uid(),fromName:uname(),to:pid,toName:p.n||p.name||'',createdAt:serverTime()},{merge:true})}catch(e){console.warn('forti add',e)}
+    }
+    updateFortiUI();
+  }
+  function updateFortiUI(){
+    const r=fortiRecords();
+    document.querySelectorAll('button[onclick*="sendForti"],.btn-forti').forEach(btn=>{
+      const click=btn.getAttribute('onclick')||'';
+      const m=click.match(/sendForti\(['"]([^'"]+)['"]\)/);
+      const pid=m?m[1]:(btn.dataset.pid||'');
+      if(!pid)return;
+      const on=r.sent.includes(pid);
+      btn.classList.toggle('fu-final-btn',true);
+      btn.classList.toggle('gold',true);
+      btn.classList.toggle('on',on);
+      btn.textContent=on?'✓ Forti enviado':'◆ Forti';
+    });
+  }
 
-  window.showEventosPanel=function(){renderMyEventsPanel()};
-  function renderMyEventsIfOpen(){const panel=$('profilePanel'),content=$('panelContent');if(panel&&panel.classList.contains('open')&&content&&/Mis eventos|Eventos a los que/.test(content.textContent||''))renderMyEventsPanel()}
-  function renderMyEventsPanel(){const panel=$('profilePanel'),content=$('panelContent');if(!panel||!content)return;const myid=uid();const attending=Object.keys(attAll()).filter(isAttendingFinal).map(eventById);const created=myEventsStore().filter(e=>e.creatorId===myid||e.createdByMe);const line=e=>`<div class="my-event-card" onclick="openFuEventCard('${esc(e.id)}')" style="cursor:pointer"><img src="${esc(e.img||'')}" alt=""><div style="flex:1"><h4>${esc(e.title)}</h4><p>${esc(e.when||'Fecha a confirmar')} · ${esc(e.city||e.place||'')}</p><p>${eventCount(e.id)} asistentes · tocar para ver</p></div></div>`;content.innerHTML=`<div class="panel-title">📅 Mis eventos</div><h3 class="section-title">Eventos a los que asistirás (${attending.length})</h3>${attending.length?attending.map(line).join(''):'<div class="empty"><div class="empty-ico">📅</div><p>Todavía no marcaste asistencia a ningún evento.</p></div>'}<h3 class="section-title" style="margin-top:1rem">Creados por mí (${created.length})</h3>${created.length?created.map(line).join(''):'<div class="empty"><p>Todavía no creaste eventos.</p></div>'}`;panel.classList.add('open')}
+  window.sendSuper=async function(pid){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+    let can=true;
+    try{if(typeof window.canSendSuper==='function')can=window.canSendSuper()}catch(e){}
+    if(!can){
+      toast('No tenés Súper Diamantes disponibles 💎');
+      return;
+    }
+    save('fu_last_super',new Date().toISOString());
+    const sent=load(LS_SUPER_SENT,[]);
+    sent.push({to:pid,name:p.n||p.name||'Usuario',at:now()});
+    save(LS_SUPER_SENT,sent);
+    try{if(typeof window.syncSuperUI==='function')window.syncSuperUI()}catch(e){}
+    toast('Súper Diamante enviado a '+(p.n||p.name||'este usuario')+' 💎');
+    const d=db();
+    if(d){
+      try{await d.collection('superDiamonds').add({from:uid(),fromName:uname(),to:pid,toName:p.n||p.name||'',createdAt:serverTime(),seen:false})}catch(e){console.warn('super add',e)}
+    }
+  }
 
-  // Forti
-  function fortiState(){const s=load(FORTI,{sent:[],received:[]});s.sent=Array.isArray(s.sent)?s.sent:[];s.received=Array.isArray(s.received)?s.received:[];return s}
-  function setFortiState(s){save(FORTI,s);try{localStorage.setItem('fu_forti_records',JSON.stringify(s));localStorage.setItem('fu_fortis',JSON.stringify(s.sent))}catch(e){}syncFortiUI()}
-  function syncFortiUI(){const s=fortiState();const sent=$('sentFortis');if(sent)sent.textContent=s.sent.length;const rec=$('recFortis');if(rec)rec.textContent=s.received.length;document.querySelectorAll('button[onclick*="sendForti"],.btn-forti').forEach(b=>{const oc=b.getAttribute('onclick')||'';const m=oc.match(/sendForti\(['"]([^'"]+)['"]\)/);if(m&&s.sent.includes(m[1])){b.classList.add('fu-action-ok');b.textContent='✓ Forti enviado'}else if(m){b.classList.remove('fu-action-ok');b.textContent='◆ Forti'}})}
-  function fortiPopup(p,match){const icon=$('matchIcon'),title=$('matchTitle'),text=$('matchText'),pop=$('matchPopup');if(icon){icon.textContent='◆';icon.classList.add('forti-single')}if(title)title.textContent=match?'¡Match de Forti!':'Forti enviado';if(text)text.innerHTML=match?`${esc(profileName(p))} también te envió un <span class="forti-yellow-text">Forti</span>.`:`Le enviaste un <span class="forti-yellow-text">Forti</span> a ${esc(profileName(p))}.`;if(pop)pop.classList.add('show')}
-  window.sendForti=async function(pid){if(!uid()){toastMsg('Primero iniciá sesión');return}const p=profileById(pid);if(!p){toastMsg('No se encontró el perfil');return}const st=fortiState();if(st.sent.includes(pid)){toastMsg('Ya le enviaste un Forti a '+profileName(p));syncFortiUI();return}st.sent.push(pid);setFortiState(st);fortiPopup(p,false);toastMsg('Forti enviado a '+profileName(p));const d=db();if(d){try{await d.collection('fortis').doc(uid()+'_'+pid).set({from:uid(),to:pid,fromName:uname(),toName:profileName(p),createdAt:serverTime()},{merge:true});const recip=await d.collection('fortis').doc(pid+'_'+uid()).get();if(recip.exists)fortiPopup(p,true)}catch(e){console.warn('Forti remoto no disponible. Revisar reglas de fortis.',e)}}};
+  const oldStartChat=window.startChat;
+  window.startChat=function(p){
+    window.chatWith=p;
+    try{if(oldStartChat)return oldStartChat(p)}catch(e){console.warn(e)}
+    if(typeof window.go==='function')window.go('chat');
+    const n=el('chatName'); if(n)n.textContent=p.n||p.name||'Usuario';
+    renderChatFinal();
+  }
+  function chatKey(){
+    const p=window.chatWith;
+    return p&&p.id?p.id:'';
+  }
+  function renderChatFinal(){
+    const key=chatKey();
+    const box=el('chatBox');
+    if(!box||!key)return;
+    const chats=load('fu_chats',{});
+    const arr=Array.isArray(chats[key])?chats[key]:[];
+    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
+    setTimeout(()=>box.scrollTop=box.scrollHeight,40);
+  }
+  window.sendMsg=async function(){
+    const input=el('chatInput');
+    const text=(input?.value||'').trim();
+    const peer=window.chatWith;
+    if(!text||!peer)return;
+    const chats=load('fu_chats',{});
+    chats[peer.id]=Array.isArray(chats[peer.id])?chats[peer.id]:[];
+    chats[peer.id].push({from:'me',text,time:time(),date:now()});
+    save('fu_chats',chats);
+    input.value='';
+    input.style.height='auto';
+    renderChatFinal();
+    const d=db(), u=uid();
+    if(d&&u){
+      try{
+        const chatId=[u,peer.id].sort().join('_');
+        await d.collection('conversations').doc(chatId).set({participants:[u,peer.id],lastText:text,lastSender:u,lastTime:time(),updatedAt:serverTime()},{merge:true});
+        await d.collection('conversations').doc(chatId).collection('messages').add({from:u,senderId:u,to:peer.id,text,time:time(),createdAt:serverTime()});
+      }catch(e){console.warn('chat add',e)}
+    }
+  }
 
-  function listenFortis(){const d=db(),my=uid();if(!d||!my||window.__fuFinalFortiListen)return;window.__fuFinalFortiListen=true;try{d.collection('fortis').where('to','==',my).onSnapshot(snap=>{const st=fortiState();let changed=false;snap.docChanges().forEach(ch=>{if(ch.type!=='added'&&ch.type!=='modified')return;const data=ch.doc.data()||{};if(data.from&&!st.received.includes(data.from)){st.received.push(data.from);changed=true;const p=profileById(data.from)||{id:data.from,n:data.fromName||'Usuario'};toastMsg((data.fromName||profileName(p))+' te mandó un Forti ◆');if(st.sent.includes(data.from))fortiPopup(p,true)}});if(changed)setFortiState(st)},e=>console.warn('listen fortis',e))}catch(e){}}
+  function refreshAll(){
+    try{if(el('plans')?.classList.contains('active'))renderPlans()}catch(e){}
+    try{if(el('home')?.classList.contains('active')&&typeof window.renderHome==='function')window.renderHome()}catch(e){}
+    try{if(el('me')?.classList.contains('active')&&typeof window.renderMe==='function')window.renderMe()}catch(e){}
+    updateFortiUI();
+  }
 
-  // Super Diamante
-  function canSendSuperFinal(){const last=load('fu_last_super',null);if(!last)return true;return Date.now()-new Date(last).getTime()>=86400000}
-  window.canSendSuper=canSendSuperFinal;
-  window.availableSuper=function(){return canSendSuperFinal()?1:0};
-  window.syncSuperUI=function(){const val=canSendSuperFinal()?1:0;['superCount','meSuperCount'].forEach(id=>{const el=$(id);if(el)el.textContent=val});const user=u();if(user){user.super=val;try{localStorage.setItem('fu_user',JSON.stringify(user))}catch(e){}}};
-  function superPopup(from){if(typeof window.showSuperDiamondPopup==='function')window.showSuperDiamondPopup(from||'Alguien especial');else toastMsg((from||'Alguien')+' te envió un Súper Diamante 💎')}
-  window.sendSuper=async function(pid){if(!uid()){toastMsg('Primero iniciá sesión');return}const p=profileById(pid);if(!p){toastMsg('No se encontró el perfil');return}if(!canSendSuperFinal()){toastMsg('No tenés Súper Diamantes disponibles. Volvé mañana 💎');return}save('fu_last_super',new Date().toISOString());window.syncSuperUI();toastMsg('Súper Diamante enviado a '+profileName(p)+' 💎');const sent=load(SUPER_SENT,[]);sent.push({to:pid,name:profileName(p),img:profilePhoto(p),at:new Date().toISOString()});save(SUPER_SENT,sent);const d=db();if(d){try{await d.collection('superDiamonds').add({from:uid(),fromName:uname(),to:pid,toName:profileName(p),createdAt:serverTime(),seen:false})}catch(e){console.warn('Súper Diamante remoto no disponible. Revisar reglas.',e)}}};
-  function listenSupers(){const d=db(),my=uid();if(!d||!my||window.__fuFinalSuperListen)return;window.__fuFinalSuperListen=true;let first=true;try{d.collection('superDiamonds').where('to','==',my).onSnapshot(snap=>{snap.docChanges().forEach(ch=>{if(ch.type!=='added')return;if(first)return;const data=ch.doc.data()||{};superPopup(data.fromName||'Alguien especial')});first=false},e=>console.warn('listen supers',e))}catch(e){}}
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__fuFinalButtons){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(()=>{if(id==='plans')renderPlans();updateFortiUI();},180);
+      return r;
+    }
+    window.go.__fuFinalButtons=true;
+  }
 
-  // Chat inmediato + Firestore
-  let activeChatUnsub=null;
-  window.startChat=function(p){if(!p)return;window.chatWith=p;const av=$('chatAvatarCircle');if(av){const img=profilePhoto(p);av.innerHTML=img?`<img src="${esc(img)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:esc(profileName(p).charAt(0).toUpperCase())}const name=$('chatName');if(name)name.textContent=profileName(p);if(typeof window.go==='function')window.go('chat');listenChat(p.id);renderChatLocal(p.id);setTimeout(()=>{$('chatInput')&&$('chatInput').focus()},120)};
-  function chats(){return load('fu_chats',{})}
-  function setChatsFinal(c){save('fu_chats',c);try{if(typeof window.setChats==='function')window.setChats(c)}catch(e){}}
-  function renderChatLocal(pid){const box=$('chatBox');if(!box)return;const arr=(chats()[pid]||[]);box.innerHTML=arr.length?arr.map(m=>`<div style="display:flex;justify-content:${m.from==='me'?'flex-end':'flex-start'}"><div class="bubble ${m.from==='me'?'mine':'theirs'}">${esc(m.text||'')}<small style="display:block;opacity:.65;font-size:.65rem;margin-top:.25rem">${esc(m.time||'')}</small></div></div>`).join(''):'<div style="color:rgba(255,255,255,.7);text-align:center;margin:auto">Mandá el primer mensaje</div>';box.scrollTop=box.scrollHeight}
-  window.sendMsg=async function(){const input=$('chatInput');const text=(input&&input.value||'').trim();const p=window.chatWith;if(!text||!p)return;if(input){input.value='';input.style.height='auto'}const now=new Date();const msg={from:'me',senderId:uid(),text,time:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),createdAt:now.toISOString()};const c=chats();c[p.id]=c[p.id]||[];c[p.id].push(msg);setChatsFinal(c);renderChatLocal(p.id);const d=db();if(d&&uid()){try{const cid=chatIdFor(uid(),p.id);await d.collection('conversations').doc(cid).set({participants:[uid(),p.id],updatedAt:serverTime(),lastMessage:text},{merge:true});await d.collection('conversations').doc(cid).collection('messages').add({senderId:uid(),to:p.id,text,createdAt:serverTime(),createdAtText:msg.createdAt})}catch(e){console.warn('Chat remoto no disponible',e)}}};
-  function listenChat(pid){const d=db(),my=uid();if(activeChatUnsub){try{activeChatUnsub()}catch(e){}activeChatUnsub=null}if(!d||!my||!pid)return;try{const cid=chatIdFor(my,pid);activeChatUnsub=d.collection('conversations').doc(cid).collection('messages').orderBy('createdAt','asc').limit(100).onSnapshot(snap=>{const c=chats();c[pid]=c[pid]||[];let changed=false;snap.docChanges().forEach(ch=>{if(ch.type!=='added')return;const data=ch.doc.data()||{};if(data.senderId===my)return;const exists=c[pid].some(m=>m.remoteId===ch.doc.id);if(!exists){c[pid].push({remoteId:ch.doc.id,from:'them',text:data.text||'',time:new Date(data.createdAtText||Date.now()).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});changed=true}});if(changed){setChatsFinal(c);if(window.chatWith&&window.chatWith.id===pid)renderChatLocal(pid);if(typeof window.renderMessages==='function')window.renderMessages()}},e=>console.warn('chat listener',e))}catch(e){}}
+  document.addEventListener('click',function(ev){
+    const btn=ev.target&&ev.target.closest?ev.target.closest('button'):null;
+    if(!btn)return;
+    if(btn.disabled)return;
+    const txt=(btn.textContent||'').trim().toLowerCase();
+    const onclick=(btn.getAttribute('onclick')||'').trim();
+    if(!onclick && !btn.__fuKnownButton){
+      if(txt.includes('cerrar')||txt==='✕'||txt==='x'){
+        const p=el('profilePanel'); if(p)p.classList.remove('open');
+        const a=el('auth'); if(a)a.classList.remove('open');
+        return;
+      }
+    }
+  },true);
 
-  // Render wrapping
-  const oldRenderPlans=window.renderPlans;if(typeof oldRenderPlans==='function'){window.renderPlans=function(){const r=oldRenderPlans.apply(this,arguments);setTimeout(()=>{enhancePlanCards();updateAttendUI()},80);return r}}
-  const oldRenderHome=window.renderHome;if(typeof oldRenderHome==='function'){window.renderHome=function(){const r=oldRenderHome.apply(this,arguments);setTimeout(()=>{enhancePlanCards();updateAttendUI()},80);return r}}
-  const oldRenderProfiles=window.renderProfiles;if(typeof oldRenderProfiles==='function'){window.renderProfiles=function(){const r=oldRenderProfiles.apply(this,arguments);setTimeout(syncFortiUI,80);return r}}
-  const oldGo=window.go;if(typeof oldGo==='function'){window.go=function(id){const r=oldGo.apply(this,arguments);setTimeout(()=>{enhancePlanCards();updateAttendUI();syncFortiUI();window.syncSuperUI&&window.syncSuperUI()},150);return r}}
-
-  function init(){enhancePlanCards();updateAttendUI();syncFortiUI();window.syncSuperUI&&window.syncSuperUI();listenFortis();listenSupers()}
-  setTimeout(init,400);setTimeout(init,1200);setInterval(init,2000);try{const a=auth();if(a)a.onAuthStateChanged(()=>setTimeout(init,600))}catch(e){}
+  setTimeout(()=>{try{if(el('plans')?.classList.contains('active'))renderPlans()}catch(e){} updateFortiUI();},700);
+  setInterval(()=>{updateFortiUI()},1800);
 })();
 </script>
 
