@@ -7094,5 +7094,149 @@ setTimeout(enhanceEvents,1500);
 })();
 </script>
 
+
+<style id="fuAntiFlickerFinalStyle">
+.btn-forti,button[onclick*="sendForti"],#msgList .msg-item{transition:none!important}
+.fu-fast-sent,.fu-final-on{transition:none!important}
+#profilesList .profile-card,#homeProfiles .profile-card,#msgList .msg-item{animation:none!important}
+body.fu-rendering *{transition:none!important}
+</style>
+
+<script id="fuAntiFlickerFinalScript">
+(function(){
+  const LS_FORTI='fu_forti_records';
+  const LS_CHATS='fu_chats';
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+
+  function fortiRecords(){
+    const r=load(LS_FORTI,{sent:[],received:[]});
+    r.sent=Array.isArray(r.sent)?r.sent:[];
+    r.received=Array.isArray(r.received)?r.received:[];
+    return r;
+  }
+
+  function pidFromButton(btn){
+    const click=btn.getAttribute('onclick')||'';
+    const m=click.match(/sendForti\(['"]([^'"]+)['"]\)/);
+    return m?m[1]:(btn.dataset.pid||'');
+  }
+
+  function applyFortiStateInstant(){
+    const r=fortiRecords();
+    document.querySelectorAll('button[onclick*="sendForti"],.btn-forti').forEach(btn=>{
+      const pid=pidFromButton(btn);
+      if(!pid)return;
+      const sent=r.sent.includes(pid);
+      btn.classList.toggle('fu-fast-sent',sent);
+      btn.classList.toggle('fu-final-on',sent);
+      btn.textContent=sent?'✓ Forti enviado':'◆ Forti';
+      btn.disabled=false;
+    });
+  }
+
+  function renderMessagesInstant(){
+    const list=$('msgList');
+    if(!list)return false;
+    const chats=load(LS_CHATS,{});
+    const rows=[];
+    Object.keys(chats||{}).forEach(pid=>{
+      const arr=Array.isArray(chats[pid])?chats[pid]:[];
+      if(!arr.length)return;
+      const p=profile(pid)||{id:pid,n:'Usuario',name:'Usuario',img:''};
+      rows.push({p,last:arr[arr.length-1]});
+    });
+    if(!rows.length){
+      list.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. Entrá a un perfil y escribile para iniciar una conversación.</p></div>';
+      return true;
+    }
+    rows.sort((a,b)=>new Date(b.last.date||b.last.createdAt||0)-new Date(a.last.date||a.last.createdAt||0));
+    list.innerHTML=rows.map(({p,last})=>`
+      <div class="msg-item" onclick="startChatFastFinal('${safe(p.id)}')">
+        <img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'">
+        <div class="msg-info">
+          <div class="msg-name">${safe(p.n||p.name||'Usuario')}</div>
+          <div class="msg-preview">${safe(last.text||'Mensaje')}</div>
+        </div>
+        <div class="msg-time">${safe(last.time||'')}</div>
+      </div>`).join('');
+    return true;
+  }
+
+  window.startChatFastFinal=window.startChatFastFinal||function(pid){
+    const p=profile(pid)||{id:pid,n:'Usuario',name:'Usuario',img:''};
+    if(typeof window.startChat==='function')window.startChat(p);
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__antiFlickerFinal){
+    window.go=function(id){
+      document.body.classList.add('fu-rendering');
+      if(id==='messages')renderMessagesInstant();
+      const r=oldGo.apply(this,arguments);
+      applyFortiStateInstant();
+      requestAnimationFrame(()=>{
+        if(id==='messages')renderMessagesInstant();
+        applyFortiStateInstant();
+        document.body.classList.remove('fu-rendering');
+      });
+      setTimeout(()=>{
+        if(id==='messages')renderMessagesInstant();
+        applyFortiStateInstant();
+      },30);
+      return r;
+    };
+    window.go.__antiFlickerFinal=true;
+  }
+
+  ['renderProfiles','renderHome'].forEach(fn=>{
+    const old=window[fn];
+    if(typeof old==='function' && !old.__antiFlickerFinal){
+      window[fn]=function(){
+        const r=old.apply(this,arguments);
+        applyFortiStateInstant();
+        requestAnimationFrame(applyFortiStateInstant);
+        return r;
+      };
+      window[fn].__antiFlickerFinal=true;
+    }
+  });
+
+  const oldRenderMessages=window.renderMessages;
+  if(typeof oldRenderMessages==='function' && !oldRenderMessages.__antiFlickerFinal){
+    window.renderMessages=function(){
+      renderMessagesInstant();
+      const r=oldRenderMessages.apply(this,arguments);
+      renderMessagesInstant();
+      requestAnimationFrame(renderMessagesInstant);
+      return r;
+    };
+    window.renderMessages.__antiFlickerFinal=true;
+  }else{
+    window.renderMessages=renderMessagesInstant;
+  }
+
+  const oldSendForti=window.sendForti;
+  if(typeof oldSendForti==='function' && !oldSendForti.__antiFlickerFinal){
+    window.sendForti=function(pid){
+      const r=oldSendForti.apply(this,arguments);
+      applyFortiStateInstant();
+      requestAnimationFrame(applyFortiStateInstant);
+      setTimeout(applyFortiStateInstant,25);
+      return r;
+    };
+    window.sendForti.__antiFlickerFinal=true;
+  }
+
+  setTimeout(()=>{applyFortiStateInstant();renderMessagesInstant()},80);
+  setTimeout(()=>{applyFortiStateInstant();renderMessagesInstant()},400);
+  setInterval(applyFortiStateInstant,1000);
+})();
+</script>
+
 </body>
 </html>
