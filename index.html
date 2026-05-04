@@ -7714,5 +7714,137 @@ window.addEventListener('load',()=>{
 });
 </script>
 
+
+<style>
+/* === NOTIFICACIONES LIVIANAS (SIN SISTEMA) === */
+
+/* Mini Forti indicador */
+.fu-unread-dot{
+  display:inline-block;
+  margin-right:6px;
+  color:#10B981;
+  font-weight:900;
+}
+
+/* Popup Forti recibido */
+.fu-forti-popup{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#042F25;
+  color:#fff;
+  padding:.8rem 1rem;
+  border-radius:999px;
+  font-weight:900;
+  z-index:99999;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  animation:fuPopIn .3s ease;
+}
+
+@keyframes fuPopIn{
+  from{opacity:0;transform:translateX(-50%) translateY(20px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+</style>
+
+<script>
+(function(){
+
+const LS_NOTI = 'fu_light_notis';
+
+function load(){
+  try{return JSON.parse(localStorage.getItem(LS_NOTI))||{}}
+  catch(e){return {}}
+}
+function save(v){
+  localStorage.setItem(LS_NOTI,JSON.stringify(v))
+}
+
+/* ===== MINI FORTI EN MENSAJES ===== */
+
+function markUnread(pid){
+  const n = load();
+  n[pid] = true;
+  save(n);
+}
+
+function clearUnread(pid){
+  const n = load();
+  delete n[pid];
+  save(n);
+}
+
+function isUnread(pid){
+  const n = load();
+  return !!n[pid];
+}
+
+/* Hook mensaje recibido */
+const oldSendMsg = window.sendMsg;
+window.sendMsg = async function(){
+  const res = oldSendMsg.apply(this, arguments);
+  return res;
+}
+
+/* Cuando entra mensaje remoto */
+const oldStartChat = window.startChatPremium;
+window.startChatPremium = function(pid){
+  clearUnread(pid);
+  updateUnreadUI();
+  return oldStartChat.apply(this, arguments);
+}
+
+function updateUnreadUI(){
+  const list = document.getElementById('msgList');
+  if(!list) return;
+
+  list.querySelectorAll('.msg-item').forEach(item=>{
+    const onclick = item.getAttribute('onclick')||'';
+    const match = onclick.match(/'([^']+)'/);
+    if(!match) return;
+    const pid = match[1];
+
+    const name = item.querySelector('.msg-name');
+    if(!name) return;
+
+    if(isUnread(pid)){
+      if(!name.innerHTML.includes('◆')){
+        name.innerHTML = '<span class="fu-unread-dot">◆</span>' + name.innerHTML;
+      }
+    }
+  });
+}
+
+/* ===== POPUP FORTI ===== */
+
+window.showFortiReceivedPopup = function(name){
+  const pop = document.createElement('div');
+  pop.className='fu-forti-popup';
+  pop.innerHTML='◆ '+name+' te envió un Forti';
+
+  document.body.appendChild(pop);
+
+  setTimeout(()=>pop.remove(),2500);
+}
+
+/* Hook recepción Forti */
+const oldForti = window.sendForti;
+window.sendForti = function(pid){
+  const res = oldForti.apply(this, arguments);
+  // Simula recepción en otro usuario (local testing)
+  setTimeout(()=>{
+    markUnread(pid);
+    updateUnreadUI();
+  },200);
+  return res;
+}
+
+/* Refresco suave */
+setInterval(updateUnreadUI,1000);
+
+})();
+</script>
+
 </body>
 </html>
