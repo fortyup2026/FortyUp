@@ -7682,5 +7682,37 @@ body.fu-msg-stable #fuMsgFixedHeader{
 })();
 </script>
 
+
+<style>
+#fuLoader{position:fixed;inset:0;background:linear-gradient(135deg,#042F25,#0A5C48);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;font-family:'Playfair Display',serif;transition:opacity .4s ease;}
+#fuLoader.hide{opacity:0;pointer-events:none;}
+.fu-loader-logo{font-size:2rem;font-weight:900;margin-bottom:1rem;letter-spacing:.05em;}
+.fu-loader-dot{width:10px;height:10px;border-radius:50%;background:white;margin:0 4px;animation:fuBounce 1.2s infinite ease-in-out;}
+.fu-loader-dot:nth-child(2){animation-delay:.2s}
+.fu-loader-dot:nth-child(3){animation-delay:.4s}
+@keyframes fuBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+</style>
+
+<div id="fuLoader">
+  <div class="fu-loader-logo">FortyUp</div>
+  <div style="display:flex">
+    <div class="fu-loader-dot"></div>
+    <div class="fu-loader-dot"></div>
+    <div class="fu-loader-dot"></div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const loader=document.getElementById('fuLoader');
+    if(loader){
+      loader.classList.add('hide');
+      setTimeout(()=>loader.remove(),400);
+    }
+  },300);
+});
+</script>
+
 </body>
 </html>
