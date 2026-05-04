@@ -6272,41 +6272,8 @@ setTimeout(enhanceEvents,1500);
     if(!box||!key)return;
     const chats=load('fu_chats',{});
     const arr=Array.isArray(chats[key])?chats[key]:[];
-    const peer=window.chatWith;
-    const photo=peer?(peer.img||peer.photo||''):'';
-    const initial=peer?(peer.n||peer.name||'?')[0].toUpperCase():'?';
-    const miniAv=photo
-      ?('<div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;align-self:flex-end"><img src="'+photo+'" style="width:100%;height:100%;object-fit:cover"></div>')
-      :('<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10B981,#6ee7b7);flex-shrink:0;align-self:flex-end;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#064E3B">'+initial+'</div>');
-    if(!arr.length){
-      box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;color:rgba(255,255,255,.6);min-height:200px">'
-        +'<div style="font-size:3.5rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">&#128075;</div>'
-        +'<div style="font-weight:800;color:#6ee7b7;font-size:.95rem;margin-bottom:.3rem">&iexcl;Salud&aacute; a '+(peer?safe(peer.n||peer.name||''):'')+'!</div>'
-        +'<div style="font-size:.8rem">S&eacute; el primero en escribir</div></div>';
-      return;
-    }
-    let lastDate='',htm='';
-    arr.forEach(function(m){
-      const mine=m.from==='me';
-      const d=m.date||'';
-      if(d&&d!==lastDate){
-        htm+='<div style="text-align:center;font-size:.6rem;font-weight:800;color:rgba(255,255,255,.4);margin:.5rem 0;text-transform:uppercase;letter-spacing:.06em">'+safe(d)+'</div>';
-        lastDate=d;
-      }
-      const content=m.photo?('<img src="'+m.photo+'" style="max-width:200px;border-radius:14px;display:block">'):safe(m.text||'');
-      const meta='<div style="font-size:.58rem;margin-top:.2rem;opacity:.6;text-align:'+(mine?'right':'left')+'">'+safe(m.time||'')+(mine?' &#10003;&#10003;':'')+'</div>';
-      if(mine){
-        htm+='<div style="display:flex;justify-content:flex-end;margin-bottom:.35rem">'
-          +'<div style="max-width:78%;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#042f25;border-radius:18px 4px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 4px 16px rgba(16,185,129,.35);font-weight:600">'
-          +content+meta+'</div></div>';
-      }else{
-        htm+='<div style="display:flex;align-items:flex-end;gap:.45rem;margin-bottom:.35rem">'+miniAv
-          +'<div style="max-width:75%;background:rgba(255,255,255,.12);color:#fff;border-radius:4px 18px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;border:1px solid rgba(255,255,255,.1)">'
-          +content+meta+'</div></div>';
-      }
-    });
-    box.innerHTML=htm;
-    setTimeout(function(){box.scrollTop=box.scrollHeight;},40);
+    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
+    setTimeout(()=>box.scrollTop=box.scrollHeight,40);
   }
   window.sendMsg=async function(){
     const input=el('chatInput');
@@ -6364,6 +6331,766 @@ setTimeout(enhanceEvents,1500);
 
   setTimeout(()=>{try{if(el('plans')?.classList.contains('active'))renderPlans()}catch(e){} updateFortiUI();},700);
   setInterval(()=>{updateFortiUI()},1800);
+})();
+</script>
+
+
+<style id="fuTodoJuntoFinalStyle">
+/* === FortyUp TODO JUNTO FINAL: UX + botones + imágenes + chat + eventos === */
+.fu-img-fallback{
+  background:linear-gradient(135deg,#ECFDF5,#FFFDF7)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:var(--g)!important;
+  font-weight:1000!important;
+  text-align:center!important;
+}
+.fu-status-real{
+  font-size:.65rem!important;
+  color:#6ee7b7!important;
+  font-weight:700!important;
+  letter-spacing:.03em!important;
+}
+.fu-fast-sent,
+.fu-final-on{
+  background:#E8FFF6!important;
+  color:#047857!important;
+  border:1.5px solid #A7F3D0!important;
+  box-shadow:none!important;
+}
+.fu-final-btn{
+  border:0;
+  border-radius:999px;
+  padding:.62rem .85rem;
+  font-family:'Nunito',sans-serif;
+  font-size:.8rem;
+  font-weight:1000;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+}
+.fu-final-btn.out{
+  background:#fff;
+  color:var(--g);
+  border:1.5px solid var(--line)!important;
+}
+.fu-final-btn.gold{
+  background:linear-gradient(135deg,#F2B705,#FFD75A);
+  color:#064E3B;
+}
+.fu-final-btn.blue{
+  background:linear-gradient(135deg,#27B7F2,#6ED8FF);
+  color:#064E3B;
+}
+.fu-final-actions{
+  display:flex;
+  gap:.45rem;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-top:.65rem;
+}
+.fu-final-count{
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  background:var(--soft);
+  color:var(--g);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:.22rem .52rem;
+  font-size:.7rem;
+  font-weight:1000;
+}
+.fu-final-empty{
+  background:var(--soft);
+  border:1.5px dashed var(--line);
+  border-radius:20px;
+  padding:1rem;
+  text-align:center;
+  color:var(--muted);
+  font-weight:800;
+  line-height:1.45;
+}
+.fu-event-chat-final-box{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:var(--sh2);
+}
+.fu-event-chat-final-head{
+  padding:.78rem .9rem;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  font-weight:1000;
+}
+.fu-event-chat-final-messages{
+  height:280px;
+  overflow-y:auto;
+  padding:.85rem;
+  background:var(--soft);
+  display:flex;
+  flex-direction:column;
+  gap:.45rem;
+}
+.fu-event-chat-final-msg{
+  max-width:82%;
+  padding:.58rem .72rem;
+  border-radius:16px;
+  background:#fff;
+  color:var(--txt);
+  box-shadow:var(--sh2);
+  font-size:.84rem;
+  line-height:1.35;
+}
+.fu-event-chat-final-msg.mine{
+  align-self:flex-end;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+}
+.fu-event-chat-final-msg small{
+  display:block;
+  margin-top:.2rem;
+  opacity:.7;
+  font-size:.62rem;
+  font-weight:900;
+}
+.fu-event-chat-final-input{
+  display:flex;
+  gap:.45rem;
+  padding:.65rem;
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+.fu-event-chat-final-input input{
+  flex:1;
+  min-width:0;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  padding:.62rem .85rem;
+  font-family:'Nunito',sans-serif;
+  outline:none;
+}
+.fu-event-chat-final-input button{
+  border:0;
+  border-radius:999px;
+  padding:.62rem .85rem;
+  background:linear-gradient(135deg,var(--g),var(--g3));
+  color:#fff;
+  font-weight:1000;
+}
+.fu-match-pop-final{
+  position:fixed;
+  inset:0;
+  z-index:100010;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(4,47,37,.88);
+  backdrop-filter:blur(12px);
+  padding:1.2rem;
+  animation:fuFinalFade .18s ease both;
+}
+.fu-match-card-final{
+  width:100%;
+  max-width:360px;
+  background:linear-gradient(135deg,#fff,#FFF8D7);
+  border-radius:30px;
+  padding:1.4rem 1.15rem;
+  text-align:center;
+  border:2px solid rgba(242,183,5,.45);
+  box-shadow:0 18px 54px rgba(242,183,5,.28),0 18px 44px rgba(0,0,0,.2);
+  animation:fuFinalPop .42s cubic-bezier(.2,.95,.25,1.2) both;
+}
+.fu-match-card-final .ico{
+  font-size:4.8rem;
+  line-height:1;
+  color:#F2B705;
+  text-shadow:0 0 22px rgba(242,183,5,.55);
+  margin-bottom:.55rem;
+}
+.fu-match-card-final h3{
+  font-family:'Playfair Display',serif;
+  color:#064E3B;
+  font-size:1.55rem;
+  font-weight:900;
+  margin-bottom:.35rem;
+}
+.fu-match-card-final p{
+  color:#41524d;
+  font-size:.9rem;
+  font-weight:800;
+  line-height:1.45;
+  margin-bottom:1rem;
+}
+.fu-match-actions-final{
+  display:flex;
+  gap:.5rem;
+}
+.fu-match-actions-final button{
+  flex:1;
+  border:0;
+  border-radius:999px;
+  padding:.78rem .8rem;
+  font-family:'Nunito',sans-serif;
+  font-weight:1000;
+  cursor:pointer;
+}
+.fu-match-chat-final{
+  background:linear-gradient(135deg,#064E3B,#10B981);
+  color:#fff;
+}
+.fu-match-close-final{
+  background:#fff;
+  color:#064E3B;
+  border:1.5px solid #D9EFE6!important;
+}
+.fu-final-form{
+  display:flex;
+  flex-direction:column;
+  gap:.7rem;
+}
+.fu-final-form input,.fu-final-form textarea{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  padding:.7rem .85rem;
+  font-family:'Nunito',sans-serif;
+  outline:none;
+  background:#fff;
+}
+.fu-final-form textarea{height:90px;resize:none}
+@keyframes fuFinalFade{from{opacity:0}to{opacity:1}}
+@keyframes fuFinalPop{from{opacity:0;transform:scale(.8) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+</style>
+
+<script id="fuTodoJuntoFinalScript">
+(function(){
+  const LS_CHATS='fu_chats';
+  const LS_EVENTS_ATT='fu_final_attendance_all_v2';
+  const LS_EVENTS_CREATED='fu_final_created_events_all_v2';
+  const LS_EVENT_MSG='fu_final_event_chat_all_v2';
+  const LS_SUPER_SENT='fu_final_super_sent_all_v2';
+  const LS_FORTI='fu_forti_records';
+
+  function $(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function uname(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function uphoto(){const u=me();return (u&&(u.photo||u.img))||''}
+  function nowIso(){return new Date().toISOString()}
+  function nowTime(){return new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+  function normalizeId(v){return String(v||'x').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,130)||'x'}
+
+  function fixImages(){
+    document.querySelectorAll('img').forEach(img=>{
+      if(img.__fuImgFix)return;
+      img.__fuImgFix=true;
+      img.loading='lazy';
+      img.onerror=function(){
+        this.onerror=null;
+        this.removeAttribute('src');
+        this.style.display='none';
+        const parent=this.parentElement;
+        if(parent){
+          parent.classList.add('fu-img-fallback');
+          if(!parent.dataset.fallbackText){
+            parent.dataset.fallbackText='FortyUp';
+            if(!parent.querySelector('.fu-img-fallback-text')){
+              const s=document.createElement('span');
+              s.className='fu-img-fallback-text';
+              s.textContent='FortyUp';
+              parent.appendChild(s);
+            }
+          }
+        }
+      };
+    });
+  }
+
+  function chatStore(){const c=load(LS_CHATS,{});return c&&typeof c==='object'?c:{}}
+  function setChatStore(c){save(LS_CHATS,c)}
+  function getChatArr(pid){const c=chatStore();return Array.isArray(c[pid])?c[pid]:[]}
+  function addLocalChat(pid,msg){const c=chatStore();c[pid]=Array.isArray(c[pid])?c[pid]:[];c[pid].push(msg);c[pid]=c[pid].slice(-250);setChatStore(c)}
+  function conversationId(a,b){return [a,b].filter(Boolean).sort().join('_')}
+
+  function renderMessagesFast(){
+    const list=$('msgList');
+    if(!list)return;
+    const chats=chatStore();
+    const rows=[];
+    Object.keys(chats).forEach(pid=>{
+      const p=profile(pid)||{id:pid,n:'Usuario',name:'Usuario',img:''};
+      const arr=Array.isArray(chats[pid])?chats[pid]:[];
+      if(arr.length)rows.push({p,last:arr[arr.length-1]});
+    });
+    if(!rows.length){
+      list.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. Entrá a un perfil y escribile para iniciar una conversación.</p></div>';
+      return;
+    }
+    rows.sort((a,b)=>new Date(b.last.date||b.last.createdAt||0)-new Date(a.last.date||a.last.createdAt||0));
+    list.innerHTML=rows.map(({p,last})=>`
+      <div class="msg-item" onclick="startChatFastFinal('${safe(p.id)}')">
+        <img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'">
+        <div class="msg-info">
+          <div class="msg-name">${safe(p.n||p.name||'Usuario')}</div>
+          <div class="msg-preview">${safe(last.text||'Mensaje')}</div>
+        </div>
+        <div class="msg-time">${safe(last.time||'')}</div>
+      </div>`).join('');
+    fixImages();
+  }
+  window.startChatFastFinal=function(pid){
+    const p=profile(pid)||{id:pid,n:'Usuario',name:'Usuario',img:''};
+    window.startChat(p);
+  };
+
+  let loadedRemoteChats=false;
+  async function loadRemoteConversationsOnce(){
+    const d=db(), u=uid();
+    if(!d||!u||loadedRemoteChats)return;
+    loadedRemoteChats=true;
+    try{
+      const snap=await d.collection('conversations').where('participants','array-contains',u).limit(30).get();
+      const c=chatStore();
+      snap.forEach(doc=>{
+        const data=doc.data()||{};
+        const other=(data.participants||[]).find(x=>x!==u);
+        if(!other)return;
+        c[other]=Array.isArray(c[other])?c[other]:[];
+        if(data.lastText && !c[other].some(m=>m.text===data.lastText && m.time===data.lastTime)){
+          c[other].push({from:data.lastSender===u?'me':'theirs',text:data.lastText,time:data.lastTime||'',date:nowIso()});
+        }
+      });
+      setChatStore(c);
+      renderMessagesFast();
+    }catch(e){console.warn('remote conversations unavailable',e)}
+  }
+  window.renderMessages=function(){
+    renderMessagesFast();
+    loadRemoteConversationsOnce();
+  };
+
+  function renderChatFast(){
+    const peer=window.chatWith;
+    const box=$('chatBox');
+    if(!peer||!box)return;
+    const arr=getChatArr(peer.id);
+    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
+    setTimeout(()=>box.scrollTop=box.scrollHeight,30);
+  }
+  let chatUnsub=null;
+  function listenChatRemote(peerId){
+    const d=db(), u=uid();
+    if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}
+    if(!d||!u||!peerId)return;
+    try{
+      const id=conversationId(u,peerId);
+      chatUnsub=d.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{
+        const arr=[];
+        s.forEach(doc=>{
+          const x=doc.data()||{};
+          arr.push({from:(x.from||x.senderId)===u?'me':'theirs',text:x.text||'',time:x.time||'',date:nowIso()});
+        });
+        if(arr.length){
+          const c=chatStore();
+          c[peerId]=arr;
+          setChatStore(c);
+          renderChatFast();
+        }
+      },err=>console.warn('chat listener',err));
+    }catch(e){console.warn('listenChatRemote',e)}
+  }
+  window.startChat=function(p){
+    window.chatWith=p;
+    if(typeof window.go==='function')window.go('chat');
+    const name=$('chatName'); if(name)name.textContent=p.n||p.name||'Usuario';
+    const avatar=$('chatAvatarCircle');
+    if(avatar){
+      if(p.img||p.photo)avatar.innerHTML='<img src="'+safe(p.img||p.photo)+'" style="width:100%;height:100%;object-fit:cover">';
+      else avatar.textContent=(p.n||p.name||'U').charAt(0).toUpperCase();
+    }
+    const chatScreen=$('chat');
+    if(chatScreen){
+      chatScreen.querySelectorAll('div').forEach(d=>{
+        if((d.textContent||'').trim()==='FortyUp · En línea'){
+          d.textContent='FortyUp · conversación privada';
+          d.className='fu-status-real';
+        }
+      });
+    }
+    renderChatFast();
+    listenChatRemote(p.id);
+    fixImages();
+  };
+  window.sendMsg=async function(){
+    const input=$('chatInput');
+    const text=(input&&input.value||'').trim();
+    const peer=window.chatWith;
+    if(!text||!peer)return;
+    addLocalChat(peer.id,{from:'me',text,time:nowTime(),date:nowIso()});
+    input.value='';
+    input.style.height='auto';
+    renderChatFast();
+    const d=db(), u=uid();
+    if(d&&u){
+      try{
+        const id=conversationId(u,peer.id);
+        await d.collection('conversations').doc(id).set({participants:[u,peer.id],lastText:text,lastSender:u,lastTime:nowTime(),updatedAt:serverTime()},{merge:true});
+        await d.collection('conversations').doc(id).collection('messages').add({from:u,senderId:u,to:peer.id,text,time:nowTime(),createdAt:serverTime()});
+      }catch(e){console.warn('chat send remote failed',e)}
+    }
+  };
+
+  function fortiRecords(){
+    const r=load(LS_FORTI,{sent:[],received:[]});
+    r.sent=Array.isArray(r.sent)?r.sent:[];
+    r.received=Array.isArray(r.received)?r.received:[];
+    return r;
+  }
+  function saveFortiRecords(r){
+    save(LS_FORTI,r);
+    try{if(typeof window.setFortiRecords==='function')window.setFortiRecords(r)}catch(e){}
+    try{if(typeof window.syncFortiCounts==='function')window.syncFortiCounts()}catch(e){}
+  }
+  function updateFortiButtons(){
+    const r=fortiRecords();
+    document.querySelectorAll('button[onclick*="sendForti"],.btn-forti').forEach(btn=>{
+      const click=btn.getAttribute('onclick')||'';
+      const m=click.match(/sendForti\(['"]([^'"]+)['"]\)/);
+      const pid=m?m[1]:(btn.dataset.pid||'');
+      if(!pid)return;
+      const on=r.sent.includes(pid);
+      btn.classList.toggle('fu-fast-sent',on);
+      btn.textContent=on?'✓ Forti enviado':'◆ Forti';
+      btn.disabled=false;
+    });
+  }
+  function showFortiMatch(p){
+    document.querySelectorAll('.fu-match-pop-final').forEach(x=>x.remove());
+    const overlay=document.createElement('div');
+    overlay.className='fu-match-pop-final';
+    overlay.innerHTML=`<div class="fu-match-card-final">
+      <div class="ico">◆</div>
+      <h3>¡Match de Forti!</h3>
+      <p>Vos y <b>${safe(p.n||p.name||'esta persona')}</b> se enviaron Forti.</p>
+      <div class="fu-match-actions-final">
+        <button class="fu-match-chat-final">Hablar</button>
+        <button class="fu-match-close-final">Cerrar</button>
+      </div>
+    </div>`;
+    overlay.querySelector('.fu-match-close-final').onclick=()=>overlay.remove();
+    overlay.querySelector('.fu-match-chat-final').onclick=()=>{overlay.remove();window.startChat(p)};
+    document.body.appendChild(overlay);
+  }
+  window.sendForti=async function(pid){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+    const r=fortiRecords();
+    if(r.sent.includes(pid)){
+      toast('Ya le enviaste un Forti a '+(p.n||p.name||'este usuario'));
+      updateFortiButtons();
+      return;
+    }
+    r.sent.push(pid);
+    saveFortiRecords(r);
+    updateFortiButtons();
+    toast('Forti enviado a '+(p.n||p.name||'este usuario')+' ◆');
+    if(r.received.includes(pid))showFortiMatch(p);
+    const d=db();
+    if(d){
+      try{await d.collection('fortis').doc(uid()+'_'+pid).set({from:uid(),fromName:uname(),to:pid,toName:p.n||p.name||'',createdAt:serverTime()},{merge:true})}catch(e){console.warn('forti remote failed',e)}
+    }
+  };
+
+  window.sendSuper=async function(pid){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+    let can=true;
+    try{if(typeof window.canSendSuper==='function')can=window.canSendSuper()}catch(e){}
+    if(!can)return toast('No tenés Súper Diamantes disponibles 💎');
+    save('fu_last_super',new Date().toISOString());
+    const sent=load(LS_SUPER_SENT,[]);
+    sent.push({to:pid,name:p.n||p.name||'Usuario',at:nowIso()});
+    save(LS_SUPER_SENT,sent);
+    try{if(typeof window.syncSuperUI==='function')window.syncSuperUI()}catch(e){}
+    toast('Súper Diamante enviado a '+(p.n||p.name||'este usuario')+' 💎');
+    const d=db();
+    if(d){
+      try{await d.collection('superDiamonds').add({from:uid(),fromName:uname(),to:pid,toName:p.n||p.name||'',createdAt:serverTime(),seen:false})}catch(e){console.warn('super add',e)}
+    }
+  };
+
+  function basePlans(){
+    try{return Array.isArray(window.plans)?window.plans:(typeof plans!=='undefined'?plans:[])}catch(e){return []}
+  }
+  function createdEvents(){const a=load(LS_EVENTS_CREATED,[]);return Array.isArray(a)?a:[]}
+  function setCreatedEvents(a){save(LS_EVENTS_CREATED,a)}
+  function planId(p){return normalizeId('ev_'+(p[0]||'')+'_'+(p[1]||'')+'_'+(p[7]||''))}
+  function allEvents(){
+    const fromPlans=basePlans().map(p=>({id:planId(p),kind:p[8]?'curated':'plan',title:p[0]||'Evento',when:p[1]||'Fecha a confirmar',desc:p[2]||'',img:p[3]||'',icon:p[4]||'🎟️',place:p[5]||'',countText:p[6]||'0 asistirán',city:p[7]||'',link:p[8]||'',creatorId:'fortyup'}));
+    const map={};
+    [...createdEvents(),...fromPlans].forEach(e=>{if(e&&e.id)map[e.id]=e});
+    return Object.values(map);
+  }
+  function eventById(id){return allEvents().find(e=>e.id===id)||{id,title:'Evento',when:'Fecha a confirmar',icon:'🎟️',place:'',city:''}}
+  function attendStore(){const a=load(LS_EVENTS_ATT,{});return a&&typeof a==='object'?a:{}}
+  function setAttendStore(a){save(LS_EVENTS_ATT,a)}
+  function attendees(id){const a=attendStore();return Array.isArray(a[id])?a[id]:[]}
+  function isGoing(id){const u=uid();return !!u && attendees(id).some(x=>(x.uid||x.id||x)===u)}
+  function attendeeCount(id,fallback){const base=parseInt(String(fallback||'0').match(/\d+/)?.[0]||'0');return Math.max(base,attendees(id).length)}
+  function setGoing(id,on){
+    const u=uid();
+    if(!u)return false;
+    const s=attendStore();
+    s[id]=Array.isArray(s[id])?s[id]:[];
+    if(on){
+      if(!s[id].some(x=>(x.uid||x.id||x)===u))s[id].push({uid:u,id:u,name:uname(),photo:uphoto(),joinedAt:nowIso()});
+    }else{
+      s[id]=s[id].filter(x=>(x.uid||x.id||x)!==u);
+    }
+    setAttendStore(s);
+    return true;
+  }
+  async function syncAttend(id,on){
+    const d=db(), u=uid();
+    if(!d||!u)return;
+    try{
+      const payload=on
+        ? {eventId:id,attendees:firebase.firestore.FieldValue.arrayUnion(u),['attendeeNames.'+u]:uname(),updatedAt:serverTime()}
+        : {eventId:id,attendees:firebase.firestore.FieldValue.arrayRemove(u),['attendeeNames.'+u]:firebase.firestore.FieldValue.delete(),updatedAt:serverTime()};
+      await d.collection('eventAttendance').doc(id).set(payload,{merge:true});
+    }catch(e){console.warn('eventAttendance',e)}
+  }
+  async function finalAttend(id){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const on=!isGoing(id);
+    setGoing(id,on);
+    await syncAttend(id,on);
+    toast(on?'Te sumaste al evento ✅':'Cancelaste tu asistencia');
+    refreshEventUI();
+  }
+  window.toggleAttend=finalAttend;
+  window.toggleFuEventAttend=finalAttend;
+  window.fuToggleEventAttendFull=finalAttend;
+  window.togglePublicEventAttend=function(type,id){return finalAttend(id)};
+  window.isAttending=isGoing;
+  window.fuEventAttendees=attendees;
+  window.finalAttendFromButton=finalAttend;
+
+  function cityNow(){const override=localStorage.getItem('fu_plan_city_override');if(override)return override;const u=me();return (u&&(u.city||u.c))||'Buenos Aires'}
+  function planCard(e){
+    const on=isGoing(e.id), c=attendeeCount(e.id,e.countText);
+    return `<div class="card plan-card" data-event-id="${safe(e.id)}">
+      ${e.img?`<img src="${safe(e.img)}" loading="lazy" alt="${safe(e.title)}">`:''}
+      <div class="plan-card-body">
+        <span class="event-source">${e.kind==='created'?'🌿 Plan público':'🌐 Evento/Plan'}</span>
+        <h3>${safe(e.icon||'🎟️')} ${safe(e.title)}</h3>
+        <div class="plan-cat">${safe(e.when||'Fecha a confirmar')}</div>
+        <p>${safe(e.desc||'Plan para conectar con gente de FortyUp.')}</p>
+        <div class="plan-meta"><span>📍 ${safe(e.place||e.city||'')}</span><span>👥 ${c} asistirán</span></div>
+        <div class="fu-final-actions">
+          <span class="fu-final-count">👥 ${c} van</span>
+          <button class="fu-final-btn gold ${on?'fu-final-on':''}" onclick="finalAttendFromButton('${safe(e.id)}')">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-final-btn out" onclick="openFuEventCard('${safe(e.id)}')">Ver evento</button>
+          <button class="fu-final-btn out" onclick="openFuEventChat('${safe(e.id)}')">💬 Chat</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  window.renderPlans=function(q=''){
+    const list=$('plansList');
+    if(!list)return;
+    const city=cityNow();
+    const cityTop=$('cityTop'); if(cityTop)cityTop.textContent=city;
+    const query=String(q||$('plansTextSearch')?.value||'').toLowerCase();
+    let evs=allEvents().filter(e=>String(e.city||'').toLowerCase()===String(city||'').toLowerCase());
+    if(!evs.length)evs=allEvents();
+    if(query)evs=evs.filter(e=>Object.values(e).join(' ').toLowerCase().includes(query));
+    list.innerHTML=`<div class="fu-plans-layout-final">
+      <div class="fu-plans-block-final"><div class="fu-plans-head-final"><div><h3>Planes y eventos</h3><p>Marcá Asistiré para guardar el evento y entrar al chat.</p></div></div></div>
+      ${evs.map(planCard).join('')||'<div class="fu-final-empty">No hay eventos para mostrar.</div>'}
+      <div class="fu-create-plan-hero-final"><h3>Crear plan público</h3><p>Publicá un plan para que otros usuarios se sumen y entren al chat.</p><button class="fu-create-plan-main-btn-final" onclick="showCreateEventPanel()">＋ Crear evento público</button></div>
+    </div>`;
+    fixImages();
+  };
+  function refreshEventUI(){
+    try{if($('plans')?.classList.contains('active'))window.renderPlans()}catch(e){}
+    try{if($('me')?.classList.contains('active')&&typeof window.renderMe==='function')window.renderMe()}catch(e){}
+  }
+
+  window.openFuEventCard=function(id){
+    const e=eventById(id);
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    const on=isGoing(id), atts=attendees(id);
+    content.innerHTML=`<div class="panel-title">🎟️ Evento</div>
+      <div class="card" style="padding:1rem">
+        <h3 style="font-family:'Playfair Display',serif;color:var(--g);margin-bottom:.3rem">${safe(e.icon||'🎟️')} ${safe(e.title)}</h3>
+        <p style="color:var(--muted);font-weight:800;margin:.25rem 0">🕒 ${safe(e.when||'Fecha a confirmar')}</p>
+        <p style="color:var(--muted);font-weight:800;margin:.25rem 0">📍 ${safe(e.place||e.city||'')}</p>
+        <p style="margin:.7rem 0;color:var(--txt);line-height:1.45">${safe(e.desc||'Plan para conectar con gente de FortyUp.')}</p>
+        <div class="fu-final-actions">
+          <button class="fu-final-btn gold ${on?'fu-final-on':''}" onclick="finalAttendFromButton('${safe(id)}');setTimeout(()=>openFuEventCard('${safe(id)}'),250)">${on?'✓ Asistiré':'Asistiré'}</button>
+          <button class="fu-final-btn out" onclick="openFuEventChat('${safe(id)}')">💬 Chat del evento</button>
+        </div>
+      </div>
+      <div class="card" style="padding:1rem;margin-top:.75rem">
+        <h3 class="section-title">👥 Asistentes (${atts.length})</h3>
+        ${atts.length?atts.map(a=>`<div class="my-event-card"><div style="width:42px;height:42px;border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--g);font-weight:1000">${safe((a.name||'U')[0])}</div><div style="flex:1"><h4>${safe(a.name||'Usuario')}</h4><p>Va a asistir</p></div></div>`).join(''):`<div class="fu-final-empty">Todavía no hay asistentes.</div>`}
+      </div>`;
+    panel.classList.add('open');
+  };
+
+  window.showEventosPanel=function(){
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    const going=allEvents().filter(e=>isGoing(e.id));
+    const created=createdEvents().filter(e=>e.creatorId===uid());
+    const card=e=>`<div class="my-event-card">
+      ${e.img?`<img src="${safe(e.img)}">`:`<div style="width:62px;height:62px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:1.6rem">${safe(e.icon||'🎟️')}</div>`}
+      <div style="flex:1;min-width:0"><h4>${safe(e.title)}</h4><p>${safe(e.when||'Fecha a confirmar')}</p><p>${safe(e.place||e.city||'')}</p></div>
+      <button class="fu-final-btn out" onclick="openFuEventCard('${safe(e.id)}')">Abrir</button>
+    </div>`;
+    content.innerHTML=`<div class="panel-title">📅 Mis eventos</div>
+      <h3 class="section-title">Eventos a los que asistirás (${going.length})</h3>
+      ${going.length?going.map(card).join(''):`<div class="fu-final-empty">Todavía no marcaste asistencia a ningún evento.</div>`}
+      <h3 class="section-title" style="margin-top:1rem">Creados por vos (${created.length})</h3>
+      ${created.length?created.map(card).join(''):`<div class="fu-final-empty">Todavía no creaste eventos públicos.</div>`}
+      <button class="fu-final-btn" style="width:100%;margin-top:.75rem" onclick="showCreateEventPanel()">＋ Crear evento público</button>`;
+    panel.classList.add('open');
+    fixImages();
+  };
+
+  window.showCreateEventPanel=function(){
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    const u=me();
+    content.innerHTML=`<div class="panel-title">＋ Crear evento público</div>
+      <div class="fu-final-form">
+        <input id="fuNewEventTitle" placeholder="Título del plan o evento">
+        <input id="fuNewEventWhen" placeholder="Día y hora: sábado 21:00">
+        <input id="fuNewEventCity" placeholder="Ciudad" value="${safe(u?.city||u?.c||cityNow())}">
+        <input id="fuNewEventPlace" placeholder="Lugar">
+        <textarea id="fuNewEventDesc" placeholder="Descripción"></textarea>
+        <button class="fu-final-btn" onclick="saveFinalPublicEvent()">Crear evento</button>
+      </div>`;
+    panel.classList.add('open');
+  };
+  window.saveFinalPublicEvent=function(){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const title=($('fuNewEventTitle')?.value||'').trim();
+    if(!title)return toast('Poné un título para el evento');
+    const e={id:normalizeId('created_'+uid()+'_'+title+'_'+Date.now()),kind:'created',title,when:($('fuNewEventWhen')?.value||'Fecha a confirmar').trim(),city:($('fuNewEventCity')?.value||cityNow()).trim(),place:($('fuNewEventPlace')?.value||'').trim(),desc:($('fuNewEventDesc')?.value||'').trim(),icon:'🌿',img:'',creatorId:uid(),creatorName:uname(),createdAt:nowIso()};
+    const arr=createdEvents();arr.unshift(e);setCreatedEvents(arr);
+    toast('Evento creado ✅');
+    window.openFuEventCard(e.id);
+  };
+
+  let currentEventChat='';
+  function eventMsgStore(){const m=load(LS_EVENT_MSG,{});return m&&typeof m==='object'?m:{}}
+  function getEventMsgs(id){const m=eventMsgStore();return Array.isArray(m[id])?m[id]:[]}
+  function addEventMsg(id,msg){const m=eventMsgStore();m[id]=Array.isArray(m[id])?m[id]:[];m[id].push(msg);m[id]=m[id].slice(-200);save(LS_EVENT_MSG,m)}
+  function renderEventChat(id,msgs){
+    const box=$('fuEventChatFinalMessages');
+    if(!box)return;
+    const arr=Array.isArray(msgs)?msgs:getEventMsgs(id);
+    box.innerHTML=arr.length?arr.map(m=>`<div class="fu-event-chat-final-msg ${m.uid===uid()?'mine':''}">${safe(m.text)}<small>${safe(m.name||'Usuario')} · ${safe(m.time||'')}</small></div>`).join(''):`<div class="fu-final-empty">Todavía no hay mensajes. Escribí el primero.</div>`;
+    setTimeout(()=>box.scrollTop=box.scrollHeight,40);
+  }
+  let eventChatUnsub=null;
+  function listenEventChat(id){
+    if(eventChatUnsub){try{eventChatUnsub()}catch(e){};eventChatUnsub=null}
+    const d=db();
+    if(!d)return;
+    try{
+      eventChatUnsub=d.collection('eventChats').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{
+        const arr=[];s.forEach(doc=>{const x=doc.data()||{};arr.push({uid:x.uid||'',name:x.name||'Usuario',text:x.text||'',time:x.time||''})});
+        renderEventChat(id,arr);
+      },err=>console.warn('event chat listener',err));
+    }catch(e){}
+  }
+  window.openFuEventChat=function(id){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    if(!isGoing(id))return toast('Primero tocá Asistiré para entrar al chat del evento');
+    currentEventChat=id;
+    const e=eventById(id);
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`<div class="panel-title">💬 Chat del evento</div>
+      <div class="fu-event-chat-final-box">
+        <div class="fu-event-chat-final-head">${safe(e.title||'Evento')}</div>
+        <div id="fuEventChatFinalMessages" class="fu-event-chat-final-messages"></div>
+        <div class="fu-event-chat-final-input">
+          <input id="fuEventChatFinalInput" placeholder="Escribí en el chat del evento..." onkeydown="if(event.key==='Enter')sendFuEventChatMsgFinal()">
+          <button onclick="sendFuEventChatMsgFinal()">Enviar</button>
+        </div>
+      </div>
+      <button class="fu-final-btn out" style="width:100%;margin-top:.75rem" onclick="openFuEventCard('${safe(id)}')">← Volver al evento</button>`;
+    panel.classList.add('open');
+    renderEventChat(id);
+    listenEventChat(id);
+  };
+  window.sendFuEventChatMsgFinal=async function(){
+    const input=$('fuEventChatFinalInput');
+    const text=(input?.value||'').trim();
+    const id=currentEventChat;
+    if(!id||!text)return;
+    const msg={uid:uid(),name:uname(),text,time:nowTime(),createdAt:nowIso()};
+    input.value='';
+    addEventMsg(id,msg);
+    renderEventChat(id);
+    const d=db();
+    if(d){
+      try{await d.collection('eventChats').doc(id).collection('messages').add({...msg,createdAt:serverTime()})}catch(e){console.warn('event chat add',e)}
+    }
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__todoJuntoFinal){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(()=>{
+        if(id==='messages')renderMessagesFast();
+        if(id==='plans')window.renderPlans();
+        updateFortiButtons();
+        fixImages();
+      },140);
+      return r;
+    };
+    window.go.__todoJuntoFinal=true;
+  }
+
+  function checkDeadButtons(){
+    document.querySelectorAll('button').forEach(btn=>{
+      if(btn.__fuDeadCheck)return;
+      btn.__fuDeadCheck=true;
+      btn.addEventListener('click',function(){
+        const click=btn.getAttribute('onclick');
+        const txt=(btn.textContent||'').trim().toLowerCase();
+        if(!click && !btn.type){
+          if(txt.includes('cerrar')||txt==='x'||txt==='✕'){
+            const p=$('profilePanel');if(p)p.classList.remove('open');
+          }
+        }
+      });
+    });
+  }
+
+  setTimeout(()=>{fixImages();updateFortiButtons();renderMessagesFast();checkDeadButtons()},700);
+  setInterval(()=>{fixImages();updateFortiButtons();checkDeadButtons()},1800);
 })();
 </script>
 
