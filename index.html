@@ -6234,7 +6234,6 @@ setTimeout(enhanceEvents,1500);
     save(LS_SUPER_SENT,sent);
     try{if(typeof window.syncSuperUI==='function')window.syncSuperUI();}catch(e){}
     updateSuperUI();
-    setTimeout(updateSuperUI,300);
     toast('Súper Diamante enviado a '+(p.n||p.name||'este usuario')+' 💎');
     try{if(typeof window.showSuperDiamondPopup==='function')window.showSuperDiamondPopup(p.n||p.name||'esta persona');}catch(e){}
     const d=db();
@@ -6248,20 +6247,12 @@ setTimeout(enhanceEvents,1500);
     const pids=sent.map(function(s){return s.to;});
     document.querySelectorAll('button[onclick*="sendSuper"],.btn-super').forEach(function(btn){
       const click=btn.getAttribute('onclick')||'';
-      // Match sendSuper with any content after (like ;closePanel())
-      const m=click.match(/sendSuper\s*\(['"]([^'"]+)['"]\s*\)/);
-      const pid=m?m[1]:(btn.dataset.pid||btn.dataset.uid||'');
+      const m=click.match(/sendSuper\(['"]([^'"]+)['"]\)/);
+      const pid=m?m[1]:(btn.dataset.pid||'');
       if(!pid)return;
       const on=pids.includes(pid);
-      if(on){
-        btn.textContent='✓ Enviado';
-        btn.style.opacity='.65';
-        btn.style.background='var(--blue)';
-        btn.disabled=true;
-      }
+      if(on){btn.textContent='💎 Enviado';btn.style.opacity='.6';btn.style.background='var(--blue)';}
     });
-    // Also mark on page load
-    window._superSentPids=pids;
   }
   const oldStartChat=window.startChat;
   window.startChat=function(p){
@@ -7300,15 +7291,7 @@ body.fu-rendering *{transition:none!important}
   function markRead(pid){const n=msgNotis();if(n[pid])n[pid].unread=false;setMsgNotis(n);updateMsgDot()}
   function markUnread(pid,text){const n=msgNotis();n[pid]={unread:true,text:text||'Nuevo mensaje',at:nowIso()};setMsgNotis(n);updateMsgDot()}
 
-  function getDeletedConvs(){try{return JSON.parse(localStorage.getItem('fu_deleted_convs')||'[]')}catch(e){return[]}}
-  function addDeletedConv(pid){const d=getDeletedConvs();if(!d.includes(pid)){d.push(pid);localStorage.setItem('fu_deleted_convs',JSON.stringify(d))}}
-  function deleteConversation(pid){
-    const c=chats();delete c[pid];setChats(c);
-    const n=msgNotis();delete n[pid];setMsgNotis(n);
-    addDeletedConv(pid); // Remember this was deleted
-    renderMessagesPremium();updateMsgDot();
-    toast('Conversación eliminada');
-  }
+  function deleteConversation(pid){const c=chats();delete c[pid];setChats(c);const n=msgNotis();delete n[pid];setMsgNotis(n);renderMessagesPremium();updateMsgDot();toast('Conversación eliminada')}
   function archiveConversation(pid){const a=archived();if(!a.includes(pid))a.push(pid);setArchived(a);renderMessagesPremium();toast('Conversación archivada')}
   function blockConversation(pid){const b=blocked();if(!b.includes(pid))b.push(pid);setBlocked(b);deleteConversation(pid);toast('Usuario bloqueado')}
   window.cleanBrokenChats=function(){const c=chats();let removed=0;Object.keys(c).forEach(pid=>{const arr=Array.isArray(c[pid])?c[pid]:[];if(!pid||!arr.length||pid==='undefined'||pid==='null'||(!profile(pid)&&pid.startsWith('undefined'))){delete c[pid];removed++}});setChats(c);renderMessagesPremium();toast(removed?'Chats con error eliminados: '+removed:'No encontré chats con error')}
@@ -7322,8 +7305,7 @@ body.fu-rendering *{transition:none!important}
 
   function rowHTML(pid,arr){const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible',img:''};const last=arr[arr.length-1]||{};const n=msgNotis()[pid]||{};const error=!profile(pid);return `<div class="msg-item ${error?'fu-msg-error':''} ${!canChat(pid)?'fu-msg-lock':''}" onclick="startChatPremium('${safe(pid)}')" oncontextmenu="event.preventDefault();openChatMenu('${safe(pid)}')" onmousedown="fuChatHoldStart(event,'${safe(pid)}')" onmouseup="fuChatHoldEnd()" ontouchstart="fuChatHoldStart(event,'${safe(pid)}')" ontouchend="fuChatHoldEnd()"><img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'"><div class="msg-info"><div class="msg-name">${n.unread?'🔔 ':''}${safe(p.n||p.name)}</div><div class="msg-preview">${safe(last.text||n.text||'Mensaje')}</div></div><div class="msg-time">${safe(last.time||'')}</div></div>`}
 
-  function renderMessagesPremium(){const list=$('msgList');if(!list)return;const c=chats(), a=archived(), rows=[];const _del=getDeletedConvs?getDeletedConvs():[];
-  Object.keys(c).forEach(pid=>{if(a.includes(pid)||_del.includes(pid))return;const arr=Array.isArray(c[pid])?c[pid]:[];if(arr.length)rows.push({pid,arr,last:arr[arr.length-1]})});rows.sort((x,y)=>new Date(y.last.date||y.last.createdAt||0)-new Date(x.last.date||x.last.createdAt||0));list.innerHTML=`<div class="fu-msg-top-actions"><button onclick="cleanBrokenChats()">Limpiar chats con error</button><button onclick="showArchivedChats()">Archivados</button></div>`+(rows.length?rows.map(x=>rowHTML(x.pid,x.arr)).join(''):`<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. El chat se habilita con match de Forti, Súper Diamante o evento en común.</p></div>`);updateMsgDot()}
+  function renderMessagesPremium(){const list=$('msgList');if(!list)return;const c=chats(), a=archived(), rows=[];Object.keys(c).forEach(pid=>{if(a.includes(pid))return;const arr=Array.isArray(c[pid])?c[pid]:[];if(arr.length)rows.push({pid,arr,last:arr[arr.length-1]})});rows.sort((x,y)=>new Date(y.last.date||y.last.createdAt||0)-new Date(x.last.date||x.last.createdAt||0));list.innerHTML=`<div class="fu-msg-top-actions"><button onclick="cleanBrokenChats()">Limpiar chats con error</button><button onclick="showArchivedChats()">Archivados</button></div>`+(rows.length?rows.map(x=>rowHTML(x.pid,x.arr)).join(''):`<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. El chat se habilita con match de Forti, Súper Diamante o evento en común.</p></div>`);updateMsgDot()}
   window.renderMessages=renderMessagesPremium;
   window.showArchivedChats=function(){const list=$('msgList');if(!list)return;const c=chats(), a=archived();const rows=a.filter(pid=>Array.isArray(c[pid])&&c[pid].length).map(pid=>({pid,arr:c[pid]}));list.innerHTML=`<div class="fu-msg-top-actions"><button onclick="renderMessages()">← Volver</button></div>`+(rows.length?rows.map(x=>rowHTML(x.pid,x.arr)).join(''):`<div class="empty"><div class="empty-ico">📦</div><p>No hay chats archivados.</p></div>`)}
 
@@ -7331,8 +7313,7 @@ body.fu-rendering *{transition:none!important}
   function setChatHeader(p){const name=$('chatName');if(name)name.textContent=p.n||p.name||'Usuario';const avatar=$('chatAvatarCircle');if(avatar){if(p.img||p.photo)avatar.innerHTML='<img src="'+safe(p.img||p.photo)+'" style="width:100%;height:100%;object-fit:cover">';else avatar.textContent=(p.n||p.name||'U').charAt(0).toUpperCase()}const chatScreen=$('chat');if(chatScreen){chatScreen.querySelectorAll('div').forEach(d=>{if((d.textContent||'').trim()==='FortyUp · En línea'){d.textContent='FortyUp · conversación privada';d.className='fu-status-real'}})}}
 
   let chatUnsub=null;
-  function listenRemote(pid){const d=db(), u=uid();if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}if(!d||!u||!pid)return;try{const id=conversationId(u,pid);chatUnsub=d.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{const arr=[];s.forEach(doc=>{const x=doc.data()||{};arr.push({from:(x.from||x.senderId)===u?'me':'theirs',text:x.text||'',time:x.time||'',date:nowIso()})});const _delConvs=getDeletedConvs?getDeletedConvs():[];
-        if(arr.length&&!_delConvs.includes(pid)){const c=chats();c[pid]=arr;setChats(c);renderChatMessages(pid);renderMessagesPremium()}},err=>console.warn('chat listener',err))}catch(e){}}
+  function listenRemote(pid){const d=db(), u=uid();if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}if(!d||!u||!pid)return;try{const id=conversationId(u,pid);chatUnsub=d.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{const arr=[];s.forEach(doc=>{const x=doc.data()||{};arr.push({from:(x.from||x.senderId)===u?'me':'theirs',text:x.text||'',time:x.time||'',date:nowIso()})});if(arr.length){const c=chats();c[pid]=arr;setChats(c);renderChatMessages(pid);renderMessagesPremium()}},err=>console.warn('chat listener',err))}catch(e){}}
 
   window.startChatPremium=function(pid){const p=profile(pid);if(!p&&!hasConversation(pid)){toast('Ese usuario ya no está disponible. Podés eliminar el chat manteniendo apretado.');openChatMenu(pid);return}if(!canChat(pid)){toast('Para chatear necesitás match de Forti o compartir un evento');return}window.chatWith=p||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible'};markRead(pid);if(typeof window.go==='function')window.go('chat');setChatHeader(window.chatWith);renderChatMessages(pid);listenRemote(pid)}
   window.startChat=function(p){if(!p||!p.id)return toast('No encontré el usuario');if(!canChat(p.id)&&!hasConversation(p.id)){toast('Para chatear necesitás match de Forti o compartir un evento');return}window.startChatPremium(p.id)}
@@ -8279,9 +8260,8 @@ if(oldSuper){
 /* CAMPANA */
 function fixBell(){
   document.querySelectorAll('.msg-name').forEach(el=>{
-    // Remove ghost bell emoji completely
     if(el.innerHTML.includes('🔔')){
-      el.innerHTML=el.innerHTML.replace(/🔔\s*/g,'').trim();
+      el.classList.add('fu-bell-stable');
     }
   });
 }
@@ -8295,8 +8275,344 @@ setTimeout(()=>{
   }
 },500);
 
-setInterval(fixBell,2000);
+setInterval(fixBell,1000);
 
+})();
+</script>
+
+
+<style id="fuSuperChatCardsFinalFixStyle">
+/* === FortyUp FIX final: cards ordenadas + superdiamante + mensajes === */
+
+/* Tarjetas: que Forti / diamante / chat no queden amontonados */
+.profile-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:.38rem!important;
+  width:100%!important;
+  align-items:stretch!important;
+}
+.profile-actions button{
+  min-width:0!important;
+  width:100%!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  line-height:1.1!important;
+}
+.profile-actions .btn-fav{
+  grid-column:auto!important;
+  background:var(--soft)!important;
+  border:1.5px solid var(--line)!important;
+  border-radius:50px!important;
+  font-size:.82rem!important;
+}
+.btn-forti,.btn-super,.btn-chat{
+  padding:.48rem .45rem!important;
+  font-size:.72rem!important;
+}
+.btn-super.fu-super-sent-final{
+  background:#E8FFF6!important;
+  color:#047857!important;
+  border:1.5px solid #A7F3D0!important;
+  box-shadow:none!important;
+}
+.btn-super.fu-super-disabled-final{
+  opacity:.55!important;
+  filter:grayscale(.2)!important;
+}
+
+/* Sacar campanita fantasma en mensajes */
+.msg-name .fu-bell-remove,
+.msg-name .fu-hidden-bell{
+  display:none!important;
+}
+.msg-name{
+  min-height:1.1em;
+}
+</style>
+
+<script id="fuSuperChatCardsFinalFixScript">
+(function(){
+  const LS_SUPER_SENT='fu_super_sent';
+  const LS_LAST_SUPER='fu_last_super';
+  const LS_CHATS='fu_chats';
+  const LS_DELETED='fu_deleted_chats_v2';
+  const LS_MSG_NOTIS='fu_msg_notifications_v1';
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function uname(){const u=me();return (u&&(u.name||u.n))||(auth()&&auth().currentUser&&auth().currentUser.email&&auth().currentUser.email.split('@')[0])||'Usuario'}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+
+  function todayKey(){
+    const d=new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function sentSuperList(){
+    const arr=load(LS_SUPER_SENT,[]);
+    return Array.isArray(arr)?arr:[];
+  }
+  function sentSuperToday(){
+    const t=todayKey();
+    return sentSuperList().filter(x=>{
+      const at=x&&x.at?new Date(x.at):null;
+      if(!at || isNaN(at.getTime()))return false;
+      const k=at.getFullYear()+'-'+String(at.getMonth()+1).padStart(2,'0')+'-'+String(at.getDate()).padStart(2,'0');
+      return k===t;
+    });
+  }
+  function superSentTo(pid){
+    return sentSuperToday().some(x=>x.to===pid);
+  }
+  function canSendSuperFinal(){
+    const last=load(LS_LAST_SUPER,null);
+    if(!last)return true;
+    const d=new Date(last);
+    if(isNaN(d.getTime()))return true;
+    return (Date.now()-d.getTime())>=86400000;
+  }
+
+  function pidFromSuperButton(btn){
+    const click=btn.getAttribute('onclick')||'';
+    const m=click.match(/sendSuper\(['"]([^'"]+)['"]\)/);
+    return m?m[1]:(btn.dataset.pid||btn.closest('[data-pid]')?.dataset.pid||'');
+  }
+
+  function updateSuperButtons(){
+    const available=canSendSuperFinal();
+    document.querySelectorAll('button[onclick*="sendSuper"],.btn-super').forEach(btn=>{
+      const pid=pidFromSuperButton(btn);
+      if(!pid)return;
+      const sent=superSentTo(pid);
+      btn.classList.toggle('fu-super-sent-final',sent);
+      btn.classList.toggle('fu-super-disabled-final',!sent && !available);
+      if(sent){
+        btn.textContent='✓ Enviado';
+        btn.title='Súper Diamante enviado hoy';
+      }else{
+        btn.textContent=available?'💎 Súper':'Sin 💎';
+        btn.title=available?'Enviar Súper Diamante':'Volvé mañana para enviar otro';
+      }
+    });
+    const home=$('superCount'); if(home)home.textContent=available?1:0;
+    const meCount=$('meSuperCount'); if(meCount)meCount.textContent=available?1:0;
+  }
+
+  const previousSendSuper=window.sendSuper;
+  window.sendSuper=async function(pid){
+    if(!uid())return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+
+    if(superSentTo(pid)){
+      toast('Ya le enviaste el Súper Diamante a '+(p.n||p.name||'este usuario')+' 💎');
+      updateSuperButtons();
+      return;
+    }
+
+    if(!canSendSuperFinal()){
+      toast('No tenés Súper Diamantes disponibles. Volvé mañana 💎');
+      updateSuperButtons();
+      return;
+    }
+
+    // UI inmediata: no esperamos Firebase ni otros wrappers.
+    const now=new Date().toISOString();
+    save(LS_LAST_SUPER,now);
+    const sent=sentSuperList();
+    sent.push({to:pid,name:p.n||p.name||'Usuario',img:p.img||p.photo||'',at:now});
+    save(LS_SUPER_SENT,sent);
+    updateSuperButtons();
+    toast('Súper Diamante enviado a '+(p.n||p.name||'este usuario')+' 💎');
+
+    // Intento remoto en segundo plano.
+    const d=db();
+    if(d){
+      try{
+        await d.collection('superDiamonds').add({
+          from:uid(),
+          fromName:uname(),
+          to:pid,
+          toName:p.n||p.name||'',
+          createdAt:serverTime(),
+          seen:false
+        });
+      }catch(e){
+        console.warn('superDiamonds remote failed',e);
+      }
+    }
+  };
+
+  /* Mensajes: borrar campanita visual y evitar que chats eliminados vuelvan */
+  function deletedChats(){
+    const a=load(LS_DELETED,[]);
+    return Array.isArray(a)?a:[];
+  }
+  function setDeletedChats(a){save(LS_DELETED,a)}
+  function markDeleted(pid){
+    const a=deletedChats();
+    if(!a.includes(pid))a.push(pid);
+    setDeletedChats(a);
+  }
+  function isDeleted(pid){return deletedChats().includes(pid)}
+  function chats(){
+    const c=load(LS_CHATS,{});
+    return c&&typeof c==='object'?c:{};
+  }
+  function setChats(c){save(LS_CHATS,c)}
+  function msgNotis(){
+    const n=load(LS_MSG_NOTIS,{});
+    return n&&typeof n==='object'?n:{};
+  }
+  function setMsgNotis(n){save(LS_MSG_NOTIS,n)}
+
+  function removeBellFromMessages(){
+    document.querySelectorAll('.msg-name').forEach(el=>{
+      el.innerHTML=el.innerHTML
+        .replace(/🔔\s*/g,'')
+        .replace(/<span[^>]*>🔔<\/span>/g,'');
+    });
+  }
+
+  function filterDeletedChats(){
+    const c=chats();
+    let changed=false;
+    deletedChats().forEach(pid=>{
+      if(c[pid]){
+        delete c[pid];
+        changed=true;
+      }
+    });
+    if(changed)setChats(c);
+  }
+
+  function hardDeleteConversation(pid){
+    markDeleted(pid);
+    const c=chats();
+    delete c[pid];
+    setChats(c);
+    const n=msgNotis();
+    delete n[pid];
+    setMsgNotis(n);
+    removeBellFromMessages();
+    if(typeof window.renderMessages==='function')setTimeout(()=>window.renderMessages(),20);
+    toast('Conversación eliminada');
+  }
+  window.hardDeleteConversation=hardDeleteConversation;
+
+  function openCleanMenu(pid){
+    const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible'};
+    document.querySelectorAll('.fu-chat-menu').forEach(x=>x.remove());
+    const o=document.createElement('div');
+    o.className='fu-chat-menu';
+    o.onclick=e=>{if(e.target===o)o.remove()};
+    o.innerHTML=`<div class="fu-chat-menu-sheet">
+      <div class="fu-chat-menu-handle"></div>
+      <div class="fu-chat-menu-title">${safe(p.n||p.name||'Usuario')}</div>
+      <div class="fu-chat-menu-sub">Opciones de conversación</div>
+      <button class="fu-chat-menu-btn" data-a="open">💬 Abrir chat</button>
+      <button class="fu-chat-menu-btn danger" data-a="delete">🗑 Eliminar conversación</button>
+      <button class="fu-chat-menu-btn close" data-a="close">Cerrar</button>
+    </div>`;
+    o.querySelectorAll('button').forEach(b=>{
+      b.onclick=()=>{
+        const a=b.dataset.a;
+        if(a==='open'){
+          o.remove();
+          if(typeof window.startChatPremium==='function')window.startChatPremium(pid);
+          else if(typeof window.startChat==='function')window.startChat(p);
+        }
+        if(a==='delete'){
+          o.remove();
+          hardDeleteConversation(pid);
+        }
+        if(a==='close')o.remove();
+      };
+    });
+    document.body.appendChild(o);
+  }
+  window.openChatMenu=openCleanMenu;
+
+  function rowPid(row){
+    const onclick=row.getAttribute('onclick')||'';
+    let m=onclick.match(/startChatPremium\(['"]([^'"]+)['"]\)/);
+    if(m)return m[1];
+    m=onclick.match(/startChatFastFinal\(['"]([^'"]+)['"]\)/);
+    if(m)return m[1];
+    return row.dataset.pid||'';
+  }
+
+  function scrubMessageList(){
+    filterDeletedChats();
+    document.querySelectorAll('#msgList .msg-item').forEach(row=>{
+      const pid=rowPid(row);
+      if(pid && isDeleted(pid)){
+        row.remove();
+        return;
+      }
+      const name=row.querySelector('.msg-name');
+      if(name){
+        name.innerHTML=name.innerHTML.replace(/🔔\s*/g,'');
+      }
+    });
+    removeBellFromMessages();
+  }
+
+  const oldRenderMessages=window.renderMessages;
+  if(typeof oldRenderMessages==='function' && !oldRenderMessages.__superChatFinalFix){
+    window.renderMessages=function(){
+      filterDeletedChats();
+      const r=oldRenderMessages.apply(this,arguments);
+      setTimeout(scrubMessageList,10);
+      return r;
+    };
+    window.renderMessages.__superChatFinalFix=true;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__superChatFinalFix){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      setTimeout(()=>{
+        updateSuperButtons();
+        if(id==='messages')scrubMessageList();
+      },80);
+      return r;
+    };
+    window.go.__superChatFinalFix=true;
+  }
+
+  // Protección: si otro script rehidrata un chat eliminado, lo sacamos al toque.
+  const originalSetItem=localStorage.setItem.bind(localStorage);
+  if(!localStorage.__fuDeletedChatGuard){
+    localStorage.setItem=function(k,v){
+      if(k===LS_CHATS){
+        try{
+          const obj=JSON.parse(v);
+          deletedChats().forEach(pid=>{if(obj&&obj[pid])delete obj[pid]});
+          v=JSON.stringify(obj);
+        }catch(e){}
+      }
+      return originalSetItem(k,v);
+    };
+    localStorage.__fuDeletedChatGuard=true;
+  }
+
+  setTimeout(()=>{updateSuperButtons();scrubMessageList()},500);
+  setTimeout(()=>{updateSuperButtons();scrubMessageList()},1200);
+  setInterval(()=>{updateSuperButtons();scrubMessageList()},2000);
 })();
 </script>
 
