@@ -1747,6 +1747,7 @@ function showFortiMatchPopup(profile){
   $('matchPopup').classList.add('show');
 }
 
+window.showFortiMatchPopup=showFortiMatchPopup;
 function sendForti(pid){
   const u=me();
   if(!u) return openAuth('log');
@@ -1858,6 +1859,7 @@ function showMatch(p){
   $('matchText').textContent=`Vos y ${p.n||p.name} se mandaron un Forti mutuamente. ¡Chateá ahora!`;
   $('matchPopup').classList.add('show');
 }
+window.showMatch=showMatch;
 function closeMatch(){$('matchPopup').classList.remove('show');$('matchIcon').classList.remove('forti-single')}
 
 // ── Profile panel ──
@@ -2109,6 +2111,7 @@ function showSuperDiamondPopup(fromName){
   setTimeout(()=>{if(ov.parentNode)ov.remove()},8000);
 }
 
+window.showSuperDiamondPopup=showSuperDiamondPopup;
 function showSuperPanel(){
   const u=me();
   $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
@@ -6201,14 +6204,28 @@ setTimeout(enhanceEvents,1500);
     const sent=load(LS_SUPER_SENT,[]);
     sent.push({to:pid,name:p.n||p.name||'Usuario',at:now()});
     save(LS_SUPER_SENT,sent);
-    try{if(typeof window.syncSuperUI==='function')window.syncSuperUI()}catch(e){}
+    try{if(typeof window.syncSuperUI==='function')window.syncSuperUI();}catch(e){}
+    updateSuperUI();
     toast('Súper Diamante enviado a '+(p.n||p.name||'este usuario')+' 💎');
+    try{if(typeof window.showSuperDiamondPopup==='function')window.showSuperDiamondPopup(p.n||p.name||'esta persona');}catch(e){}
     const d=db();
     if(d){
       try{await d.collection('superDiamonds').add({from:uid(),fromName:uname(),to:pid,toName:p.n||p.name||'',createdAt:serverTime(),seen:false})}catch(e){console.warn('super add',e)}
     }
   }
 
+  function updateSuperUI(){
+    const sent=load(LS_SUPER_SENT,[]);
+    const pids=sent.map(function(s){return s.to;});
+    document.querySelectorAll('button[onclick*="sendSuper"],.btn-super').forEach(function(btn){
+      const click=btn.getAttribute('onclick')||'';
+      const m=click.match(/sendSuper\(['"]([^'"]+)['"]\)/);
+      const pid=m?m[1]:(btn.dataset.pid||'');
+      if(!pid)return;
+      const on=pids.includes(pid);
+      if(on){btn.textContent='💎 Enviado';btn.style.opacity='.6';btn.style.background='var(--blue)';}
+    });
+  }
   const oldStartChat=window.startChat;
   window.startChat=function(p){
     window.chatWith=p;
