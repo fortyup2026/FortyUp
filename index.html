@@ -902,27 +902,35 @@ body.chat-open #bottomNav{
 </div>
 
 <!-- ══ CHAT ══ -->
-<div id="chat" class="screen" style="display:none;flex-direction:column;height:100dvh;overflow:hidden;background:#fff">
-  <!-- topbar -->
-  <div style="flex-shrink:0;display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 1px 4px rgba(0,0,0,.06)">
-    <button onclick="go('messages')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#064E3B;padding:.2rem .4rem;line-height:1;flex-shrink:0">←</button>
-    <div id="chatAvatarCircle" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#10B981);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:800;color:#fff;font-size:1rem;flex-shrink:0;overflow:hidden;border:2px solid #10B981">?</div>
+<div id="chat" class="screen" style="display:none;flex-direction:column;height:100dvh;height:100vh;overflow:hidden;background:linear-gradient(160deg,#042f25 0%,#064E3B 40%,#0a5a42 100%)">
+
+  <!-- Topbar oscuro premium -->
+  <div style="flex-shrink:0;display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;background:rgba(4,47,37,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.1)">
+    <button onclick="go('messages')" style="background:rgba(255,255,255,.1);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">←</button>
+    <div id="chatAvatarCircle" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10B981,#6ee7b7);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:800;color:#064E3B;font-size:1.1rem;flex-shrink:0;overflow:hidden;border:2.5px solid rgba(110,231,183,.5);box-shadow:0 0 0 3px rgba(16,185,129,.2)">?</div>
     <div style="flex:1;min-width:0">
-      <div id="chatName" style="font-weight:800;font-size:.95rem;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
-      <div style="font-size:.65rem;color:#10B981;font-weight:700">FortyUp</div>
+      <div id="chatName" style="font-weight:900;font-size:.97rem;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
+      <div style="font-size:.65rem;color:#6ee7b7;font-weight:700;letter-spacing:.03em">FortyUp · En línea</div>
     </div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0"></div>
   </div>
-  <!-- messages -->
-  <div id="chatBox" style="flex:1;overflow-y:auto;padding:.85rem .75rem;display:flex;flex-direction:column;gap:.35rem;background:#f9fafb;min-height:0"></div>
-  <!-- input -->
-  <div style="flex-shrink:0;display:flex;align-items:center;gap:.5rem;padding:.6rem .75rem;background:#fff;border-top:1px solid #e5e7eb">
-    <button onclick="document.getElementById('chatPhotoIn').click()" style="background:none;border:none;font-size:1.15rem;cursor:pointer;color:#6b7280;padding:.3rem;flex-shrink:0">📷</button>
-    <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
-    <input type="text" id="chatInput" placeholder="Escribí un mensaje..."
-      style="flex:1;border:1.5px solid #e5e7eb;border-radius:24px;padding:.55rem .9rem;font-family:'Nunito',sans-serif;font-size:.9rem;outline:none;background:#fff;color:#111"
-      onfocus="this.style.borderColor='#10B981'" onblur="this.style.borderColor='#e5e7eb'"
-      onkeydown="if(event.key==='Enter')sendMsg()">
-    <button onclick="sendMsg()" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#064E3B,#10B981);color:#fff;border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(6,78,59,.3)">➤</button>
+
+  <!-- Messages area con patrón de fondo sutil -->
+  <div id="chatBox" style="flex:1;overflow-y:auto;padding:1rem .85rem;display:flex;flex-direction:column;gap:.5rem;min-height:0;background:transparent"></div>
+
+  <!-- Input area flotante -->
+  <div style="flex-shrink:0;padding:.65rem .75rem calc(.65rem + env(safe-area-inset-bottom,0px));background:rgba(4,47,37,.9);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.08)">
+    <div style="display:flex;align-items:flex-end;gap:.5rem">
+      <button onclick="document.getElementById('chatPhotoIn').click()" style="background:rgba(255,255,255,.1);border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;color:#6ee7b7;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">📷</button>
+      <input type="file" id="chatPhotoIn" accept="image/*" style="display:none" onchange="sendChatPhoto(this)">
+      <div style="flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.15);border-radius:24px;padding:.45rem .85rem;transition:border-color .2s" onfocusin="this.style.borderColor='rgba(110,231,183,.6)'" onfocusout="this.style.borderColor='rgba(255,255,255,.15)'">
+        <textarea id="chatInput" rows="1" placeholder="Escribí un mensaje..."
+          style="width:100%;border:none;outline:none;background:none;font-family:'Nunito',sans-serif;font-size:.9rem;color:#fff;resize:none;max-height:96px;min-height:22px;line-height:1.45;overflow-y:auto;display:block"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      </div>
+      <button onclick="sendMsg()" style="width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#064E3B;border:none;cursor:pointer;font-size:1.1rem;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(16,185,129,.5);flex-shrink:0">➤</button>
+    </div>
   </div>
 </div>
 
@@ -2614,76 +2622,36 @@ html,body{overscroll-behavior:none;}
   };
 
   window.startChat=function(p){
-    if(typeof p==='string')try{p=JSON.parse(p)}catch(e){return;}
-    if(!p||!p.id){return;}
-    window.chatWith=p;
-    currentPeer=p;
-    // Update UI
+    if(typeof p==='string') try{p=JSON.parse(p)}catch(e){return}
+    const meId=uid(); if(!meId){ toastSafe('Primero iniciá sesión'); return; }
+    if(!p||!p.id){ toastSafe('No pude abrir ese chat'); return; }
+    currentPeer=p; currentChatId=chatIdFor(meId,p.id); window.chatWith=p;
+    if(chatUnsub) { chatUnsub(); chatUnsub=null; }
     const av=byId('chatAvatarCircle');
-    if(av){const ph=profilePhoto(p);av.innerHTML=ph?('<img src="'+ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):profileName(p)[0].toUpperCase();}
-    const nm=byId('chatName');if(nm)nm.textContent=profileName(p);
-    const inp=byId('chatInput');if(inp){inp.disabled=false;inp.placeholder='Escribile a '+profileName(p)+'...';}
-    // Go to chat
-    if(typeof window.go==='function')window.go('chat');
-    // Render from localStorage immediately
-    renderLocalChat(p.id);
-    // Try Firebase in background
-    const meId=uid();
-    if(db&&meId){
-      try{
-        if(chatUnsub){chatUnsub();chatUnsub=null;}
-        currentChatId=chatIdFor(meId,p.id);
-        chatUnsub=db.collection('conversations').doc(currentChatId).collection('messages')
-          .orderBy('createdAt','asc').onSnapshot(function(snap){
-            // Merge Firebase messages with local ones
-            const fbMsgs=[];
-            snap.forEach(function(doc){fbMsgs.push({id:doc.id,...doc.data()});});
-            if(fbMsgs.length)renderLocalChat(p.id,fbMsgs,meId);
-          },function(e){console.warn('chat snap',e);});
-      }catch(e){console.warn('chat firebase',e);}
+    if(av){
+      const photo=profilePhoto(p);
+      av.innerHTML=photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':profileName(p)[0].toUpperCase();
     }
-    setTimeout(function(){const inp=byId('chatInput');if(inp)inp.focus();},200);
+    const nm=byId('chatName'); if(nm) nm.textContent=profileName(p);
+    const box=byId('chatBox'); if(box) box.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>Cargando mensajes...</p></div>';
+    if(typeof window.go==='function') window.go('chat');
+    const inp=byId('chatInput'); if(inp){ inp.disabled=false; inp.placeholder='Escribile a '+profileName(p)+'...'; setTimeout(()=>inp.focus(),100); }
+    chatUnsub=db.collection('conversations').doc(currentChatId).collection('messages').orderBy('createdAt','asc').onSnapshot(snap=>{
+      const msgs=[]; snap.forEach(doc=>msgs.push({id:doc.id,...doc.data()}));
+      renderChatMessages(msgs);
+    }, e=>{ console.warn('chat snapshot',e); if(box) box.innerHTML='<div class="empty"><div class="empty-ico">⚠️</div><p>No pude cargar este chat.</p></div>'; });
   };
 
-  function renderLocalChat(pid,fbMsgs,meId){
-    const box=byId('chatBox');
-    if(!box)return;
-    const peer=window.chatWith;
-    // Get local messages
-    const local=JSON.parse(localStorage.getItem('fu_chats')||'{}');
-    const arr=Array.isArray(local[pid])?local[pid]:[];
-    // If Firebase gave us messages, prefer those
-    const msgs=fbMsgs&&fbMsgs.length?fbMsgs:arr;
-    const myId=meId||uid()||'me';
+  function renderChatMessages(msgs){
+    const box=byId('chatBox'); if(!box) return;
+    const meId=uid();
     if(!msgs.length){
-      box.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:#9ca3af">'
-        +'<div style="font-size:3rem;margin-bottom:.75rem">&#128075;</div>'
-        +'<div style="font-weight:700;color:#064E3B;margin-bottom:.2rem">&iexcl;Salud&aacute; a '+(peer?esc(profileName(peer)):'')+'!</div>'
-        +'<div style="font-size:.8rem">Escribí abajo para iniciar la charla</div></div>';
+      box.innerHTML=`<div style="text-align:center;padding:3rem 1rem;color:var(--muted)"><div style="font-size:4rem;margin-bottom:.75rem">👋</div><p style="font-size:.95rem;font-weight:700;color:var(--g);margin-bottom:.3rem">Todavía no hay mensajes con ${esc(profileName(currentPeer))}</p><p style="font-size:.82rem">Escribí abajo para iniciar la charla.</p></div>`;
       return;
     }
-    var htm='';
-    msgs.forEach(function(m){
-      var mine=(m.from==='me'||m.from===myId||m.senderId===myId);
-      var content=m.photo?('<img src="'+m.photo+'" style="max-width:200px;border-radius:12px;display:block">'):esc(m.text||'');
-      var time=m.time||'';
-      if(mine){
-        htm+='<div style="display:flex;justify-content:flex-end;margin-bottom:.35rem">'
-          +'<div style="max-width:75%;background:#064E3B;color:#fff;border-radius:18px 4px 18px 18px;padding:.6rem .85rem;font-size:.87rem;line-height:1.5;word-break:break-word">'
-          +content+'<div style="font-size:.58rem;opacity:.6;margin-top:.2rem;text-align:right">'+time+' &#10003;</div>'
-          +'</div></div>';
-      }else{
-        htm+='<div style="display:flex;justify-content:flex-start;margin-bottom:.35rem">'
-          +'<div style="max-width:75%;background:#fff;color:#111;border-radius:4px 18px 18px 18px;padding:.6rem .85rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 1px 4px rgba(0,0,0,.08)">'
-          +content+'<div style="font-size:.58rem;opacity:.5;margin-top:.2rem">'+time+'</div>'
-          +'</div></div>';
-      }
-    });
-    box.innerHTML=htm;
-    box.scrollTop=box.scrollHeight;
+    box.innerHTML=msgs.map(m=>`<div class="bubble ${m.from===meId?'mine':'theirs'}">${m.photo?`<img src="${m.photo}" style="max-width:200px;border-radius:12px;display:block">`:esc(m.text||'')}</div>`).join('');
+    requestAnimationFrame(()=>{ box.scrollTop=box.scrollHeight; });
   }
-
-
 
   window.sendMsg=async function(){
     const inp=byId('chatInput'); const text=inp?.value.trim(); const meId=uid();
@@ -6714,40 +6682,14 @@ setTimeout(enhanceEvents,1500);
   };
 
   function renderChatFast(){
-    var peer=window.chatWith;
-    var box=document.getElementById('chatBox');
+    const peer=window.chatWith;
+    const box=$('chatBox');
     if(!peer||!box)return;
-    var arr=getChatArr(peer.id);
-    if(!arr.length){
-      box.innerHTML='<div style="text-align:center;padding:3rem 1rem;color:#9ca3af">'
-        +'<div style="font-size:3rem;margin-bottom:.75rem">&#128075;</div>'
-        +'<div style="font-weight:700;color:#064E3B;margin-bottom:.25rem">&iexcl;Salud&aacute; a '+safe(peer.n||peer.name||'')+'!</div>'
-        +'<div style="font-size:.8rem">S&eacute; el primero en escribir</div></div>';
-      return;
-    }
-    var htm='';
-    arr.forEach(function(m){
-      var mine=m.from==='me';
-      var txt=safe(m.text||'');
-      var time=safe(m.time||'');
-      if(m.photo){
-        txt='<img src="'+m.photo+'" style="max-width:200px;border-radius:12px;display:block">';
-      }
-      if(mine){
-        htm+='<div style="display:flex;justify-content:flex-end">'
-          +'<div style="max-width:75%;background:#064E3B;color:#fff;border-radius:18px 4px 18px 18px;padding:.6rem .85rem;font-size:.87rem;line-height:1.5;word-break:break-word">'
-          +txt+'<div style="font-size:.58rem;opacity:.6;margin-top:.2rem;text-align:right">'+time+' &#10003;</div>'
-          +'</div></div>';
-      }else{
-        htm+='<div style="display:flex;justify-content:flex-start">'
-          +'<div style="max-width:75%;background:#fff;color:#111;border-radius:4px 18px 18px 18px;padding:.6rem .85rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 1px 4px rgba(0,0,0,.08)">'
-          +txt+'<div style="font-size:.58rem;opacity:.5;margin-top:.2rem">'+time+'</div>'
-          +'</div></div>';
-      }
-    });
-    box.innerHTML=htm;
-    box.scrollTop=box.scrollHeight;
+    const arr=getChatArr(peer.id);
+    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
+    setTimeout(()=>box.scrollTop=box.scrollHeight,30);
   }
+  let chatUnsub=null;
   function listenChatRemote(peerId){
     const d=db(), u=uid();
     if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}
@@ -6798,9 +6740,8 @@ setTimeout(enhanceEvents,1500);
     if(!text||!peer)return;
     addLocalChat(peer.id,{from:'me',text,time:nowTime(),date:nowIso()});
     input.value='';
-    if(input.style)input.style.height='auto';
+    input.style.height='auto';
     renderChatFast();
-    if(typeof renderLocalChat==='function')renderLocalChat(peer.id);
     const d=db(), u=uid();
     if(d&&u){
       try{
@@ -7294,6 +7235,97 @@ body.fu-rendering *{transition:none!important}
   setTimeout(()=>{applyFortiStateInstant();renderMessagesInstant()},80);
   setTimeout(()=>{applyFortiStateInstant();renderMessagesInstant()},400);
   setInterval(applyFortiStateInstant,1000);
+})();
+</script>
+
+
+<style id="fuMensajeriaPremiumFixStyle">
+.fu-msg-top-actions{display:flex;gap:.45rem;margin-bottom:.75rem;flex-wrap:wrap}
+.fu-msg-top-actions button{border:0;border-radius:999px;padding:.55rem .75rem;font-family:'Nunito',sans-serif;font-weight:1000;font-size:.76rem;cursor:pointer;background:var(--soft);color:var(--g);border:1.5px solid var(--line)}
+.fu-msg-error{border-color:#fecaca!important;background:#fff7f7!important}
+.fu-msg-error .msg-name{color:#b91c1c!important}
+.fu-msg-lock{opacity:.58;filter:grayscale(.15)}
+.fu-chat-menu{position:fixed;inset:0;z-index:100020;background:rgba(4,47,37,.72);backdrop-filter:blur(8px);display:flex;align-items:flex-end}
+.fu-chat-menu-sheet{width:100%;max-width:520px;margin:0 auto;background:var(--cream);border-radius:26px 26px 0 0;padding:1rem 1rem calc(1.2rem + env(safe-area-inset-bottom,0px));box-shadow:0 -16px 42px rgba(0,0,0,.22)}
+.fu-chat-menu-handle{width:42px;height:4px;border-radius:999px;background:var(--line);margin:0 auto .9rem}
+.fu-chat-menu-title{font-family:'Playfair Display',serif;color:var(--g);font-size:1.15rem;font-weight:900;margin-bottom:.2rem}
+.fu-chat-menu-sub{color:var(--muted);font-size:.78rem;font-weight:800;margin-bottom:.9rem}
+.fu-chat-menu-btn{width:100%;border:0;border-radius:18px;padding:.82rem .9rem;margin-bottom:.55rem;text-align:left;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:1000;cursor:pointer;background:#fff;color:var(--txt);border:1.5px solid var(--line)}
+.fu-chat-menu-btn.danger{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+.fu-chat-menu-btn.close{text-align:center;background:var(--g);color:#fff}
+</style>
+
+<script id="fuMensajeriaPremiumFixScript">
+(function(){
+  const LS_CHATS='fu_chats', LS_ARCH='fu_archived_chats_v1', LS_BLOCK='fu_blocked', LS_MSG_NOTIS='fu_msg_notifications_v1', LS_FORTI='fu_forti_records', LS_ATT='fu_final_attendance_all_v2';
+  function $(id){return document.getElementById(id)}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function auth(){try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}}
+  function db(){try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}}
+  function me(){try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}}
+  function uid(){const a=auth();return (a&&a.currentUser&&a.currentUser.uid)||(me()&&(me().uid||me().id))||''}
+  function nowIso(){return new Date().toISOString()}
+  function nowTime(){return new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}
+  function serverTime(){return firebase.firestore.FieldValue.serverTimestamp()}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+
+  function chats(){const c=load(LS_CHATS,{});return c&&typeof c==='object'?c:{}}
+  function setChats(c){save(LS_CHATS,c)}
+  function archived(){const a=load(LS_ARCH,[]);return Array.isArray(a)?a:[]}
+  function setArchived(a){save(LS_ARCH,a)}
+  function blocked(){const b=load(LS_BLOCK,[]);return Array.isArray(b)?b:[]}
+  function setBlocked(b){save(LS_BLOCK,b)}
+  function msgNotis(){const n=load(LS_MSG_NOTIS,{});return n&&typeof n==='object'?n:{}}
+  function setMsgNotis(n){save(LS_MSG_NOTIS,n)}
+  function fortiRecords(){const r=load(LS_FORTI,{sent:[],received:[]});r.sent=Array.isArray(r.sent)?r.sent:[];r.received=Array.isArray(r.received)?r.received:[];return r}
+  function hasFortiMatch(pid){const r=fortiRecords();return r.sent.includes(pid)&&r.received.includes(pid)}
+  function hasConversation(pid){const c=chats();return Array.isArray(c[pid])&&c[pid].length>0}
+  function sameEventConnection(pid){try{const att=load(LS_ATT,{}), u=uid();return Object.values(att||{}).some(list=>Array.isArray(list)&&list.map(x=>x.uid||x.id||x).includes(u)&&list.map(x=>x.uid||x.id||x).includes(pid))}catch(e){return false}}
+  function canChat(pid){return !!pid && !blocked().includes(pid) && (hasConversation(pid)||hasFortiMatch(pid)||sameEventConnection(pid))}
+  function conversationId(a,b){return [a,b].filter(Boolean).sort().join('_')}
+  function updateMsgDot(){const dot=$('msgDot');const n=msgNotis();const count=Object.values(n).filter(x=>x&&x.unread).length;if(dot)dot.classList.toggle('show',count>0)}
+  function markRead(pid){const n=msgNotis();if(n[pid])n[pid].unread=false;setMsgNotis(n);updateMsgDot()}
+  function markUnread(pid,text){const n=msgNotis();n[pid]={unread:true,text:text||'Nuevo mensaje',at:nowIso()};setMsgNotis(n);updateMsgDot()}
+
+  function deleteConversation(pid){const c=chats();delete c[pid];setChats(c);const n=msgNotis();delete n[pid];setMsgNotis(n);renderMessagesPremium();updateMsgDot();toast('Conversación eliminada')}
+  function archiveConversation(pid){const a=archived();if(!a.includes(pid))a.push(pid);setArchived(a);renderMessagesPremium();toast('Conversación archivada')}
+  function blockConversation(pid){const b=blocked();if(!b.includes(pid))b.push(pid);setBlocked(b);deleteConversation(pid);toast('Usuario bloqueado')}
+  window.cleanBrokenChats=function(){const c=chats();let removed=0;Object.keys(c).forEach(pid=>{const arr=Array.isArray(c[pid])?c[pid]:[];if(!pid||!arr.length||pid==='undefined'||pid==='null'||(!profile(pid)&&pid.startsWith('undefined'))){delete c[pid];removed++}});setChats(c);renderMessagesPremium();toast(removed?'Chats con error eliminados: '+removed:'No encontré chats con error')}
+
+  function openChatMenu(pid){const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible'};document.querySelectorAll('.fu-chat-menu').forEach(x=>x.remove());const o=document.createElement('div');o.className='fu-chat-menu';o.onclick=e=>{if(e.target===o)o.remove()};o.innerHTML=`<div class="fu-chat-menu-sheet"><div class="fu-chat-menu-handle"></div><div class="fu-chat-menu-title">${safe(p.n||p.name)}</div><div class="fu-chat-menu-sub">Opciones de conversación</div><button class="fu-chat-menu-btn" data-a="open">💬 Abrir chat</button><button class="fu-chat-menu-btn" data-a="archive">📦 Archivar conversación</button><button class="fu-chat-menu-btn danger" data-a="delete">🗑 Eliminar conversación</button><button class="fu-chat-menu-btn danger" data-a="block">🚫 Bloquear usuario</button><button class="fu-chat-menu-btn close" data-a="close">Cerrar</button></div>`;o.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='open'){o.remove();startChatPremium(pid)}if(a==='archive'){o.remove();archiveConversation(pid)}if(a==='delete'){o.remove();deleteConversation(pid)}if(a==='block'){o.remove();blockConversation(pid)}if(a==='close')o.remove()});document.body.appendChild(o)}
+  window.openChatMenu=openChatMenu;
+
+  let holdTimer=null;
+  window.fuChatHoldStart=function(ev,pid){clearTimeout(holdTimer);holdTimer=setTimeout(()=>openChatMenu(pid),520)}
+  window.fuChatHoldEnd=function(){clearTimeout(holdTimer)}
+
+  function rowHTML(pid,arr){const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible',img:''};const last=arr[arr.length-1]||{};const n=msgNotis()[pid]||{};const error=!profile(pid);return `<div class="msg-item ${error?'fu-msg-error':''} ${!canChat(pid)?'fu-msg-lock':''}" onclick="startChatPremium('${safe(pid)}')" oncontextmenu="event.preventDefault();openChatMenu('${safe(pid)}')" onmousedown="fuChatHoldStart(event,'${safe(pid)}')" onmouseup="fuChatHoldEnd()" ontouchstart="fuChatHoldStart(event,'${safe(pid)}')" ontouchend="fuChatHoldEnd()"><img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'"><div class="msg-info"><div class="msg-name">${n.unread?'🔔 ':''}${safe(p.n||p.name)}</div><div class="msg-preview">${safe(last.text||n.text||'Mensaje')}</div></div><div class="msg-time">${safe(last.time||'')}</div></div>`}
+
+  function renderMessagesPremium(){const list=$('msgList');if(!list)return;const c=chats(), a=archived(), rows=[];Object.keys(c).forEach(pid=>{if(a.includes(pid))return;const arr=Array.isArray(c[pid])?c[pid]:[];if(arr.length)rows.push({pid,arr,last:arr[arr.length-1]})});rows.sort((x,y)=>new Date(y.last.date||y.last.createdAt||0)-new Date(x.last.date||x.last.createdAt||0));list.innerHTML=`<div class="fu-msg-top-actions"><button onclick="cleanBrokenChats()">Limpiar chats con error</button><button onclick="showArchivedChats()">Archivados</button></div>`+(rows.length?rows.map(x=>rowHTML(x.pid,x.arr)).join(''):`<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. El chat se habilita con match de Forti, Súper Diamante o evento en común.</p></div>`);updateMsgDot()}
+  window.renderMessages=renderMessagesPremium;
+  window.showArchivedChats=function(){const list=$('msgList');if(!list)return;const c=chats(), a=archived();const rows=a.filter(pid=>Array.isArray(c[pid])&&c[pid].length).map(pid=>({pid,arr:c[pid]}));list.innerHTML=`<div class="fu-msg-top-actions"><button onclick="renderMessages()">← Volver</button></div>`+(rows.length?rows.map(x=>rowHTML(x.pid,x.arr)).join(''):`<div class="empty"><div class="empty-ico">📦</div><p>No hay chats archivados.</p></div>`)}
+
+  function renderChatMessages(pid){const box=$('chatBox');if(!box)return;const arr=Array.isArray(chats()[pid])?chats()[pid]:[];box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');setTimeout(()=>box.scrollTop=box.scrollHeight,30)}
+  function setChatHeader(p){const name=$('chatName');if(name)name.textContent=p.n||p.name||'Usuario';const avatar=$('chatAvatarCircle');if(avatar){if(p.img||p.photo)avatar.innerHTML='<img src="'+safe(p.img||p.photo)+'" style="width:100%;height:100%;object-fit:cover">';else avatar.textContent=(p.n||p.name||'U').charAt(0).toUpperCase()}const chatScreen=$('chat');if(chatScreen){chatScreen.querySelectorAll('div').forEach(d=>{if((d.textContent||'').trim()==='FortyUp · En línea'){d.textContent='FortyUp · conversación privada';d.className='fu-status-real'}})}}
+
+  let chatUnsub=null;
+  function listenRemote(pid){const d=db(), u=uid();if(chatUnsub){try{chatUnsub()}catch(e){};chatUnsub=null}if(!d||!u||!pid)return;try{const id=conversationId(u,pid);chatUnsub=d.collection('conversations').doc(id).collection('messages').orderBy('createdAt','asc').limit(200).onSnapshot(s=>{const arr=[];s.forEach(doc=>{const x=doc.data()||{};arr.push({from:(x.from||x.senderId)===u?'me':'theirs',text:x.text||'',time:x.time||'',date:nowIso()})});if(arr.length){const c=chats();c[pid]=arr;setChats(c);renderChatMessages(pid);renderMessagesPremium()}},err=>console.warn('chat listener',err))}catch(e){}}
+
+  window.startChatPremium=function(pid){const p=profile(pid);if(!p&&!hasConversation(pid)){toast('Ese usuario ya no está disponible. Podés eliminar el chat manteniendo apretado.');openChatMenu(pid);return}if(!canChat(pid)){toast('Para chatear necesitás match de Forti o compartir un evento');return}window.chatWith=p||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible'};markRead(pid);if(typeof window.go==='function')window.go('chat');setChatHeader(window.chatWith);renderChatMessages(pid);listenRemote(pid)}
+  window.startChat=function(p){if(!p||!p.id)return toast('No encontré el usuario');if(!canChat(p.id)&&!hasConversation(p.id)){toast('Para chatear necesitás match de Forti o compartir un evento');return}window.startChatPremium(p.id)}
+
+  window.sendMsg=async function(){const input=$('chatInput');const text=(input&&input.value||'').trim();const peer=window.chatWith;if(!text||!peer)return;const pid=peer.id;if(!canChat(pid)&&!hasConversation(pid)){toast('Este chat no está habilitado');return}const c=chats();c[pid]=Array.isArray(c[pid])?c[pid]:[];c[pid].push({from:'me',text,time:nowTime(),date:nowIso()});setChats(c);input.value='';input.style.height='auto';renderChatMessages(pid);renderMessagesPremium();const d=db(), u=uid();if(d&&u){try{const id=conversationId(u,pid);await d.collection('conversations').doc(id).set({participants:[u,pid],lastText:text,lastSender:u,lastTime:nowTime(),updatedAt:serverTime()},{merge:true});await d.collection('conversations').doc(id).collection('messages').add({from:u,senderId:u,to:pid,text,time:nowTime(),createdAt:serverTime()})}catch(e){console.warn('send message remote',e)}}}
+
+  async function loadRemoteConversations(){const d=db(), u=uid();if(!d||!u)return;try{const snap=await d.collection('conversations').where('participants','array-contains',u).limit(50).get();const c=chats();snap.forEach(doc=>{const x=doc.data()||{};const other=(x.participants||[]).find(id=>id!==u);if(!other)return;c[other]=Array.isArray(c[other])?c[other]:[];if(x.lastText&&!c[other].some(m=>m.text===x.lastText&&m.time===x.lastTime)){c[other].push({from:x.lastSender===u?'me':'theirs',text:x.lastText,time:x.lastTime||'',date:nowIso()});if(x.lastSender!==u)markUnread(other,x.lastText)}});setChats(c);renderMessagesPremium()}catch(e){console.warn('remote conversations',e)}}
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function'&&!oldGo.__msgPremiumFix){window.go=function(id){const r=oldGo.apply(this,arguments);setTimeout(()=>{if(id==='messages'){renderMessagesPremium();loadRemoteConversations()}},100);return r};window.go.__msgPremiumFix=true}
+  setTimeout(()=>{renderMessagesPremium();updateMsgDot()},700);
+  setInterval(updateMsgDot,1500);
 })();
 </script>
 
