@@ -7329,5 +7329,167 @@ body.fu-rendering *{transition:none!important}
 })();
 </script>
 
+
+<style id="fuNoFlickerGlobalFinalStyle">
+/* === FortyUp NO FLICKER GLOBAL FINAL === */
+body.fu-no-flicker *{
+  transition:none!important;
+  animation:none!important;
+}
+#msgList{
+  min-height:220px;
+}
+.fu-msg-top-actions{
+  min-height:38px;
+  opacity:1!important;
+  transform:none!important;
+  animation:none!important;
+}
+#msgList .msg-item,
+#profilesList .profile-card,
+#homeProfiles .profile-card,
+#plansList .plan-card,
+#homePlans .plan-mini{
+  animation:none!important;
+}
+.screen.active{
+  animation:none!important;
+}
+.fu-stable-hidden{
+  visibility:hidden!important;
+}
+</style>
+
+<script id="fuNoFlickerGlobalFinalScript">
+(function(){
+  const LS_CHATS='fu_chats';
+  const LS_ARCH='fu_archived_chats_v1';
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k)) ?? d}catch(e){return d}}
+  function safe(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+  function profiles(){try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}}
+  function profile(pid){return profiles().find(p=>p.id===pid)||null}
+
+  function chats(){
+    const c=load(LS_CHATS,{});
+    return c&&typeof c==='object'?c:{};
+  }
+  function archived(){
+    const a=load(LS_ARCH,[]);
+    return Array.isArray(a)?a:[];
+  }
+
+  function buildMessagesStableHTML(){
+    const c=chats();
+    const a=archived();
+    const rows=[];
+    Object.keys(c).forEach(pid=>{
+      if(a.includes(pid))return;
+      const arr=Array.isArray(c[pid])?c[pid]:[];
+      if(arr.length)rows.push({pid,arr,last:arr[arr.length-1]});
+    });
+    rows.sort((x,y)=>new Date(y.last.date||y.last.createdAt||0)-new Date(x.last.date||x.last.createdAt||0));
+
+    const top=`<div class="fu-msg-top-actions">
+      <button onclick="cleanBrokenChats()">Limpiar chats con error</button>
+      <button onclick="showArchivedChats()">Archivados</button>
+    </div>`;
+
+    if(!rows.length){
+      return top + `<div class="empty"><div class="empty-ico">💬</div><p>Todavía no tenés mensajes. El chat se habilita con match de Forti, Súper Diamante o evento en común.</p></div>`;
+    }
+
+    return top + rows.map(({pid,arr,last})=>{
+      const p=profile(pid)||{id:pid,n:'Usuario no disponible',name:'Usuario no disponible',img:''};
+      const error=!profile(pid);
+      return `<div class="msg-item ${error?'fu-msg-error':''}" onclick="startChatPremium('${safe(pid)}')" oncontextmenu="event.preventDefault();openChatMenu('${safe(pid)}')" onmousedown="fuChatHoldStart(event,'${safe(pid)}')" onmouseup="fuChatHoldEnd()" ontouchstart="fuChatHoldStart(event,'${safe(pid)}')" ontouchend="fuChatHoldEnd()">
+        <img class="msg-avatar" src="${safe(p.img||p.photo||'')}" onerror="this.style.display='none'">
+        <div class="msg-info">
+          <div class="msg-name">${safe(p.n||p.name||'Usuario')}</div>
+          <div class="msg-preview">${safe(last.text||'Mensaje')}</div>
+        </div>
+        <div class="msg-time">${safe(last.time||'')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderMessagesStable(){
+    const list=$('msgList');
+    if(!list)return;
+    const next=buildMessagesStableHTML();
+    if(list.dataset.lastStableHtml===next)return;
+    list.dataset.lastStableHtml=next;
+    list.innerHTML=next;
+  }
+
+  function stabilizeScreen(id){
+    document.body.classList.add('fu-no-flicker');
+
+    if(id==='messages'){
+      const list=$('msgList');
+      if(list){
+        list.classList.add('fu-stable-hidden');
+        renderMessagesStable();
+        requestAnimationFrame(()=>{
+          renderMessagesStable();
+          list.classList.remove('fu-stable-hidden');
+        });
+      }
+    }
+
+    requestAnimationFrame(()=>{
+      document.body.classList.remove('fu-no-flicker');
+    });
+  }
+
+  const oldRenderMessages=window.renderMessages;
+  window.renderMessages=function(){
+    renderMessagesStable();
+    if(typeof oldRenderMessages==='function'){
+      setTimeout(()=>renderMessagesStable(),0);
+    }
+  };
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__noFlickerGlobalFinal){
+    window.go=function(id){
+      document.body.classList.add('fu-no-flicker');
+
+      if(id==='messages'){
+        renderMessagesStable();
+      }
+
+      const r=oldGo.apply(this,arguments);
+
+      stabilizeScreen(id);
+
+      setTimeout(()=>{
+        if(id==='messages')renderMessagesStable();
+      },80);
+
+      return r;
+    };
+    window.go.__noFlickerGlobalFinal=true;
+  }
+
+  const oldShowArchived=window.showArchivedChats;
+  if(typeof oldShowArchived==='function' && !oldShowArchived.__noFlickerGlobalFinal){
+    window.showArchivedChats=function(){
+      document.body.classList.add('fu-no-flicker');
+      const r=oldShowArchived.apply(this,arguments);
+      requestAnimationFrame(()=>document.body.classList.remove('fu-no-flicker'));
+      return r;
+    };
+    window.showArchivedChats.__noFlickerGlobalFinal=true;
+  }
+
+  setTimeout(()=>{
+    const active=[...document.querySelectorAll('.screen.active')][0]?.id||'';
+    if(active==='messages')renderMessagesStable();
+  },500);
+})();
+</script>
+
 </body>
 </html>
