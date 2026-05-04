@@ -777,7 +777,21 @@ body.chat-open #bottomNav{
 
 
 @keyframes bIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.flip-card{width:96px;height:96px;perspective:600px;cursor:pointer;position:relative}
+.flip-card-inner{width:100%;height:100%;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;position:relative}
+.flip-card-inner.flipped{transform:rotateY(180deg)}
+.flip-card-front,.flip-card-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:50%;overflow:hidden}
+.flip-card-front{background:var(--soft)}
+.flip-card-back{transform:rotateY(180deg);background:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;border:3px solid var(--g3)}
+.flip-card-back #qrCodeContainer canvas,.flip-card-back #qrCodeContainer img{width:70px!important;height:70px!important}
+.flip-hint{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:.58rem;color:rgba(255,255,255,.75);white-space:nowrap;font-weight:700}
 </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -928,9 +942,17 @@ body.chat-open #bottomNav{
   </div>
   <div class="screen-inner" style="padding-top:0">
     <div class="me-hero">
-      <div class="me-photo-wrap">
-        <img id="mePhoto" class="me-photo" src="" alt="">
-        <div class="me-photo-edit" onclick="document.getElementById('newProfilePhoto').click()">✏</div>
+      <div class="me-photo-wrap" id="mePhotoFlipWrap">
+        <div class="flip-card" onclick="flipProfileCard()">
+          <div class="flip-card-inner" id="flipCardInner">
+            <div class="flip-card-front">
+              <img id="mePhoto" class="me-photo" src="" alt="">
+              <div class="flip-hint">Toc&aacute; para QR</div>
+            </div>
+            <div class="flip-card-back"><div id="qrCodeContainer" style="width:72px;height:72px;display:flex;align-items:center;justify-content:center"></div></div>
+          </div>
+        </div>
+        <div class="me-photo-edit" onclick="event.stopPropagation();document.getElementById('newProfilePhoto').click()">✏</div>
         <input type="file" id="newProfilePhoto" accept="image/*" style="display:none" onchange="saveNewPhoto(this)">
       </div>
       <div class="me-name" id="meNameAge">Nombre, 00</div>
@@ -2117,6 +2139,12 @@ function showSuperPanel(){
   $('panelContent').innerHTML='<div class="panel-title">💎 Súper Diamantes</div><div style="text-align:center;padding:1.5rem 0"><div style="font-size:4rem;margin-bottom:.5rem">💎</div><p style="font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem">Podés enviar 1 Súper Diamante por día a quien más te guste.</p><div style="background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:.85rem"><div style="font-size:2rem;font-weight:900;color:var(--g)">'+(u&&u.super!=null?u.super:1)+'</div><div style="font-size:.78rem;color:var(--muted)">disponibles hoy</div></div></div>';
   $('profilePanel').classList.add('open');
 }
+
+var _qrGen=false,_flipped=false;
+function flipProfileCard(){var inner=document.getElementById('flipCardInner');if(!inner)return;_flipped=!_flipped;if(_flipped){inner.classList.add('flipped');if(!_qrGen)generateQR();}else inner.classList.remove('flipped');}
+function generateQR(){var u=me?me():null;if(!u)return;var c=document.getElementById('qrCodeContainer');if(!c)return;c.innerHTML='';var url=window.location.origin+window.location.pathname+'?user='+encodeURIComponent(u.id);try{new QRCode(c,{text:url,width:70,height:70,colorDark:'#064E3B',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});_qrGen=true;}catch(e){c.textContent=u.name||'QR';}}
+(function(){try{var p=new URLSearchParams(window.location.search),userId=p.get('user');if(!userId)return;setTimeout(function(){var users=typeof getSavedUsers==='function'?getSavedUsers():[];var found=users.find(function(u){return u.id===userId;});if(found&&typeof openPanel==='function')openPanel({id:found.id,n:found.name,a:found.age,c:found.city,img:found.photo||'',bio:found.bio||'',intent:found.intent||''});try{window.history.replaceState({},'',window.location.pathname);}catch(e){}},1200);}catch(e){}})();
+
 // ── Toast ──
 function toast(msg,dur=3000){
   const el=$('toast');
@@ -4193,7 +4221,7 @@ body{padding-bottom:70px!important}
   color:var(--g)!important;
   border:1.5px solid var(--line)!important;
 }
-.fu-panel-close-premium{display:none!important;
+.fu-panel-close-premium{display:none!important;display:none!important;
   position:absolute!important;
   top:.8rem!important;
   right:1rem!important;
@@ -6244,8 +6272,41 @@ setTimeout(enhanceEvents,1500);
     if(!box||!key)return;
     const chats=load('fu_chats',{});
     const arr=Array.isArray(chats[key])?chats[key]:[];
-    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${safe(m.text||'')}<small style="display:block;font-size:.62rem;opacity:.7;margin-top:.2rem">${safe(m.time||'')}</small></div>`).join('');
-    setTimeout(()=>box.scrollTop=box.scrollHeight,40);
+    const peer=window.chatWith;
+    const photo=peer?(peer.img||peer.photo||''):'';
+    const initial=peer?(peer.n||peer.name||'?')[0].toUpperCase():'?';
+    const miniAv=photo
+      ?('<div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;align-self:flex-end"><img src="'+photo+'" style="width:100%;height:100%;object-fit:cover"></div>')
+      :('<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#10B981,#6ee7b7);flex-shrink:0;align-self:flex-end;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#064E3B">'+initial+'</div>');
+    if(!arr.length){
+      box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;color:rgba(255,255,255,.6);min-height:200px">'
+        +'<div style="font-size:3.5rem;margin-bottom:.75rem;display:inline-block;animation:wave 1.5s ease-in-out infinite">&#128075;</div>'
+        +'<div style="font-weight:800;color:#6ee7b7;font-size:.95rem;margin-bottom:.3rem">&iexcl;Salud&aacute; a '+(peer?safe(peer.n||peer.name||''):'')+'!</div>'
+        +'<div style="font-size:.8rem">S&eacute; el primero en escribir</div></div>';
+      return;
+    }
+    let lastDate='',htm='';
+    arr.forEach(function(m){
+      const mine=m.from==='me';
+      const d=m.date||'';
+      if(d&&d!==lastDate){
+        htm+='<div style="text-align:center;font-size:.6rem;font-weight:800;color:rgba(255,255,255,.4);margin:.5rem 0;text-transform:uppercase;letter-spacing:.06em">'+safe(d)+'</div>';
+        lastDate=d;
+      }
+      const content=m.photo?('<img src="'+m.photo+'" style="max-width:200px;border-radius:14px;display:block">'):safe(m.text||'');
+      const meta='<div style="font-size:.58rem;margin-top:.2rem;opacity:.6;text-align:'+(mine?'right':'left')+'">'+safe(m.time||'')+(mine?' &#10003;&#10003;':'')+'</div>';
+      if(mine){
+        htm+='<div style="display:flex;justify-content:flex-end;margin-bottom:.35rem">'
+          +'<div style="max-width:78%;background:linear-gradient(135deg,#10B981,#6ee7b7);color:#042f25;border-radius:18px 4px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;box-shadow:0 4px 16px rgba(16,185,129,.35);font-weight:600">'
+          +content+meta+'</div></div>';
+      }else{
+        htm+='<div style="display:flex;align-items:flex-end;gap:.45rem;margin-bottom:.35rem">'+miniAv
+          +'<div style="max-width:75%;background:rgba(255,255,255,.12);color:#fff;border-radius:4px 18px 18px 18px;padding:.65rem .9rem;font-size:.87rem;line-height:1.5;word-break:break-word;border:1px solid rgba(255,255,255,.1)">'
+          +content+meta+'</div></div>';
+      }
+    });
+    box.innerHTML=htm;
+    setTimeout(function(){box.scrollTop=box.scrollHeight;},40);
   }
   window.sendMsg=async function(){
     const input=el('chatInput');
