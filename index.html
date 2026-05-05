@@ -378,7 +378,7 @@ button{cursor:pointer}
   grid-template-columns:1fr 1fr;
   gap:.75rem;
 }
-.profile-card{
+.profile-card{pointer-events:auto;
   display:flex;
   flex-direction:column;
   cursor:pointer;
@@ -1469,7 +1469,7 @@ function renderProfiles(target='profilesList',limit=null){
 function closePanel(){
   $('profilePanel').classList.remove('open');
 }
-function openProfile(pid){
+function openProfile(pid){console.log('openProfile',pid);
   const p=profileById(pid);
   if(!p)return toast('No encontré el perfil');
 
@@ -1540,11 +1540,7 @@ function showEventosPanel(){
 function showSuperPanel(){
   const r=diamondRecords();
   $('panelContent').innerHTML=`<h3 class="section-title">💎 Tus Diamantes</h3>
-  <div class="diamond-card"><div class="diamond-grid">
-    <div class="diamond-stat"><strong>${r.sent.length}</strong><span>Enviados</span></div>
-    <div class="diamond-stat"><strong>${r.matches.length}</strong><span>Matches</span></div>
-    <div class="diamond-stat"><strong>${remainingDiamonds()}</strong><span>Hoy</span></div>
-  </div></div>`;
+  </div>`;
   $('profilePanel').classList.add('open');
 }
 function renderMessages(){
@@ -1619,11 +1615,7 @@ function renderMe(){
     <div class="profile-name">${esc(name)}${age?', '+age:''}</div>
     <div class="profile-city">📍 ${esc(city||'Sin ciudad')}</div>
   </div>
-  <div class="diamond-card">
-    <div class="diamond-head">
-      <div><h3>💎 Tus Diamantes</h3><p>Tu forma principal de conectar en FortyUp</p></div>
-      <div class="diamond-badge"><span id="diamAvail">5</span> hoy</div>
-    </div>
+  
     <div class="diamond-grid">
       <div class="diamond-stat"><strong id="diamSent">0</strong><span>Enviados</span></div>
       <div class="diamond-stat"><strong id="diamMatches">0</strong><span>Matches</span></div>
