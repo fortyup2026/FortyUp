@@ -8990,6 +8990,9 @@ body.fu-no-jump *{
 
   window.__fuOpenProfileStable=function(p){
     if(!p||!p.id)return toast('No encontré el perfil');
+    // Always register in global map so buttons inside panel can find it
+    window._fuProfileMap = window._fuProfileMap || {};
+    window._fuProfileMap[p.id] = p;
     unlockUI();
     const panel=$('profilePanel');
     const content=$('panelContent');
@@ -9011,7 +9014,7 @@ body.fu-no-jump *{
       <div style="display:flex;flex-direction:column;gap:.65rem">
         <button class="btn btn-green" style="width:100%" onclick="event.stopPropagation();sendForti('${safe(p.id)}')">◆ Mandar Forti</button>
         <button class="btn btn-green btn-super" style="width:100%;background:linear-gradient(135deg,#1d6faa,var(--blue))" onclick="event.stopPropagation();sendSuper('${safe(p.id)}')">💎 Súper Diamante</button>
-        <button class="btn btn-green" style="width:100%;background:linear-gradient(135deg,#444,#666)" onclick="event.stopPropagation();closePanel();startChat(${safe(JSON.stringify(p))})">💬 Chatear</button>
+        <button class="btn btn-green" style="width:100%;background:linear-gradient(135deg,#444,#666)" onclick="event.stopPropagation();closePanel();startChatById('${safe(p.id)}')">💬 Chatear</button>
         <button class="btn btn-out" style="width:100%" onclick="event.stopPropagation();toggleFav('${safe(p.id)}')">☆ Favorito</button>
         <button class="btn" style="width:100%;background:none;color:var(--muted);font-size:.8rem" onclick="event.stopPropagation();blockProfile('${safe(p.id)}')">🚫 Bloquear</button>
         <button class="btn" style="width:100%;background:none;color:var(--red);font-size:.8rem" onclick="event.stopPropagation();reportProfile('${safe(p.id)}')">⚑ Reportar</button>
@@ -9071,7 +9074,6 @@ body.fu-no-jump *{
   const oldGo=window.go;
   if(typeof oldGo==='function'&&!oldGo.__quirurgicoCardsNotis){
     window.go=function(id){
-      document.body.classList.add('fu-no-jump');
       unlockUI();
       if(id==='messages'){
         stripBell();
@@ -9079,20 +9081,10 @@ body.fu-no-jump *{
       }
       const res=oldGo.apply(this,arguments);
       requestAnimationFrame(()=>{
-        unlockUI();
         applyFortiUI();
         applySuperUI();
-        stripBell();
-        cleanGhostChats();
-        document.body.classList.remove('fu-no-jump');
+        if(id==='messages'){ stripBell(); cleanGhostChats(); }
       });
-      setTimeout(()=>{
-        unlockUI();
-        applyFortiUI();
-        applySuperUI();
-        stripBell();
-        cleanGhostChats();
-      },90);
       return res;
     };
     window.go.__quirurgicoCardsNotis=true;
@@ -9114,7 +9106,18 @@ body.fu-no-jump *{
 
   setTimeout(()=>{unlockUI();applyFortiUI();applySuperUI();stripBell();cleanGhostChats()},250);
   setTimeout(()=>{unlockUI();applyFortiUI();applySuperUI();stripBell();cleanGhostChats()},900);
-  setInterval(()=>{unlockUI();applyFortiUI();applySuperUI();stripBell();cleanGhostChats()},2000);
+  // Reduced interval - only run when no interaction is happening to avoid blocking clicks
+  let _fuLastInteraction=Date.now();
+  document.addEventListener('touchstart',()=>{_fuLastInteraction=Date.now()},{passive:true});
+  document.addEventListener('mousedown',()=>{_fuLastInteraction=Date.now()});
+  document.addEventListener('click',()=>{_fuLastInteraction=Date.now()});
+  setInterval(()=>{
+    if(Date.now()-_fuLastInteraction < 1000) return; // skip if user just interacted
+    applyFortiUI();
+    applySuperUI();
+    stripBell();
+    cleanGhostChats();
+  },3000);
 })();
 </script>
 
