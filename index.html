@@ -1086,6 +1086,11 @@ button{cursor:pointer}
 .create-event-card p{color:rgba(6,78,59,.75);font-size:.82rem;line-height:1.45;font-weight:800;margin-bottom:.8rem}
 .create-event-card button{width:100%;border:0;border-radius:999px;padding:.85rem 1rem;background:var(--g);color:#fff;font-size:.92rem;font-weight:1000}
 
+
+/* === APP REAL FIREBASE SYNC === */
+.fu-sync-pill{position:fixed;top:62px;left:50%;transform:translateX(-50%);z-index:950;background:rgba(6,78,59,.94);color:#fff;border-radius:999px;padding:.38rem .75rem;font-size:.72rem;font-weight:900;box-shadow:0 8px 22px rgba(6,78,59,.18);opacity:0;pointer-events:none;transition:.25s}
+.fu-sync-pill.show{opacity:1}
+
 </style>
 </head>
 <body>
@@ -2630,52 +2635,6 @@ initApp();
 </script>
 
 
-<!-- FIREBASE REAL USERS -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",
-  authDomain: "fortyup-9dfe7.firebaseapp.com",
-  databaseURL: "https://fortyup-9dfe7-default-rtdb.firebaseio.com",
-  projectId: "fortyup-9dfe7",
-  storageBucket: "fortyup-9dfe7.firebasestorage.app",
-  messagingSenderId: "649626072035",
-  appId: "1:649626072035:web:694a3d054e4dc79a4ee6d6"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.loadFirebaseUsers = async function(){
-  try{
-    const snapshot = await get(ref(db, "users"));
-    if(snapshot.exists()){
-      const data = snapshot.val();
-      const users = Object.values(data);
-      localStorage.setItem("fu_users", JSON.stringify(users));
-      if(window.renderProfiles) renderProfiles();
-      console.log("Usuarios cargados desde Firebase:", users.length);
-    }
-  }catch(e){
-    console.log("Error Firebase:", e);
-  }
-}
-
-window.saveUserFirebase = async function(user){
-  try{
-    await set(ref(db, "users/" + user.id), user);
-  }catch(e){
-    console.log("Error guardando:", e);
-  }
-}
-
-// AUTO LOAD
-setTimeout(loadFirebaseUsers, 800);
-</script>
-
-
 <!-- GEOLOCATION + DISTANCE SYSTEM -->
 <script>
 (function(){
@@ -2979,6 +2938,338 @@ window.renderProfiles = function(){
 
   setTimeout(()=>{renderPlans(); if(typeof renderHome==='function')renderHome();},400);
 })();
+</script>
+
+
+<script type="module" id="fuAppRealFirebaseScript">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, set, update, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY",
+  authDomain: "fortyup-9dfe7.firebaseapp.com",
+  databaseURL: "https://fortyup-9dfe7-default-rtdb.firebaseio.com",
+  projectId: "fortyup-9dfe7",
+  storageBucket: "fortyup-9dfe7.firebasestorage.app",
+  messagingSenderId: "649626072035",
+  appId: "1:649626072035:web:694a3d054e4dc79a4ee6d6",
+  measurementId: "G-DTZ2B67BSY"
+};
+
+const app = initializeApp(firebaseConfig);
+const rtdb = getDatabase(app);
+window.fuFirebaseReady = true;
+
+const LS_USERS='fu_users';
+const LS_USER='fu_user';
+const LS_DIAMONDS='fu_diamond_records_v2';
+const LS_EVENTS='fu_created_events_v1';
+const LS_CHATS='fu_chats_v2';
+const LS_UNREAD='fu_unread_msgs_v2';
+
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function store(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function toast(msg){ if(typeof window.toast==='function') window.toast(msg); else console.log(msg); }
+function syncPill(msg){
+  let el=document.getElementById('fuSyncPill');
+  if(!el){el=document.createElement('div');el.id='fuSyncPill';el.className='fu-sync-pill';document.body.appendChild(el)}
+  el.textContent=msg;el.classList.add('show');clearTimeout(syncPill.t);syncPill.t=setTimeout(()=>el.classList.remove('show'),1400);
+}
+function safeKey(v){
+  const s=String(v||'local').trim()||'local';
+  try{return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+  catch(e){return s.replace(/[.#$\[\]\/]/g,'_')}
+}
+function now(){return new Date().toISOString()}
+function currentUser(){return load(LS_USER,null)}
+function currentId(){const u=currentUser()||{};return u.id||u.uid||u.email||''}
+function userKey(){return safeKey(currentId())}
+function normalizeUser(u){
+  if(!u)return null;
+  const id=u.id||u.uid||u.email||safeKey(u.name||Date.now());
+  return {...u,id,uid:id,n:u.n||u.name||'Usuario',name:u.name||u.n||'Usuario',c:u.c||u.city||'',city:u.city||u.c||'',img:u.img||u.photo||'',photo:u.photo||u.img||'',updatedAt:now()};
+}
+function mergeUsers(remote){
+  const me=currentUser();
+  const local=load(LS_USERS,[]);
+  const map=new Map();
+  [...local,...remote].forEach(u=>{u=normalizeUser(u); if(u&&u.id)map.set(u.id,u)});
+  if(me&&me.id)map.delete(me.id);
+  const arr=[...map.values()];
+  store(LS_USERS,arr);
+  if(typeof window.renderProfiles==='function')window.renderProfiles();
+  if(typeof window.renderHome==='function')window.renderHome();
+}
+async function saveUser(user){
+  const u=normalizeUser(user); if(!u||!u.id)return;
+  await set(ref(rtdb,'users/'+safeKey(u.id)),u);
+}
+async function loadUsersOnce(){
+  try{
+    const snap=await get(ref(rtdb,'users'));
+    if(snap.exists()) mergeUsers(Object.values(snap.val()||{}));
+  }catch(e){console.warn('loadUsersOnce',e)}
+}
+function listenUsers(){
+  try{
+    onValue(ref(rtdb,'users'),snap=>{
+      if(snap.exists()) mergeUsers(Object.values(snap.val()||{}));
+    });
+  }catch(e){console.warn('listenUsers',e)}
+}
+
+// Mantener una copia de las funciones originales por si hace falta.
+const originalRegister=window.register;
+const originalLogin=window.login;
+const originalSaveEditedProfile=window.saveEditedProfile;
+const originalSaveNewPhoto=window.saveNewPhoto;
+const originalUpdateGPS=window.updateGPS;
+const originalSendDiamond=window.sendDiamond;
+const originalSaveNewEvent=window.saveNewEvent;
+const originalRenderMessages=window.renderMessages;
+const originalRenderChat=window.renderChat;
+
+window.saveUserFirebase=async function(user){try{await saveUser(user)}catch(e){console.warn('saveUserFirebase',e)}};
+window.loadFirebaseUsers=loadUsersOnce;
+
+// Registro real: conserva tu UI actual y guarda en Firebase.
+window.register=async function(){
+  if(typeof originalRegister==='function') await originalRegister();
+  const u=currentUser();
+  if(u){await saveUser(u); syncPill('Perfil guardado en Firebase')}
+  await loadUsersOnce();
+};
+
+// Login real: busca por email en Firebase si no está local.
+window.login=async function(){
+  const email=(document.getElementById('lEmail')?.value||'').trim().toLowerCase();
+  await loadUsersOnce();
+  if(email){
+    const users=load(LS_USERS,[]);
+    let found=users.find(u=>String(u.email||'').toLowerCase()===email);
+    if(!found){
+      try{
+        const snap=await get(ref(rtdb,'users'));
+        if(snap.exists()){
+          found=Object.values(snap.val()||{}).find(u=>String(u.email||'').toLowerCase()===email);
+        }
+      }catch(e){console.warn(e)}
+    }
+    if(found){store(LS_USER,normalizeUser(found)); if(typeof window.closeAuth==='function')window.closeAuth(); if(typeof window.initApp==='function')window.initApp(); syncPill('Sesión cargada desde Firebase'); return;}
+  }
+  if(typeof originalLogin==='function') originalLogin();
+};
+
+// Perfil editado y foto persistente.
+window.saveEditedProfile=async function(){
+  if(typeof originalSaveEditedProfile==='function') await originalSaveEditedProfile();
+  const u=currentUser(); if(u){await saveUser(u); syncPill('Perfil actualizado en Firebase')}
+  await loadUsersOnce();
+};
+window.saveNewPhoto=async function(input){
+  if(typeof originalSaveNewPhoto==='function') await originalSaveNewPhoto(input);
+  const u=currentUser(); if(u){await saveUser(u); syncPill('Foto guardada en Firebase')}
+  await loadUsersOnce();
+};
+
+// Ubicación real persistente.
+window.updateLocation = window.updateGPS = function(){
+  if(!navigator.geolocation){toast('Tu dispositivo no soporta ubicación');return}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const u=normalizeUser(currentUser()||{});
+    u.location={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy||null,updatedAt:now()};
+    store(LS_USER,u);
+    await saveUser(u);
+    syncPill('Ubicación guardada');
+    if(typeof window.renderProfiles==='function')window.renderProfiles();
+    if(typeof window.renderHome==='function')window.renderHome();
+  },()=>toast('No pude obtener la ubicación. Revisá permisos.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+};
+
+// Diamantes reales en Firebase.
+function diamonds(){const r=load(LS_DIAMONDS,{sent:[],received:[],matches:[]});r.sent=Array.isArray(r.sent)?r.sent:[];r.received=Array.isArray(r.received)?r.received:[];r.matches=Array.isArray(r.matches)?r.matches:[];return r}
+function saveDiamondsLocal(r){store(LS_DIAMONDS,r); if(typeof window.updateDiamondUI==='function')window.updateDiamondUI()}
+function addRec(arr,item,key){if(item&&item[key]&&!arr.some(x=>x&&x[key]===item[key]))arr.push(item)}
+function addStr(arr,val){if(val&&!arr.includes(val))arr.push(val)}
+function profileByIdSafe(id){try{return typeof window.profileById==='function'?window.profileById(id):null}catch(e){return null}}
+function pname(p){return (p&&(p.n||p.name))||'Usuario'}
+function todayKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function sentToday(){const t=todayKey();return diamonds().sent.filter(x=>{const d=new Date(x.at);return !isNaN(d)&&todayKey(d)===t})}
+function sentTo(pid){return sentToday().some(x=>x.to===pid)}
+function remaining(){return Math.max(0,5-sentToday().length)}
+
+async function syncDiamonds(){
+  const meId=currentId(); if(!meId)return;
+  try{
+    const [sentSnap,recSnap]=await Promise.all([get(ref(rtdb,'diamondsSent/'+safeKey(meId))),get(ref(rtdb,'diamondsReceived/'+safeKey(meId)))]);
+    const r=diamonds();
+    if(sentSnap.exists()) Object.values(sentSnap.val()||{}).forEach(x=>addRec(r.sent,x,'to'));
+    if(recSnap.exists()) Object.values(recSnap.val()||{}).forEach(x=>addRec(r.received,x,'from'));
+    r.sent.forEach(s=>{if(r.received.some(x=>x.from===s.to))addStr(r.matches,s.to)});
+    saveDiamondsLocal(r);
+  }catch(e){console.warn('syncDiamonds',e)}
+}
+function listenDiamonds(){
+  const meId=currentId(); if(!meId)return;
+  try{
+    onValue(ref(rtdb,'diamondsReceived/'+safeKey(meId)),snap=>{
+      const r=diamonds();
+      if(snap.exists()) Object.values(snap.val()||{}).forEach(x=>addRec(r.received,x,'from'));
+      r.sent.forEach(s=>{if(r.received.some(x=>x.from===s.to)){const was=r.matches.includes(s.to);addStr(r.matches,s.to); if(!was && typeof window.showDiamondMatch==='function') window.showDiamondMatch(profileByIdSafe(s.to)||{id:s.to,n:s.name||'Usuario'});}});
+      saveDiamondsLocal(r);
+    });
+  }catch(e){console.warn('listenDiamonds',e)}
+}
+window.sendDiamond=async function(pid){
+  const meId=currentId(); if(!meId){if(typeof window.openAuth==='function')window.openAuth('log');return}
+  const p=profileByIdSafe(pid); if(!p){toast('No encontré el perfil');return}
+  const r=diamonds();
+  if(sentTo(pid)){toast('Ya le enviaste diamante a '+pname(p));return}
+  if(remaining()<=0){toast('No tenés diamantes disponibles. Volvé mañana 💎');return}
+  const item={to:pid,name:pname(p),at:now(),from:meId,fromName:pname(currentUser())};
+  addRec(r.sent,item,'to');
+  saveDiamondsLocal(r);
+  await set(ref(rtdb,'diamondsSent/'+safeKey(meId)+'/'+safeKey(pid)),item);
+  await set(ref(rtdb,'diamondsReceived/'+safeKey(pid)+'/'+safeKey(meId)),{from:meId,name:pname(currentUser()),at:item.at,to:pid,toName:pname(p)});
+  syncPill('Diamante enviado');
+  await syncDiamonds();
+  const updated=diamonds();
+  if(updated.matches.includes(pid) && typeof window.showDiamondMatch==='function') window.showDiamondMatch(p);
+};
+
+// Eventos creados en Firebase.
+function createdEvents(){const arr=load(LS_EVENTS,[]);return Array.isArray(arr)?arr:[]}
+async function saveEventsRemote(){
+  const arr=createdEvents();
+  for(const ev of arr){if(ev&&ev.id) await set(ref(rtdb,'events/'+safeKey(ev.id)),ev)}
+}
+async function loadEventsRemote(){
+  try{
+    const snap=await get(ref(rtdb,'events'));
+    if(snap.exists()){
+      const remote=Object.values(snap.val()||{});
+      const map=new Map();
+      [...createdEvents(),...remote].forEach(ev=>{if(ev&&ev.id)map.set(ev.id,ev)});
+      store(LS_EVENTS,[...map.values()]);
+      if(typeof window.renderPlans==='function')window.renderPlans();
+      if(typeof window.renderHome==='function')window.renderHome();
+    }
+  }catch(e){console.warn('loadEventsRemote',e)}
+}
+function listenEvents(){
+  try{
+    onValue(ref(rtdb,'events'),snap=>{
+      if(snap.exists()){
+        const remote=Object.values(snap.val()||{});
+        const map=new Map();
+        [...createdEvents(),...remote].forEach(ev=>{if(ev&&ev.id)map.set(ev.id,ev)});
+        store(LS_EVENTS,[...map.values()]);
+        if(typeof window.renderPlans==='function')window.renderPlans();
+        if(typeof window.renderHome==='function')window.renderHome();
+      }
+    });
+  }catch(e){console.warn('listenEvents',e)}
+}
+window.saveNewEvent=async function(){
+  // Ejecuta tu flujo visual actual y luego sube todo lo creado.
+  const prev=JSON.stringify(createdEvents());
+  if(typeof originalSaveNewEvent==='function') await originalSaveNewEvent();
+  await saveEventsRemote();
+  syncPill('Evento guardado en Firebase');
+};
+
+// Chat real en Firebase, tanto usuarios como eventos.
+let activeChatUnsub=null;
+function convKey(id){return safeKey([currentId(),id].sort().join('_'))}
+function eventConvKey(eventId){return 'event_'+safeKey(eventId)}
+function chatKey(chat){return chat&&chat.event?eventConvKey(String(chat.id).replace('event_','')):convKey(chat.id)}
+function localChats(){const c=load(LS_CHATS,{});return c&&typeof c==='object'?c:{}}
+function saveLocalChats(c){store(LS_CHATS,c)}
+function unread(){const u=load(LS_UNREAD,{});return u&&typeof u==='object'?u:{}}
+function setUnread(u){store(LS_UNREAD,u); const dot=document.getElementById('msgDot'); if(dot)dot.classList.toggle('show',Object.values(u).some(Boolean))}
+function profileOrEvent(id){
+  if(id.startsWith('event_')){
+    const evId=id.replace('event_','');
+    let ev=null;
+    try{ if(typeof window.openEvent==='function'){ const arr=[...(load(LS_EVENTS,[])),...(window.plans||[])]; ev=arr.find(x=>x.id===evId) } }catch(e){}
+    return ev||{id,n:'Evento',name:'Evento',img:'',event:true};
+  }
+  return profileByIdSafe(id)||{id,n:'Usuario',name:'Usuario',img:''};
+}
+function renderChatLocal(){
+  const chat=window.currentChat; if(!chat)return;
+  const box=document.getElementById('chatBox'); if(!box)return;
+  const c=localChats(); const arr=c[chat.id]||[];
+  box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${String(m.text||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[x]))}<div style="font-size:.62rem;opacity:.7;margin-top:.2rem">${m.time||''}</div></div>`).join('');
+  setTimeout(()=>box.scrollTop=box.scrollHeight,30);
+}
+function listenChat(chat){
+  if(activeChatUnsub)try{activeChatUnsub()}catch(e){}
+  if(!chat||!currentId())return;
+  const ck=chatKey(chat);
+  const rf=ref(rtdb,'chats/'+ck+'/messages');
+  const cb=snap=>{
+    if(!snap.exists())return;
+    const arr=Object.values(snap.val()||{}).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).map(m=>({...m,from:m.fromId===currentId()?'me':'theirs'}));
+    const c=localChats(); c[chat.id]=arr; saveLocalChats(c); renderChatLocal();
+  };
+  onValue(rf,cb);
+  activeChatUnsub=()=>off(rf,'value',cb);
+}
+window.startChatById=function(pid){
+  const p=profileByIdSafe(pid); if(!p){toast('No encontré el perfil');return}
+  const hasMatch=(diamonds().matches||[]).includes(pid) || load('fu_event_attendance',[]).length>0;
+  if(!hasMatch){toast('El chat se habilita con match de diamante o evento en común 💎');return}
+  window.currentChat={...p,id:pid,event:false};
+  const u=unread();delete u[pid];setUnread(u);
+  const name=document.getElementById('chatName'), av=document.getElementById('chatAvatar');
+  if(name)name.textContent=pname(p); if(av)av.src=p.img||p.photo||'';
+  if(typeof window.go==='function')window.go('chat');
+  listenChat(window.currentChat); renderChatLocal();
+};
+const oldStartEventChat=window.startEventChat;
+window.startEventChat=function(eventId){
+  let ev=null;
+  const arr=[...load(LS_EVENTS,[]),...(window.plans||[])]; ev=arr.find(x=>x.id===eventId)||{id:eventId,title:'Evento',img:'',event:true};
+  if(!load('fu_event_attendance',[]).includes(eventId)){toast('Primero tenés que sumarte al evento');return}
+  window.currentChat={id:'event_'+eventId,n:ev.title,name:ev.title,img:ev.img,event:true};
+  const u=unread();delete u['event_'+eventId];setUnread(u);
+  if(typeof window.closePanel==='function')window.closePanel();
+  const name=document.getElementById('chatName'), av=document.getElementById('chatAvatar');
+  if(name)name.textContent=ev.title||ev.name; if(av)av.src=ev.img||'';
+  if(typeof window.go==='function')window.go('chat');
+  listenChat(window.currentChat); renderChatLocal();
+};
+window.renderChat=renderChatLocal;
+window.sendMsg=async function(){
+  const chat=window.currentChat; if(!chat)return;
+  const input=document.getElementById('chatInput'); const text=(input?.value||'').trim(); if(!text)return;
+  const msg={from:'me',fromId:currentId(),fromName:pname(currentUser()),text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),date:now()};
+  const c=localChats(); c[chat.id]=c[chat.id]||[]; c[chat.id].push(msg); saveLocalChats(c); input.value=''; input.style.height='auto'; renderChatLocal();
+  await push(ref(rtdb,'chats/'+chatKey(chat)+'/messages'),{...msg,from:'remote'});
+  await set(ref(rtdb,'chatIndex/'+safeKey(currentId())+'/'+safeKey(chat.id)),{id:chat.id,name:chat.name||chat.n||'Chat',img:chat.img||'',event:!!chat.event,lastText:text,updatedAt:msg.date});
+  if(!chat.event) await set(ref(rtdb,'chatIndex/'+safeKey(chat.id)+'/'+safeKey(currentId())),{id:currentId(),name:pname(currentUser()),img:currentUser()?.img||currentUser()?.photo||'',event:false,lastText:text,updatedAt:msg.date});
+};
+window.renderMessages=function(){
+  const c=localChats(); const u=unread(); const ids=Object.keys(c).filter(id=>c[id]&&c[id].length);
+  const list=document.getElementById('msgList'); if(!list)return;
+  list.innerHTML=ids.length?ids.map(id=>{
+    const data=profileOrEvent(id); const last=c[id][c[id].length-1]; const isEvent=id.startsWith('event_');
+    return `<div class="msg-item" onclick="${isEvent?`startEventChat('${id.replace('event_','')}')`:`startChatById('${id}')`}"><img class="msg-avatar" src="${data.img||data.photo||''}"><div class="msg-info"><div class="msg-name">${isEvent?'📅 ':''}${data.n||data.name||data.title||'Usuario'}</div><div class="msg-preview">${last.text||'Mensaje'}</div></div>${u[id]?'<span class="unread-pill"></span>':''}<div class="msg-time">${last.time||''}</div></div>`;
+  }).join(''):'<div class="empty"><div class="empty-ico">💬</div><p>Mandá un diamante o sumate a un evento para empezar una charla.</p></div>';
+  setUnread(u);
+};
+
+// Arranque real.
+async function bootReal(){
+  await loadUsersOnce(); listenUsers();
+  const u=currentUser(); if(u&&u.id) await saveUser(u);
+  await syncDiamonds(); listenDiamonds();
+  await loadEventsRemote(); listenEvents();
+  if(typeof window.updateDiamondUI==='function')window.updateDiamondUI();
+  if(typeof window.renderHome==='function')window.renderHome();
+}
+setTimeout(bootReal,800);
 </script>
 
 </body>
