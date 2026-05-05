@@ -8095,5 +8095,574 @@ setTimeout(enhanceEmptyStates,500);
 })();
 </script>
 
+
+<style id="fuDiamanteFinalSystemStyle">
+/* === FortyUp sistema final: Diamantes reemplazan Forti === */
+
+/* Cards clickeables */
+.profile-card,
+.profile-card *,
+#profilesList,
+#homeProfiles{
+  pointer-events:auto!important;
+}
+.profile-card{
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:3!important;
+}
+
+/* Overlays cerrados no bloquean */
+.auth-overlay:not(.open),
+.panel-overlay:not(.open),
+.match-popup:not(.show){
+  pointer-events:none!important;
+}
+.auth-overlay.open,
+.panel-overlay.open,
+.match-popup.show{
+  pointer-events:auto!important;
+}
+
+/* Sin campanas viejas */
+.msg-name .fu-unread-dot,
+.msg-name .fu-bell,
+.msg-name .bell,
+.msg-name .fu-hidden-bell{
+  display:none!important;
+}
+
+/* Forti queda fuera de la experiencia */
+.btn-forti,
+button[onclick*="sendForti"]{
+  display:none!important;
+}
+
+/* Botones ordenados */
+.profile-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:.38rem!important;
+  width:100%!important;
+}
+.profile-actions button{
+  min-width:0!important;
+  width:100%!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.btn-super,
+.btn-diamond-final{
+  background:linear-gradient(135deg,#27B7F2,#6ED8FF)!important;
+  color:#064E3B!important;
+  border:none!important;
+  border-radius:50px!important;
+  padding:.5rem .65rem!important;
+  font-size:.75rem!important;
+  font-weight:1000!important;
+}
+.btn-super.fu-diamond-sent,
+.btn-diamond-final.fu-diamond-sent{
+  background:#E8FFF6!important;
+  color:#047857!important;
+  border:1.5px solid #A7F3D0!important;
+  box-shadow:none!important;
+}
+.btn-super.fu-diamond-disabled,
+.btn-diamond-final.fu-diamond-disabled{
+  opacity:.55!important;
+  filter:grayscale(.2)!important;
+}
+
+/* Perfil: ocultar viejo bloque de Fortis si aparece */
+#sentFortis,
+#recFortis{
+  font-size:1.1rem!important;
+}
+.me-stat-fortis .me-stat-main-label::after{
+  content:"";
+}
+
+/* Match diamante */
+.match-icon.diamond-match{
+  color:#27B7F2!important;
+  text-shadow:0 0 22px rgba(39,183,242,.65),0 8px 28px rgba(0,0,0,.25);
+}
+
+/* Navegación estable */
+body.fu-diamond-stable *{
+  animation:none!important;
+}
+</style>
+
+<script id="fuDiamanteFinalSystemScript">
+(function(){
+  const LS_DIAMONDS='fu_diamond_records_v1';
+  const LS_DIAMOND_MATCHES='fu_diamond_matches_shown_v1';
+  const LS_MSG_NOTIS='fu_msg_notifications_v1';
+  const DAILY_LIMIT=5;
+
+  const byId=id=>document.getElementById(id);
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const toast=msg=>{if(typeof window.toast==='function')window.toast(msg);else alert(msg)};
+  const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+  function auth(){
+    try{return window.fuAuth || (window.firebase && firebase.auth ? firebase.auth() : null)}catch(e){return null}
+  }
+  function db(){
+    try{return window.fuDb || (window.firebase && firebase.firestore ? firebase.firestore() : null)}catch(e){return null}
+  }
+  function currentUser(){
+    try{return typeof window.me==='function'?window.me():JSON.parse(localStorage.getItem('fu_user')||'null')}catch(e){return null}
+  }
+  function uid(){
+    const a=auth();
+    const u=currentUser();
+    return (a&&a.currentUser&&a.currentUser.uid)||(u&&(u.uid||u.id||u.email))||'';
+  }
+  function uname(){
+    const a=auth();
+    const u=currentUser();
+    return (u&&(u.name||u.n))||(a&&a.currentUser&&a.currentUser.email&&a.currentUser.email.split('@')[0])||'Usuario';
+  }
+  function serverTime(){
+    try{return firebase.firestore.FieldValue.serverTimestamp()}catch(e){return new Date().toISOString()}
+  }
+  function profiles(){
+    try{
+      if(typeof window.allProfiles==='function')return window.allProfiles();
+      if(typeof allProfiles==='function')return allProfiles();
+    }catch(e){}
+    return [];
+  }
+  function profile(pid){
+    return profiles().find(p=>p.id===pid||p.uid===pid)||null;
+  }
+  function pname(p){return (p&&(p.n||p.name))||'esta persona'}
+  function todayKey(d=new Date()){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+  }
+
+  function unlockUI(){
+    document.body.style.pointerEvents='auto';
+    document.documentElement.style.pointerEvents='auto';
+    document.body.classList.remove('fu-stable-mode','fu-hard-stable','fu-nav-stable','fu-rendering','fu-msg-stable','fu-card-unlock','fu-no-jump');
+    document.querySelectorAll('.auth-overlay:not(.open),.panel-overlay:not(.open),.match-popup:not(.show)').forEach(el=>el.style.pointerEvents='none');
+    document.querySelectorAll('.profile-card,.profile-card *').forEach(el=>el.style.pointerEvents='auto');
+  }
+
+  function stripOldNotis(){
+    try{localStorage.removeItem('fu_light_notis')}catch(e){}
+    document.querySelectorAll('.msg-name').forEach(el=>{
+      const cleaned=(el.textContent||'').replace(/🔔/g,'').replace(/◆/g,'').replace(/\s+/g,' ').trim();
+      if(el.textContent!==cleaned)el.textContent=cleaned;
+      el.querySelectorAll('.fu-unread-dot,.fu-bell,.bell,.fu-hidden-bell').forEach(x=>x.remove());
+    });
+    const n=load(LS_MSG_NOTIS,{});
+    Object.keys(n||{}).forEach(k=>{if(n[k])n[k].unread=false});
+    save(LS_MSG_NOTIS,n||{});
+    const dot=byId('msgDot'); if(dot)dot.classList.remove('show');
+  }
+
+  function diamondRecords(){
+    const r=load(LS_DIAMONDS,{sent:[],received:[],matches:[]});
+    r.sent=Array.isArray(r.sent)?r.sent:[];
+    r.received=Array.isArray(r.received)?r.received:[];
+    r.matches=Array.isArray(r.matches)?r.matches:[];
+    return r;
+  }
+  function saveDiamondRecords(r){
+    save(LS_DIAMONDS,r);
+    updateDiamondStats();
+  }
+  function sentToday(){
+    const t=todayKey();
+    return diamondRecords().sent.filter(x=>{
+      const d=x&&x.at?new Date(x.at):null;
+      return d && !isNaN(d.getTime()) && todayKey(d)===t;
+    });
+  }
+  function remainingDiamonds(){
+    return Math.max(0,DAILY_LIMIT-sentToday().length);
+  }
+  function sentTo(pid){
+    return sentToday().some(x=>x.to===pid);
+  }
+  function addUniqueRecord(arr, item, key='to'){
+    if(!item || !item[key])return;
+    if(!arr.some(x=>x&&x[key]===item[key]))arr.push(item);
+  }
+  function addUniqueString(arr,val){
+    if(val&&!arr.includes(val))arr.push(val);
+  }
+  function matchKey(pid){
+    return [uid(),pid].sort().join('_');
+  }
+  function matchShown(pid){
+    const a=load(LS_DIAMOND_MATCHES,[]);
+    return a.includes(matchKey(pid));
+  }
+  function markMatchShown(pid){
+    const a=load(LS_DIAMOND_MATCHES,[]);
+    const k=matchKey(pid);
+    if(!a.includes(k))a.push(k);
+    save(LS_DIAMOND_MATCHES,a);
+  }
+  function hasDiamondMatch(pid){
+    const r=diamondRecords();
+    return r.matches.includes(pid) || (r.sent.some(x=>x.to===pid) && r.received.some(x=>x.from===pid));
+  }
+
+  function updateDiamondStats(){
+    const r=diamondRecords();
+    const sentCount=r.sent.length;
+    const matchCount=r.matches.length;
+    const s=byId('sentFortis');
+    const rec=byId('recFortis');
+    if(s)s.textContent=sentCount;
+    if(rec)rec.textContent=matchCount;
+
+    document.querySelectorAll('.me-stat-fortis .me-stat-l').forEach(el=>{
+      if((el.textContent||'').includes('Enviados'))el.textContent='Diamantes';
+      if((el.textContent||'').includes('Recibidos'))el.textContent='Matches';
+      if((el.textContent||'').includes('Fortis'))el.textContent='Diamantes';
+    });
+
+    const superCount=byId('superCount');
+    if(superCount)superCount.textContent=remainingDiamonds();
+    const meSuperCount=byId('meSuperCount');
+    if(meSuperCount)meSuperCount.textContent=remainingDiamonds();
+  }
+
+  function pidFromDiamondButton(btn){
+    const click=btn.getAttribute('onclick')||'';
+    let m=click.match(/sendSuper\(['"]([^'"]+)['"]\)/);
+    if(m)return m[1];
+    m=click.match(/sendDiamond\(['"]([^'"]+)['"]\)/);
+    if(m)return m[1];
+    return btn.dataset.pid||btn.closest('[data-pid]')?.dataset.pid||'';
+  }
+  function applyDiamondUI(){
+    const left=remainingDiamonds();
+    document.querySelectorAll('button[onclick*="sendSuper"],button[onclick*="sendDiamond"],.btn-super,.btn-diamond-final').forEach(btn=>{
+      const pid=pidFromDiamondButton(btn);
+      if(!pid)return;
+      const sent=sentTo(pid);
+      btn.classList.toggle('fu-diamond-sent',sent);
+      btn.classList.toggle('fu-diamond-disabled',!sent&&left<=0);
+      btn.textContent=sent?'✓ Diamante enviado':(left>0?'💎 Enviar diamante':'Sin 💎');
+      btn.disabled=false;
+      btn.title=sent?'Ya le enviaste diamante hoy':(left>0?left+' diamantes disponibles':'Volvé mañana');
+    });
+    updateDiamondStats();
+  }
+  window.applySuperUI=applyDiamondUI;
+  window.applyDiamondUI=applyDiamondUI;
+
+  function showDiamondMatch(p){
+    if(!p)return;
+    const pid=p.id||p.uid;
+    markMatchShown(pid);
+    const r=diamondRecords();
+    addUniqueString(r.matches,pid);
+    saveDiamondRecords(r);
+
+    const pop=byId('matchPopup');
+    const icon=byId('matchIcon');
+    const title=byId('matchTitle');
+    const text=byId('matchText');
+
+    if(icon){
+      icon.textContent='💎';
+      icon.classList.add('diamond-match');
+      icon.classList.remove('forti-single');
+    }
+    if(title)title.textContent='¡Match de Diamante!';
+    if(text)text.innerHTML=`Vos y <span style="color:#6ED8FF;font-weight:900">${esc(pname(p))}</span> se enviaron diamante. Ya pueden empezar a hablar.`;
+    if(pop)pop.classList.add('show');
+    else toast('¡Match de Diamante con '+pname(p)+'!');
+  }
+
+  async function checkReverseDiamond(pid){
+    const meId=uid();
+    const d=db();
+    if(!meId||!d)return false;
+    try{
+      const direct=await d.collection('diamondLikes').doc(`${pid}_${meId}`).get();
+      if(direct.exists)return true;
+      const q=await d.collection('diamondLikes').where('from','==',pid).where('to','==',meId).limit(1).get();
+      return !q.empty;
+    }catch(e){
+      console.warn('checkReverseDiamond',e);
+      return false;
+    }
+  }
+
+  window.sendDiamond=async function(pid){
+    const meId=uid();
+    if(!meId)return (typeof window.openAuth==='function'?window.openAuth('log'):toast('Primero iniciá sesión'));
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+
+    let r=diamondRecords();
+    if(sentTo(pid)){
+      const reverseLocal=r.received.some(x=>x.from===pid);
+      const reverseRemote=reverseLocal || await checkReverseDiamond(pid);
+      if(reverseRemote && !matchShown(pid)){
+        addUniqueRecord(r.received,{from:pid,name:pname(p),at:new Date().toISOString()},'from');
+        addUniqueString(r.matches,pid);
+        saveDiamondRecords(r);
+        showDiamondMatch(p);
+      }else{
+        toast('Ya le enviaste diamante a '+pname(p));
+      }
+      applyDiamondUI();
+      return;
+    }
+
+    if(remainingDiamonds()<=0){
+      toast('No tenés diamantes disponibles. Volvé mañana 💎');
+      applyDiamondUI();
+      return;
+    }
+
+    const t=new Date().toISOString();
+    addUniqueRecord(r.sent,{to:pid,name:pname(p),at:t},'to');
+    saveDiamondRecords(r);
+    applyDiamondUI();
+    toast('Diamante enviado a '+pname(p)+' 💎');
+
+    const d=db();
+    if(d){
+      try{
+        await d.collection('diamondLikes').doc(`${meId}_${pid}`).set({
+          from:meId,
+          fromName:uname(),
+          to:pid,
+          toName:pname(p),
+          createdAt:serverTime()
+        },{merge:true});
+      }catch(e){console.warn('diamond remote',e)}
+    }
+
+    const reverse=await checkReverseDiamond(pid);
+    if(reverse){
+      r=diamondRecords();
+      addUniqueRecord(r.received,{from:pid,name:pname(p),at:new Date().toISOString()},'from');
+      addUniqueString(r.matches,pid);
+      saveDiamondRecords(r);
+      showDiamondMatch(p);
+    }
+    applyDiamondUI();
+  };
+
+  // Compatibilidad: cualquier botón viejo de Súper ahora manda diamante
+  window.sendSuper=function(pid){return window.sendDiamond(pid)};
+
+  async function syncDiamonds(){
+    const meId=uid();
+    const d=db();
+    if(!meId||!d)return diamondRecords();
+
+    try{
+      const sentSnap=await d.collection('diamondLikes').where('from','==',meId).get();
+      const recSnap=await d.collection('diamondLikes').where('to','==',meId).get();
+      const r=diamondRecords();
+
+      sentSnap.forEach(doc=>{
+        const x=doc.data()||{};
+        if(x.to)addUniqueRecord(r.sent,{to:x.to,name:x.toName||'Usuario',at:(x.createdAt&&x.createdAt.toDate?x.createdAt.toDate().toISOString():new Date().toISOString())},'to');
+      });
+      recSnap.forEach(doc=>{
+        const x=doc.data()||{};
+        if(x.from)addUniqueRecord(r.received,{from:x.from,name:x.fromName||'Usuario',at:(x.createdAt&&x.createdAt.toDate?x.createdAt.toDate().toISOString():new Date().toISOString())},'from');
+      });
+
+      r.sent.forEach(s=>{
+        if(r.received.some(x=>x.from===s.to)){
+          addUniqueString(r.matches,s.to);
+          if(!matchShown(s.to))showDiamondMatch(profile(s.to)||{id:s.to,n:s.name||'Usuario'});
+        }
+      });
+
+      saveDiamondRecords(r);
+      applyDiamondUI();
+      return r;
+    }catch(e){
+      console.warn('syncDiamonds',e);
+      return diamondRecords();
+    }
+  }
+  window.syncDiamonds=syncDiamonds;
+
+  function startDiamondRealtime(){
+    const d=db();
+    const meId=uid();
+    if(!d||!meId||window.__fuDiamondRealtimeStarted)return;
+    window.__fuDiamondRealtimeStarted=true;
+
+    try{
+      d.collection('diamondLikes').where('to','==',meId).onSnapshot(snap=>{
+        const r=diamondRecords();
+        snap.forEach(doc=>{
+          const x=doc.data()||{};
+          if(x.from)addUniqueRecord(r.received,{from:x.from,name:x.fromName||'Usuario',at:new Date().toISOString()},'from');
+        });
+
+        r.sent.forEach(s=>{
+          if(r.received.some(x=>x.from===s.to)){
+            addUniqueString(r.matches,s.to);
+            if(!matchShown(s.to))showDiamondMatch(profile(s.to)||{id:s.to,n:s.name||'Usuario'});
+          }
+        });
+
+        saveDiamondRecords(r);
+        applyDiamondUI();
+      });
+    }catch(e){console.warn('diamond realtime received',e)}
+
+    try{
+      d.collection('diamondLikes').where('from','==',meId).onSnapshot(()=>syncDiamonds());
+    }catch(e){console.warn('diamond realtime sent',e)}
+  }
+
+  /* Cards estable */
+  function parseProfileFromCard(card){
+    const raw=card.getAttribute('onclick')||'';
+    const m=raw.match(/openPanel\((.*)\)/);
+    if(m){
+      let inside=m[1].replace(/&quot;/g,'"').replace(/&#34;/g,'"').replace(/&#39;/g,"'").replace(/&apos;/g,"'");
+      try{return JSON.parse(inside)}catch(e){}
+      try{return (new Function('return ('+inside+')'))()}catch(e){}
+    }
+    const did=card.dataset.pid||card.dataset.id||card.getAttribute('data-pid')||card.getAttribute('data-id');
+    if(did){
+      const found=profile(did);
+      if(found)return found;
+    }
+    const name=(card.querySelector('.profile-info h2,h2,.profile-name')?.textContent||'').split(',')[0].trim();
+    if(name)return profiles().find(p=>String(p.n||p.name||'').trim()===name)||null;
+    return null;
+  }
+
+  function openProfileStable(p){
+    if(!p||!p.id)return toast('No encontré el perfil');
+    unlockUI();
+
+    const panel=byId('profilePanel');
+    const content=byId('panelContent');
+    if(!panel||!content)return toast('No encontré el panel');
+
+    const name=pname(p);
+    const age=p.a||p.age||'';
+    const city=p.c||p.city||'';
+    const img=p.img||p.photo||'';
+    const tags=Array.isArray(p.tags)?p.tags:[];
+    const bio=p.bio||'';
+    const intent=p.intent||'';
+
+    content.innerHTML=`
+      <div style="text-align:center;margin-bottom:1.25rem">
+        <div style="width:96px;height:96px;border-radius:50%;background:url('${esc(img)}') center/cover var(--soft);margin:0 auto .75rem;border:3px solid var(--line);box-shadow:var(--sh2)"></div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:var(--g)">${esc(name)}${age?', '+esc(age):''}</div>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">📍 ${esc(city)}</div>
+        ${intent?`<div style="font-size:.78rem;color:var(--g2);font-weight:800;margin-top:.35rem">Busca: ${esc(intent)}</div>`:''}
+      </div>
+      ${bio?`<p style="font-size:.88rem;line-height:1.65;color:var(--txt);margin-bottom:1.25rem;text-align:center">${esc(bio)}</p>`:''}
+      <div class="tagrow" style="justify-content:center;margin-bottom:1.25rem">${tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <button class="btn btn-green btn-diamond-final" style="width:100%" onclick="event.stopPropagation();sendDiamond('${esc(p.id)}')">💎 Enviar diamante</button>
+        <button class="btn btn-green" style="width:100%;background:linear-gradient(135deg,#444,#666)" onclick="event.stopPropagation();__fuStartChatFromProfile('${esc(p.id)}')">💬 Chatear</button>
+        <button class="btn btn-out" style="width:100%" onclick="event.stopPropagation();toggleFav('${esc(p.id)}')">☆ Favorito</button>
+        <button class="btn" style="width:100%;background:none;color:var(--muted);font-size:.8rem" onclick="event.stopPropagation();blockProfile('${esc(p.id)}')">🚫 Bloquear</button>
+        <button class="btn" style="width:100%;background:none;color:var(--red);font-size:.8rem" onclick="event.stopPropagation();reportProfile('${esc(p.id)}')">⚑ Reportar</button>
+      </div>`;
+    panel.classList.add('open');
+    panel.style.pointerEvents='auto';
+    setTimeout(()=>{applyDiamondUI();unlockUI()},30);
+  }
+  window.__fuOpenProfileStable=openProfileStable;
+  window.__fuStartChatFromProfile=function(pid){
+    const p=profile(pid);
+    if(!p)return toast('No encontré el perfil');
+    if(!hasDiamondMatch(pid)){
+      toast('El chat se habilita con match de diamante o evento en común 💎');
+      return;
+    }
+    if(typeof window.closePanel==='function')window.closePanel();
+    if(typeof window.startChat==='function')window.startChat(p);
+  };
+
+  const previousOpenPanel=window.openPanel;
+  window.openPanel=function(arg){
+    if(arg&&typeof arg==='object'&&arg.id)return openProfileStable(arg);
+    if(typeof arg==='string'){
+      try{
+        const parsed=JSON.parse(arg);
+        if(parsed&&parsed.id)return openProfileStable(parsed);
+      }catch(e){}
+    }
+    if(typeof previousOpenPanel==='function'){
+      try{return previousOpenPanel.apply(this,arguments)}catch(e){console.warn('openPanel original',e)}
+    }
+  };
+
+  document.addEventListener('click',function(ev){
+    const button=ev.target.closest&&ev.target.closest('button,a,input,textarea,select');
+    if(button)return;
+    const card=ev.target.closest&&ev.target.closest('.profile-card');
+    if(!card)return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();
+    const p=parseProfileFromCard(card);
+    openProfileStable(p);
+  },true);
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function'&&!oldGo.__fuDiamondFinal){
+    window.go=function(id){
+      document.body.classList.add('fu-diamond-stable');
+      unlockUI();
+      stripOldNotis();
+      const r=oldGo.apply(this,arguments);
+      requestAnimationFrame(()=>{
+        unlockUI();
+        applyDiamondUI();
+        stripOldNotis();
+        document.body.classList.remove('fu-diamond-stable');
+      });
+      setTimeout(()=>{unlockUI();applyDiamondUI();stripOldNotis();},120);
+      return r;
+    };
+    window.go.__fuDiamondFinal=true;
+  }
+
+  const panel=byId('profilePanel');
+  if(panel&&!panel.__fuDiamondFinalObserver){
+    panel.__fuDiamondFinalObserver=true;
+    new MutationObserver(()=>{unlockUI();applyDiamondUI()}).observe(panel,{childList:true,subtree:true,attributes:true});
+  }
+
+  const msgList=byId('msgList');
+  if(msgList&&!msgList.__fuDiamondFinalObserver){
+    msgList.__fuDiamondFinalObserver=true;
+    new MutationObserver(()=>stripOldNotis()).observe(msgList,{childList:true,subtree:true,characterData:true});
+  }
+
+  document.addEventListener('touchstart',unlockUI,{passive:true});
+  document.addEventListener('mousedown',unlockUI);
+
+  setTimeout(()=>{unlockUI();syncDiamonds();startDiamondRealtime();applyDiamondUI();stripOldNotis();},500);
+  setTimeout(()=>{unlockUI();applyDiamondUI();stripOldNotis();},1200);
+  setInterval(()=>{unlockUI();applyDiamondUI();stripOldNotis();},2500);
+})();
+</script>
+
 </body>
 </html>
