@@ -1074,6 +1074,18 @@ button{cursor:pointer}
   margin-bottom:0;
 }
 
+
+.event-real-pill,.event-created-pill{display:inline-flex;align-items:center;gap:.25rem;background:var(--soft);color:var(--g);border:1px solid var(--line);border-radius:999px;padding:.18rem .52rem;font-size:.68rem;font-weight:1000;margin:0 .25rem .35rem 0}
+.event-real-pill{background:#E0F7FF;border-color:rgba(39,183,242,.28);color:#075985}
+.event-form-grid{display:flex;flex-direction:column;gap:.75rem}.event-form-grid .form-group{margin-bottom:0}
+.fu-event-search{display:grid;grid-template-columns:1fr auto;gap:.45rem;margin-bottom:.85rem}
+.fu-event-search input{width:100%;border:1.5px solid var(--line);border-radius:999px;padding:.64rem .85rem;outline:none;background:#fff;color:var(--txt);font-weight:800}
+.fu-event-search button{border:0;border-radius:999px;padding:.64rem .85rem;background:var(--g);color:#fff;font-weight:1000}
+.create-event-card{background:linear-gradient(135deg,#FFF7CC,#FFE58A);border:1.5px solid rgba(242,183,5,.35);border-radius:26px;padding:1rem;box-shadow:0 12px 26px rgba(242,183,5,.18);margin-bottom:1rem}
+.create-event-card h3{font-family:'Playfair Display',serif;color:var(--g);font-size:1.14rem;margin-bottom:.25rem}
+.create-event-card p{color:rgba(6,78,59,.75);font-size:.82rem;line-height:1.45;font-weight:800;margin-bottom:.8rem}
+.create-event-card button{width:100%;border:0;border-radius:999px;padding:.85rem 1rem;background:var(--g);color:#fff;font-size:.92rem;font-weight:1000}
+
 </style>
 </head>
 <body>
@@ -1243,10 +1255,174 @@ const defaultProfiles=[
 ];
 
 const plans=[
-  {id:'ev1',title:'Degustación de vinos',when:'Hoy, 20:00',desc:'Una experiencia para disfrutar buenos vinos y conocer gente copada.',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=900&auto=format&fit=crop',ico:'🍷',city:'Córdoba',meta:'12 asistirán'},
-  {id:'ev2',title:'Café tranqui',when:'Hoy, 18:00',desc:'Me gustaría charlar tranqui esta tarde. ¿Te sumás?',img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=900&auto=format&fit=crop',ico:'☕',city:'Centro',meta:'3 interesados'},
-  {id:'ev3',title:'Caminata suave',when:'Mañana, 10:00',desc:'Busco compañeros/as para una caminata suave.',img:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=900&auto=format&fit=crop',ico:'🌿',city:'Mendoza',meta:'5 anotados'},
-  {id:'ev4',title:'Martin Garrix',when:'16 mayo 2026, 21:00',desc:'Show internacional de música electrónica.',img:'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop',ico:'🎧',city:'Buenos Aires',meta:'Plan activo'}
+  {
+    id:'real_jonas_brothers_2026',
+    title:'Jonas Brothers',
+    when:'05 mayo 2026 y más fechas',
+    desc:'Show internacional en Buenos Aires. Ideal para quienes buscan recitales grandes y planes musicales.',
+    img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop',
+    ico:'🎵',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_ricardo_arjona_2026',
+    title:'Ricardo Arjona',
+    when:'Mayo 2026 · varias funciones',
+    desc:'Residencia de Ricardo Arjona en Movistar Arena durante mayo 2026.',
+    img:'https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop',
+    ico:'🎤',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_divididos_2026',
+    title:'Divididos',
+    when:'09 mayo 2026',
+    desc:'Rock argentino en vivo en Movistar Arena.',
+    img:'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=900&auto=format&fit=crop',
+    ico:'🎸',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_ca7riel_paco_2026',
+    title:'Ca7riel & Paco Amoroso',
+    when:'14 y 15 mayo 2026',
+    desc:'Show de Ca7riel & Paco Amoroso en Movistar Arena.',
+    img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=900&auto=format&fit=crop',
+    ico:'🎶',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_martin_garrix_2026',
+    title:'Martin Garrix',
+    when:'16 mayo 2026',
+    desc:'Noche de electrónica en Buenos Aires.',
+    img:'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=900&auto=format&fit=crop',
+    ico:'🎧',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Electrónica',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_fito_paez_2026',
+    title:'Fito Páez',
+    when:'20 mayo 2026',
+    desc:'Fito Páez en vivo en Buenos Aires.',
+    img:'https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop',
+    ico:'🎹',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_mon_laferte_2026',
+    title:'Mon Laferte',
+    when:'21 mayo 2026',
+    desc:'Mon Laferte regresa con show en Buenos Aires.',
+    img:'https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?q=80&w=900&auto=format&fit=crop',
+    ico:'🎤',
+    city:'Buenos Aires · Movistar Arena',
+    place:'Movistar Arena',
+    category:'Recitales',
+    meta:'Evento real curado',
+    real:true,
+    source:'Movistar Arena'
+  },
+  {
+    id:'real_teatro_colon_visita_2026',
+    title:'Visita guiada Teatro Colón',
+    when:'Disponible durante 2026',
+    desc:'Experiencia cultural para recorrer uno de los teatros más importantes del mundo.',
+    img:'https://images.unsplash.com/photo-1507924538820-ede94a04019d?q=80&w=900&auto=format&fit=crop',
+    ico:'🎭',
+    city:'Buenos Aires · Teatro Colón',
+    place:'Teatro Colón',
+    category:'Teatro y cultura',
+    meta:'Experiencia cultural',
+    real:true,
+    source:'Visit Buenos Aires'
+  },
+  {
+    id:'real_teatro_cartelera_2026',
+    title:'Cartelera teatral porteña',
+    when:'Temporada 2026',
+    desc:'Obras de teatro, comedias, musicales y propuestas culturales en salas de Buenos Aires.',
+    img:'https://images.unsplash.com/photo-1503095396549-807759245b35?q=80&w=900&auto=format&fit=crop',
+    ico:'🎭',
+    city:'Buenos Aires · Salas teatrales',
+    place:'CABA',
+    category:'Teatro',
+    meta:'Agenda cultural',
+    real:true,
+    source:'Agenda cultural'
+  },
+  {
+    id:'real_candlelight_ba_2026',
+    title:'Candlelight Buenos Aires',
+    when:'Temporada 2026',
+    desc:'Conciertos a la luz de las velas en espacios especiales de la Ciudad.',
+    img:'https://images.unsplash.com/photo-1519683109079-d5f539e1542f?q=80&w=900&auto=format&fit=crop',
+    ico:'🕯️',
+    city:'Buenos Aires',
+    place:'CABA',
+    category:'Experiencias',
+    meta:'Experiencia musical',
+    real:true,
+    source:'Buenos Aires Secreta'
+  },
+  {
+    id:'real_gastro_ba_2026',
+    title:'Experiencias gastronómicas BA',
+    when:'Temporada 2026',
+    desc:'Ferias, restaurantes, salidas gastronómicas y experiencias para compartir.',
+    img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=900&auto=format&fit=crop',
+    ico:'🍽️',
+    city:'Buenos Aires',
+    place:'CABA',
+    category:'Gastronomía',
+    meta:'Experiencia',
+    real:true,
+    source:'Agenda BA'
+  },
+  {
+    id:'real_tango_ba_2026',
+    title:'Tango y noche porteña',
+    when:'Temporada 2026',
+    desc:'Shows de tango, cenas, milongas y experiencias nocturnas en Buenos Aires.',
+    img:'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=900&auto=format&fit=crop',
+    ico:'💃',
+    city:'Buenos Aires',
+    place:'CABA',
+    category:'Tango',
+    meta:'Experiencia cultural',
+    real:true,
+    source:'Visit Buenos Aires'
+  }
 ];
 
 let currentChat=null;
@@ -2577,6 +2753,231 @@ window.renderProfiles = function(){
   `).join("")
 }
 
+})();
+</script>
+
+
+<script id="fuEventosRealesTodoFinal">
+(function(){
+  const $=id=>document.getElementById(id);
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+  const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const esc=v=>String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const low=v=>String(v||'').toLowerCase().trim();
+  const toast=msg=>typeof window.toast==='function'?window.toast(msg):alert(msg);
+
+  function createdEvents(){
+    const arr=load('fu_created_events_v1',[]);
+    return Array.isArray(arr)?arr:[];
+  }
+  function allEvents(){
+    const ids=new Set();
+    return [...createdEvents(),...plans].filter(ev=>{
+      if(!ev||!ev.id||ids.has(ev.id))return false;
+      ids.add(ev.id);
+      return true;
+    });
+  }
+  function eventById(id){return allEvents().find(ev=>ev.id===id)||null}
+  function isGoing(id){return load('fu_event_attendance',[]).includes(id)}
+  function filterEvents(q=''){
+    const term=low(q);
+    let evs=allEvents();
+    if(term){
+      evs=evs.filter(ev=>low(ev.title+' '+ev.when+' '+ev.desc+' '+ev.city+' '+ev.category+' '+ev.place).includes(term));
+    }
+    return evs;
+  }
+  function card(ev){
+    return `<div class="card plan-card" onclick="openEvent('${ev.id}')">
+      <img src="${ev.img}">
+      <div class="plan-card-body">
+        ${ev.real?`<div class="event-real-pill">Evento real · ${esc(ev.category||ev.source||'Agenda')}</div>`:''}
+        ${ev.isUserCreated?'<div class="event-created-pill">Creado por usuarios</div>':''}
+        <h3>${esc((ev.ico||'📍')+' '+ev.title)}</h3>
+        <div class="plan-cat">${esc(ev.city)} · ${esc(ev.when)}</div>
+        <p>${esc(ev.desc)}</p>
+        <div class="plan-meta"><span>📍 ${esc(ev.place||ev.city)}</span><span>👥 ${esc(ev.meta||'Evento público')}</span></div>
+        <button class="btn btn-green" onclick="event.stopPropagation();attendEvent('${ev.id}')">${isGoing(ev.id)?'✓ Vas a ir':'Sumarme'}</button>
+      </div>
+    </div>`;
+  }
+
+  window.renderPlans=function(q=''){
+    const list=$('plansList');
+    if(!list)return;
+    const events=filterEvents(q);
+    list.innerHTML=`
+      <div class="create-event-card">
+        <h3>＋ Crear evento público</h3>
+        <p>Creá un evento real para que otras personas de FortyUp puedan sumarse y entrar al chat del plan.</p>
+        <button onclick="showCreateEventPanel()">Crear evento</button>
+      </div>
+      <div class="fu-event-search">
+        <input id="fuEventSearch" placeholder="Buscar recital, teatro, gastronomía..." value="${esc(q||'')}" onkeydown="if(event.key==='Enter')renderPlans(this.value)">
+        <button onclick="renderPlans(document.getElementById('fuEventSearch').value)">Buscar</button>
+      </div>
+      ${events.length?events.map(card).join(''):'<div class="empty"><div class="empty-ico">📅</div><p>No hay eventos para esta búsqueda.</p></div>'}
+    `;
+  };
+
+  window.renderPlansMini=function(){
+    const row=$('homePlans');
+    if(!row)return;
+    row.innerHTML=allEvents().slice(0,7).map(ev=>`
+      <div class="plan-mini" onclick="openEvent('${ev.id}')">
+        <div class="plan-mini-img" style="background-image:url('${ev.img}')"></div>
+        <div class="plan-mini-info"><p>${esc((ev.ico||'📍')+' '+ev.title)}</p><small>${esc(ev.when)}</small></div>
+      </div>
+    `).join('');
+  };
+
+  window.openEvent=function(id){
+    const ev=eventById(id);
+    if(!ev)return toast('No encontré el evento');
+    const going=isGoing(id);
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`
+      <h3 class="section-title">${esc((ev.ico||'📍')+' '+ev.title)}</h3>
+      <img src="${ev.img}" style="width:100%;height:180px;object-fit:cover;border-radius:20px;margin-bottom:.9rem">
+      ${ev.real?`<div class="event-real-pill">Evento real · ${esc(ev.category||ev.source||'Agenda')}</div>`:''}
+      ${ev.isUserCreated?'<div class="event-created-pill">Creado por usuarios</div>':''}
+      <p style="line-height:1.6;margin-bottom:.8rem">${esc(ev.desc)}</p>
+      <p style="color:var(--muted);font-weight:800;margin-bottom:.8rem">📍 ${esc(ev.city)} · ${esc(ev.when)}</p>
+      <button class="btn btn-green" style="width:100%;margin-bottom:.65rem" onclick="attendEvent('${ev.id}')">${going?'✓ Vas a ir':'Sumarme'}</button>
+      ${going?`<button class="btn" style="width:100%;background:linear-gradient(135deg,#444,#666);color:white" onclick="startEventChat('${ev.id}')">💬 Abrir chat del evento</button>`:`<div style="font-size:.78rem;color:var(--muted);font-weight:800;text-align:center;margin-top:.35rem">Sumate para habilitar el chat del evento.</div>`}
+    `;
+    panel.classList.add('open');
+  };
+
+  window.attendEvent=function(id){
+    const a=load('fu_event_attendance',[]);
+    const i=a.indexOf(id);
+    if(i>=0){a.splice(i,1);toast('Ya no asistís a este plan')}
+    else{a.push(id);toast('Te sumaste al plan')}
+    store('fu_event_attendance',a);
+    renderPlans(document.getElementById('fuEventSearch')?.value||'');
+    if(typeof renderHome==='function')renderHome();
+    setTimeout(()=>openEvent(id),80);
+  };
+
+  window.showCreateEventPanel=function(){
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`
+      <h3 class="section-title">➕ Crear evento público</h3>
+      <div class="event-form-grid">
+        <div class="form-group"><label>Título del evento *</label><input id="newEventTitle" placeholder="Ej: Teatro, recital, cena, salida..."></div>
+        <div class="form-group"><label>Fecha y horario *</label><input id="newEventWhen" placeholder="Ej: Viernes 20:00"></div>
+        <div class="form-group"><label>Lugar / ciudad *</label><input id="newEventCity" placeholder="Ej: Buenos Aires · Palermo"></div>
+        <div class="form-group"><label>Categoría</label><select id="newEventCategory"><option>Recitales</option><option>Teatro</option><option>Gastronomía</option><option>Experiencias</option><option>Cine</option><option>Tango</option><option>Otro</option></select></div>
+        <div class="form-group"><label>Descripción *</label><textarea id="newEventDesc" placeholder="Contá de qué se trata el plan..."></textarea></div>
+        <div class="form-group"><label>Imagen del evento</label><input id="newEventImg" type="file" accept="image/*"></div>
+        <button class="btn btn-green" style="width:100%" onclick="saveNewEvent()">Crear evento</button>
+      </div>
+    `;
+    panel.classList.add('open');
+  };
+
+  function readFile(file){
+    return new Promise(res=>{
+      if(!file)return res('');
+      const r=new FileReader();
+      r.onload=()=>res(r.result);
+      r.onerror=()=>res('');
+      r.readAsDataURL(file);
+    });
+  }
+
+  window.saveNewEvent=async function(){
+    const title=$('newEventTitle')?.value.trim();
+    const when=$('newEventWhen')?.value.trim();
+    const city=$('newEventCity')?.value.trim();
+    const category=$('newEventCategory')?.value||'Otro';
+    const desc=$('newEventDesc')?.value.trim();
+    const file=$('newEventImg')?.files?.[0];
+    if(!title||!when||!city||!desc)return toast('Completá título, fecha, lugar y descripción');
+    let img=await readFile(file);
+    if(!img)img='https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
+    const u=load('fu_user',{})||{};
+    const ev={id:'created_'+Date.now(),title,when,desc,img,ico:'📍',city,place:city,category,meta:'Evento público',createdBy:u.id||u.email||'local',createdByName:u.name||u.n||'Usuario',isUserCreated:true};
+    const arr=createdEvents();
+    arr.unshift(ev);
+    store('fu_created_events_v1',arr);
+    toast('Evento creado');
+    if(typeof closePanel==='function')closePanel();
+    renderPlans();
+    if(typeof renderHome==='function')renderHome();
+  };
+
+  window.startEventChat=function(eventId){
+    const ev=eventById(eventId);
+    if(!ev)return toast('No encontré el evento');
+    if(!isGoing(eventId))return toast('Primero tenés que sumarte al evento');
+    window.currentChat={id:'event_'+eventId,n:ev.title,name:ev.title,img:ev.img,event:true};
+    if(typeof closePanel==='function')closePanel();
+    const chatName=$('chatName'), chatAvatar=$('chatAvatar');
+    if(chatName)chatName.textContent=ev.title;
+    if(chatAvatar)chatAvatar.src=ev.img;
+    if(typeof go==='function')go('chat');
+    if(typeof renderChat==='function')renderChat();
+  };
+
+  window.showEventosPanel=function(){
+    const attending=load('fu_event_attendance',[]).map(eventById).filter(Boolean);
+    const created=createdEvents();
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`<h3 class="section-title">📅 Mis eventos</h3>
+      ${attending.length?`<h4 style="color:var(--g);margin:.4rem 0 .6rem">A los que vas</h4>`+attending.map(ev=>`<div class="msg-item" onclick="openEvent('${ev.id}')"><img class="msg-avatar" src="${ev.img}"><div class="msg-info"><div class="msg-name">${esc(ev.title)}</div><div class="msg-preview">${esc(ev.when)} · Chat habilitado</div></div></div>`).join(''):''}
+      ${created.length?`<h4 style="color:var(--g);margin:1rem 0 .6rem">Creados por vos</h4>`+created.map(ev=>`<div class="msg-item" onclick="openEvent('${ev.id}')"><img class="msg-avatar" src="${ev.img}"><div class="msg-info"><div class="msg-name">${esc(ev.title)}</div><div class="msg-preview">${esc(ev.when)} · Evento público</div></div></div>`).join(''):''}
+      ${(!attending.length&&!created.length)?'<div class="empty"><div class="empty-ico">📅</div><p>Todavía no tenés eventos.</p></div>':''}
+      <button class="btn btn-green" style="width:100%;margin-top:1rem" onclick="showCreateEventPanel()">Crear evento</button>`;
+    panel.classList.add('open');
+  };
+
+  // Chat para eventos
+  const oldRenderMessages=window.renderMessages;
+  window.renderMessages=function(){
+    const c=load('fu_chats_v2',{});
+    const u=load('fu_unread_msgs_v2',{});
+    const ids=Object.keys(c).filter(id=>c[id]&&c[id].length);
+    const list=$('msgList');
+    if(!list)return;
+    list.innerHTML=ids.length?ids.map(id=>{
+      let ev=null, p=null, isEvent=false;
+      if(id.startsWith('event_')){isEvent=true;ev=eventById(id.replace('event_',''));}
+      else if(typeof profileById==='function')p=profileById(id);
+      const data=ev||p||{id,n:'Usuario',img:''};
+      const last=c[id][c[id].length-1];
+      return `<div class="msg-item" onclick="${isEvent?`startEventChat('${id.replace('event_','')}')`:`startChatById('${id}')`}">
+        <img class="msg-avatar" src="${esc(data.img||data.photo||'')}">
+        <div class="msg-info"><div class="msg-name">${isEvent?'📅 ':''}${esc(data.n||data.name||data.title||'Usuario')}</div><div class="msg-preview">${esc(last.text||'Mensaje')}</div></div>
+        ${u[id]?'<span class="unread-pill"></span>':''}
+        <div class="msg-time">${esc(last.time||'')}</div>
+      </div>`;
+    }).join(''):'<div class="empty"><div class="empty-ico">💬</div><p>Mandá un diamante o sumate a un evento para empezar una charla.</p></div>';
+    if(typeof setUnread==='function')setUnread(u);
+  };
+
+  const oldSendMsg=window.sendMsg;
+  window.sendMsg=function(){
+    const chat=window.currentChat || (typeof currentChat!=='undefined'?currentChat:null);
+    if(!chat)return;
+    const input=$('chatInput');
+    const text=input?.value.trim();
+    if(!text)return;
+    const c=load('fu_chats_v2',{});
+    c[chat.id]=c[chat.id]||[];
+    c[chat.id].push({from:'me',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),date:new Date().toISOString()});
+    store('fu_chats_v2',c);
+    input.value='';
+    input.style.height='auto';
+    if(typeof renderChat==='function')renderChat();
+  };
+
+  setTimeout(()=>{renderPlans(); if(typeof renderHome==='function')renderHome();},400);
 })();
 </script>
 
