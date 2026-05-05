@@ -1287,8 +1287,12 @@ function renderHome(){
   
   // Show 2 profiles in home
   const profs=allProfiles().slice(0,4);
+  // Register profiles in global map
+  window._fuProfileMap = window._fuProfileMap || {};
+  profs.forEach(p=>{ window._fuProfileMap[p.id]=p; });
+
   $('homeProfiles').innerHTML=profs.map(p=>`
-    <div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    <div class="card profile-card" data-pid="${escHtml(p.id)}" onclick="openPanelById('${escHtml(p.id)}')">
       <div class="profile-photo" style="${(p.img||p.photo)?`background-image:url('${p.img||p.photo}')`:''}">
         ${!(p.img||p.photo)?`<div class="initial-fallback">${escHtml((p.n||p.name||'?')[0])}</div>`:''}
         <span class="distance">${randDist()}</span>
@@ -1310,6 +1314,28 @@ function allProfiles(){
   const rp=reg.map(usr=>({id:usr.id,n:usr.name,a:usr.age,c:usr.city,img:usr.photo||'',tags:[],bio:usr.bio||'',intent:usr.intent||'',lat:usr.lat||null,lng:usr.lng||null}));
   return [...rp,...defaultProfiles.filter(p=>!blocked.includes(p.id))];
 }
+
+// ── Safe profile lookup helpers ──
+window._fuProfileMap = window._fuProfileMap || {};
+
+function profileById(id){
+  // Check live map first (populated during renders)
+  if(window._fuProfileMap[id]) return window._fuProfileMap[id];
+  // Fall back to allProfiles search
+  return allProfiles().find(p=>p.id===id) || null;
+}
+
+window.openPanelById = function(id){
+  const p = profileById(id);
+  if(!p) return toast('No encontré el perfil');
+  window.__fuOpenProfileStable(p);
+};
+
+window.startChatById = function(id){
+  const p = profileById(id);
+  if(!p) return toast('No encontré el perfil');
+  startChat(p);
+};
 
 // ── Render Plans ──
 
@@ -1412,12 +1438,16 @@ function renderProfiles(){
     $('profilesList').innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><p>No hay perfiles disponibles</p></div>';
     return;
   }
+  // Store profiles in a global map keyed by id for safe retrieval
+  window._fuProfileMap = window._fuProfileMap || {};
+  profs.forEach(p=>{ window._fuProfileMap[p.id]=p; });
+
   $('profilesList').innerHTML=profs.map(p=>{
     const dl=distLabel(p);
     const isFav=favs.includes(p.id);
     const photo=p.img||p.photo||'';
     const initial=(p.n||p.name||'?')[0].toUpperCase();
-    return `<div class="card profile-card" onclick="openPanel(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    return `<div class="card profile-card" data-pid="${escHtml(p.id)}" onclick="openPanelById('${escHtml(p.id)}')">
       <div class="profile-photo" style="${photo?`background-image:url('${photo}')`:``}">
         ${!photo?`<div class="initial-fallback">${initial}</div>`:''}
         ${dl?`<span class="distance">📍 ${dl}</span>`:''}
@@ -1427,10 +1457,10 @@ function renderProfiles(){
         <b>📍 ${escHtml(p.c||p.city)}</b>
         ${p.intent?`<div style="font-size:.7rem;color:var(--g2);font-weight:700;margin:.2rem 0">${escHtml(p.intent)}</div>`:''}
         <div class="profile-actions">
-          <button class="btn-forti" onclick="event.stopPropagation();sendForti('${p.id}')">◆ Forti</button>
-          <button class="btn-super" onclick="event.stopPropagation();sendSuper('${p.id}')">💎</button>
-          <button class="btn-chat" onclick="event.stopPropagation();startChat(${JSON.stringify(p).replace(/"/g,'&quot;')})">💬</button>
-          <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${p.id}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button>
+          <button class="btn-forti" onclick="event.stopPropagation();sendForti('${escHtml(p.id)}')">◆ Forti</button>
+          <button class="btn-super" onclick="event.stopPropagation();sendSuper('${escHtml(p.id)}')">💎</button>
+          <button class="btn-chat" onclick="event.stopPropagation();startChatById('${escHtml(p.id)}')">💬</button>
+          <button class="btn-fav" onclick="event.stopPropagation();toggleFav('${escHtml(p.id)}')" style="color:${isFav?'var(--gold)':'inherit'}">${isFav?'★':'☆'}</button>
         </div>
       </div>
     </div>`;
@@ -1448,9 +1478,10 @@ function renderMessages(){
   }
   
   $('msgList').innerHTML=entries.map(([pid,msgs])=>{
-    const p=profiles.find(x=>x.id===pid)||{n:pid,img:'',a:''};
+    const p=profiles.find(x=>x.id===pid)||{id:pid,n:pid,img:'',a:''};
+    if(window._fuProfileMap) window._fuProfileMap[p.id]=p;
     const last=msgs[msgs.length-1]||{};
-    return `<div class="msg-item" onclick="startChat(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+    return `<div class="msg-item" data-pid="${escHtml(p.id||pid)}" onclick="startChatById('${escHtml(p.id||pid)}')">
       <img class="msg-avatar" src="${p.img||p.photo||''}" alt="" onerror="this.style.background='var(--soft)'">
       <div class="msg-info">
         <div class="msg-name">${escHtml(p.n||p.name)}</div>
@@ -1604,36 +1635,66 @@ function login(){
 function forgotPassword(){
   migrateCurrentUserToUsers();
 
-  let email=normalizeEmail($('lEmail')?.value || prompt('Ingresá tu email para recuperar la contraseña:'));
-  if(!email)return;
+  const emailInput = $('lEmail');
+  const emailVal = normalizeEmail(emailInput?.value || '');
 
-  const users=getSavedUsers();
-  const idx=users.findIndex(u=>normalizeEmail(u.email)===email);
-  if(idx<0){
+  // Show inline password recovery UI inside the auth sheet
+  const logFields = $('logFields');
+  if(!logFields) return;
+
+  const existingForm = $('forgotForm');
+  if(existingForm){ existingForm.remove(); return; }
+
+  const form = document.createElement('div');
+  form.id = 'forgotForm';
+  form.style.cssText = 'margin-top:.75rem;padding:.85rem;background:var(--soft);border-radius:var(--r);border:1px solid var(--line)';
+  form.innerHTML = `
+    <div style="font-size:.82rem;font-weight:800;color:var(--g);margin-bottom:.6rem">🔑 Recuperar contraseña</div>
+    <div class="form-group"><label>Email</label><input id="fpEmail" type="email" placeholder="tu@email.com" value="${escHtml(emailVal)}"></div>
+    <div class="form-group"><label>Nueva contraseña</label><input id="fpPass" type="password" placeholder="Mínimo 6 caracteres"></div>
+    <div class="form-group"><label>Repetir contraseña</label><input id="fpPass2" type="password" placeholder="Repetí la contraseña"></div>
+    <button class="auth-btn" style="margin-top:.25rem" onclick="doForgotPassword()">Cambiar contraseña</button>
+    <button class="auth-link-btn" style="margin-top:.35rem" onclick="document.getElementById('forgotForm').remove()">Cancelar</button>
+  `;
+  logFields.appendChild(form);
+}
+
+function doForgotPassword(){
+  const email = normalizeEmail($('fpEmail')?.value || '');
+  const pass = $('fpPass')?.value || '';
+  const pass2 = $('fpPass2')?.value || '';
+
+  if(!email) return toast('Ingresá tu email');
+  if(!pass) return toast('Ingresá una nueva contraseña');
+  if(pass.length < 6) return toast('La contraseña debe tener mínimo 6 caracteres');
+  if(pass !== pass2) return toast('Las contraseñas no coinciden');
+
+  migrateCurrentUserToUsers();
+  const users = getSavedUsers();
+  const idx = users.findIndex(u => normalizeEmail(u.email) === email);
+  if(idx < 0){
     toast('Ese email no está registrado.');
     setAuth('reg');
-    $('rEmail').value=email;
+    $('rEmail').value = email;
+    $('forgotForm')?.remove();
     return;
   }
 
-  const pass=prompt('Escribí una nueva contraseña (mínimo 6 caracteres):');
-  if(!pass)return;
-  if(pass.length<6)return toast('La contraseña debe tener mínimo 6 caracteres');
-
-  users[idx].password=pass;
-  users[idx].updatedAt=new Date().toISOString();
+  users[idx].password = pass;
+  users[idx].updatedAt = new Date().toISOString();
   saveSavedUsers(users);
 
-  const current=load('fu_user',null);
-  if(current&&normalizeEmail(current.email)===email){
-    current.password=pass;
+  const current = load('fu_user', null);
+  if(current && normalizeEmail(current.email) === email){
+    current.password = pass;
     setMe(current);
   }
 
+  $('forgotForm')?.remove();
   setAuth('log');
-  $('lEmail').value=email;
-  $('lPass').value='';
-  toast('Contraseña actualizada. Ya podés iniciar sesión.');
+  $('lEmail').value = email;
+  $('lPass').value = '';
+  toast('Contraseña actualizada. Ya podés iniciar sesión ✅');
 }
 
 function logout(){
@@ -8908,11 +8969,20 @@ body.fu-no-jump *{
   };
 
   function profileFromCard(card){
+    // First try data-pid attribute (new safe approach)
+    const pid = card.dataset.pid;
+    if(pid){
+      if(window._fuProfileMap && window._fuProfileMap[pid]) return window._fuProfileMap[pid];
+      // fall back to profiles() lookup
+      return profiles().find(p=>p.id===pid) || null;
+    }
+    // Legacy fallback: try onclick attr parsing
     const onclick=card.getAttribute('onclick')||'';
-    const m=onclick.match(/openPanel\((.*)\)/);
+    const m=onclick.match(/openPanel(?:ById)?\(['"]([^'"]+)['"]\)/);
     if(m){
-      let raw=m[1].replace(/&quot;/g,'"');
-      try{return JSON.parse(raw)}catch(e){}
+      const id=m[1];
+      if(window._fuProfileMap && window._fuProfileMap[id]) return window._fuProfileMap[id];
+      return profiles().find(p=>p.id===id) || null;
     }
     const name=(card.querySelector('.profile-info h2')?.textContent||'').split(',')[0].trim();
     return profiles().find(p=>(p.n||p.name||'').trim()===name)||null;
@@ -8958,6 +9028,10 @@ body.fu-no-jump *{
       return window.__fuOpenProfileStable(arg);
     }
     if(typeof arg==='string'){
+      // Try as ID in the global map first
+      if(window._fuProfileMap && window._fuProfileMap[arg]){
+        return window.__fuOpenProfileStable(window._fuProfileMap[arg]);
+      }
       try{
         const parsed=JSON.parse(arg);
         if(parsed&&parsed.id)return window.__fuOpenProfileStable(parsed);
@@ -8967,6 +9041,21 @@ body.fu-no-jump *{
       try{return originalOpenPanel.apply(this,arguments)}catch(e){console.warn(e)}
     }
   };
+  // Also expose openPanelById in this scope if not already defined
+  if(!window.openPanelById){
+    window.openPanelById=function(id){
+      const p=(window._fuProfileMap&&window._fuProfileMap[id])||profiles().find(p=>p.id===id);
+      if(!p)return toast('No encontré el perfil');
+      window.__fuOpenProfileStable(p);
+    };
+  }
+  if(!window.startChatById){
+    window.startChatById=function(id){
+      const p=(window._fuProfileMap&&window._fuProfileMap[id])||profiles().find(p=>p.id===id);
+      if(!p)return toast('No encontré el perfil');
+      startChat(p);
+    };
+  }
 
   document.addEventListener('click',function(ev){
     const button=ev.target.closest('button,a,input,textarea,select');
