@@ -378,7 +378,7 @@ button{cursor:pointer}
   grid-template-columns:1fr 1fr;
   gap:.75rem;
 }
-.profile-card{pointer-events:auto;
+.profile-card{
   display:flex;
   flex-direction:column;
   cursor:pointer;
@@ -1469,7 +1469,7 @@ function renderProfiles(target='profilesList',limit=null){
 function closePanel(){
   $('profilePanel').classList.remove('open');
 }
-function openProfile(pid){console.log('openProfile',pid);
+function openProfile(pid){
   const p=profileById(pid);
   if(!p)return toast('No encontré el perfil');
 
@@ -1540,7 +1540,11 @@ function showEventosPanel(){
 function showSuperPanel(){
   const r=diamondRecords();
   $('panelContent').innerHTML=`<h3 class="section-title">💎 Tus Diamantes</h3>
-  </div>`;
+  <div class="diamond-card"><div class="diamond-grid">
+    <div class="diamond-stat"><strong>${r.sent.length}</strong><span>Enviados</span></div>
+    <div class="diamond-stat"><strong>${r.matches.length}</strong><span>Matches</span></div>
+    <div class="diamond-stat"><strong>${remainingDiamonds()}</strong><span>Hoy</span></div>
+  </div></div>`;
   $('profilePanel').classList.add('open');
 }
 function renderMessages(){
@@ -1615,7 +1619,11 @@ function renderMe(){
     <div class="profile-name">${esc(name)}${age?', '+age:''}</div>
     <div class="profile-city">📍 ${esc(city||'Sin ciudad')}</div>
   </div>
-  
+  <div class="diamond-card">
+    <div class="diamond-head">
+      <div><h3>💎 Tus Diamantes</h3><p>Tu forma principal de conectar en FortyUp</p></div>
+      <div class="diamond-badge"><span id="diamAvail">5</span> hoy</div>
+    </div>
     <div class="diamond-grid">
       <div class="diamond-stat"><strong id="diamSent">0</strong><span>Enviados</span></div>
       <div class="diamond-stat"><strong id="diamMatches">0</strong><span>Matches</span></div>
@@ -1684,5 +1692,312 @@ setInterval(()=>{
 },1500);
 initApp();
 </script>
+
+<script id="fuEventosEditPerfilFinalScript">
+(function(){
+
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+  function store(k,v){localStorage.setItem(k,JSON.stringify(v))}
+  function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  function toast(msg){if(typeof window.toast==='function')window.toast(msg);else alert(msg)}
+  function me(){return load('fu_user',null)}
+  function setMe(u){store('fu_user',u)}
+  function readFile(file){
+    return new Promise(res=>{
+      if(!file)return res('');
+      const r=new FileReader();
+      r.onload=()=>res(r.result);
+      r.onerror=()=>res('');
+      r.readAsDataURL(file);
+    });
+  }
+  function eventById(id){
+    try{return plans.find(p=>p.id===id)||null}catch(e){return null}
+  }
+  function chats(){
+    try{
+      const c=load('fu_chats_v2',{});
+      return c&&typeof c==='object'?c:{};
+    }catch(e){return {}}
+  }
+  function setChats(c){store('fu_chats_v2',c)}
+  function unread(){
+    const u=load('fu_unread_msgs_v2',{});
+    return u&&typeof u==='object'?u:{};
+  }
+  function setUnread(u){
+    store('fu_unread_msgs_v2',u);
+    const dot=$('msgDot');
+    if(dot)dot.classList.toggle('show',Object.values(u).some(Boolean));
+  }
+  function markRead(id){
+    const u=unread();
+    delete u[id];
+    setUnread(u);
+  }
+
+  window.showEditPanel = function(){
+    const u=me()||{};
+    const panel=$('profilePanel');
+    const content=$('panelContent');
+    if(!panel||!content)return;
+
+    content.innerHTML=`
+      <h3 class="section-title">✏️ Editar perfil</h3>
+
+      <div class="form-group">
+        <label>Nombre</label>
+        <input id="editName" value="${esc(u.name||u.n||'')}" placeholder="Tu nombre">
+      </div>
+
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input id="editCity" value="${esc(u.city||u.c||'')}" placeholder="Tu ciudad">
+      </div>
+
+      <div class="form-group">
+        <label>¿Qué buscás?</label>
+        <select id="editIntent">
+          ${['Conocer gente nueva','Hacer planes y salidas','Amistad','Algo romántico'].map(x=>`<option ${((u.intent||'')===x)?'selected':''}>${x}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="editBio" placeholder="Contate algo...">${esc(u.bio||'')}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Cambiar foto</label>
+        <input id="editPhoto" type="file" accept="image/*">
+      </div>
+
+      <button class="btn btn-green" style="width:100%" onclick="saveEditedProfile()">Guardar cambios</button>
+    `;
+
+    panel.classList.add('open');
+  };
+
+  window.saveEditedProfile = async function(){
+    const u=me()||{};
+    const name=$('editName')?.value.trim()||u.name||u.n||'Usuario';
+    const city=$('editCity')?.value.trim()||'';
+    const intent=$('editIntent')?.value||'';
+    const bio=$('editBio')?.value.trim()||'';
+    const file=$('editPhoto')?.files?.[0];
+
+    let photo=u.photo||u.img||'';
+    if(file){
+      const newPhoto=await readFile(file);
+      if(newPhoto)photo=newPhoto;
+    }
+
+    const updated={
+      ...u,
+      name,
+      n:name,
+      city,
+      c:city,
+      intent,
+      bio,
+      photo,
+      img:photo
+    };
+
+    setMe(updated);
+
+    const users=load('fu_users',[]);
+    const clean=users.filter(x=>x && x.id!==updated.id && x.email!==updated.email);
+    clean.unshift(updated);
+    store('fu_users',clean);
+
+    toast('Perfil actualizado');
+    if(typeof closePanel==='function')closePanel();
+    if(typeof updateHeader==='function')updateHeader();
+    if(typeof renderMe==='function')renderMe();
+    if(typeof renderProfiles==='function')renderProfiles();
+  };
+
+  window.attendEvent = function(id){
+    const a=load('fu_event_attendance',[]);
+    const i=a.indexOf(id);
+
+    if(i>=0){
+      a.splice(i,1);
+      toast('Ya no asistís a este plan');
+    }else{
+      a.push(id);
+      toast('Te sumaste al plan');
+    }
+
+    store('fu_event_attendance',a);
+
+    if(typeof renderPlans==='function')renderPlans();
+    if(typeof renderHome==='function')renderHome();
+
+    const ev=eventById(id);
+    if(ev){
+      setTimeout(()=>openEvent(id),100);
+    }
+  };
+
+  window.openEvent = function(id){
+    const p=eventById(id);
+    if(!p)return;
+
+    const isGoing=load('fu_event_attendance',[]).includes(id);
+    const panel=$('profilePanel');
+    const content=$('panelContent');
+    if(!panel||!content)return;
+
+    content.innerHTML=`
+      <h3 class="section-title">${esc(p.ico+' '+p.title)}</h3>
+      <img src="${p.img}" style="width:100%;height:180px;object-fit:cover;border-radius:20px;margin-bottom:.9rem">
+      <p style="line-height:1.6;margin-bottom:.8rem">${esc(p.desc)}</p>
+      <p style="color:var(--muted);font-weight:800;margin-bottom:.8rem">📍 ${esc(p.city)} · ${esc(p.when)}</p>
+
+      <button class="btn btn-green" style="width:100%;margin-bottom:.65rem" onclick="attendEvent('${p.id}')">
+        ${isGoing?'✓ Vas a ir':'Sumarme'}
+      </button>
+
+      ${isGoing?`
+        <button class="btn" style="width:100%;background:linear-gradient(135deg,#444,#666);color:white" onclick="startEventChat('${p.id}')">
+          💬 Abrir chat del evento
+        </button>
+      `:`
+        <div style="font-size:.78rem;color:var(--muted);font-weight:800;text-align:center;margin-top:.35rem">
+          Sumate para habilitar el chat del evento.
+        </div>
+      `}
+    `;
+
+    panel.classList.add('open');
+  };
+
+  window.startEventChat = function(eventId){
+    const ev=eventById(eventId);
+    if(!ev)return toast('No encontré el evento');
+
+    const attending=load('fu_event_attendance',[]).includes(eventId);
+    if(!attending)return toast('Primero tenés que sumarte al evento');
+
+    window.currentChat={
+      id:'event_'+eventId,
+      n:ev.title,
+      name:ev.title,
+      img:ev.img,
+      event:true
+    };
+
+    markRead('event_'+eventId);
+
+    if(typeof closePanel==='function')closePanel();
+
+    const chatName=$('chatName');
+    const chatAvatar=$('chatAvatar');
+    if(chatName)chatName.textContent=ev.title;
+    if(chatAvatar)chatAvatar.src=ev.img;
+
+    if(typeof go==='function')go('chat');
+    renderEventAwareChat();
+  };
+
+  function profileOrEventById(id){
+    if(String(id).startsWith('event_')){
+      const ev=eventById(String(id).replace('event_',''));
+      if(ev)return {id:'event_'+ev.id,n:ev.title,name:ev.title,img:ev.img,event:true};
+    }
+    try{
+      if(typeof profileById==='function')return profileById(id);
+    }catch(e){}
+    return null;
+  }
+
+  window.renderMessages = function(){
+    const c=chats();
+    const u=unread();
+    const ids=Object.keys(c).filter(id=>c[id]&&c[id].length);
+
+    const list=$('msgList');
+    if(!list)return;
+
+    list.innerHTML=ids.length?ids.map(id=>{
+      const p=profileOrEventById(id)||{id,n:'Usuario',img:''};
+      const last=c[id][c[id].length-1];
+      const isEvent=String(id).startsWith('event_');
+
+      return `<div class="msg-item" onclick="${isEvent?`startEventChat('${id.replace('event_','')}')`:`startChatById('${id}')`}">
+        <img class="msg-avatar" src="${esc(p.img||p.photo||'')}">
+        <div class="msg-info">
+          <div class="msg-name">${isEvent?'📅 ':''}${esc(p.n||p.name||'Usuario')}</div>
+          <div class="msg-preview">${esc(last.text||'Mensaje')}</div>
+        </div>
+        ${u[id]?'<span class="unread-pill"></span>':''}
+        <div class="msg-time">${esc(last.time||'')}</div>
+      </div>`;
+    }).join(''):'<div class="empty"><div class="empty-ico">💬</div><p>Mandá un diamante o sumate a un evento para empezar una charla.</p></div>';
+
+    setUnread(u);
+  };
+
+  function renderEventAwareChat(){
+    const c=chats();
+    const chat=window.currentChat;
+    if(!chat)return;
+    const box=$('chatBox');
+    if(!box)return;
+
+    const arr=c[chat.id]||[];
+    box.innerHTML=arr.map(m=>`<div class="bubble ${m.from==='me'?'mine':'theirs'}">${esc(m.text)}<div style="font-size:.62rem;opacity:.7;margin-top:.2rem">${esc(m.time||'')}</div></div>`).join('');
+    setTimeout(()=>box.scrollTop=box.scrollHeight,30);
+  }
+
+  window.renderChat = renderEventAwareChat;
+
+  window.sendMsg = function(){
+    const chat=window.currentChat;
+    if(!chat)return;
+    const input=$('chatInput');
+    const text=input?.value.trim();
+    if(!text)return;
+
+    const c=chats();
+    c[chat.id]=c[chat.id]||[];
+
+    c[chat.id].push({
+      from:'me',
+      text,
+      time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
+      date:new Date().toISOString()
+    });
+
+    setChats(c);
+    input.value='';
+    input.style.height='auto';
+    renderEventAwareChat();
+  };
+
+  window.showEventosPanel = function(){
+    const a=load('fu_event_attendance',[]).map(id=>eventById(id)).filter(Boolean);
+    const panel=$('profilePanel');
+    const content=$('panelContent');
+    if(!panel||!content)return;
+
+    content.innerHTML=`<h3 class="section-title">📅 Mis eventos</h3>
+    ${a.length?a.map(p=>`<div class="msg-item" onclick="openEvent('${p.id}')">
+      <img class="msg-avatar" src="${p.img}">
+      <div class="msg-info">
+        <div class="msg-name">${esc(p.title)}</div>
+        <div class="msg-preview">${esc(p.when)} · Chat habilitado</div>
+      </div>
+    </div>`).join(''):'<div class="empty"><div class="empty-ico">📅</div><p>Todavía no te sumaste a eventos.</p></div>'}`;
+
+    panel.classList.add('open');
+  };
+
+})();
+</script>
+
 </body>
 </html>
