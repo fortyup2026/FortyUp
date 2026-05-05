@@ -1000,6 +1000,22 @@ button{cursor:pointer}
   .profile-photo{height:175px}
   .btn-diamond,.btn-chat{font-size:.66rem;padding:.42rem .38rem}
 }
+
+/* === PERFIL PULIDO FINAL === */
+.edit-photo{
+  right:calc(50% - 82px)!important;
+  bottom:18px!important;
+  width:34px!important;
+  height:34px!important;
+  z-index:8!important;
+}
+.me-hero{padding-bottom:1.95rem!important}
+.me-actions.profile-clean{grid-template-columns:1fr 1fr!important}
+.legal-panel p{font-size:.84rem;color:var(--txt);line-height:1.65;margin-bottom:.8rem}
+.legal-panel h4{font-size:.94rem;color:var(--g);margin:.85rem 0 .35rem}
+.legal-panel ul{padding-left:1.2rem;margin:.4rem 0 .9rem}
+.legal-panel li{font-size:.83rem;line-height:1.55;margin-bottom:.35rem;color:var(--txt)}
+
 </style>
 </head>
 <body>
@@ -1996,6 +2012,104 @@ initApp();
     panel.classList.add('open');
   };
 
+})();
+</script>
+
+
+<script id="fuPerfilPulidoFinalScript">
+(function(){
+  function $(id){return document.getElementById(id)}
+  function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+  function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  function me(){return load('fu_user',null)}
+  function ageFromBirthLocal(b){if(!b)return '';const d=new Date(b);if(isNaN(d))return '';const n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
+  function diamondRecordsLocal(){const r=load('fu_diamond_records_v2',{sent:[],received:[],matches:[]});r.sent=Array.isArray(r.sent)?r.sent:[];r.received=Array.isArray(r.received)?r.received:[];r.matches=Array.isArray(r.matches)?r.matches:[];return r}
+  function todayKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function remainingDiamondsLocal(){const r=diamondRecordsLocal();const t=todayKey();const sentToday=r.sent.filter(x=>{const d=new Date(x.at);return !isNaN(d)&&todayKey(d)===t});return Math.max(0,5-sentToday.length)}
+  function renderQRLocal(){const box=$('qrBox');if(!box)return;box.innerHTML='';try{new QRCode(box,{text:location.origin+location.pathname+'#perfil='+(me()?.id||'fortyup'),width:104,height:104,colorDark:'#064E3B',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M})}catch(e){box.innerHTML='<b style="color:#064E3B;text-align:center">QR<br>FortyUp</b>'}}
+
+  window.renderMe=function(){
+    const u=me()||{};
+    const name=u.name||u.n||'Usuario';
+    const age=u.age||ageFromBirthLocal(u.birth)||'';
+    const city=u.city||u.c||'';
+    const photo=u.photo||u.img||'';
+    const initial=name.charAt(0).toUpperCase();
+    const r=diamondRecordsLocal();
+    const left=remainingDiamondsLocal();
+
+    $('meInner').innerHTML=`
+      <div class="me-hero">
+        <div class="flip-profile" onclick="flipQR()">
+          <div id="flipInner" class="flip-inner">
+            <div class="flip-front">${photo?`<img src="${photo}">`:`<div class="flip-fallback">${initial}</div>`}</div>
+            <div class="flip-back"><div id="qrBox"></div></div>
+          </div>
+          <div class="qr-hint">Tocá para ver QR</div>
+        </div>
+        <button class="edit-photo" onclick="event.stopPropagation();document.getElementById('newPhoto').click()" title="Cambiar foto">✏</button>
+        <input id="newPhoto" type="file" accept="image/*" style="display:none" onchange="saveNewPhoto(this)">
+        <div class="profile-name">${esc(name)}${age?', '+age:''}</div>
+        <div class="profile-city">📍 ${esc(city||'Sin ciudad')}</div>
+      </div>
+
+      <div class="diamond-card">
+        <div class="diamond-head">
+          <div><h3>💎 Tus Diamantes</h3><p>Tu forma principal de conectar en FortyUp</p></div>
+          <div class="diamond-badge"><span id="diamAvail">${left}</span> hoy</div>
+        </div>
+        <div class="diamond-grid">
+          <div class="diamond-stat"><strong id="diamSent">${r.sent.length}</strong><span>Enviados</span></div>
+          <div class="diamond-stat"><strong id="diamMatches">${r.matches.length}</strong><span>Matches</span></div>
+          <div class="diamond-stat"><strong id="diamAvail2">${left}</strong><span>Disponibles</span></div>
+        </div>
+      </div>
+
+      <div class="me-actions profile-clean">
+        <div class="me-action" onclick="showEventosPanel()"><div class="ico">📅</div><div class="title">Mis eventos</div><div class="sub">Planes y asistencias</div></div>
+        <div class="me-action" onclick="showFavoritesPanel()"><div class="ico">⭐</div><div class="title">Favoritos</div><div class="sub">Perfiles guardados</div></div>
+        <div class="me-action" onclick="showEditPanel()"><div class="ico">✏️</div><div class="title">Editar perfil</div><div class="sub">Datos y foto</div></div>
+        <div class="me-action" onclick="showTermsPanel()"><div class="ico">📄</div><div class="title">Términos</div><div class="sub">Condiciones de uso</div></div>
+      </div>
+
+      <div class="settings">
+        <div class="me-row" onclick="updateGPS()"><span class="me-row-ico">📍</span><span class="me-row-txt">Actualizar ubicación</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showHelpPanel()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="if(confirm('¿Eliminar tu cuenta?'))deleteAccount()" style="color:var(--red)"><span class="me-row-ico">🗑</span><span class="me-row-txt" style="color:var(--red)">Eliminar cuenta</span><span class="me-row-arr">›</span></div>
+      </div>
+    `;
+    renderQRLocal();
+    if(typeof updateDiamondUI==='function')updateDiamondUI();
+  };
+
+  function openInfoPanel(title,html){
+    const panel=$('profilePanel'), content=$('panelContent');
+    if(!panel||!content)return;
+    content.innerHTML=`<div class="legal-panel"><h3 class="section-title">${title}</h3>${html}</div>`;
+    panel.classList.add('open');
+  }
+
+  window.showTermsPanel=function(){openInfoPanel('📄 Términos y condiciones',`
+    <p>FortyUp es una comunidad pensada para personas mayores de 40 años que buscan conectar a través de planes, eventos y conversaciones respetuosas.</p>
+    <h4>Uso de la app</h4><ul><li>Usá información real y respetuosa en tu perfil.</li><li>No se permite acosar, amenazar, discriminar ni publicar contenido ofensivo.</li><li>Los eventos y chats deben usarse para encuentros seguros y de buena fe.</li></ul>
+    <h4>Diamantes y matches</h4><p>Los diamantes sirven para expresar interés. Cuando dos personas se envían diamante mutuamente, se habilita el match y la posibilidad de conversar.</p>
+    <h4>Responsabilidad</h4><p>FortyUp facilita conexiones, pero cada usuario es responsable de sus interacciones, decisiones y encuentros fuera de la aplicación.</p>`)}
+  window.showSecurityPanel=function(){openInfoPanel('🛡 Seguridad',`
+    <p>Tu seguridad es prioridad. Recomendamos mantener las primeras conversaciones dentro de FortyUp y evitar compartir datos sensibles demasiado rápido.</p>
+    <h4>Consejos</h4><ul><li>Coordiná primeros encuentros en lugares públicos.</li><li>Avisale a alguien de confianza dónde vas a estar.</li><li>No compartas claves, datos bancarios ni documentos personales.</li><li>Si alguien te incomoda, podés bloquear o reportar su perfil.</li></ul>
+    <h4>Reportes</h4><p>Los reportes ayudan a mantener una comunidad sana. Un perfil reportado puede ser revisado y limitado si incumple las normas.</p>`)}
+  window.showPrivacyPanel=function(){openInfoPanel('🔒 Privacidad',`
+    <p>La información de tu perfil se usa para mostrarte dentro de la comunidad y facilitar conexiones con otros usuarios.</p>
+    <h4>Datos visibles</h4><ul><li>Nombre, edad, ciudad, foto, bio e intereses.</li><li>Eventos a los que decidís sumarte dentro de la app.</li><li>Matches y chats solo dentro de las funciones correspondientes.</li></ul>
+    <h4>Control</h4><p>Podés actualizar tu perfil, cambiar tu foto, bloquear usuarios o eliminar tu cuenta desde esta pantalla.</p>`)}
+  window.showHelpPanel=function(){openInfoPanel('❓ Ayuda',`
+    <p>Acá tenés una guía rápida para usar FortyUp.</p>
+    <h4>¿Cómo conecto con alguien?</h4><p>Enviá un diamante a un perfil. Si esa persona también te envía uno, se crea un match y se habilita el chat.</p>
+    <h4>¿Cómo funcionan los eventos?</h4><p>Entrá a un evento y tocá “Sumarme”. Al asistir, se habilita el chat del evento para hablar con otras personas que van.</p>
+    <h4>¿Cómo cambio mi foto?</h4><p>Tocá el botón amarillo de edición sobre tu foto de perfil y elegí una imagen nueva.</p>
+    <h4>¿Qué pasa con el QR?</h4><p>Tocá tu foto para girarla y mostrar tu QR de perfil FortyUp.</p>`)}
 })();
 </script>
 
