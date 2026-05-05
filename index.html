@@ -8664,5 +8664,525 @@ body.fu-diamond-stable *{
 })();
 </script>
 
+
+<style id="fuPerfilDiamantesFinalStyle">
+/* === FortyUp PERFIL DIAMANTES FINAL === */
+#me .screen-inner{
+  padding-top:0!important;
+  padding-bottom:7.5rem!important;
+}
+.fu-profile-hero-final{
+  background:linear-gradient(160deg,#042f25 0%,#064E3B 55%,#0a6b50 100%);
+  padding:1.35rem 1.1rem 1.6rem;
+  border-radius:0 0 34px 34px;
+  margin:0 -1rem 1rem;
+  color:#fff;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.fu-profile-hero-final::before{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:rgba(110,216,255,.12);
+  right:-70px;
+  top:-80px;
+}
+.fu-profile-hero-final::after{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:rgba(16,185,129,.14);
+  left:-80px;
+  bottom:-90px;
+}
+.fu-profile-hero-inner{
+  position:relative;
+  z-index:2;
+}
+.fu-profile-flip{
+  width:134px;
+  height:134px;
+  margin:0 auto .85rem;
+  perspective:900px;
+  position:relative;
+}
+.fu-profile-flip-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .65s cubic-bezier(.4,0,.2,1);
+}
+.fu-profile-flip-inner.flipped{
+  transform:rotateY(180deg);
+}
+.fu-profile-flip-front,
+.fu-profile-flip-back{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  overflow:hidden;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  border:4px solid rgba(255,255,255,.6);
+  box-shadow:0 16px 40px rgba(0,0,0,.22);
+  background:rgba(255,255,255,.12);
+}
+.fu-profile-flip-front img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.fu-profile-photo-fallback{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  font-family:'Playfair Display',serif;
+  font-size:3.2rem;
+  font-weight:900;
+  color:#064E3B;
+  background:linear-gradient(135deg,#ECFDF5,#6ee7b7);
+}
+.fu-profile-flip-back{
+  transform:rotateY(180deg);
+  display:grid;
+  place-items:center;
+  background:#fff;
+  padding:.55rem;
+}
+#fuProfileQR{
+  width:104px;
+  height:104px;
+  display:grid;
+  place-items:center;
+}
+#fuProfileQR canvas,
+#fuProfileQR img{
+  width:104px!important;
+  height:104px!important;
+}
+.fu-profile-qr-hint{
+  position:absolute;
+  left:50%;
+  bottom:-20px;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:.63rem;
+  color:rgba(255,255,255,.78);
+  font-weight:900;
+}
+.fu-profile-edit-photo{
+  position:absolute;
+  right:calc(50% - 68px);
+  bottom:4px;
+  z-index:4;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#F2B705;
+  color:#064E3B;
+  border:3px solid #fff;
+  font-size:.82rem;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(0,0,0,.2);
+}
+.fu-profile-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.55rem;
+  font-weight:900;
+  line-height:1.1;
+  margin-top:1.15rem;
+}
+.fu-profile-city{
+  font-size:.84rem;
+  color:rgba(255,255,255,.75);
+  font-weight:800;
+  margin-top:.25rem;
+}
+.fu-diamond-main-card{
+  margin:0 0 1rem;
+  background:linear-gradient(135deg,#E0F7FF,#ffffff);
+  border:1.5px solid rgba(39,183,242,.28);
+  border-radius:28px;
+  padding:1rem;
+  box-shadow:0 14px 36px rgba(39,183,242,.14);
+}
+.fu-diamond-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.75rem;
+  margin-bottom:.9rem;
+}
+.fu-diamond-card-head h3{
+  font-family:'Playfair Display',serif;
+  color:#064E3B;
+  font-size:1.18rem;
+  margin:0;
+  line-height:1.1;
+}
+.fu-diamond-card-head p{
+  color:#6B7C76;
+  font-size:.76rem;
+  font-weight:800;
+  margin:.2rem 0 0;
+}
+.fu-diamond-badge{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+  border-radius:999px;
+  background:#064E3B;
+  color:#fff;
+  padding:.38rem .65rem;
+  font-size:.78rem;
+  font-weight:1000;
+}
+.fu-diamond-stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:.55rem;
+}
+.fu-diamond-stat{
+  border-radius:20px;
+  background:#fff;
+  border:1.5px solid rgba(39,183,242,.18);
+  padding:.75rem .5rem;
+  text-align:center;
+}
+.fu-diamond-stat strong{
+  display:block;
+  color:#064E3B;
+  font-size:1.25rem;
+  font-weight:1000;
+  line-height:1;
+}
+.fu-diamond-stat span{
+  display:block;
+  color:#6B7C76;
+  font-size:.68rem;
+  font-weight:900;
+  margin-top:.28rem;
+}
+.fu-profile-actions-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.65rem;
+  margin-bottom:1rem;
+}
+.fu-profile-action{
+  border:1.5px solid var(--line);
+  background:#fff;
+  border-radius:22px;
+  padding:.9rem .75rem;
+  text-align:left;
+  cursor:pointer;
+  box-shadow:var(--sh2);
+}
+.fu-profile-action .ico{
+  font-size:1.35rem;
+  margin-bottom:.35rem;
+}
+.fu-profile-action .title{
+  color:#064E3B;
+  font-weight:1000;
+  font-size:.88rem;
+}
+.fu-profile-action .sub{
+  color:#6B7C76;
+  font-size:.72rem;
+  font-weight:800;
+  margin-top:.12rem;
+}
+.fu-profile-settings{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--sh2);
+}
+.fu-profile-settings .me-row{
+  border-bottom:1px solid var(--line);
+}
+.fu-profile-settings .me-row:last-child{
+  border-bottom:none;
+}
+@media(max-width:380px){
+  .fu-diamond-stats-grid{gap:.4rem}
+  .fu-diamond-stat{padding:.65rem .35rem}
+  .fu-diamond-stat strong{font-size:1.12rem}
+  .fu-diamond-stat span{font-size:.62rem}
+}
+</style>
+
+<script id="fuPerfilDiamantesFinalScript">
+(function(){
+  const DAILY_LIMIT=5;
+  const LS_DIAMONDS='fu_diamond_records_v1';
+
+  const $=id=>document.getElementById(id);
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+
+  function todayKey(d=new Date()){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+
+  function diamondRecords(){
+    const r=load(LS_DIAMONDS,{sent:[],received:[],matches:[]});
+    r.sent=Array.isArray(r.sent)?r.sent:[];
+    r.received=Array.isArray(r.received)?r.received:[];
+    r.matches=Array.isArray(r.matches)?r.matches:[];
+    return r;
+  }
+
+  function sentToday(){
+    const t=todayKey();
+    return diamondRecords().sent.filter(x=>{
+      const d=x&&x.at?new Date(x.at):null;
+      return d && !isNaN(d.getTime()) && todayKey(d)===t;
+    });
+  }
+
+  function remainingDiamonds(){
+    return Math.max(0,DAILY_LIMIT-sentToday().length);
+  }
+
+  function currentUser(){
+    try{
+      if(typeof window.me==='function')return window.me();
+      return JSON.parse(localStorage.getItem('fu_user')||'null');
+    }catch(e){return null}
+  }
+
+  function userAge(u){
+    if(!u)return '';
+    if(u.a||u.age)return u.a||u.age;
+    const b=u.birth||u.birthdate||u.fechaNacimiento||u.rBirth;
+    if(!b)return '';
+    const d=new Date(b);
+    if(isNaN(d.getTime()))return '';
+    const now=new Date();
+    let age=now.getFullYear()-d.getFullYear();
+    const m=now.getMonth()-d.getMonth();
+    if(m<0||(m===0&&now.getDate()<d.getDate()))age--;
+    return age;
+  }
+
+  function profileUrl(){
+    const u=currentUser()||{};
+    const id=u.uid||u.id||u.email||'fortyup';
+    try{
+      return location.origin+location.pathname+'#perfil='+encodeURIComponent(id);
+    }catch(e){
+      return 'https://fortyup.com.ar/#perfil='+encodeURIComponent(id);
+    }
+  }
+
+  function renderQR(){
+    const target=$('fuProfileQR');
+    if(!target)return;
+    target.innerHTML='';
+    try{
+      if(typeof QRCode!=='undefined'){
+        new QRCode(target,{
+          text:profileUrl(),
+          width:104,
+          height:104,
+          colorDark:'#064E3B',
+          colorLight:'#ffffff',
+          correctLevel:QRCode.CorrectLevel.M
+        });
+      }else{
+        target.innerHTML='<div style="font-size:.7rem;font-weight:900;color:#064E3B;text-align:center">QR<br>FortyUp</div>';
+      }
+    }catch(e){
+      target.innerHTML='<div style="font-size:.7rem;font-weight:900;color:#064E3B;text-align:center">QR<br>FortyUp</div>';
+    }
+  }
+
+  function updateDiamondProfileStats(){
+    const r=diamondRecords();
+    const sent=(r.sent||[]).length;
+    const matches=(r.matches||[]).length;
+    const available=remainingDiamonds();
+
+    const ids={
+      fuDiamondsSent:sent,
+      fuDiamondsMatches:matches,
+      fuDiamondsAvailable:available,
+      superCount:available,
+      meSuperCount:available,
+      sentFortis:sent,
+      recFortis:matches
+    };
+    Object.keys(ids).forEach(id=>{
+      const el=$(id);
+      if(el)el.textContent=ids[id];
+    });
+
+    document.querySelectorAll('.me-stat-fortis .me-stat-l').forEach(el=>{
+      const txt=(el.textContent||'').toLowerCase();
+      if(txt.includes('enviado'))el.textContent='Diamantes';
+      if(txt.includes('recibido'))el.textContent='Matches';
+      if(txt.includes('fortis'))el.textContent='Diamantes';
+    });
+  }
+
+  window.updateDiamondProfileStats=updateDiamondProfileStats;
+
+  window.flipProfileDiamondQR=function(){
+    const el=$('fuProfileFlipInner');
+    if(el)el.classList.toggle('flipped');
+  };
+
+  function buildProfileHTML(){
+    const meScreen=$('me');
+    const inner=meScreen?meScreen.querySelector('.screen-inner'):null;
+    if(!inner)return;
+
+    const u=currentUser()||{};
+    const name=u.name||u.n||'Usuario';
+    const age=userAge(u);
+    const city=u.city||u.c||'';
+    const photo=u.photo||u.img||u.profilePhoto||'';
+    const initial=(name||'U').charAt(0).toUpperCase();
+
+    inner.innerHTML=`
+      <div class="fu-profile-hero-final">
+        <div class="fu-profile-hero-inner">
+          <div class="fu-profile-flip" onclick="flipProfileDiamondQR()">
+            <div class="fu-profile-flip-inner" id="fuProfileFlipInner">
+              <div class="fu-profile-flip-front">
+                ${photo?`<img id="mePhoto" src="${photo}" alt="">`:`<div class="fu-profile-photo-fallback">${initial}</div>`}
+              </div>
+              <div class="fu-profile-flip-back">
+                <div id="fuProfileQR"></div>
+              </div>
+            </div>
+            <div class="fu-profile-qr-hint">Tocá para ver QR</div>
+          </div>
+
+          <button class="fu-profile-edit-photo" onclick="event.stopPropagation();document.getElementById('newProfilePhoto').click()">✏</button>
+          <input type="file" id="newProfilePhoto" accept="image/*" style="display:none" onchange="saveNewPhoto(this)">
+
+          <div class="fu-profile-name">${name}${age?', '+age:''}</div>
+          <div class="fu-profile-city">${city?'📍 '+city:'📍 Sin ciudad'}</div>
+        </div>
+      </div>
+
+      <div class="fu-diamond-main-card">
+        <div class="fu-diamond-card-head">
+          <div>
+            <h3>💎 Tus Diamantes</h3>
+            <p>Tu forma principal de conectar en FortyUp</p>
+          </div>
+          <div class="fu-diamond-badge"><span id="fuDiamondsAvailable">5</span> hoy</div>
+        </div>
+
+        <div class="fu-diamond-stats-grid">
+          <div class="fu-diamond-stat">
+            <strong id="fuDiamondsSent">0</strong>
+            <span>Enviados</span>
+          </div>
+          <div class="fu-diamond-stat">
+            <strong id="fuDiamondsMatches">0</strong>
+            <span>Matches</span>
+          </div>
+          <div class="fu-diamond-stat">
+            <strong id="fuDiamondsAvailable2">5</strong>
+            <span>Disponibles</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fu-profile-actions-grid">
+        <div class="fu-profile-action" onclick="showEventosPanel()">
+          <div class="ico">📅</div>
+          <div class="title">Mis eventos</div>
+          <div class="sub">Planes creados y asistencias</div>
+        </div>
+        <div class="fu-profile-action" onclick="showFavoritesPanel()">
+          <div class="ico">⭐</div>
+          <div class="title">Favoritos</div>
+          <div class="sub">Perfiles guardados</div>
+        </div>
+        <div class="fu-profile-action" onclick="showEditPanel()">
+          <div class="ico">✏️</div>
+          <div class="title">Editar perfil</div>
+          <div class="sub">Datos, gustos y foto</div>
+        </div>
+        <div class="fu-profile-action" onclick="showSuperPanel()">
+          <div class="ico">💎</div>
+          <div class="title">Diamantes</div>
+          <div class="sub">Enviados y matches</div>
+        </div>
+      </div>
+
+      <div class="fu-profile-settings">
+        <div class="me-row" onclick="updateGPS()"><span class="me-row-ico">📍</span><span class="me-row-txt">Actualizar ubicación</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showSecurityPanel()"><span class="me-row-ico">🛡</span><span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showPrivacyPanel()"><span class="me-row-ico">🔒</span><span class="me-row-txt">Privacidad</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="showHelpPanel()"><span class="me-row-ico">❓</span><span class="me-row-txt">Ayuda</span><span class="me-row-arr">›</span></div>
+        <div class="me-row" onclick="if(confirm('¿Eliminar tu cuenta?'))deleteAccount()" style="color:var(--red)"><span class="me-row-ico">🗑</span><span class="me-row-txt" style="color:var(--red)">Eliminar cuenta</span><span class="me-row-arr">›</span></div>
+      </div>
+    `;
+
+    renderQR();
+    updateDiamondProfileStats();
+
+    const available2=$('fuDiamondsAvailable2');
+    if(available2)available2.textContent=remainingDiamonds();
+  }
+
+  window.renderProfileDiamondsFinal=buildProfileHTML;
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__perfilDiamantesFinal){
+    window.go=function(id){
+      const r=oldGo.apply(this,arguments);
+      if(id==='me'){
+        setTimeout(buildProfileHTML,30);
+        setTimeout(updateDiamondProfileStats,120);
+      }
+      return r;
+    };
+    window.go.__perfilDiamantesFinal=true;
+  }
+
+  // Si el sistema de diamantes guarda cambios, el contador se corrige solo.
+  const originalSetItem=localStorage.setItem.bind(localStorage);
+  if(!localStorage.__fuDiamondProfileCounterGuard){
+    localStorage.setItem=function(k,v){
+      const res=originalSetItem(k,v);
+      if(k===LS_DIAMONDS){
+        setTimeout(updateDiamondProfileStats,20);
+      }
+      return res;
+    };
+    localStorage.__fuDiamondProfileCounterGuard=true;
+  }
+
+  setTimeout(()=>{
+    const active=document.querySelector('.screen.active');
+    if(active&&active.id==='me')buildProfileHTML();
+    updateDiamondProfileStats();
+  },500);
+
+  setInterval(updateDiamondProfileStats,1500);
+})();
+</script>
+
 </body>
 </html>
