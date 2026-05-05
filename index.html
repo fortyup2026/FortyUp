@@ -8703,5 +8703,226 @@ body.fu-stable-mode *{animation:none!important;transition:none!important}
 })();
 </script>
 
+
+<style id="fuEstabilidadFinalSebasStyle">
+body.fu-no-jump *,body.fu-card-unlock *{animation:none!important;transition:none!important}
+.bnav{height:calc(58px + env(safe-area-inset-bottom,0px))!important;min-height:58px!important}
+.bn,.bn-center{min-height:52px!important;transform:none!important;transition:none!important}
+.msg-name .fu-unread-dot,.msg-name .fu-bell,.msg-name .bell,.msg-name .fu-hidden-bell{display:none!important}
+.msg-name{min-height:18px!important}
+.auth-overlay:not(.open),.panel-overlay:not(.open),.match-popup:not(.show){pointer-events:none!important}
+.auth-overlay.open,.panel-overlay.open,.match-popup.show{pointer-events:auto!important}
+.profile-card,.profile-card *,.profile-actions,.profile-actions *,#profilesList,#homeProfiles{pointer-events:auto!important}
+.profile-card{position:relative!important;z-index:1!important;transform:none!important}
+#msgDot{display:none!important}
+</style>
+
+<script id="fuEstabilidadFinalSebasScript">
+(function(){
+  const LS_MSG_NOTIS='fu_msg_notifications_v1';
+  const LS_CHATS='fu_chats';
+  const LS_DELETED='fu_deleted_chats_permanent_v6';
+  const LS_FORTI='fu_forti_records';
+
+  const $=id=>document.getElementById(id);
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const toast=msg=>{if(typeof window.toast==='function')window.toast(msg);else alert(msg)};
+  const profiles=()=>{try{return typeof window.allProfiles==='function'?window.allProfiles():[]}catch(e){return []}};
+  const profile=pid=>profiles().find(p=>p.id===pid)||null;
+
+  function stripNotificationIcons(){
+    document.querySelectorAll('.msg-name').forEach(el=>{
+      const cleaned=(el.textContent||'').replace(/🔔/g,'').replace(/◆/g,'').replace(/\s+/g,' ').trim();
+      if(el.textContent!==cleaned) el.textContent=cleaned;
+      el.querySelectorAll('.fu-unread-dot,.fu-bell,.bell,.fu-hidden-bell').forEach(x=>x.remove());
+    });
+
+    const n=load(LS_MSG_NOTIS,{});
+    let changed=false;
+    Object.keys(n||{}).forEach(k=>{
+      if(n[k] && n[k].unread){
+        n[k].unread=false;
+        changed=true;
+      }
+    });
+    if(changed) save(LS_MSG_NOTIS,n);
+    const dot=$('msgDot');
+    if(dot)dot.classList.remove('show');
+  }
+
+  function deleted(){
+    const a=load(LS_DELETED,[]);
+    return Array.isArray(a)?a:[];
+  }
+  function markDeleted(pid){
+    const a=deleted();
+    if(pid&&!a.includes(pid))a.push(pid);
+    save(LS_DELETED,a);
+  }
+  function isDeleted(pid){return deleted().includes(pid)}
+  function chats(){
+    const c=load(LS_CHATS,{});
+    return c&&typeof c==='object'?c:{};
+  }
+  function setChats(c){save(LS_CHATS,c)}
+
+  function cleanGhostChats(){
+    const c=chats();
+    let changed=false;
+    Object.keys(c).forEach(pid=>{
+      const arr=Array.isArray(c[pid])?c[pid]:[];
+      const invalid=!pid || pid==='undefined' || pid==='null' || pid==='[object Object]';
+      if(invalid || isDeleted(pid) || !arr.length){
+        delete c[pid];
+        changed=true;
+      }
+    });
+    if(changed)setChats(c);
+  }
+
+  function unlockUI(){
+    document.body.classList.remove('fu-stable-mode','fu-hard-stable','fu-nav-stable','fu-rendering','fu-msg-stable','fu-card-unlock','fu-no-jump');
+    document.body.style.pointerEvents='auto';
+    document.documentElement.style.pointerEvents='auto';
+
+    document.querySelectorAll('.auth-overlay:not(.open),.panel-overlay:not(.open),.match-popup:not(.show)').forEach(el=>{
+      el.style.pointerEvents='none';
+    });
+    document.querySelectorAll('.profile-card,.profile-card *,.profile-actions,.profile-actions *').forEach(el=>{
+      el.style.pointerEvents='auto';
+    });
+  }
+
+  function fortiRecords(){
+    const r=load(LS_FORTI,{sent:[],received:[]});
+    r.sent=Array.isArray(r.sent)?r.sent:[];
+    r.received=Array.isArray(r.received)?r.received:[];
+    return r;
+  }
+  function pidFromForti(btn){
+    const click=btn.getAttribute('onclick')||'';
+    const m=click.match(/sendForti\(['"]([^'"]+)['"]\)/);
+    return m?m[1]:(btn.dataset.pid||btn.closest('[data-pid]')?.dataset.pid||'');
+  }
+  function applyFortiUIStable(){
+    const r=fortiRecords();
+    document.querySelectorAll('button[onclick*="sendForti"],.btn-forti').forEach(btn=>{
+      const pid=pidFromForti(btn);
+      if(!pid)return;
+      const sent=r.sent.includes(pid);
+      btn.classList.toggle('fu-state-sent',sent);
+      btn.classList.toggle('fu-forti-final-sent',sent);
+      btn.classList.toggle('fu-fast-sent',sent);
+      btn.textContent=sent?'✓ Forti enviado':'◆ Forti';
+      btn.disabled=false;
+    });
+  }
+
+  window.hardDeleteConversation=function(pid){
+    markDeleted(pid);
+    const c=chats();
+    delete c[pid];
+    setChats(c);
+    const n=load(LS_MSG_NOTIS,{});
+    if(n && n[pid]) delete n[pid];
+    save(LS_MSG_NOTIS,n||{});
+    cleanGhostChats();
+    stripNotificationIcons();
+    if(typeof window.renderMessages==='function'){
+      try{window.renderMessages()}catch(e){}
+    }
+    toast('Conversación eliminada');
+  };
+
+  const originalSetItem=localStorage.setItem.bind(localStorage);
+  if(!localStorage.__fuSebasStableGuard){
+    localStorage.setItem=function(k,v){
+      if(k===LS_CHATS || k===LS_MSG_NOTIS){
+        try{
+          const obj=JSON.parse(v);
+          deleted().forEach(pid=>{if(obj&&obj[pid])delete obj[pid]});
+          if(k===LS_MSG_NOTIS){
+            Object.keys(obj||{}).forEach(key=>{if(obj[key])obj[key].unread=false});
+          }
+          v=JSON.stringify(obj);
+        }catch(e){}
+      }
+      return originalSetItem(k,v);
+    };
+    localStorage.__fuSebasStableGuard=true;
+  }
+
+  const oldStartChatPremium=window.startChatPremium;
+  if(typeof oldStartChatPremium==='function' && !oldStartChatPremium.__estabilidadSebas){
+    window.startChatPremium=function(pid){
+      const res=oldStartChatPremium.apply(this,arguments);
+      setTimeout(()=>{stripNotificationIcons();unlockUI()},30);
+      return res;
+    };
+    window.startChatPremium.__estabilidadSebas=true;
+  }
+
+  const oldGo=window.go;
+  if(typeof oldGo==='function' && !oldGo.__estabilidadSebas){
+    window.go=function(id){
+      document.body.classList.add('fu-no-jump');
+      unlockUI();
+
+      if(id==='messages'){
+        cleanGhostChats();
+        stripNotificationIcons();
+      }
+
+      const res=oldGo.apply(this,arguments);
+
+      requestAnimationFrame(()=>{
+        unlockUI();
+        applyFortiUIStable();
+        if(id==='messages'){
+          cleanGhostChats();
+          stripNotificationIcons();
+        }
+        document.body.classList.remove('fu-no-jump');
+      });
+
+      setTimeout(()=>{
+        unlockUI();
+        applyFortiUIStable();
+        stripNotificationIcons();
+      },90);
+
+      return res;
+    };
+    window.go.__estabilidadSebas=true;
+  }
+
+  const profilePanel=$('profilePanel');
+  if(profilePanel && !profilePanel.__estabilidadSebasObserver){
+    profilePanel.__estabilidadSebasObserver=true;
+    new MutationObserver(()=>{
+      unlockUI();
+      applyFortiUIStable();
+    }).observe(profilePanel,{childList:true,subtree:true,attributes:true});
+  }
+
+  const msgList=$('msgList');
+  if(msgList && !msgList.__estabilidadSebasObserver){
+    msgList.__estabilidadSebasObserver=true;
+    new MutationObserver(()=>{
+      stripNotificationIcons();
+      cleanGhostChats();
+    }).observe(msgList,{childList:true,subtree:true,characterData:true});
+  }
+
+  document.addEventListener('touchstart',unlockUI,{passive:true});
+  document.addEventListener('mousedown',unlockUI);
+
+  setTimeout(()=>{unlockUI();applyFortiUIStable();stripNotificationIcons();cleanGhostChats()},250);
+  setTimeout(()=>{unlockUI();applyFortiUIStable();stripNotificationIcons();cleanGhostChats()},900);
+  setInterval(()=>{unlockUI();applyFortiUIStable();stripNotificationIcons();cleanGhostChats()},2000);
+})();
+</script>
+
 </body>
 </html>
