@@ -1654,17 +1654,31 @@ async function register(){
   closeAuth();
   initApp();
 }
+
 function login(){
-  const email=$('lEmail').value.trim().toLowerCase();
-  if(!email)return toast('Ingresá email');
-  let u=load('fu_users',[]).find(x=>x.email===email);
-  if(!u){
-    u={id:email,email,name:email.split('@')[0],n:email.split('@')[0],city:'Buenos Aires',c:'Buenos Aires',age:40};
+  const email = $('lEmail').value.trim().toLowerCase();
+
+  if(!email){
+    return toast('Ingresá email');
   }
+
+  const users = load('fu_users', []);
+
+  let u = users.find(x => 
+    (x.email || '').toLowerCase().trim() === email
+  );
+
+  if(!u){
+    return toast('Ese email no está registrado');
+  }
+
   setMe(u);
   closeAuth();
   initApp();
+
+  toast('Bienvenido ' + (u.name || u.n));
 }
+
 function logout(){
   localStorage.removeItem('fu_user');
   location.reload();
