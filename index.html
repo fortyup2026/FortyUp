@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#050A05">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>FortyUp Nova</title>
+<title>FortyUp Nova Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -356,91 +356,77 @@ img{display:block}
 }
 
 /* ============================================================
-   FORTYUP NOVA — ChatGPT premium layer
-   Diseño más producto, sin reemplazar la lógica pesada existente.
+   FORTYUP NOVA PRO — ChatGPT product layer
+   Mantiene la app completa, pero la vuelve más premium y estable.
 ============================================================ */
 :root{
-  --nova-a:#8BFFC1;
-  --nova-b:#19D982;
-  --nova-c:#54D8FF;
-  --nova-ink:#03100C;
-  --nova-glass:rgba(139,255,193,.075);
-  --nova-glass2:rgba(84,216,255,.06);
+  --nova-lime:#9BFFBF;
+  --nova-green:#16E08A;
+  --nova-dark:#020B08;
+  --nova-card:#071812;
+  --nova-cyan:#54D8FF;
+  --nova-gold:#F4C95D;
+  --nova-red:#FF6B7A;
 }
 body::before{
   content:"";
   position:fixed;
   inset:0;
+  z-index:-2;
   pointer-events:none;
-  z-index:-1;
   background:
-    radial-gradient(circle at 20% -12%,rgba(139,255,193,.13),transparent 32%),
-    radial-gradient(circle at 100% 18%,rgba(84,216,255,.08),transparent 28%),
-    radial-gradient(circle at 50% 118%,rgba(25,217,130,.09),transparent 38%);
+    radial-gradient(circle at 15% -12%,rgba(155,255,191,.15),transparent 32%),
+    radial-gradient(circle at 95% 18%,rgba(84,216,255,.08),transparent 28%),
+    radial-gradient(circle at 45% 115%,rgba(22,224,138,.10),transparent 40%);
 }
 .tb{
-  box-shadow:0 10px 36px rgba(0,0,0,.22);
+  box-shadow:0 12px 42px rgba(0,0,0,.24);
 }
 .tb-logo::after{
-  content:" Nova";
+  content:" Nova Pro";
   font-family:Inter,sans-serif;
   font-size:.48rem;
-  font-weight:800;
+  font-weight:900;
   letter-spacing:.13em;
   text-transform:uppercase;
-  color:var(--nova-a);
-  margin-left:.35rem;
+  color:var(--nova-lime);
+  margin-left:.4rem;
   vertical-align:middle;
 }
 .land-title::after{
-  content:"NOVA";
+  content:"NOVA PRO";
   display:inline-flex;
   margin-top:1.1rem;
-  padding:.32rem .78rem;
+  padding:.32rem .82rem;
   border-radius:999px;
-  border:1px solid rgba(139,255,193,.28);
-  background:rgba(139,255,193,.06);
+  border:1px solid rgba(155,255,191,.30);
+  background:rgba(155,255,191,.07);
   color:var(--gr2);
   font-family:Inter,sans-serif;
   font-size:.62rem;
-  font-weight:800;
+  font-weight:900;
   letter-spacing:.16em;
   -webkit-text-stroke:0;
   font-style:normal;
 }
-.land-btn-p,
-.auth-submit,
-.pa-green,
-.ma-p,
-.btn-att-go,
-.sw-like{
-  background:linear-gradient(135deg,var(--gr) 0%,var(--gr2) 58%,var(--gr3) 100%)!important;
-  box-shadow:0 12px 34px rgba(82,196,82,.22), inset 0 1px 0 rgba(255,255,255,.18)!important;
+.land-btn-p,.auth-submit,.pa-green,.ma-p,.btn-att-go,.sw-like{
+  background:linear-gradient(135deg,#2D8F43 0%,#16E08A 56%,#9BFFBF 100%)!important;
+  box-shadow:0 14px 36px rgba(22,224,138,.24), inset 0 1px 0 rgba(255,255,255,.18)!important;
 }
-.card,
-.plan-card,
-.pc,
-.gems-card,
-.me-q,
-.me-list,
-.msg-item,
-.panel-sheet,
-.auth-sheet{
-  box-shadow:0 18px 48px rgba(0,0,0,.20);
+.plan-card,.pc,.gems-card,.me-q,.me-list,.msg-item,.panel-sheet,.auth-sheet,.cpb{
+  box-shadow:0 20px 54px rgba(0,0,0,.22);
 }
-.pc-img,
-.plan-card-img,
-.panel-img,
-.sc-photo{
-  filter:saturate(1.04) contrast(1.03);
+.plan-card,.pc,.gems-card,.me-q,.me-list,.cpb{
+  position:relative;
+  overflow:hidden;
 }
-.pc::before,
-.plan-card::before,
-.gems-card::before{
+.plan-card::before,.pc::before,.gems-card::before,.me-q::before,.cpb::before{
   content:"";
-  display:block;
+  position:absolute;
+  left:0;right:0;top:0;
   height:1px;
-  background:linear-gradient(90deg,transparent,rgba(139,255,193,.18),transparent);
+  background:linear-gradient(90deg,transparent,rgba(155,255,191,.22),transparent);
+  pointer-events:none;
 }
 .bn-c{
   position:relative;
@@ -449,16 +435,211 @@ body::before{
 .bn-c::after{
   content:"";
   position:absolute;
-  inset:-40%;
-  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.28),transparent 62%);
-  transform:translateX(-120%) rotate(20deg);
-  animation:novaShine 5s ease-in-out infinite;
+  inset:-45%;
+  background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.32),transparent 65%);
+  transform:translateX(-130%) rotate(20deg);
+  animation:novaShine 5.6s ease-in-out infinite;
 }
 @keyframes novaShine{
-  0%,55%{transform:translateX(-130%) rotate(20deg)}
-  75%{transform:translateX(130%) rotate(20deg)}
+  0%,58%{transform:translateX(-130%) rotate(20deg)}
+  78%{transform:translateX(130%) rotate(20deg)}
   100%{transform:translateX(130%) rotate(20deg)}
 }
+
+/* Swipe más fluido */
+#swipeStack{
+  perspective:1200px;
+}
+.swipe-card{
+  transform-origin:50% 82%;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  contain:layout paint;
+  touch-action:none!important;
+}
+.swipe-card.dragging{
+  transition:none!important;
+  cursor:grabbing!important;
+}
+.swipe-card.exit{
+  pointer-events:none!important;
+}
+.sw-acts{
+  filter:drop-shadow(0 12px 25px rgba(0,0,0,.28));
+}
+.sw-btn{
+  transform:translateZ(0);
+}
+.sw-btn:active{
+  transform:scale(.88) translateZ(0)!important;
+}
+
+/* Mis planes: tarjeta dashboard protagonista */
+#myPlansSection{
+  margin-bottom:1.15rem!important;
+}
+#myPlansSection .sh{
+  display:none!important;
+}
+.nova-myplans-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  padding:1rem;
+  margin:0 0 1rem;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(155,255,191,.17),transparent 40%),
+    radial-gradient(circle at 100% 25%,rgba(84,216,255,.10),transparent 36%),
+    linear-gradient(145deg,rgba(12,38,28,.98),rgba(5,14,10,.98));
+  border:1px solid rgba(155,255,191,.20);
+  box-shadow:0 24px 70px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.02) inset;
+}
+.nova-myplans-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:linear-gradient(rgba(155,255,191,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(155,255,191,.04) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:radial-gradient(circle at 50% 0%,black 0%,transparent 72%);
+  pointer-events:none;
+}
+.nova-myplans-head{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.85rem;
+}
+.nova-myplans-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  color:var(--nova-lime);
+  background:rgba(155,255,191,.08);
+  border:1px solid rgba(155,255,191,.18);
+  border-radius:999px;
+  padding:.23rem .62rem;
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:.55rem;
+}
+.nova-myplans-title{
+  font-family:'Playfair Display',serif;
+  color:var(--text);
+  font-size:1.35rem;
+  line-height:1.05;
+  font-weight:800;
+  letter-spacing:-.04em;
+}
+.nova-myplans-sub{
+  color:var(--t2);
+  font-size:.76rem;
+  line-height:1.45;
+  margin-top:.25rem;
+}
+.nova-myplans-count{
+  position:relative;
+  z-index:1;
+  flex:0 0 auto;
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--gr),var(--gr2));
+  color:#04110D;
+  font-family:'Playfair Display',serif;
+  font-size:1.55rem;
+  font-weight:900;
+  box-shadow:0 12px 30px rgba(82,196,82,.22);
+}
+.nova-myplans-list{
+  position:relative;
+  z-index:1;
+  display:flex;
+  gap:.7rem;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding-bottom:.2rem;
+}
+.nova-myplans-list::-webkit-scrollbar{display:none}
+.nova-plan-pill{
+  scroll-snap-align:start;
+  flex:0 0 78%;
+  min-height:118px;
+  border-radius:22px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid rgba(155,255,191,.16);
+  background:rgba(255,255,255,.045);
+}
+.nova-plan-pill-img{
+  position:absolute;
+  inset:0;
+  background:center/cover no-repeat;
+  opacity:.42;
+  filter:saturate(1.05) contrast(1.05);
+}
+.nova-plan-pill::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.25));
+}
+.nova-plan-pill-body{
+  position:relative;
+  z-index:1;
+  padding:.9rem;
+}
+.nova-plan-pill-title{
+  color:#fff;
+  font-weight:900;
+  font-size:.9rem;
+  line-height:1.25;
+}
+.nova-plan-pill-meta{
+  color:rgba(255,255,255,.66);
+  font-size:.68rem;
+  line-height:1.35;
+  margin:.32rem 0 .6rem;
+}
+.nova-plan-pill-actions{
+  display:flex;
+  gap:.38rem;
+}
+.nova-plan-mini-btn{
+  border-radius:999px;
+  padding:.35rem .62rem;
+  font-size:.64rem;
+  font-weight:900;
+  background:rgba(155,255,191,.12);
+  border:1px solid rgba(155,255,191,.18);
+  color:var(--nova-lime);
+}
+.nova-plan-mini-btn.danger{
+  background:rgba(255,107,122,.10);
+  border-color:rgba(255,107,122,.22);
+  color:#FF9EA8;
+}
+.nova-empty-plans{
+  position:relative;
+  z-index:1;
+  border:1px dashed rgba(155,255,191,.18);
+  background:rgba(155,255,191,.04);
+  border-radius:20px;
+  padding:1rem;
+  color:var(--t2);
+  line-height:1.55;
+  text-align:center;
+  font-size:.78rem;
+}
+
+/* Status */
 .nova-status{
   position:fixed;
   left:50%;
@@ -468,31 +649,20 @@ body::before{
   opacity:0;
   pointer-events:none;
   transition:.25s ease;
-  background:rgba(5,10,5,.86);
+  background:rgba(5,10,5,.88);
   color:var(--gr2);
-  border:1px solid rgba(139,255,193,.22);
+  border:1px solid rgba(155,255,191,.22);
   box-shadow:0 12px 34px rgba(0,0,0,.28);
   backdrop-filter:blur(18px);
   border-radius:999px;
   padding:.42rem .85rem;
   font-size:.68rem;
-  font-weight:800;
+  font-weight:900;
   letter-spacing:.04em;
 }
 .nova-status.show{
   opacity:1;
   transform:translateX(-50%) translateY(0);
-}
-.nova-empty-note{
-  padding:1rem;
-  margin:.5rem 0;
-  border-radius:18px;
-  border:1px dashed rgba(139,255,193,.20);
-  color:var(--t2);
-  background:rgba(139,255,193,.035);
-  font-size:.78rem;
-  line-height:1.55;
-  text-align:center;
 }
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -1506,17 +1676,17 @@ function updateGPS(){
 window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.showEditPanel=showEditPanel;window.openTerms=openTerms;window.closeTerms=closeTerms;
 </script>
 
-<script id="fortyupNovaChatGPTLayer">
+<script id="fortyupNovaProLayer">
 (function(){
   const $ = id => document.getElementById(id);
+  const safeEsc = v => String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
   function ensureStatus(){
-    let el = document.getElementById('novaStatus');
+    let el = $('novaStatus');
     if(!el){
       el = document.createElement('div');
       el.id = 'novaStatus';
       el.className = 'nova-status';
-      el.textContent = 'FortyUp Nova';
       document.body.appendChild(el);
     }
     return el;
@@ -1524,42 +1694,139 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 
   window.novaPing = function(msg){
     const el = ensureStatus();
-    el.textContent = msg || 'FortyUp Nova';
+    el.textContent = msg || 'FortyUp Nova Pro';
     el.classList.add('show');
     clearTimeout(window.__novaPingTimer);
     window.__novaPingTimer = setTimeout(()=>el.classList.remove('show'),2200);
   };
 
-  function safeClickGuard(){
-    document.documentElement.style.pointerEvents = 'auto';
-    document.body.style.pointerEvents = 'auto';
+  function unlockPointer(){
+    document.documentElement.style.pointerEvents='auto';
+    document.body.style.pointerEvents='auto';
+  }
+  document.addEventListener('click',unlockPointer,true);
+  document.addEventListener('touchstart',unlockPointer,true);
+  window.addEventListener('online',()=>window.novaPing('Conexión recuperada'));
+  window.addEventListener('offline',()=>window.novaPing('Modo sin conexión'));
+
+  // Mejora de Mis planes sin tocar la data original: transforma el listado en dashboard premium.
+  function enhanceMyPlans(){
+    const section = $('myPlansSection');
+    const list = $('myPlansList');
+    if(!section || !list || section.style.display==='none') return;
+    if(section.dataset.novaEnhanced==='1') return;
+
+    const items = Array.from(list.querySelectorAll('.mp-item'));
+    if(!items.length) return;
+
+    const data = items.map((item,idx)=>{
+      const title = item.querySelector('.mp-title')?.textContent?.trim() || 'Plan FortyUp';
+      const meta = item.querySelector('.mp-when')?.textContent?.trim() || 'Próximo plan';
+      const bg = item.querySelector('.mp-ico')?.style?.backgroundImage || '';
+      const onclick = item.getAttribute('onclick') || '';
+      const leave = item.querySelector('.mp-leave')?.getAttribute('onclick') || '';
+      return {title,meta,bg,onclick,leave,idx};
+    });
+
+    section.dataset.novaEnhanced='1';
+    list.innerHTML = `
+      <div class="nova-myplans-card">
+        <div class="nova-myplans-head">
+          <div>
+            <div class="nova-myplans-kicker">✦ Tus próximos planes</div>
+            <div class="nova-myplans-title">Agenda FortyUp</div>
+            <div class="nova-myplans-sub">Todo lo que aceptaste, en una tarjeta más clara y protagonista.</div>
+          </div>
+          <div class="nova-myplans-count">${data.length}</div>
+        </div>
+        <div class="nova-myplans-list">
+          ${data.map(p=>`
+            <div class="nova-plan-pill" onclick="${p.onclick.replace(/"/g,'&quot;')}">
+              <div class="nova-plan-pill-img" style="${p.bg}"></div>
+              <div class="nova-plan-pill-body">
+                <div class="nova-plan-pill-title">${safeEsc(p.title)}</div>
+                <div class="nova-plan-pill-meta">${safeEsc(p.meta)}</div>
+                <div class="nova-plan-pill-actions">
+                  <button class="nova-plan-mini-btn" onclick="event.stopPropagation();${p.onclick.replace(/"/g,'&quot;')}">Ver plan</button>
+                  <button class="nova-plan-mini-btn danger" onclick="event.stopPropagation();${p.leave.replace(/"/g,'&quot;')}">Bajarme</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
   }
 
-  document.addEventListener('click', safeClickGuard, true);
-  document.addEventListener('touchstart', safeClickGuard, true);
-
-  window.addEventListener('online', ()=>window.novaPing && window.novaPing('Conexión recuperada'));
-  window.addEventListener('offline', ()=>window.novaPing && window.novaPing('Modo sin conexión'));
-
-  // Mejora UX: si el usuario abre la app y no hay sesión, aseguramos landing visible.
-  setTimeout(()=>{
-    const active = document.querySelector('.screen.active');
-    if(!active){
-      const landing = document.getElementById('landing');
-      if(landing) landing.classList.add('active');
-    }
-    ensureStatus();
-  },600);
-
-  // Limpieza visual suave para listas vacías sin romper lógica existente.
-  setInterval(()=>{
-    ['homeProfiles','plansList','msgList'].forEach(id=>{
-      const el = document.getElementById(id);
-      if(el && !el.children.length && !el.dataset.novaEmpty){
-        el.dataset.novaEmpty = '1';
-      }
+  // Swipe smoother: estabiliza eventos duplicados con delegación y evita que se "pegue" la carta visualmente.
+  function stabilizeSwipe(){
+    const stack = $('swipeStack');
+    if(!stack) return;
+    stack.addEventListener('touchstart',e=>{
+      const card=e.target.closest('.swipe-card');
+      if(card) card.classList.add('dragging');
+    },{passive:true});
+    stack.addEventListener('mousedown',e=>{
+      const card=e.target.closest('.swipe-card');
+      if(card) card.classList.add('dragging');
     });
-  },2000);
+    ['touchend','mouseup','mouseleave'].forEach(ev=>{
+      stack.addEventListener(ev,()=>{
+        stack.querySelectorAll('.swipe-card').forEach(c=>c.classList.remove('dragging'));
+      },{passive:true});
+    });
+  }
+
+  // Wrap renderPlans if available, so every render regenerates the premium dashboard.
+  function wrapRenderPlans(){
+    if(typeof window.renderPlans === 'function' && !window.renderPlans.__novaWrapped){
+      const old = window.renderPlans;
+      window.renderPlans = function(){
+        const result = old.apply(this,arguments);
+        setTimeout(enhanceMyPlans,30);
+        return result;
+      };
+      window.renderPlans.__novaWrapped = true;
+    }
+  }
+
+  // Wrap swipeCard if available for extra visual safety.
+  function wrapSwipe(){
+    if(typeof window.swipeCard === 'function' && !window.swipeCard.__novaWrapped){
+      const old = window.swipeCard;
+      window.swipeCard = function(dir){
+        const top = document.querySelector('#swipeStack .swipe-card:last-of-type');
+        if(top){
+          top.classList.add('exit');
+          top.style.willChange='transform,opacity';
+        }
+        const result = old.apply(this,arguments);
+        setTimeout(()=>{
+          document.querySelectorAll('#swipeStack .swipe-card').forEach(c=>{
+            c.classList.remove('dragging','exit');
+            c.style.willChange='transform';
+          });
+        },380);
+        return result;
+      };
+      window.swipeCard.__novaWrapped = true;
+    }
+  }
+
+  setTimeout(()=>{
+    ensureStatus();
+    stabilizeSwipe();
+    wrapRenderPlans();
+    wrapSwipe();
+    enhanceMyPlans();
+  },800);
+
+  setInterval(()=>{
+    wrapRenderPlans();
+    wrapSwipe();
+    enhanceMyPlans();
+    unlockPointer();
+  },1500);
 })();
 </script>
 
@@ -1567,11 +1834,10 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 </html>
 
 <!--
-FORTYUP NOVA BY CHATGPT — PRODUCT DIRECTION
-- Base: user-provided ClaudeVERDE full app.
-- Goal: preserve complete real-app behavior while adding a premium Nova layer.
-- Maintains Firebase Auth + Realtime Database usage already present.
-- Maintains user profiles, events, chats, diamonds, swipe, profile panel, auth overlay.
-- Adds UI polish, interaction safety guards, connection status feedback, reduced-motion support.
-- Next production step: split into /src modules, add Firebase security rules, storage for photos, deploy pipeline.
+FORTYUP NOVA PRO BY CHATGPT
+- Base: ClaudeVERDE full app.
+- Visual goal: premium dark/green product, more distinctive than a demo.
+- UX upgrade: smoother swipe layer, safer pointer recovery, connection status.
+- Plans upgrade: "Mis planes" becomes a premium dashboard card with horizontal mini-cards.
+- Preserves core Firebase/auth/chats/events/diamonds logic from the base app.
 -->
