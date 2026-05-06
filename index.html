@@ -1600,6 +1600,60 @@ pointer-events:none;
   transform:none!important;
 }
 
+
+/* ===== TRUST PANEL SOLO EN REGISTRO, NO EN HOME ===== */
+#home #fuTrustPanel,
+#home .fu-trust-panel{
+  display:none!important;
+}
+
+/* Registro: confianza compacta, profesional y no invasiva */
+.fu-register-trust{
+  margin:.4rem 0 1rem;
+  border-radius:18px;
+  padding:.85rem;
+  background:linear-gradient(145deg,rgba(10,24,16,.94),rgba(5,12,8,.96));
+  border:1px solid rgba(126,232,126,.14);
+}
+.fu-register-trust-title{
+  font-size:.82rem;
+  font-weight:900;
+  color:#fff;
+  margin-bottom:.45rem;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+.fu-register-trust-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.45rem;
+}
+.fu-register-trust-item{
+  border-radius:14px;
+  padding:.6rem;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  color:rgba(255,255,255,.62);
+  font-size:.66rem;
+  line-height:1.35;
+}
+.fu-register-trust-item b{
+  display:block;
+  color:#A2FFD0;
+  font-size:.68rem;
+  margin-bottom:.18rem;
+}
+
+/* Inicio más limpio/pro */
+#home .home-hdr,
+#home .homeHeader{
+  padding-bottom:1.5rem!important;
+}
+#home .home-gems{
+  margin-top:1rem!important;
+}
+
 </style>
 </head>
 <body>
@@ -3212,78 +3266,77 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 </script>
 
 
-<script id="fortyupTrustPremium">
+
+
+
+<script id="fortyupRegisterTrustOnly">
 (function(){
-  function buildTrustPanel(){
-    var home = document.querySelector('#home .screen-inner,#home .inner,#home');
-    if(!home) return;
-
-    var existing = document.getElementById('fuTrustPanel');
-    if(existing) return;
-
-    var panel = document.createElement('div');
-    panel.id = 'fuTrustPanel';
-    panel.className = 'fu-trust-panel';
-
-    panel.innerHTML = `
-      <div class="fu-trust-title">Tu privacidad primero</div>
-      <div class="fu-trust-sub">
-        FortyUp prioriza perfiles reales, seguridad y control total de tu información.
-      </div>
-
-      <div class="fu-trust-grid">
-        <div class="fu-trust-item">
-          <strong>🔒 Datos protegidos</strong>
-          <span>Tus datos y ubicación se usan solo para mejorar tu experiencia dentro de FortyUp.</span>
-        </div>
-
-        <div class="fu-trust-item">
-          <strong>📍 Ubicación inteligente</strong>
-          <span>La app muestra personas y eventos cercanos sin compartir tu posición exacta.</span>
-        </div>
-
-        <div class="fu-trust-item">
-          <strong>✅ Eventos verificados</strong>
-          <span>Los eventos destacados y perfiles activos se priorizan automáticamente.</span>
-        </div>
-
-        <div class="fu-trust-item">
-          <strong>🛡️ Control total</strong>
-          <span>Podés editar tu perfil, ocultarte o abandonar eventos cuando quieras.</span>
-        </div>
-      </div>
-    `;
-
-    var anchor = home.querySelector('.home-gems,.gems-card');
-    if(anchor) anchor.insertAdjacentElement('afterend', panel);
-    else home.insertAdjacentElement('afterbegin', panel);
-  }
-
-  function cleanReflections(){
-    document.querySelectorAll('[style*="animation"],[style*="translateX"]').forEach(function(el){
-      if(el.className && String(el.className).match(/shine|glow|sweep|reflect/i)){
-        el.style.animation = 'none';
-      }
+  function removeHomeTrust(){
+    document.querySelectorAll('#home #fuTrustPanel,#home .fu-trust-panel').forEach(function(el){
+      el.remove();
     });
   }
 
-  var oldGo = window.go;
-  if(typeof oldGo === 'function' && !oldGo.__trustPremium){
-    window.go = function(){
-      var r = oldGo.apply(this,arguments);
-      setTimeout(buildTrustPanel,80);
-      setTimeout(cleanReflections,120);
-      return r;
-    };
-    window.go.__trustPremium = true;
+  function addRegisterTrust(){
+    const regBox = document.getElementById('regFields') || document.getElementById('regBox');
+    if(!regBox || document.getElementById('fuRegisterTrust')) return;
+
+    const trust = document.createElement('div');
+    trust.id = 'fuRegisterTrust';
+    trust.className = 'fu-register-trust';
+    trust.innerHTML = `
+      <div class="fu-register-trust-title">🛡️ Seguridad y privacidad</div>
+      <div class="fu-register-trust-grid">
+        <div class="fu-register-trust-item"><b>Datos protegidos</b>Tu información se usa solo dentro de FortyUp.</div>
+        <div class="fu-register-trust-item"><b>Ubicación cuidada</b>Mostramos cercanía, no tu posición exacta.</div>
+        <div class="fu-register-trust-item"><b>Control total</b>Podés editar tu perfil cuando quieras.</div>
+        <div class="fu-register-trust-item"><b>Comunidad 40+</b>Diseñada para conexiones reales.</div>
+      </div>
+    `;
+
+    const terms = regBox.querySelector('.terms-row,.checkRow');
+    if(terms) terms.insertAdjacentElement('beforebegin', trust);
+    else regBox.insertAdjacentElement('afterbegin', trust);
   }
 
-  document.addEventListener('DOMContentLoaded',function(){
-    buildTrustPanel();
-    cleanReflections();
-  });
+  function run(){
+    removeHomeTrust();
+    addRegisterTrust();
+  }
 
-  setTimeout(buildTrustPanel,400);
+  const oldOpenAuth = window.openAuth;
+  if(typeof oldOpenAuth === 'function' && !oldOpenAuth.__registerTrustOnly){
+    window.openAuth = function(){
+      const r = oldOpenAuth.apply(this,arguments);
+      setTimeout(run,50);
+      return r;
+    };
+    window.openAuth.__registerTrustOnly = true;
+  }
+
+  const oldSetAuth = window.setAuth;
+  if(typeof oldSetAuth === 'function' && !oldSetAuth.__registerTrustOnly){
+    window.setAuth = function(){
+      const r = oldSetAuth.apply(this,arguments);
+      setTimeout(run,50);
+      return r;
+    };
+    window.setAuth.__registerTrustOnly = true;
+  }
+
+  const oldGo = window.go;
+  if(typeof oldGo === 'function' && !oldGo.__registerTrustOnly){
+    window.go = function(){
+      const r = oldGo.apply(this,arguments);
+      setTimeout(removeHomeTrust,40);
+      return r;
+    };
+    window.go.__registerTrustOnly = true;
+  }
+
+  document.addEventListener('DOMContentLoaded',run);
+  setTimeout(run,400);
+  setInterval(removeHomeTrust,1500);
 })();
 </script>
 
