@@ -1104,6 +1104,182 @@ pointer-events:none;
 100%{transform:translateX(140%) rotate(18deg)}
 }
 
+
+/* ===== MI PERFIL: TARJETA PREMIUM MIS PLANES ===== */
+.profile-plans-pro{
+  margin:0 0 1rem;
+  border-radius:32px;
+  overflow:hidden;
+  position:relative;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(162,255,208,.18),transparent 38%),
+    radial-gradient(circle at 100% 20%,rgba(93,220,255,.08),transparent 36%),
+    linear-gradient(145deg,rgba(11,26,20,.98),rgba(5,12,9,.98));
+  border:1px solid rgba(162,255,208,.16);
+  box-shadow:0 32px 90px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.035);
+}
+.profile-plans-pro::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:linear-gradient(rgba(162,255,208,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(162,255,208,.032) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:radial-gradient(circle at top,black 0%,transparent 78%);
+  pointer-events:none;
+}
+.profile-plans-head{
+  position:relative;
+  z-index:1;
+  padding:1.15rem 1.15rem .8rem;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.profile-plans-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#A2FFD0;
+  background:rgba(162,255,208,.08);
+  border:1px solid rgba(162,255,208,.18);
+  border-radius:999px;
+  padding:.25rem .65rem;
+  font-size:.6rem;
+  font-weight:1000;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:.65rem;
+}
+.profile-plans-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem;
+  font-weight:900;
+  line-height:1.03;
+  letter-spacing:-.05em;
+  color:#fff;
+}
+.profile-plans-sub{
+  margin-top:.38rem;
+  font-size:.76rem;
+  line-height:1.48;
+  color:rgba(255,255,255,.62);
+  max-width:250px;
+}
+.profile-plans-count{
+  flex:0 0 auto;
+  width:62px;
+  height:62px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#19E28F,#A2FFD0);
+  color:#03100B;
+  font-family:'Playfair Display',serif;
+  font-weight:1000;
+  font-size:1.7rem;
+  box-shadow:0 16px 34px rgba(25,226,143,.24);
+}
+.profile-plans-list{
+  position:relative;
+  z-index:1;
+  display:flex;
+  gap:.75rem;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  padding:0 1.15rem 1.15rem;
+  scrollbar-width:none;
+}
+.profile-plans-list::-webkit-scrollbar{display:none}
+.profile-plan-card{
+  flex:0 0 82%;
+  min-height:132px;
+  border-radius:24px;
+  position:relative;
+  overflow:hidden;
+  scroll-snap-align:start;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+}
+.profile-plan-bg{
+  position:absolute;
+  inset:0;
+  background:center/cover no-repeat;
+  opacity:.48;
+  filter:saturate(1.08) contrast(1.08);
+}
+.profile-plan-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.34));
+}
+.profile-plan-body{
+  position:relative;
+  z-index:1;
+  padding:1rem;
+}
+.profile-plan-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  background:rgba(0,0,0,.46);
+  border:1px solid rgba(255,255,255,.13);
+  color:#A2FFD0;
+  border-radius:999px;
+  padding:.2rem .56rem;
+  font-size:.58rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:.55rem;
+}
+.profile-plan-title{
+  font-size:.98rem;
+  font-weight:1000;
+  color:#fff;
+  line-height:1.22;
+  max-width:92%;
+}
+.profile-plan-meta{
+  color:rgba(255,255,255,.68);
+  font-size:.72rem;
+  line-height:1.38;
+  margin:.35rem 0 .75rem;
+}
+.profile-plan-actions{
+  display:flex;
+  gap:.45rem;
+}
+.profile-plan-btn{
+  border-radius:999px;
+  padding:.42rem .74rem;
+  font-size:.66rem;
+  font-weight:1000;
+  background:rgba(162,255,208,.12);
+  border:1px solid rgba(162,255,208,.18);
+  color:#A2FFD0;
+}
+.profile-plan-btn.danger{
+  background:rgba(255,107,122,.10);
+  border-color:rgba(255,107,122,.20);
+  color:#FF9EA8;
+}
+.profile-plans-empty{
+  position:relative;
+  z-index:1;
+  margin:0 1.15rem 1.15rem;
+  padding:1rem;
+  border-radius:22px;
+  border:1px dashed rgba(162,255,208,.20);
+  background:rgba(162,255,208,.045);
+  text-align:center;
+  color:rgba(255,255,255,.64);
+  font-size:.8rem;
+  line-height:1.55;
+}
+.profile-plans-empty b{color:#A2FFD0}
+
 </style>
 </head>
 <body>
@@ -2413,6 +2589,120 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
   setInterval(()=>{
     document.querySelectorAll('.swipe-card').forEach(bind);
   },1200);
+})();
+</script>
+
+
+<script id="profilePlansCardUpgrade">
+(function(){
+  function parseStore(key, fallback){
+    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
+  }
+  function esc(v){
+    return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]});
+  }
+  function collectPlans(){
+    const ids = []
+      .concat(parseStore('fu_event_attendance',[]))
+      .concat(parseStore('fu_joined_events',[]))
+      .concat(parseStore('fortyup_attending',[]))
+      .filter(Boolean);
+
+    const created = parseStore('fu_created_events_v1',[]);
+    const stored = [].concat(created, parseStore('fu_events',[]), parseStore('events',[])).filter(Boolean);
+
+    let plans = [];
+    stored.forEach(function(ev){
+      if(ids.includes(ev.id) || ids.includes(String(ev.id))) plans.push(ev);
+    });
+
+    const myDom = Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill')).map(function(el,i){
+      const title = (el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent || '';
+      const meta = (el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent || '';
+      const bg = ((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage || '';
+      const img = bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+      const onclick = el.getAttribute('onclick') || '';
+      return title.trim() ? {id:'mydom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick,source:'mydom'} : null;
+    }).filter(Boolean);
+
+    if(myDom.length) plans = myDom;
+
+    const seen = new Set();
+    return plans.filter(function(p){
+      const id = p.id || p.title;
+      if(seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    }).slice(0,8);
+  }
+
+  function buildCard(){
+    const target = document.getElementById('meInner') || document.getElementById('meContent') || document.querySelector('#me .screen-inner') || document.querySelector('#me');
+    if(!target) return;
+
+    const existing = document.getElementById('profilePlansProCard');
+    if(existing) existing.remove();
+
+    const plans = collectPlans();
+    const card = document.createElement('div');
+    card.className = 'profile-plans-pro';
+    card.id = 'profilePlansProCard';
+
+    card.innerHTML = `
+      <div class="profile-plans-head">
+        <div>
+          <div class="profile-plans-kicker">📍 Mis planes</div>
+          <div class="profile-plans-title">Lugares donde asistiré</div>
+          <div class="profile-plans-sub">Tus próximos eventos confirmados, salidas y experiencias dentro de FortyUp.</div>
+        </div>
+        <div class="profile-plans-count">${plans.length}</div>
+      </div>
+      ${plans.length ? `
+        <div class="profile-plans-list">
+          ${plans.map(function(p){
+            const img = p.img || p.image || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
+            const meta = (p.when || p.date || '') + (p.city ? ' · '+p.city : '');
+            return `
+              <div class="profile-plan-card" onclick="${esc(p.onclick||'')}">
+                <div class="profile-plan-bg" style="background-image:url('${esc(img)}')"></div>
+                <div class="profile-plan-body">
+                  <div class="profile-plan-label">${esc(p.type || p.category || 'Evento')}</div>
+                  <div class="profile-plan-title">${esc(p.title || p.name || 'Plan FortyUp')}</div>
+                  <div class="profile-plan-meta">${esc(meta)}</div>
+                  <div class="profile-plan-actions">
+                    <button class="profile-plan-btn" onclick="event.stopPropagation();${esc(p.onclick||'')}">Ver plan</button>
+                    <button class="profile-plan-btn danger" onclick="event.stopPropagation(); if(window.toggleAttend){window.toggleAttend('${esc(p.id)}')}">Bajarme</button>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>` : `
+        <div class="profile-plans-empty">
+          <b>Aún no confirmaste asistencia.</b><br>
+          Cuando te sumes a un evento, va a aparecer acá como tu agenda personal.
+        </div>`}
+    `;
+
+    const anchor = target.querySelector('.diamond-card,.gems-card,.statCard');
+    if(anchor) anchor.insertAdjacentElement('afterend', card);
+    else target.insertAdjacentElement('afterbegin', card);
+  }
+
+  const oldGo = window.go;
+  if(typeof oldGo === 'function' && !oldGo.__plansProfileWrapped){
+    window.go = function(id){
+      const r = oldGo.apply(this, arguments);
+      if(id === 'me') setTimeout(buildCard, 150);
+      return r;
+    };
+    window.go.__plansProfileWrapped = true;
+  }
+
+  setTimeout(buildCard, 1200);
+  setInterval(function(){
+    const me = document.getElementById('me');
+    if(me && me.classList.contains('active')) buildCard();
+  }, 2500);
 })();
 </script>
 
