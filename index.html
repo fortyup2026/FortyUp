@@ -1709,6 +1709,20 @@ pointer-events:none;
   }
 }
 
+
+/* ===== FIX DEFINITIVO PERFIL: EVENTOS SIN TITILEO ===== */
+#fuProfileEventsStableCard{
+  animation:none!important;
+  opacity:1!important;
+  transform:none!important;
+}
+.fu-profile-events-card{
+  animation:none!important;
+}
+.fu-hide-profile-plans-row{
+  display:none!important;
+}
+
 </style>
 </head>
 <body>
@@ -3028,174 +3042,7 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 
 
 
-<script id="fuProfileEventsStableOnly">
-(function(){
-  function read(key, fallback){
-    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
-  }
-  function write(key, value){
-    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
-  }
-  function esc(v){
-    return String(v||'').replace(/[&<>"']/g,function(m){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
-    });
-  }
-  function joinedIds(){
-    var keys=['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'];
-    var out=[];
-    keys.forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) out=out.concat(v);
-    });
-    return Array.from(new Set(out.filter(Boolean).map(String)));
-  }
-  function storedEvents(){
-    var out=[];
-    ['fu_created_events_v1','fu_events','events','fortyup_events'].forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) out=out.concat(v);
-    });
-    return out.filter(Boolean);
-  }
-  function visibleMyPlansFromDOM(){
-    var nodes=Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill'));
-    return nodes.map(function(el,i){
-      var title=(el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent||'';
-      var meta=(el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent||'';
-      var bg=((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage||'';
-      var img=bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
-      var onclick=el.getAttribute('onclick')||'';
-      return title.trim()?{id:'dom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick}:null;
-    }).filter(Boolean);
-  }
-  function collectPlans(){
-    var ids=joinedIds();
-    var events=storedEvents();
-    var plans=[];
-    events.forEach(function(ev){
-      if(ids.indexOf(String(ev.id))>=0) plans.push(ev);
-    });
-    var dom=visibleMyPlansFromDOM();
-    if(dom.length) plans=dom;
-    var seen=new Set();
-    return plans.filter(function(p){
-      var id=String(p.id||p.title||'');
-      if(!id||seen.has(id)) return false;
-      seen.add(id);
-      return true;
-    });
-  }
-  function removeDuplicateRow(){
-    document.querySelectorAll('.me-row,.row').forEach(function(row){
-      var txt=(row.textContent||'').toLowerCase();
-      if(txt.indexOf('mis planes')>=0 && !row.closest('.fu-profile-events-card')){
-        row.classList.add('fu-hide-profile-plans-row');
-      }
-    });
-  }
-  function removeFromJoined(id){
-    ['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'].forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) write(k,v.filter(function(x){return String(x)!==String(id)}));
-    });
-    try{ if(typeof window.toggleAttend==='function') window.toggleAttend(id); }catch(e){}
-    buildProfileEventsCard();
-  }
-  window.fuRemoveJoinedPlan=removeFromJoined;
 
-  function openPlan(onclick){
-    if(onclick){
-      try{ new Function(onclick)(); return; }catch(e){}
-    }
-    if(typeof window.go==='function') window.go('plans');
-  }
-  window.fuOpenProfilePlan=openPlan;
-
-  function cardHTML(plans){
-    return '<div class="fu-profile-events-head">'+
-      '<div class="fu-profile-events-title">Mis eventos</div>'+
-      '<div class="fu-profile-events-sub">Lugares donde confirmaste que vas a asistir.</div>'+
-      '</div>'+
-      (plans.length?
-        '<div class="fu-profile-events-list">'+plans.map(function(p){
-          var img=p.img||p.image||'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
-          var meta=(p.when||p.date||'')+(p.city?' · '+p.city:'');
-          var onclick=String(p.onclick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-          return '<div class="fu-profile-event-item">'+
-            '<div class="fu-profile-event-img" style="background-image:url(\\''+esc(img)+'\\')"></div>'+
-            '<div class="fu-profile-event-info">'+
-              '<div class="fu-profile-event-title">'+esc(p.title||p.name||'Evento FortyUp')+'</div>'+
-              '<div class="fu-profile-event-meta">'+esc(meta||'Evento confirmado')+'</div>'+
-              '<div class="fu-profile-event-actions">'+
-                '<button class="fu-profile-event-btn" onclick="event.stopPropagation();fuOpenProfilePlan(\\''+esc(onclick)+'\\')">Ver</button>'+
-                '<button class="fu-profile-event-btn danger" onclick="event.stopPropagation();fuRemoveJoinedPlan(\\''+esc(p.id)+'\\')">Bajarme</button>'+
-              '</div>'+
-            '</div>'+
-          '</div>';
-        }).join('')+'</div>'
-      :
-        '<div class="fu-profile-events-empty"><b>Todavía no te sumaste a ningún evento.</b><br>Cuando confirmes asistencia, van a aparecer acá.</div>'
-      );
-  }
-  function targetProfile(){
-    return document.getElementById('meInner')||
-           document.getElementById('meContent')||
-           document.querySelector('#me .inner')||
-           document.querySelector('#me');
-  }
-  function buildProfileEventsCard(){
-    var target=targetProfile();
-    if(!target) return;
-    removeDuplicateRow();
-    var card=document.getElementById('fuProfileEventsCard');
-    if(!card){
-      card=document.createElement('div');
-      card.id='fuProfileEventsCard';
-      card.className='fu-profile-events-card';
-      var anchor=target.querySelector('.gems-card,.statCard,.diamond-card');
-      if(anchor) anchor.insertAdjacentElement('afterend',card);
-      else{
-        var header=target.querySelector('.me-body,.meContent');
-        if(header) header.insertAdjacentElement('afterend',card);
-        else target.insertAdjacentElement('afterbegin',card);
-      }
-    }
-    card.innerHTML=cardHTML(collectPlans());
-  }
-  window.buildProfileEventsCard=buildProfileEventsCard;
-
-  function hook(){
-    var oldGo=window.go;
-    if(typeof oldGo==='function' && !oldGo.__profileEventsStableOnly){
-      window.go=function(id){
-        var result=oldGo.apply(this,arguments);
-        if(id==='me'){
-          buildProfileEventsCard();
-          setTimeout(buildProfileEventsCard,80);
-        }
-        return result;
-      };
-      window.go.__profileEventsStableOnly=true;
-    }
-    var oldRenderMe=window.renderMe;
-    if(typeof oldRenderMe==='function' && !oldRenderMe.__profileEventsStableOnly){
-      window.renderMe=function(){
-        var result=oldRenderMe.apply(this,arguments);
-        buildProfileEventsCard();
-        return result;
-      };
-      window.renderMe.__profileEventsStableOnly=true;
-    }
-  }
-  hook();
-  setTimeout(function(){
-    hook();
-    var me=document.getElementById('me');
-    if(me && me.classList.contains('active')) buildProfileEventsCard();
-  },400);
-})();
-</script>
 
 
 <script id="fortyupFinalProBugfix">
@@ -3392,6 +3239,232 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
   document.addEventListener('DOMContentLoaded',run);
   setTimeout(run,400);
   setInterval(removeHomeTrust,1500);
+})();
+</script>
+
+
+<script id="fuProfileEventsNoFlickerFinal">
+(function(){
+  function read(key, fallback){
+    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
+  }
+  function write(key, value){
+    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
+  }
+  function esc(v){
+    return String(v||'').replace(/[&<>"']/g,function(m){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
+    });
+  }
+
+  function getJoinedIds(){
+    var keys = ['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'];
+    var ids = [];
+    keys.forEach(function(k){
+      var v = read(k, []);
+      if(Array.isArray(v)) ids = ids.concat(v);
+    });
+    return Array.from(new Set(ids.filter(Boolean).map(String)));
+  }
+
+  function getStoredEvents(){
+    var out = [];
+    ['fu_created_events_v1','fu_events','events','fortyup_events'].forEach(function(k){
+      var v = read(k, []);
+      if(Array.isArray(v)) out = out.concat(v);
+    });
+    return out.filter(Boolean);
+  }
+
+  function getVisiblePlansFromDOM(){
+    return Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill')).map(function(el,i){
+      var title = (el.querySelector('.mp-title,.nova-plan-pill-title') || {}).textContent || '';
+      var meta = (el.querySelector('.mp-when,.nova-plan-pill-meta') || {}).textContent || '';
+      var bg = ((el.querySelector('.mp-ico,.nova-plan-pill-img') || {}).style || {}).backgroundImage || '';
+      var img = bg.replace(/^url\\([\"']?/,'').replace(/[\"']?\\)$/,'');
+      var onclick = el.getAttribute('onclick') || '';
+      return title.trim() ? {
+        id:'dom_'+i,
+        title:title.trim(),
+        when:meta.trim(),
+        img:img,
+        onclick:onclick
+      } : null;
+    }).filter(Boolean);
+  }
+
+  function collectPlans(){
+    var ids = getJoinedIds();
+    var events = getStoredEvents();
+    var plans = [];
+
+    events.forEach(function(ev){
+      if(ids.indexOf(String(ev.id)) >= 0) plans.push(ev);
+    });
+
+    var domPlans = getVisiblePlansFromDOM();
+    if(domPlans.length) plans = domPlans;
+
+    var seen = new Set();
+    return plans.filter(function(p){
+      var id = String(p.id || p.title || '');
+      if(!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }
+
+  function hideDuplicateMisPlanesRow(){
+    document.querySelectorAll('.me-row,.row').forEach(function(row){
+      var text = (row.textContent || '').toLowerCase();
+      if(text.indexOf('mis planes') >= 0 && !row.closest('#fuProfileEventsStableCard')){
+        row.classList.add('fu-hide-profile-plans-row');
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  function removeAttendance(id){
+    ['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'].forEach(function(k){
+      var v = read(k, []);
+      if(Array.isArray(v)){
+        write(k, v.filter(function(x){ return String(x) !== String(id); }));
+      }
+    });
+
+    try{
+      if(typeof window.toggleAttend === 'function') window.toggleAttend(id);
+    }catch(e){}
+
+    renderStableCard(true);
+  }
+  window.fuPerfilBajarmeEvento = removeAttendance;
+
+  function openPlan(onclick){
+    if(onclick){
+      try{
+        new Function(onclick)();
+        return;
+      }catch(e){}
+    }
+    if(typeof window.go === 'function') window.go('plans');
+  }
+  window.fuPerfilVerEvento = openPlan;
+
+  function getProfileTarget(){
+    return document.getElementById('meInner') ||
+           document.getElementById('meContent') ||
+           document.querySelector('#me .inner') ||
+           document.querySelector('#me');
+  }
+
+  function htmlCard(plans){
+    return `
+      <div class="fu-profile-events-head">
+        <div class="fu-profile-events-title">Mis eventos</div>
+        <div class="fu-profile-events-sub">Lugares donde confirmaste que vas a asistir.</div>
+      </div>
+      ${plans.length ? `
+        <div class="fu-profile-events-list">
+          ${plans.map(function(p){
+            var img = p.img || p.image || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
+            var meta = (p.when || p.date || '') + (p.city ? ' · ' + p.city : '');
+            var onclick = String(p.onclick || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            return `
+              <div class="fu-profile-event-item">
+                <div class="fu-profile-event-img" style="background-image:url('${esc(img)}')"></div>
+                <div class="fu-profile-event-info">
+                  <div class="fu-profile-event-title">${esc(p.title || p.name || 'Evento FortyUp')}</div>
+                  <div class="fu-profile-event-meta">${esc(meta || 'Evento confirmado')}</div>
+                  <div class="fu-profile-event-actions">
+                    <button class="fu-profile-event-btn" onclick="event.stopPropagation();fuPerfilVerEvento('${esc(onclick)}')">Ver</button>
+                    <button class="fu-profile-event-btn danger" onclick="event.stopPropagation();fuPerfilBajarmeEvento('${esc(p.id)}')">Bajarme</button>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>` : `
+        <div class="fu-profile-events-empty">
+          <b>Todavía no te sumaste a ningún evento.</b><br>
+          Cuando confirmes asistencia, van a aparecer acá.
+        </div>`}
+    `;
+  }
+
+  var rendering = false;
+
+  function renderStableCard(force){
+    if(rendering && !force) return;
+    rendering = true;
+
+    requestAnimationFrame(function(){
+      var target = getProfileTarget();
+      if(!target){
+        rendering = false;
+        return;
+      }
+
+      hideDuplicateMisPlanesRow();
+
+      var card = document.getElementById('fuProfileEventsStableCard');
+
+      if(!card){
+        card = document.createElement('div');
+        card.id = 'fuProfileEventsStableCard';
+        card.className = 'fu-profile-events-card';
+
+        var anchor = target.querySelector('.gems-card,.statCard,.diamond-card');
+
+        if(anchor){
+          anchor.insertAdjacentElement('afterend', card);
+        }else{
+          var header = target.querySelector('.me-body,.meContent');
+          if(header) header.insertAdjacentElement('afterend', card);
+          else target.insertAdjacentElement('afterbegin', card);
+        }
+      }
+
+      card.innerHTML = htmlCard(collectPlans());
+      rendering = false;
+    });
+  }
+
+  window.fuRenderPerfilEventosEstable = renderStableCard;
+
+  function hook(){
+    var oldGo = window.go;
+    if(typeof oldGo === 'function' && !oldGo.__noFlickerEvents){
+      window.go = function(id){
+        var result = oldGo.apply(this, arguments);
+        if(id === 'me'){
+          renderStableCard(true);
+          setTimeout(function(){ renderStableCard(true); }, 120);
+        }
+        return result;
+      };
+      window.go.__noFlickerEvents = true;
+    }
+
+    var oldRenderMe = window.renderMe;
+    if(typeof oldRenderMe === 'function' && !oldRenderMe.__noFlickerEvents){
+      window.renderMe = function(){
+        var result = oldRenderMe.apply(this, arguments);
+        renderStableCard(true);
+        return result;
+      };
+      window.renderMe.__noFlickerEvents = true;
+    }
+  }
+
+  hook();
+
+  setTimeout(function(){
+    hook();
+    var me = document.getElementById('me');
+    if(me && me.classList.contains('active')){
+      renderStableCard(true);
+    }
+  }, 500);
 })();
 </script>
 
