@@ -1280,63 +1280,6 @@ pointer-events:none;
 }
 .profile-plans-empty b{color:#A2FFD0}
 
-
-/* ===== FIX FOTOS PERFIL / USUARIOS ===== */
-.fu-photo-fix,
-.fu-avatar-fix{
-  background-size:cover!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
-}
-.fu-img-visible{
-  display:block!important;
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-}
-.top-avatar,
-.tb-av,
-.msg-avatar,
-.msg-av,
-.chat-avatar,
-.chat-av,
-.me-av-wrap img,
-.avatarSm,
-.profile-photo,
-.pc-img,
-.swipe-photo,
-.sc-photo{
-  background-size:cover!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
-}
-.bn-c.has-photo,
-.bn-center.has-photo{
-  background-size:cover!important;
-  background-position:center!important;
-  color:transparent!important;
-}
-.bn-c.has-photo span,
-.bn-center.has-photo span{
-  opacity:0!important;
-}
-
-
-/* ===== AJUSTE FINAL MI PERFIL: MIS PLANES INSTANTÁNEO + SIN DUPLICADO ===== */
-.me-row[data-profile-plans-row],
-.row[data-profile-plans-row],
-.me-row.fu-hide-duplicate-plans,
-.row.fu-hide-duplicate-plans{
-  display:none!important;
-}
-.profile-plans-pro{
-  animation:plansCardIn .18s ease-out both;
-}
-@keyframes plansCardIn{
-  from{opacity:0;transform:translateY(6px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
 </style>
 </head>
 <body>
@@ -2650,186 +2593,7 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 </script>
 
 
-
-
-
-<script id="fortyupPhotoNormalizerFix">
-(function(){
-  function read(key, fallback){
-    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
-  }
-  function write(key, value){
-    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
-  }
-  function photoOf(obj){
-    if(!obj) return '';
-    return obj.photo || obj.img || obj.avatar || obj.avatarUrl || obj.photoURL || obj.image || obj.picture || obj.profilePhoto || '';
-  }
-  function nameOf(obj){
-    return (obj && (obj.name || obj.n || obj.displayName || obj.nombre || obj.email)) || 'Usuario';
-  }
-  function normalizeObj(obj){
-    if(!obj || typeof obj !== 'object') return obj;
-    const p = photoOf(obj);
-    if(p){
-      obj.photo = p;
-      obj.img = p;
-      obj.avatar = p;
-      obj.photoURL = p;
-      obj.image = p;
-    }
-    if(!obj.name && obj.n) obj.name = obj.n;
-    if(!obj.n && obj.name) obj.n = obj.name;
-    if(!obj.city && obj.c) obj.city = obj.c;
-    if(!obj.c && obj.city) obj.c = obj.city;
-    return obj;
-  }
-  function normalizeStorage(){
-    const userKeys = ['fu_user','fu_me','user','fortyup_user'];
-    userKeys.forEach(function(k){
-      const u = read(k,null);
-      if(u) write(k, normalizeObj(u));
-    });
-
-    const arrayKeys = ['fu_users','users','fortyup_users','fu_profiles'];
-    arrayKeys.forEach(function(k){
-      const arr = read(k,null);
-      if(Array.isArray(arr)) write(k, arr.map(normalizeObj));
-    });
-  }
-  function currentUser(){
-    return normalizeObj(read('fu_user',null) || read('fu_me',null) || read('user',null) || {});
-  }
-  function allUsers(){
-    let arr = [];
-    ['fu_users','users','fortyup_users','fu_profiles'].forEach(function(k){
-      const v = read(k,[]);
-      if(Array.isArray(v)) arr = arr.concat(v);
-    });
-    return arr.map(normalizeObj);
-  }
-  function setBg(el, url){
-    if(!el || !url) return;
-    el.classList.add('fu-photo-fix');
-    el.style.backgroundImage = "url('" + String(url).replace(/'/g,"%27") + "')";
-    if(el.tagName === 'IMG'){
-      el.src = url;
-      el.classList.add('fu-img-visible');
-    }
-  }
-  function patchOwnPhoto(){
-    const u = currentUser();
-    const p = photoOf(u);
-    if(!p) return;
-
-    // Top / header / profile images
-    ['topAvatar','chatAvatar'].forEach(function(id){
-      const el = document.getElementById(id);
-      if(el) setBg(el,p);
-    });
-
-    document.querySelectorAll('.top-avatar,.tb-av,.avatarSm,.me-av-wrap img,.meAvatar img,.top-user img').forEach(function(el){
-      setBg(el,p);
-    });
-
-    // Fallback divs in profile hero
-    document.querySelectorAll('.flip-front,.me-av-wrap,.meAvatar,.profile-avatar,.avatarFallback').forEach(function(el){
-      if(el.closest('.msg-item') || el.closest('.profile-card')) return;
-      setBg(el,p);
-    });
-
-    // Center FortyUp button photo
-    const center = document.querySelector('.bn-c,.bn-center,.navCenter');
-    if(center){
-      center.classList.add('has-photo');
-      center.style.backgroundImage = "url('" + String(p).replace(/'/g,"%27") + "')";
-    }
-  }
-  function patchUserCards(){
-    const users = allUsers();
-    if(!users.length) return;
-
-    // Match cards by text name and apply photo if missing.
-    document.querySelectorAll('.profile-card,.pc,.swipe-card,.msg-item,.msgItem').forEach(function(card){
-      const txt = (card.textContent || '').toLowerCase();
-      const user = users.find(function(u){
-        const n = String(nameOf(u)).toLowerCase();
-        return n && txt.includes(n.split('@')[0]);
-      });
-      const p = photoOf(user);
-      if(!p) return;
-
-      const photoEl = card.querySelector('.profile-photo,.pc-img,.sc-photo,.swipe-photo,.msg-avatar,.msg-av,.msgAv,img');
-      if(photoEl) setBg(photoEl,p);
-    });
-  }
-  function patchInlineBrokenImages(){
-    document.querySelectorAll('img').forEach(function(img){
-      if(img.dataset.fuPhotoFix) return;
-      img.dataset.fuPhotoFix = '1';
-      img.addEventListener('error', function(){
-        const u = currentUser();
-        const p = photoOf(u);
-        if(p && (img.id === 'topAvatar' || img.className.includes('tb-av') || img.className.includes('top-avatar'))) img.src = p;
-      });
-    });
-  }
-  function run(){
-    normalizeStorage();
-    patchOwnPhoto();
-    patchUserCards();
-    patchInlineBrokenImages();
-  }
-
-  const oldRenderHome = window.renderHome;
-  if(typeof oldRenderHome === 'function' && !oldRenderHome.__photoFix){
-    window.renderHome = function(){
-      const r = oldRenderHome.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderHome.__photoFix = true;
-  }
-
-  const oldRenderProfiles = window.renderProfiles;
-  if(typeof oldRenderProfiles === 'function' && !oldRenderProfiles.__photoFix){
-    window.renderProfiles = function(){
-      const r = oldRenderProfiles.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderProfiles.__photoFix = true;
-  }
-
-  const oldRenderMe = window.renderMe;
-  if(typeof oldRenderMe === 'function' && !oldRenderMe.__photoFix){
-    window.renderMe = function(){
-      const r = oldRenderMe.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderMe.__photoFix = true;
-  }
-
-  const oldGo = window.go;
-  if(typeof oldGo === 'function' && !oldGo.__photoFix){
-    window.go = function(){
-      const r = oldGo.apply(this,arguments);
-      setTimeout(run,120);
-      return r;
-    };
-    window.go.__photoFix = true;
-  }
-
-  document.addEventListener('DOMContentLoaded', run);
-  setTimeout(run,500);
-  setTimeout(run,1500);
-  setInterval(run,2500);
-})();
-</script>
-
-
-<script id="profilePlansCardInstantFix">
+<script id="profilePlansCardUpgrade">
 (function(){
   function parseStore(key, fallback){
     try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
@@ -2837,72 +2601,54 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
   function esc(v){
     return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]});
   }
-
-  function hideDuplicateMisPlanesRow(){
-    document.querySelectorAll('.me-row,.row').forEach(function(row){
-      const txt=(row.textContent||'').toLowerCase().trim();
-      if(txt.includes('mis planes') && !row.closest('.profile-plans-pro')){
-        row.classList.add('fu-hide-duplicate-plans');
-        row.setAttribute('data-profile-plans-row','1');
-      }
-    });
-  }
-
   function collectPlans(){
-    let ids = [];
-    ['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'].forEach(function(k){
-      const v=parseStore(k,[]);
-      if(Array.isArray(v)) ids=ids.concat(v);
-    });
-    ids=[...new Set(ids.filter(Boolean))];
-
-    const stored = []
-      .concat(parseStore('fu_created_events_v1',[]))
-      .concat(parseStore('fu_events',[]))
-      .concat(parseStore('events',[]))
+    const ids = []
+      .concat(parseStore('fu_event_attendance',[]))
+      .concat(parseStore('fu_joined_events',[]))
+      .concat(parseStore('fortyup_attending',[]))
       .filter(Boolean);
 
-    let plans=[];
+    const created = parseStore('fu_created_events_v1',[]);
+    const stored = [].concat(created, parseStore('fu_events',[]), parseStore('events',[])).filter(Boolean);
+
+    let plans = [];
     stored.forEach(function(ev){
       if(ids.includes(ev.id) || ids.includes(String(ev.id))) plans.push(ev);
     });
 
     const myDom = Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill')).map(function(el,i){
-      const title=(el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent||'';
-      const meta=(el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent||'';
-      const bg=((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage||'';
-      const img=bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
-      const onclick=el.getAttribute('onclick')||'';
-      return title.trim()?{id:'mydom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick,source:'mydom'}:null;
+      const title = (el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent || '';
+      const meta = (el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent || '';
+      const bg = ((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage || '';
+      const img = bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+      const onclick = el.getAttribute('onclick') || '';
+      return title.trim() ? {id:'mydom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick,source:'mydom'} : null;
     }).filter(Boolean);
 
-    if(myDom.length) plans=myDom;
+    if(myDom.length) plans = myDom;
 
-    if(!plans.length && ids.length){
-      document.querySelectorAll('.plan-card,.eventCard').forEach(function(el,i){
-        const title=(el.querySelector('.plan-card-title,.eventTitle,h3')||{}).textContent||'';
-        const meta=(el.querySelector('.plan-card-meta,.eventMeta,.plan-cat')||{}).textContent||'';
-        const imgEl=el.querySelector('img');
-        let img=imgEl?imgEl.src:'';
-        if(!img){
-          const bg=((el.querySelector('.eventImg,.plan-card-img')||{}).style||{}).backgroundImage||'';
-          img=bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
-        }
-        if(title.trim()) plans.push({id:'dom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:el.getAttribute('onclick')||''});
-      });
-    }
-
-    const seen=new Set();
+    const seen = new Set();
     return plans.filter(function(p){
-      const id=p.id||p.title;
+      const id = p.id || p.title;
       if(seen.has(id)) return false;
       seen.add(id);
       return true;
     }).slice(0,8);
   }
 
-  function cardHTML(plans){
-    return `
+  function buildCard(){
+    const target = document.getElementById('meInner') || document.getElementById('meContent') || document.querySelector('#me .screen-inner') || document.querySelector('#me');
+    if(!target) return;
+
+    const existing = document.getElementById('profilePlansProCard');
+    if(existing) existing.remove();
+
+    const plans = collectPlans();
+    const card = document.createElement('div');
+    card.className = 'profile-plans-pro';
+    card.id = 'profilePlansProCard';
+
+    card.innerHTML = `
       <div class="profile-plans-head">
         <div>
           <div class="profile-plans-kicker">📍 Mis planes</div>
@@ -2911,17 +2657,17 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
         </div>
         <div class="profile-plans-count">${plans.length}</div>
       </div>
-      ${plans.length?`
+      ${plans.length ? `
         <div class="profile-plans-list">
           ${plans.map(function(p){
-            const img=p.img||p.image||'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
-            const meta=(p.when||p.date||'')+(p.city?' · '+p.city:'');
+            const img = p.img || p.image || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
+            const meta = (p.when || p.date || '') + (p.city ? ' · '+p.city : '');
             return `
               <div class="profile-plan-card" onclick="${esc(p.onclick||'')}">
                 <div class="profile-plan-bg" style="background-image:url('${esc(img)}')"></div>
                 <div class="profile-plan-body">
-                  <div class="profile-plan-label">${esc(p.type||p.category||'Evento')}</div>
-                  <div class="profile-plan-title">${esc(p.title||p.name||'Plan FortyUp')}</div>
+                  <div class="profile-plan-label">${esc(p.type || p.category || 'Evento')}</div>
+                  <div class="profile-plan-title">${esc(p.title || p.name || 'Plan FortyUp')}</div>
                   <div class="profile-plan-meta">${esc(meta)}</div>
                   <div class="profile-plan-actions">
                     <button class="profile-plan-btn" onclick="event.stopPropagation();${esc(p.onclick||'')}">Ver plan</button>
@@ -2930,92 +2676,33 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
                 </div>
               </div>`;
           }).join('')}
-        </div>`:`
+        </div>` : `
         <div class="profile-plans-empty">
           <b>Aún no confirmaste asistencia.</b><br>
           Cuando te sumes a un evento, va a aparecer acá como tu agenda personal.
         </div>`}
     `;
+
+    const anchor = target.querySelector('.diamond-card,.gems-card,.statCard');
+    if(anchor) anchor.insertAdjacentElement('afterend', card);
+    else target.insertAdjacentElement('afterbegin', card);
   }
 
-  function targetProfile(){
-    return document.getElementById('meInner') || document.getElementById('meContent') || document.querySelector('#me .screen-inner') || document.querySelector('#me');
+  const oldGo = window.go;
+  if(typeof oldGo === 'function' && !oldGo.__plansProfileWrapped){
+    window.go = function(id){
+      const r = oldGo.apply(this, arguments);
+      if(id === 'me') setTimeout(buildCard, 150);
+      return r;
+    };
+    window.go.__plansProfileWrapped = true;
   }
 
-  function buildCard(){
-    const target=targetProfile();
-    if(!target) return;
-
-    hideDuplicateMisPlanesRow();
-
-    const plans=collectPlans();
-    let card=document.getElementById('profilePlansProCard');
-
-    if(!card){
-      card=document.createElement('div');
-      card.className='profile-plans-pro';
-      card.id='profilePlansProCard';
-
-      const anchor=target.querySelector('.diamond-card,.gems-card,.statCard');
-      if(anchor) anchor.insertAdjacentElement('afterend',card);
-      else {
-        const afterHeader=target.querySelector('.me-body,.meContent');
-        if(afterHeader) afterHeader.insertAdjacentElement('afterend',card);
-        else target.insertAdjacentElement('afterbegin',card);
-      }
-    }
-
-    card.innerHTML=cardHTML(plans);
-  }
-
-  function install(){
-    const oldGo=window.go;
-    if(typeof oldGo==='function' && !oldGo.__profilePlansInstant){
-      window.go=function(id){
-        const r=oldGo.apply(this,arguments);
-        if(id==='me'){
-          buildCard();
-          requestAnimationFrame(buildCard);
-          setTimeout(buildCard,40);
-          setTimeout(buildCard,160);
-        }
-        return r;
-      };
-      window.go.__profilePlansInstant=true;
-    }
-
-    const oldRenderMe=window.renderMe;
-    if(typeof oldRenderMe==='function' && !oldRenderMe.__profilePlansInstant){
-      window.renderMe=function(){
-        const r=oldRenderMe.apply(this,arguments);
-        buildCard();
-        requestAnimationFrame(buildCard);
-        setTimeout(buildCard,60);
-        return r;
-      };
-      window.renderMe.__profilePlansInstant=true;
-    }
-
-    const me=document.getElementById('me');
-    if(me && !me.__profilePlansObserver){
-      const obs=new MutationObserver(function(){
-        if(me.classList.contains('active')) buildCard();
-        hideDuplicateMisPlanesRow();
-      });
-      obs.observe(me,{childList:true,subtree:true});
-      me.__profilePlansObserver=obs;
-    }
-  }
-
-  install();
-  setTimeout(function(){install();buildCard();},300);
-  setTimeout(buildCard,900);
+  setTimeout(buildCard, 1200);
   setInterval(function(){
-    install();
-    const me=document.getElementById('me');
+    const me = document.getElementById('me');
     if(me && me.classList.contains('active')) buildCard();
-    hideDuplicateMisPlanesRow();
-  },1200);
+  }, 2500);
 })();
 </script>
 
