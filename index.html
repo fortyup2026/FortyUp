@@ -1654,6 +1654,61 @@ pointer-events:none;
   margin-top:1rem!important;
 }
 
+
+/* ===== FIX: MENÚ INFERIOR NO TAPA BOTONES DEL SWIPE ===== */
+#profiles .swipe-wrap,
+#profiles .swipeArea,
+#discover .swipe-shell{
+  padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+  justify-content:flex-start!important;
+}
+
+#profiles #swipeStack,
+#profiles .stack,
+#discover .swipe-stack{
+  height:calc(100dvh - 265px)!important;
+  max-height:560px!important;
+  min-height:430px!important;
+}
+
+#profiles .sw-acts,
+#profiles .swipe-actions,
+#discover .swipe-actions{
+  position:relative!important;
+  z-index:250!important;
+  margin-top:18px!important;
+  margin-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+  padding-bottom:8px!important;
+}
+
+#bottomNav,
+.bottom-nav,
+#nav{
+  z-index:200!important;
+}
+
+#profiles .sw-btn,
+#profiles .action,
+#discover .action{
+  z-index:260!important;
+}
+
+/* En celulares bajos, achica un poco la card para que todo entre cómodo */
+@media(max-height:740px){
+  #profiles #swipeStack,
+  #profiles .stack,
+  #discover .swipe-stack{
+    height:calc(100dvh - 300px)!important;
+    min-height:360px!important;
+  }
+
+  #profiles .sw-acts,
+  #profiles .swipe-actions,
+  #discover .swipe-actions{
+    margin-top:12px!important;
+  }
+}
+
 </style>
 </head>
 <body>
