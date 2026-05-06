@@ -1280,138 +1280,6 @@ pointer-events:none;
 }
 .profile-plans-empty b{color:#A2FFD0}
 
-
-/* ===== FIX FOTOS PERFIL / USUARIOS ===== */
-.fu-photo-fix,
-.fu-avatar-fix{
-  background-size:cover!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
-}
-.fu-img-visible{
-  display:block!important;
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-}
-.top-avatar,
-.tb-av,
-.msg-avatar,
-.msg-av,
-.chat-avatar,
-.chat-av,
-.me-av-wrap img,
-.avatarSm,
-.profile-photo,
-.pc-img,
-.swipe-photo,
-.sc-photo{
-  background-size:cover!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
-}
-.bn-c.has-photo,
-.bn-center.has-photo{
-  background-size:cover!important;
-  background-position:center!important;
-  color:transparent!important;
-}
-.bn-c.has-photo span,
-.bn-center.has-photo span{
-  opacity:0!important;
-}
-
-
-/* ===== MI PERFIL: CARD ESTABLE Y SIMPLE DE EVENTOS ===== */
-.fu-profile-events-card{
-  margin:0 1rem 1rem;
-  border-radius:22px;
-  background:rgba(12,28,21,.96);
-  border:1px solid rgba(162,255,208,.16);
-  box-shadow:0 18px 44px rgba(0,0,0,.28);
-  overflow:hidden;
-}
-.fu-profile-events-head{
-  padding:1rem 1rem .75rem;
-  border-bottom:1px solid rgba(162,255,208,.10);
-}
-.fu-profile-events-title{
-  font-family:'Playfair Display',serif;
-  font-size:1.25rem;
-  font-weight:800;
-  color:#fff;
-  letter-spacing:-.03em;
-}
-.fu-profile-events-sub{
-  margin-top:.25rem;
-  font-size:.78rem;
-  line-height:1.45;
-  color:rgba(255,255,255,.58);
-}
-.fu-profile-events-list{
-  padding:.75rem;
-  display:flex;
-  flex-direction:column;
-  gap:.65rem;
-}
-.fu-profile-event-item{
-  display:flex;
-  gap:.75rem;
-  align-items:center;
-  padding:.72rem;
-  border-radius:18px;
-  background:rgba(255,255,255,.035);
-  border:1px solid rgba(255,255,255,.06);
-}
-.fu-profile-event-img{
-  width:64px;
-  height:64px;
-  border-radius:16px;
-  flex:0 0 64px;
-  background:#0b1712 center/cover no-repeat;
-}
-.fu-profile-event-info{flex:1;min-width:0}
-.fu-profile-event-title{
-  font-size:.88rem;
-  font-weight:800;
-  color:#fff;
-  line-height:1.25;
-}
-.fu-profile-event-meta{
-  margin-top:.22rem;
-  font-size:.7rem;
-  color:rgba(255,255,255,.55);
-  line-height:1.35;
-}
-.fu-profile-event-actions{
-  display:flex;
-  gap:.4rem;
-  margin-top:.52rem;
-}
-.fu-profile-event-btn{
-  border-radius:999px;
-  padding:.38rem .65rem;
-  font-size:.66rem;
-  font-weight:800;
-  background:rgba(162,255,208,.10);
-  border:1px solid rgba(162,255,208,.16);
-  color:#A2FFD0;
-}
-.fu-profile-event-btn.danger{
-  background:rgba(255,107,122,.09);
-  border-color:rgba(255,107,122,.18);
-  color:#FF9EA8;
-}
-.fu-profile-events-empty{
-  padding:1rem;
-  text-align:center;
-  color:rgba(255,255,255,.55);
-  font-size:.78rem;
-  line-height:1.5;
-}
-.fu-profile-events-empty b{color:#A2FFD0}
-.fu-hide-profile-plans-row{display:none!important}
-
 </style>
 </head>
 <body>
@@ -2725,351 +2593,116 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 </script>
 
 
-
-
-
-<script id="fortyupPhotoNormalizerFix">
+<script id="profilePlansCardUpgrade">
 (function(){
-  function read(key, fallback){
+  function parseStore(key, fallback){
     try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
   }
-  function write(key, value){
-    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
+  function esc(v){
+    return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]});
   }
-  function photoOf(obj){
-    if(!obj) return '';
-    return obj.photo || obj.img || obj.avatar || obj.avatarUrl || obj.photoURL || obj.image || obj.picture || obj.profilePhoto || '';
-  }
-  function nameOf(obj){
-    return (obj && (obj.name || obj.n || obj.displayName || obj.nombre || obj.email)) || 'Usuario';
-  }
-  function normalizeObj(obj){
-    if(!obj || typeof obj !== 'object') return obj;
-    const p = photoOf(obj);
-    if(p){
-      obj.photo = p;
-      obj.img = p;
-      obj.avatar = p;
-      obj.photoURL = p;
-      obj.image = p;
-    }
-    if(!obj.name && obj.n) obj.name = obj.n;
-    if(!obj.n && obj.name) obj.n = obj.name;
-    if(!obj.city && obj.c) obj.city = obj.c;
-    if(!obj.c && obj.city) obj.c = obj.city;
-    return obj;
-  }
-  function normalizeStorage(){
-    const userKeys = ['fu_user','fu_me','user','fortyup_user'];
-    userKeys.forEach(function(k){
-      const u = read(k,null);
-      if(u) write(k, normalizeObj(u));
+  function collectPlans(){
+    const ids = []
+      .concat(parseStore('fu_event_attendance',[]))
+      .concat(parseStore('fu_joined_events',[]))
+      .concat(parseStore('fortyup_attending',[]))
+      .filter(Boolean);
+
+    const created = parseStore('fu_created_events_v1',[]);
+    const stored = [].concat(created, parseStore('fu_events',[]), parseStore('events',[])).filter(Boolean);
+
+    let plans = [];
+    stored.forEach(function(ev){
+      if(ids.includes(ev.id) || ids.includes(String(ev.id))) plans.push(ev);
     });
 
-    const arrayKeys = ['fu_users','users','fortyup_users','fu_profiles'];
-    arrayKeys.forEach(function(k){
-      const arr = read(k,null);
-      if(Array.isArray(arr)) write(k, arr.map(normalizeObj));
-    });
-  }
-  function currentUser(){
-    return normalizeObj(read('fu_user',null) || read('fu_me',null) || read('user',null) || {});
-  }
-  function allUsers(){
-    let arr = [];
-    ['fu_users','users','fortyup_users','fu_profiles'].forEach(function(k){
-      const v = read(k,[]);
-      if(Array.isArray(v)) arr = arr.concat(v);
-    });
-    return arr.map(normalizeObj);
-  }
-  function setBg(el, url){
-    if(!el || !url) return;
-    el.classList.add('fu-photo-fix');
-    el.style.backgroundImage = "url('" + String(url).replace(/'/g,"%27") + "')";
-    if(el.tagName === 'IMG'){
-      el.src = url;
-      el.classList.add('fu-img-visible');
-    }
-  }
-  function patchOwnPhoto(){
-    const u = currentUser();
-    const p = photoOf(u);
-    if(!p) return;
+    const myDom = Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill')).map(function(el,i){
+      const title = (el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent || '';
+      const meta = (el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent || '';
+      const bg = ((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage || '';
+      const img = bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
+      const onclick = el.getAttribute('onclick') || '';
+      return title.trim() ? {id:'mydom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick,source:'mydom'} : null;
+    }).filter(Boolean);
 
-    // Top / header / profile images
-    ['topAvatar','chatAvatar'].forEach(function(id){
-      const el = document.getElementById(id);
-      if(el) setBg(el,p);
-    });
+    if(myDom.length) plans = myDom;
 
-    document.querySelectorAll('.top-avatar,.tb-av,.avatarSm,.me-av-wrap img,.meAvatar img,.top-user img').forEach(function(el){
-      setBg(el,p);
-    });
-
-    // Fallback divs in profile hero
-    document.querySelectorAll('.flip-front,.me-av-wrap,.meAvatar,.profile-avatar,.avatarFallback').forEach(function(el){
-      if(el.closest('.msg-item') || el.closest('.profile-card')) return;
-      setBg(el,p);
-    });
-
-    // Center FortyUp button photo
-    const center = document.querySelector('.bn-c,.bn-center,.navCenter');
-    if(center){
-      center.classList.add('has-photo');
-      center.style.backgroundImage = "url('" + String(p).replace(/'/g,"%27") + "')";
-    }
-  }
-  function patchUserCards(){
-    const users = allUsers();
-    if(!users.length) return;
-
-    // Match cards by text name and apply photo if missing.
-    document.querySelectorAll('.profile-card,.pc,.swipe-card,.msg-item,.msgItem').forEach(function(card){
-      const txt = (card.textContent || '').toLowerCase();
-      const user = users.find(function(u){
-        const n = String(nameOf(u)).toLowerCase();
-        return n && txt.includes(n.split('@')[0]);
-      });
-      const p = photoOf(user);
-      if(!p) return;
-
-      const photoEl = card.querySelector('.profile-photo,.pc-img,.sc-photo,.swipe-photo,.msg-avatar,.msg-av,.msgAv,img');
-      if(photoEl) setBg(photoEl,p);
-    });
-  }
-  function patchInlineBrokenImages(){
-    document.querySelectorAll('img').forEach(function(img){
-      if(img.dataset.fuPhotoFix) return;
-      img.dataset.fuPhotoFix = '1';
-      img.addEventListener('error', function(){
-        const u = currentUser();
-        const p = photoOf(u);
-        if(p && (img.id === 'topAvatar' || img.className.includes('tb-av') || img.className.includes('top-avatar'))) img.src = p;
-      });
-    });
-  }
-  function run(){
-    normalizeStorage();
-    patchOwnPhoto();
-    patchUserCards();
-    patchInlineBrokenImages();
+    const seen = new Set();
+    return plans.filter(function(p){
+      const id = p.id || p.title;
+      if(seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    }).slice(0,8);
   }
 
-  const oldRenderHome = window.renderHome;
-  if(typeof oldRenderHome === 'function' && !oldRenderHome.__photoFix){
-    window.renderHome = function(){
-      const r = oldRenderHome.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderHome.__photoFix = true;
-  }
+  function buildCard(){
+    const target = document.getElementById('meInner') || document.getElementById('meContent') || document.querySelector('#me .screen-inner') || document.querySelector('#me');
+    if(!target) return;
 
-  const oldRenderProfiles = window.renderProfiles;
-  if(typeof oldRenderProfiles === 'function' && !oldRenderProfiles.__photoFix){
-    window.renderProfiles = function(){
-      const r = oldRenderProfiles.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderProfiles.__photoFix = true;
-  }
+    const existing = document.getElementById('profilePlansProCard');
+    if(existing) existing.remove();
 
-  const oldRenderMe = window.renderMe;
-  if(typeof oldRenderMe === 'function' && !oldRenderMe.__photoFix){
-    window.renderMe = function(){
-      const r = oldRenderMe.apply(this,arguments);
-      setTimeout(run,80);
-      return r;
-    };
-    window.renderMe.__photoFix = true;
+    const plans = collectPlans();
+    const card = document.createElement('div');
+    card.className = 'profile-plans-pro';
+    card.id = 'profilePlansProCard';
+
+    card.innerHTML = `
+      <div class="profile-plans-head">
+        <div>
+          <div class="profile-plans-kicker">📍 Mis planes</div>
+          <div class="profile-plans-title">Lugares donde asistiré</div>
+          <div class="profile-plans-sub">Tus próximos eventos confirmados, salidas y experiencias dentro de FortyUp.</div>
+        </div>
+        <div class="profile-plans-count">${plans.length}</div>
+      </div>
+      ${plans.length ? `
+        <div class="profile-plans-list">
+          ${plans.map(function(p){
+            const img = p.img || p.image || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
+            const meta = (p.when || p.date || '') + (p.city ? ' · '+p.city : '');
+            return `
+              <div class="profile-plan-card" onclick="${esc(p.onclick||'')}">
+                <div class="profile-plan-bg" style="background-image:url('${esc(img)}')"></div>
+                <div class="profile-plan-body">
+                  <div class="profile-plan-label">${esc(p.type || p.category || 'Evento')}</div>
+                  <div class="profile-plan-title">${esc(p.title || p.name || 'Plan FortyUp')}</div>
+                  <div class="profile-plan-meta">${esc(meta)}</div>
+                  <div class="profile-plan-actions">
+                    <button class="profile-plan-btn" onclick="event.stopPropagation();${esc(p.onclick||'')}">Ver plan</button>
+                    <button class="profile-plan-btn danger" onclick="event.stopPropagation(); if(window.toggleAttend){window.toggleAttend('${esc(p.id)}')}">Bajarme</button>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>` : `
+        <div class="profile-plans-empty">
+          <b>Aún no confirmaste asistencia.</b><br>
+          Cuando te sumes a un evento, va a aparecer acá como tu agenda personal.
+        </div>`}
+    `;
+
+    const anchor = target.querySelector('.diamond-card,.gems-card,.statCard');
+    if(anchor) anchor.insertAdjacentElement('afterend', card);
+    else target.insertAdjacentElement('afterbegin', card);
   }
 
   const oldGo = window.go;
-  if(typeof oldGo === 'function' && !oldGo.__photoFix){
-    window.go = function(){
-      const r = oldGo.apply(this,arguments);
-      setTimeout(run,120);
+  if(typeof oldGo === 'function' && !oldGo.__plansProfileWrapped){
+    window.go = function(id){
+      const r = oldGo.apply(this, arguments);
+      if(id === 'me') setTimeout(buildCard, 150);
       return r;
     };
-    window.go.__photoFix = true;
+    window.go.__plansProfileWrapped = true;
   }
 
-  document.addEventListener('DOMContentLoaded', run);
-  setTimeout(run,500);
-  setTimeout(run,1500);
-  setInterval(run,2500);
-})();
-</script>
-
-
-<script id="fuProfileEventsStableOnly">
-(function(){
-  function read(key, fallback){
-    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
-  }
-  function write(key, value){
-    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
-  }
-  function esc(v){
-    return String(v||'').replace(/[&<>"']/g,function(m){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
-    });
-  }
-  function joinedIds(){
-    var keys=['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'];
-    var out=[];
-    keys.forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) out=out.concat(v);
-    });
-    return Array.from(new Set(out.filter(Boolean).map(String)));
-  }
-  function storedEvents(){
-    var out=[];
-    ['fu_created_events_v1','fu_events','events','fortyup_events'].forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) out=out.concat(v);
-    });
-    return out.filter(Boolean);
-  }
-  function visibleMyPlansFromDOM(){
-    var nodes=Array.from(document.querySelectorAll('#myPlansList .mp-item,#myPlansList .nova-plan-pill'));
-    return nodes.map(function(el,i){
-      var title=(el.querySelector('.mp-title,.nova-plan-pill-title')||{}).textContent||'';
-      var meta=(el.querySelector('.mp-when,.nova-plan-pill-meta')||{}).textContent||'';
-      var bg=((el.querySelector('.mp-ico,.nova-plan-pill-img')||{}).style||{}).backgroundImage||'';
-      var img=bg.replace(/^url\(["']?/,'').replace(/["']?\)$/,'');
-      var onclick=el.getAttribute('onclick')||'';
-      return title.trim()?{id:'dom_'+i,title:title.trim(),when:meta.trim(),img:img,onclick:onclick}:null;
-    }).filter(Boolean);
-  }
-  function collectPlans(){
-    var ids=joinedIds();
-    var events=storedEvents();
-    var plans=[];
-    events.forEach(function(ev){
-      if(ids.indexOf(String(ev.id))>=0) plans.push(ev);
-    });
-    var dom=visibleMyPlansFromDOM();
-    if(dom.length) plans=dom;
-    var seen=new Set();
-    return plans.filter(function(p){
-      var id=String(p.id||p.title||'');
-      if(!id||seen.has(id)) return false;
-      seen.add(id);
-      return true;
-    });
-  }
-  function removeDuplicateRow(){
-    document.querySelectorAll('.me-row,.row').forEach(function(row){
-      var txt=(row.textContent||'').toLowerCase();
-      if(txt.indexOf('mis planes')>=0 && !row.closest('.fu-profile-events-card')){
-        row.classList.add('fu-hide-profile-plans-row');
-      }
-    });
-  }
-  function removeFromJoined(id){
-    ['fu_event_attendance','fu_joined_events','fortyup_attending','attendingEvents'].forEach(function(k){
-      var v=read(k,[]);
-      if(Array.isArray(v)) write(k,v.filter(function(x){return String(x)!==String(id)}));
-    });
-    try{ if(typeof window.toggleAttend==='function') window.toggleAttend(id); }catch(e){}
-    buildProfileEventsCard();
-  }
-  window.fuRemoveJoinedPlan=removeFromJoined;
-
-  function openPlan(onclick){
-    if(onclick){
-      try{ new Function(onclick)(); return; }catch(e){}
-    }
-    if(typeof window.go==='function') window.go('plans');
-  }
-  window.fuOpenProfilePlan=openPlan;
-
-  function cardHTML(plans){
-    return '<div class="fu-profile-events-head">'+
-      '<div class="fu-profile-events-title">Mis eventos</div>'+
-      '<div class="fu-profile-events-sub">Lugares donde confirmaste que vas a asistir.</div>'+
-      '</div>'+
-      (plans.length?
-        '<div class="fu-profile-events-list">'+plans.map(function(p){
-          var img=p.img||p.image||'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop';
-          var meta=(p.when||p.date||'')+(p.city?' · '+p.city:'');
-          var onclick=String(p.onclick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-          return '<div class="fu-profile-event-item">'+
-            '<div class="fu-profile-event-img" style="background-image:url(\\''+esc(img)+'\\')"></div>'+
-            '<div class="fu-profile-event-info">'+
-              '<div class="fu-profile-event-title">'+esc(p.title||p.name||'Evento FortyUp')+'</div>'+
-              '<div class="fu-profile-event-meta">'+esc(meta||'Evento confirmado')+'</div>'+
-              '<div class="fu-profile-event-actions">'+
-                '<button class="fu-profile-event-btn" onclick="event.stopPropagation();fuOpenProfilePlan(\\''+esc(onclick)+'\\')">Ver</button>'+
-                '<button class="fu-profile-event-btn danger" onclick="event.stopPropagation();fuRemoveJoinedPlan(\\''+esc(p.id)+'\\')">Bajarme</button>'+
-              '</div>'+
-            '</div>'+
-          '</div>';
-        }).join('')+'</div>'
-      :
-        '<div class="fu-profile-events-empty"><b>Todavía no te sumaste a ningún evento.</b><br>Cuando confirmes asistencia, van a aparecer acá.</div>'
-      );
-  }
-  function targetProfile(){
-    return document.getElementById('meInner')||
-           document.getElementById('meContent')||
-           document.querySelector('#me .inner')||
-           document.querySelector('#me');
-  }
-  function buildProfileEventsCard(){
-    var target=targetProfile();
-    if(!target) return;
-    removeDuplicateRow();
-    var card=document.getElementById('fuProfileEventsCard');
-    if(!card){
-      card=document.createElement('div');
-      card.id='fuProfileEventsCard';
-      card.className='fu-profile-events-card';
-      var anchor=target.querySelector('.gems-card,.statCard,.diamond-card');
-      if(anchor) anchor.insertAdjacentElement('afterend',card);
-      else{
-        var header=target.querySelector('.me-body,.meContent');
-        if(header) header.insertAdjacentElement('afterend',card);
-        else target.insertAdjacentElement('afterbegin',card);
-      }
-    }
-    card.innerHTML=cardHTML(collectPlans());
-  }
-  window.buildProfileEventsCard=buildProfileEventsCard;
-
-  function hook(){
-    var oldGo=window.go;
-    if(typeof oldGo==='function' && !oldGo.__profileEventsStableOnly){
-      window.go=function(id){
-        var result=oldGo.apply(this,arguments);
-        if(id==='me'){
-          buildProfileEventsCard();
-          setTimeout(buildProfileEventsCard,80);
-        }
-        return result;
-      };
-      window.go.__profileEventsStableOnly=true;
-    }
-    var oldRenderMe=window.renderMe;
-    if(typeof oldRenderMe==='function' && !oldRenderMe.__profileEventsStableOnly){
-      window.renderMe=function(){
-        var result=oldRenderMe.apply(this,arguments);
-        buildProfileEventsCard();
-        return result;
-      };
-      window.renderMe.__profileEventsStableOnly=true;
-    }
-  }
-  hook();
-  setTimeout(function(){
-    hook();
-    var me=document.getElementById('me');
-    if(me && me.classList.contains('active')) buildProfileEventsCard();
-  },400);
+  setTimeout(buildCard, 1200);
+  setInterval(function(){
+    const me = document.getElementById('me');
+    if(me && me.classList.contains('active')) buildCard();
+  }, 2500);
 })();
 </script>
 
