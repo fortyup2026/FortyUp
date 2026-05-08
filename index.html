@@ -2036,6 +2036,58 @@ pointer-events:none;
   display:none!important;
 }
 
+
+/* ===== FIX BOTONES SWIPE TOUCH ===== */
+#profiles,
+#discover,
+.swipe-wrap,
+.swipeArea,
+.swipe-shell,
+.sw-card{
+  pointer-events:auto!important;
+}
+
+.sw-acts,
+.swipe-actions,
+.sw-actions,
+.profile-actions{
+  position:relative!important;
+  z-index:9999!important;
+  pointer-events:auto!important;
+}
+
+.sw-acts button,
+.swipe-actions button,
+.sw-actions button,
+.profile-actions button,
+.sw-acts .act,
+.swipe-actions .act{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:10000!important;
+}
+
+.sw-card::before,
+.sw-card::after,
+.swipe-wrap::before,
+.swipe-wrap::after{
+  pointer-events:none!important;
+}
+
+.bottom-nav,
+.navbar,
+.bottomBar{
+  z-index:100!important;
+}
+
+.sw-acts,
+.swipe-actions{
+  z-index:1000!important;
+  margin-bottom:120px!important;
+}
+
 </style>
 </head>
 <body>
@@ -3617,6 +3669,75 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
   });
 
   setTimeout(run,500);
+})();
+</script>
+
+
+<script id="fuSwipeButtonsTouchFix">
+(function(){
+
+  function trigger(type){
+    try{
+      if(type==="pass"){
+        if(typeof window.passProfile==="function") return window.passProfile();
+        if(typeof window.skipProfile==="function") return window.skipProfile();
+      }
+
+      if(type==="fav"){
+        if(typeof window.likeProfile==="function") return window.likeProfile("fav");
+        if(typeof window.favoriteProfile==="function") return window.favoriteProfile();
+      }
+
+      if(type==="diamond"){
+        if(typeof window.superLikeProfile==="function") return window.superLikeProfile();
+        if(typeof window.likeProfile==="function") return window.likeProfile("diamond");
+      }
+    }catch(e){}
+  }
+
+  function bind(){
+    const btns = Array.from(document.querySelectorAll(
+      ".sw-acts button,.swipe-actions button,.sw-actions button,.profile-actions button,.sw-acts .act,.swipe-actions .act"
+    ));
+
+    btns.forEach((btn,i)=>{
+      if(btn.dataset.touchReady==="1") return;
+      btn.dataset.touchReady="1";
+
+      let type = "";
+      const txt = (btn.textContent || "").toLowerCase();
+
+      if(txt.includes("x")) type="pass";
+      else if(txt.includes("fav") || txt.includes("⭐")) type="fav";
+      else if(txt.includes("diam") || txt.includes("💎")) type="diamond";
+      else{
+        if(i===0) type="pass";
+        if(i===1) type="fav";
+        if(i===2) type="diamond";
+      }
+
+      btn.style.pointerEvents="auto";
+      btn.style.zIndex="10000";
+      btn.style.touchAction="manipulation";
+
+      btn.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        trigger(type);
+      });
+
+      btn.addEventListener("touchstart", function(e){
+        e.stopPropagation();
+      }, {passive:true});
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(bind,500);
+  });
+
+  setInterval(bind,1500);
+
 })();
 </script>
 
