@@ -2088,6 +2088,27 @@ pointer-events:none;
   margin-bottom:120px!important;
 }
 
+
+/* ===== FIX REAL BOTONES SWIPE: CLICK + ACCIÓN ===== */
+.sw-acts,.swipe-actions,.sw-actions,.profile-actions{
+  position:relative!important;
+  z-index:99999!important;
+  pointer-events:auto!important;
+}
+
+.sw-acts button,.swipe-actions button,.sw-actions button,.profile-actions button,
+.sw-btn,.sw-nope,.sw-super,.sw-like{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:100000!important;
+}
+
+.swipe-card::after,.swipe-card::before,.sw-card::after,.sw-card::before{
+  pointer-events:none!important;
+}
+
 </style>
 </head>
 <body>
@@ -3673,71 +3694,141 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 </script>
 
 
-<script id="fuSwipeButtonsTouchFix">
+
+
+
+<script id="fuSwipeRealActionsFix">
 (function(){
-
-  function trigger(type){
-    try{
-      if(type==="pass"){
-        if(typeof window.passProfile==="function") return window.passProfile();
-        if(typeof window.skipProfile==="function") return window.skipProfile();
-      }
-
-      if(type==="fav"){
-        if(typeof window.likeProfile==="function") return window.likeProfile("fav");
-        if(typeof window.favoriteProfile==="function") return window.favoriteProfile();
-      }
-
-      if(type==="diamond"){
-        if(typeof window.superLikeProfile==="function") return window.superLikeProfile();
-        if(typeof window.likeProfile==="function") return window.likeProfile("diamond");
-      }
-    }catch(e){}
+  function read(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+  function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function toast(msg){
+    try{ if(typeof window.toast==="function") return window.toast(msg); }catch(e){}
+    try{ if(typeof window.showToast==="function") return window.showToast(msg); }catch(e){}
+    var t=document.getElementById("toast");
+    if(t){t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2200)}
   }
-
+  function currentUser(){return read("fu_user",null)||read("fu_me",null)||read("user",null)||{}}
+  function getProfiles(){
+    var arr=[];
+    ["fu_users","users","fortyup_users","fu_profiles"].forEach(function(k){var v=read(k,[]);if(Array.isArray(v))arr=arr.concat(v)});
+    return arr;
+  }
+  function visibleProfile(){
+    var card=document.querySelector("#swipeStack .swipe-card:not(.exit), #swipeStack .swipe-card, .swipe-card:not(.exit), .sw-card");
+    if(!card)return null;
+    var txt=(card.textContent||"").toLowerCase();
+    var found=getProfiles().find(function(p){
+      var n=String(p.name||p.n||p.displayName||p.username||p.email||"").toLowerCase();
+      return n && txt.indexOf(n.split("@")[0])>=0;
+    });
+    if(found)return found;
+    var name=(card.querySelector(".sc-name,.swipe-name,.sw-name")||{}).textContent||"";
+    return {id:card.dataset.id||card.dataset.uid||name||("visible_"+Date.now()),name:name||"Usuario",n:name||"Usuario"};
+  }
+  function activeProfile(){
+    try{ if(window.currentProfile)return window.currentProfile; }catch(e){}
+    try{ if(window.activeProfile)return window.activeProfile; }catch(e){}
+    try{ if(window.selectedProfile)return window.selectedProfile; }catch(e){}
+    try{ if(Array.isArray(window.profiles)&&typeof window.swipeIndex==="number")return window.profiles[window.swipeIndex]; }catch(e){}
+    try{ if(Array.isArray(window.filteredProfiles)&&typeof window.swipeIndex==="number")return window.filteredProfiles[window.swipeIndex]; }catch(e){}
+    try{ if(Array.isArray(window.users)&&typeof window.swipeIndex==="number")return window.users[window.swipeIndex]; }catch(e){}
+    return visibleProfile();
+  }
+  function pid(p){return String((p&&(p.id||p.uid||p.email||p.name||p.n))||"")}
+  function callAny(names,args){
+    for(var i=0;i<names.length;i++){
+      try{ if(typeof window[names[i]]==="function"){ window[names[i]].apply(window,args||[]); return true; } }catch(e){}
+    }
+    return false;
+  }
+  function nextVisual(){
+    if(callAny(["nextProfile","advanceProfile","renderNextProfile"],[]))return;
+    var card=document.querySelector("#swipeStack .swipe-card:not(.exit), #swipeStack .swipe-card, .swipe-card:not(.exit), .sw-card");
+    if(card){
+      card.classList.add("exit");
+      card.style.transition="transform .22s ease, opacity .22s ease";
+      card.style.transform="translateX(130%) rotate(14deg)";
+      card.style.opacity="0";
+      setTimeout(function(){try{card.remove()}catch(e){} try{if(typeof window.renderProfiles==="function")window.renderProfiles()}catch(e){}},240);
+    }else{
+      try{if(typeof window.renderProfiles==="function")window.renderProfiles()}catch(e){}
+    }
+  }
+  function saveDiamond(p){
+    var me=currentUser();
+    var id=pid(p);
+    if(!id)return false;
+    ["fu_diamonds_sent","diamonds_sent","fortyup_diamonds_sent","fu_fortis_sent"].forEach(function(k){
+      var arr=read(k,[]);
+      if(Array.isArray(arr)&&arr.map(String).indexOf(id)<0){arr.push(id);write(k,arr)}
+    });
+    var log=read("fu_diamond_log",[]);
+    if(Array.isArray(log)){
+      log.push({id:"dia_"+Date.now(),from:me.id||me.uid||me.email||"me",to:id,toName:p.name||p.n||p.displayName||"",createdAt:new Date().toISOString(),type:"diamond"});
+      write("fu_diamond_log",log);
+    }
+    return true;
+  }
+  function saveFav(p){
+    var id=pid(p); if(!id)return false;
+    ["fu_favorites","favorites","fortyup_favorites"].forEach(function(k){
+      var arr=read(k,[]);
+      if(Array.isArray(arr)&&arr.map(String).indexOf(id)<0){arr.push(id);write(k,arr)}
+    });
+    return true;
+  }
+  function pass(){
+    var ok=callAny(["passProfile","skipProfile","nopeProfile","swipeNope"],[]);
+    setTimeout(nextVisual, ok?90:10);
+  }
+  function fav(){
+    var p=activeProfile();
+    callAny(["favoriteProfile","favProfile","toggleFavorite","saveFavorite"],[p]);
+    saveFav(p);
+    toast("⭐ Guardado en favoritos");
+    setTimeout(nextVisual,90);
+  }
+  function diamond(){
+    var p=activeProfile();
+    callAny(["sendDiamond","sendForty","sendForti","sendSuperDiamond","superLikeProfile","diamondProfile"],[p]);
+    saveDiamond(p);
+    toast("💎 Diamante enviado");
+    setTimeout(nextVisual,90);
+  }
   function bind(){
-    const btns = Array.from(document.querySelectorAll(
-      ".sw-acts button,.swipe-actions button,.sw-actions button,.profile-actions button,.sw-acts .act,.swipe-actions .act"
-    ));
-
-    btns.forEach((btn,i)=>{
-      if(btn.dataset.touchReady==="1") return;
-      btn.dataset.touchReady="1";
-
-      let type = "";
-      const txt = (btn.textContent || "").toLowerCase();
-
-      if(txt.includes("x")) type="pass";
-      else if(txt.includes("fav") || txt.includes("⭐")) type="fav";
-      else if(txt.includes("diam") || txt.includes("💎")) type="diamond";
-      else{
-        if(i===0) type="pass";
-        if(i===1) type="fav";
-        if(i===2) type="diamond";
-      }
-
-      btn.style.pointerEvents="auto";
-      btn.style.zIndex="10000";
-      btn.style.touchAction="manipulation";
-
-      btn.addEventListener("click", function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        trigger(type);
+    var groups=document.querySelectorAll(".sw-acts,.swipe-actions,.sw-actions,.profile-actions");
+    groups.forEach(function(group){
+      var buttons=Array.from(group.querySelectorAll("button,.sw-btn,.sw-nope,.sw-super,.sw-like,.action,.act"));
+      buttons.forEach(function(btn,i){
+        if(btn.dataset.fuRealActionReady==="1")return;
+        btn.dataset.fuRealActionReady="1";
+        var cls=String(btn.className||"");
+        var txt=String(btn.textContent||"").toLowerCase();
+        var type="";
+        if(cls.indexOf("nope")>=0||txt.indexOf("✕")>=0||txt.indexOf("x")>=0)type="pass";
+        else if(cls.indexOf("super")>=0||txt.indexOf("⭐")>=0||txt.indexOf("fav")>=0)type="fav";
+        else if(cls.indexOf("like")>=0||txt.indexOf("💎")>=0||txt.indexOf("diam")>=0)type="diamond";
+        else{if(i===0)type="pass";if(i===1)type="fav";if(i===2)type="diamond"}
+        btn.addEventListener("touchstart",function(e){e.stopPropagation()},{passive:true});
+        btn.addEventListener("pointerdown",function(e){e.stopPropagation()},{passive:true});
+        btn.addEventListener("click",function(e){
+          e.preventDefault(); e.stopPropagation();
+          if(type==="pass")pass();
+          if(type==="fav")fav();
+          if(type==="diamond")diamond();
+        });
       });
-
-      btn.addEventListener("touchstart", function(e){
-        e.stopPropagation();
-      }, {passive:true});
     });
   }
-
-  document.addEventListener("DOMContentLoaded", function(){
-    setTimeout(bind,500);
+  ["renderProfiles","go"].forEach(function(fn){
+    var old=window[fn];
+    if(typeof old==="function"&&!old.__fuSwipeRealActions){
+      window[fn]=function(){var r=old.apply(this,arguments);setTimeout(bind,80);setTimeout(bind,250);return r};
+      window[fn].__fuSwipeRealActions=true;
+    }
   });
-
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(bind,500)});
   setInterval(bind,1500);
-
 })();
 </script>
 
