@@ -2109,6 +2109,141 @@ pointer-events:none;
   pointer-events:none!important;
 }
 
+
+/* ===== FORTYUP: MODO GRILLA DE PERFILES ESTABLE ===== */
+#profiles .swipe-wrap{
+  justify-content:flex-start!important;
+  align-items:stretch!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:1rem 1rem calc(96px + env(safe-area-inset-bottom,0px))!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+#profiles #swipeStack,
+#profiles .sw-acts,
+#profiles .swipe-actions{
+  display:none!important;
+}
+
+.fu-grid-profiles{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.75rem;
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+}
+
+.fu-grid-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  min-height:255px;
+  background:rgba(8,18,13,.96);
+  border:1px solid rgba(126,232,126,.14);
+  box-shadow:0 18px 42px rgba(0,0,0,.34);
+}
+
+.fu-grid-photo{
+  height:175px;
+  background:#0b1712 center/cover no-repeat;
+  position:relative;
+}
+
+.fu-grid-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.8),transparent 58%);
+}
+
+.fu-grid-info{
+  padding:.72rem;
+}
+
+.fu-grid-name{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;
+  font-weight:800;
+  color:#fff;
+  line-height:1.05;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.fu-grid-meta{
+  margin-top:.22rem;
+  font-size:.65rem;
+  color:rgba(255,255,255,.58);
+  line-height:1.3;
+}
+
+.fu-grid-tags{
+  margin-top:.42rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.25rem;
+}
+
+.fu-grid-tag{
+  border-radius:999px;
+  padding:.12rem .42rem;
+  font-size:.56rem;
+  color:#A2FFD0;
+  background:rgba(162,255,208,.08);
+  border:1px solid rgba(162,255,208,.14);
+}
+
+.fu-grid-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.4rem;
+  padding:0 .72rem .72rem;
+}
+
+.fu-grid-btn{
+  min-height:36px;
+  border-radius:14px;
+  font-size:.68rem;
+  font-weight:900;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.72);
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+}
+
+.fu-grid-btn.diamond{
+  background:linear-gradient(135deg,#16E08A,#9BFFBF);
+  color:#04110D;
+  border:0;
+  box-shadow:0 8px 22px rgba(22,224,138,.22);
+}
+
+.fu-grid-btn.chat{
+  color:#A2FFD0;
+  background:rgba(162,255,208,.08);
+  border-color:rgba(162,255,208,.16);
+}
+
+.fu-grid-empty{
+  grid-column:1/-1;
+  padding:2.4rem 1rem;
+  text-align:center;
+  color:rgba(255,255,255,.55);
+  border:1px dashed rgba(162,255,208,.16);
+  border-radius:24px;
+  background:rgba(162,255,208,.035);
+}
+
+@media(max-width:370px){
+  .fu-grid-photo{height:155px}
+  .fu-grid-card{min-height:235px}
+  .fu-grid-name{font-size:.9rem}
+}
+
 </style>
 </head>
 <body>
@@ -3697,7 +3832,10 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
 
 
 
-<script id="fuSwipeRealActionsFix">
+
+
+
+<script id="fuProfilesGridMode">
 (function(){
   function read(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
   function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -3707,128 +3845,135 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
     var t=document.getElementById("toast");
     if(t){t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2200)}
   }
+  function photoOf(u){return u&&(u.photo||u.img||u.avatar||u.avatarUrl||u.photoURL||u.image||u.picture||u.profilePhoto)||""}
+  function nameOf(u){return u&&(u.name||u.n||u.displayName||u.username||u.email)||"Usuario"}
+  function cityOf(u){return u&&(u.city||u.c||(u.location&&u.location.city)||"")||""}
+  function idOf(u){return String((u&&(u.id||u.uid||u.email||u.name||u.n))||"")}
   function currentUser(){return read("fu_user",null)||read("fu_me",null)||read("user",null)||{}}
-  function getProfiles(){
+  function profiles(){
     var arr=[];
-    ["fu_users","users","fortyup_users","fu_profiles"].forEach(function(k){var v=read(k,[]);if(Array.isArray(v))arr=arr.concat(v)});
-    return arr;
-  }
-  function visibleProfile(){
-    var card=document.querySelector("#swipeStack .swipe-card:not(.exit), #swipeStack .swipe-card, .swipe-card:not(.exit), .sw-card");
-    if(!card)return null;
-    var txt=(card.textContent||"").toLowerCase();
-    var found=getProfiles().find(function(p){
-      var n=String(p.name||p.n||p.displayName||p.username||p.email||"").toLowerCase();
-      return n && txt.indexOf(n.split("@")[0])>=0;
+    ["fu_users","users","fortyup_users","fu_profiles"].forEach(function(k){
+      var v=read(k,[]);
+      if(Array.isArray(v))arr=arr.concat(v);
     });
-    if(found)return found;
-    var name=(card.querySelector(".sc-name,.swipe-name,.sw-name")||{}).textContent||"";
-    return {id:card.dataset.id||card.dataset.uid||name||("visible_"+Date.now()),name:name||"Usuario",n:name||"Usuario"};
-  }
-  function activeProfile(){
-    try{ if(window.currentProfile)return window.currentProfile; }catch(e){}
-    try{ if(window.activeProfile)return window.activeProfile; }catch(e){}
-    try{ if(window.selectedProfile)return window.selectedProfile; }catch(e){}
-    try{ if(Array.isArray(window.profiles)&&typeof window.swipeIndex==="number")return window.profiles[window.swipeIndex]; }catch(e){}
-    try{ if(Array.isArray(window.filteredProfiles)&&typeof window.swipeIndex==="number")return window.filteredProfiles[window.swipeIndex]; }catch(e){}
-    try{ if(Array.isArray(window.users)&&typeof window.swipeIndex==="number")return window.users[window.swipeIndex]; }catch(e){}
-    return visibleProfile();
-  }
-  function pid(p){return String((p&&(p.id||p.uid||p.email||p.name||p.n))||"")}
-  function callAny(names,args){
-    for(var i=0;i<names.length;i++){
-      try{ if(typeof window[names[i]]==="function"){ window[names[i]].apply(window,args||[]); return true; } }catch(e){}
-    }
-    return false;
-  }
-  function nextVisual(){
-    if(callAny(["nextProfile","advanceProfile","renderNextProfile"],[]))return;
-    var card=document.querySelector("#swipeStack .swipe-card:not(.exit), #swipeStack .swipe-card, .swipe-card:not(.exit), .sw-card");
-    if(card){
-      card.classList.add("exit");
-      card.style.transition="transform .22s ease, opacity .22s ease";
-      card.style.transform="translateX(130%) rotate(14deg)";
-      card.style.opacity="0";
-      setTimeout(function(){try{card.remove()}catch(e){} try{if(typeof window.renderProfiles==="function")window.renderProfiles()}catch(e){}},240);
-    }else{
-      try{if(typeof window.renderProfiles==="function")window.renderProfiles()}catch(e){}
-    }
-  }
-  function saveDiamond(p){
+    if(!arr.length && Array.isArray(window.profiles)) arr=window.profiles;
+    if(!arr.length && Array.isArray(window.users)) arr=window.users;
+
     var me=currentUser();
-    var id=pid(p);
-    if(!id)return false;
+    var meId=idOf(me);
+    var seen=new Set();
+    return arr.filter(function(u){
+      var id=idOf(u);
+      if(!id || id===meId || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }
+  function saveDiamond(u){
+    var id=idOf(u);
+    if(!id) return;
     ["fu_diamonds_sent","diamonds_sent","fortyup_diamonds_sent","fu_fortis_sent"].forEach(function(k){
       var arr=read(k,[]);
-      if(Array.isArray(arr)&&arr.map(String).indexOf(id)<0){arr.push(id);write(k,arr)}
+      if(Array.isArray(arr) && arr.map(String).indexOf(id)<0){
+        arr.push(id);
+        write(k,arr);
+      }
     });
     var log=read("fu_diamond_log",[]);
     if(Array.isArray(log)){
-      log.push({id:"dia_"+Date.now(),from:me.id||me.uid||me.email||"me",to:id,toName:p.name||p.n||p.displayName||"",createdAt:new Date().toISOString(),type:"diamond"});
+      var me=currentUser();
+      log.push({
+        id:"dia_"+Date.now(),
+        from:me.id||me.uid||me.email||"me",
+        to:id,
+        toName:nameOf(u),
+        createdAt:new Date().toISOString(),
+        type:"diamond"
+      });
       write("fu_diamond_log",log);
     }
-    return true;
+    try{ if(typeof window.sendDiamond==="function") window.sendDiamond(u); }catch(e){}
+    try{ if(typeof window.sendForty==="function") window.sendForty(u); }catch(e){}
+    toast("💎 Diamante enviado a "+nameOf(u));
   }
-  function saveFav(p){
-    var id=pid(p); if(!id)return false;
-    ["fu_favorites","favorites","fortyup_favorites"].forEach(function(k){
-      var arr=read(k,[]);
-      if(Array.isArray(arr)&&arr.map(String).indexOf(id)<0){arr.push(id);write(k,arr)}
-    });
-    return true;
+  function openChat(u){
+    try{
+      if(typeof window.openChat==="function") return window.openChat(idOf(u));
+      if(typeof window.startChat==="function") return window.startChat(u);
+      if(typeof window.go==="function") return window.go("messages");
+    }catch(e){}
   }
-  function pass(){
-    var ok=callAny(["passProfile","skipProfile","nopeProfile","swipeNope"],[]);
-    setTimeout(nextVisual, ok?90:10);
-  }
-  function fav(){
-    var p=activeProfile();
-    callAny(["favoriteProfile","favProfile","toggleFavorite","saveFavorite"],[p]);
-    saveFav(p);
-    toast("⭐ Guardado en favoritos");
-    setTimeout(nextVisual,90);
-  }
-  function diamond(){
-    var p=activeProfile();
-    callAny(["sendDiamond","sendForty","sendForti","sendSuperDiamond","superLikeProfile","diamondProfile"],[p]);
-    saveDiamond(p);
-    toast("💎 Diamante enviado");
-    setTimeout(nextVisual,90);
-  }
-  function bind(){
-    var groups=document.querySelectorAll(".sw-acts,.swipe-actions,.sw-actions,.profile-actions");
-    groups.forEach(function(group){
-      var buttons=Array.from(group.querySelectorAll("button,.sw-btn,.sw-nope,.sw-super,.sw-like,.action,.act"));
-      buttons.forEach(function(btn,i){
-        if(btn.dataset.fuRealActionReady==="1")return;
-        btn.dataset.fuRealActionReady="1";
-        var cls=String(btn.className||"");
-        var txt=String(btn.textContent||"").toLowerCase();
-        var type="";
-        if(cls.indexOf("nope")>=0||txt.indexOf("✕")>=0||txt.indexOf("x")>=0)type="pass";
-        else if(cls.indexOf("super")>=0||txt.indexOf("⭐")>=0||txt.indexOf("fav")>=0)type="fav";
-        else if(cls.indexOf("like")>=0||txt.indexOf("💎")>=0||txt.indexOf("diam")>=0)type="diamond";
-        else{if(i===0)type="pass";if(i===1)type="fav";if(i===2)type="diamond"}
-        btn.addEventListener("touchstart",function(e){e.stopPropagation()},{passive:true});
-        btn.addEventListener("pointerdown",function(e){e.stopPropagation()},{passive:true});
-        btn.addEventListener("click",function(e){
-          e.preventDefault(); e.stopPropagation();
-          if(type==="pass")pass();
-          if(type==="fav")fav();
-          if(type==="diamond")diamond();
-        });
-      });
-    });
-  }
-  ["renderProfiles","go"].forEach(function(fn){
-    var old=window[fn];
-    if(typeof old==="function"&&!old.__fuSwipeRealActions){
-      window[fn]=function(){var r=old.apply(this,arguments);setTimeout(bind,80);setTimeout(bind,250);return r};
-      window[fn].__fuSwipeRealActions=true;
+  window.fuGridDiamond=function(id){
+    var u=profiles().find(function(p){return idOf(p)===String(id)});
+    if(u) saveDiamond(u);
+  };
+  window.fuGridChat=function(id){
+    var u=profiles().find(function(p){return idOf(p)===String(id)});
+    if(u) openChat(u);
+  };
+
+  function render(){
+    var wrap=document.querySelector("#profiles .swipe-wrap") || document.querySelector("#profiles .si") || document.querySelector("#profiles");
+    if(!wrap) return;
+
+    var old=document.getElementById("fuGridProfiles");
+    if(old) old.remove();
+
+    var grid=document.createElement("div");
+    grid.id="fuGridProfiles";
+    grid.className="fu-grid-profiles";
+
+    var list=profiles();
+
+    if(!list.length){
+      grid.innerHTML='<div class="fu-grid-empty">No hay perfiles para mostrar todavía.<br>Cuando se registren usuarios, van a aparecer acá.</div>';
+    }else{
+      grid.innerHTML=list.map(function(u){
+        var id=idOf(u);
+        var img=photoOf(u) || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop";
+        var tags=(u.tags||u.interests||u.gustos||[]).slice ? (u.tags||u.interests||u.gustos||[]).slice(0,2) : [];
+        if(typeof tags==="string") tags=tags.split(",").slice(0,2);
+        var meta=[u.age||u.edad||"", cityOf(u)||"Cerca"].filter(Boolean).join(" · ");
+        return '<div class="fu-grid-card">'+
+          '<div class="fu-grid-photo" style="background-image:url(\\''+String(img).replace(/'/g,"%27")+'\\')"></div>'+
+          '<div class="fu-grid-info">'+
+            '<div class="fu-grid-name">'+nameOf(u)+'</div>'+
+            '<div class="fu-grid-meta">'+(meta||"Perfil FortyUp")+'</div>'+
+            '<div class="fu-grid-tags">'+tags.map(function(t){return '<span class="fu-grid-tag">'+String(t).trim()+'</span>'}).join("")+'</div>'+
+          '</div>'+
+          '<div class="fu-grid-actions">'+
+            '<button class="fu-grid-btn chat" onclick="event.stopPropagation();fuGridChat(\\''+id.replace(/'/g,"\\'")+'\\')">Mensaje</button>'+
+            '<button class="fu-grid-btn diamond" onclick="event.stopPropagation();fuGridDiamond(\\''+id.replace(/'/g,"\\'")+'\\')">💎 Diamante</button>'+
+          '</div>'+
+        '</div>';
+      }).join("");
     }
-  });
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(bind,500)});
-  setInterval(bind,1500);
+
+    wrap.appendChild(grid);
+  }
+
+  var oldRenderProfiles=window.renderProfiles;
+  if(typeof oldRenderProfiles==="function" && !oldRenderProfiles.__gridMode){
+    window.renderProfiles=function(){
+      var r=oldRenderProfiles.apply(this,arguments);
+      setTimeout(render,80);
+      return r;
+    };
+    window.renderProfiles.__gridMode=true;
+  }
+
+  var oldGo=window.go;
+  if(typeof oldGo==="function" && !oldGo.__gridMode){
+    window.go=function(id){
+      var r=oldGo.apply(this,arguments);
+      if(id==="profiles" || id==="discover") setTimeout(render,100);
+      return r;
+    };
+    window.go.__gridMode=true;
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(render,600)});
+  setTimeout(render,1000);
 })();
 </script>
 
