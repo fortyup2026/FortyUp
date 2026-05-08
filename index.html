@@ -1783,6 +1783,210 @@ pointer-events:none;
 #profiles .swipe-wrap,#profiles .swipeArea,#discover .swipe-shell{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}
 #profiles .sw-acts,#profiles .swipe-actions,#discover .swipe-actions{position:relative!important;z-index:260!important;margin-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
 
+
+/* ===== PERFIL COMPACTO: OPCIONES VISIBLES SIN SCROLL LARGO ===== */
+#me.screen{
+  overflow:hidden!important;
+}
+
+#me .si{
+  height:calc(100dvh - 64px - env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+  padding:.55rem .9rem calc(70px + env(safe-area-inset-bottom,0px))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:.48rem!important;
+}
+
+#me .me-cover{
+  height:78px!important;
+  min-height:78px!important;
+  margin:-.55rem -.9rem 0!important;
+  overflow:visible!important;
+}
+
+#me .me-av-wrap{
+  width:62px!important;
+  height:62px!important;
+  bottom:-28px!important;
+  border-width:2px!important;
+  box-shadow:0 0 0 3px var(--bg),0 6px 22px rgba(0,0,0,.45)!important;
+}
+
+#me .me-body{
+  padding:34px .6rem .35rem!important;
+  text-align:center!important;
+}
+
+#me .me-nm{
+  font-size:1.35rem!important;
+  line-height:1!important;
+}
+
+#me .me-cit{
+  font-size:.68rem!important;
+  margin-top:.14rem!important;
+}
+
+#me .me-bio{
+  display:none!important;
+}
+
+#me .gems-card{
+  margin-bottom:.45rem!important;
+  padding:.72rem .8rem!important;
+  border-radius:20px!important;
+}
+
+#me .gems-hd{
+  margin-bottom:.5rem!important;
+}
+
+#me .gems-hd h3{
+  font-size:.95rem!important;
+}
+
+#me .gems-hd p{
+  font-size:.62rem!important;
+}
+
+#me .gems-badge{
+  padding:.22rem .62rem!important;
+  font-size:.68rem!important;
+}
+
+#me .gems-grid{
+  gap:.38rem!important;
+}
+
+#me .gems-stat{
+  padding:.48rem .35rem!important;
+  border-radius:14px!important;
+}
+
+#me .gems-stat strong{
+  font-size:1.25rem!important;
+}
+
+#me .gems-stat span{
+  font-size:.52rem!important;
+  margin-top:.1rem!important;
+}
+
+#me .me-quick{
+  gap:.45rem!important;
+  margin-bottom:.45rem!important;
+}
+
+#me .me-q{
+  padding:.62rem .65rem!important;
+  border-radius:18px!important;
+}
+
+#me .me-q-ico{
+  font-size:1rem!important;
+  margin-bottom:.18rem!important;
+}
+
+#me .me-q-title{
+  font-size:.72rem!important;
+}
+
+#me .me-q-sub{
+  font-size:.6rem!important;
+}
+
+#me .me-list{
+  margin-bottom:0!important;
+  border-radius:18px!important;
+  flex:1!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+
+#me .me-row{
+  padding:.62rem .8rem!important;
+  gap:.55rem!important;
+  min-height:43px!important;
+}
+
+#me .me-row-ico{
+  width:22px!important;
+}
+
+#me .me-row-ico svg{
+  width:15px!important;
+  height:15px!important;
+}
+
+#me .me-row-txt{
+  font-size:.74rem!important;
+}
+
+#me .me-row-arr{
+  font-size:.72rem!important;
+}
+
+#me #fuProfileEventsStableCard{
+  max-height:112px!important;
+  margin:0 0 .45rem!important;
+  flex:0 0 auto!important;
+}
+
+#me .fu-profile-events-head{
+  padding:.55rem .75rem .42rem!important;
+}
+
+#me .fu-profile-events-title{
+  font-size:.9rem!important;
+}
+
+#me .fu-profile-events-sub{
+  display:none!important;
+}
+
+#me .fu-profile-events-list{
+  padding:.45rem!important;
+  gap:.35rem!important;
+  max-height:70px!important;
+  overflow:hidden!important;
+}
+
+#me .fu-profile-event-item{
+  padding:.42rem!important;
+}
+
+#me .fu-profile-event-img{
+  width:40px!important;
+  height:40px!important;
+  flex-basis:40px!important;
+  border-radius:11px!important;
+}
+
+#me .fu-profile-event-title{
+  font-size:.7rem!important;
+}
+
+#me .fu-profile-event-meta{
+  font-size:.58rem!important;
+}
+
+#me .fu-profile-event-actions{
+  display:none!important;
+}
+
+@media(max-height:760px){
+  #me .me-cover{height:64px!important;min-height:64px!important}
+  #me .me-av-wrap{width:54px!important;height:54px!important;bottom:-24px!important}
+  #me .me-body{padding-top:29px!important}
+  #me .me-nm{font-size:1.18rem!important}
+  #me .gems-card{padding:.6rem .7rem!important}
+  #me .gems-stat{padding:.36rem .25rem!important}
+  #me .gems-stat strong{font-size:1.05rem!important}
+  #me .me-q{padding:.5rem .55rem!important}
+  #me .me-row{padding:.54rem .72rem!important;min-height:38px!important}
+}
+
 </style>
 </head>
 <body>
