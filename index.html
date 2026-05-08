@@ -1987,6 +1987,55 @@ pointer-events:none;
   #me .me-row{padding:.54rem .72rem!important;min-height:38px!important}
 }
 
+
+/* ===== FIX PERFIL SCROLL + EVENTOS VENCIDOS ===== */
+
+/* Mi Perfil puede deslizar, pero sin espacio gigante */
+#me.screen{
+  overflow:hidden!important;
+}
+
+#me .si{
+  height:calc(100dvh - 64px - env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding:.55rem .9rem calc(96px + env(safe-area-inset-bottom,0px))!important;
+  display:block!important;
+}
+
+/* Mantenemos compacto, pero permitimos ver todo */
+#me .me-list{
+  margin-bottom:1rem!important;
+  overflow:visible!important;
+}
+
+#me .me-row{
+  min-height:42px!important;
+}
+
+/* La card Mis eventos puede verse completa y no bloquea */
+#me #fuProfileEventsStableCard{
+  max-height:none!important;
+  overflow:visible!important;
+  margin:0 0 .65rem!important;
+}
+
+#me .fu-profile-events-list{
+  max-height:none!important;
+  overflow:visible!important;
+}
+
+#me .fu-profile-event-actions{
+  display:flex!important;
+}
+
+/* Ocultar visualmente eventos vencidos si quedaron renderizados */
+.fu-event-expired{
+  display:none!important;
+}
+
 </style>
 </head>
 <body>
@@ -3397,6 +3446,177 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
   ["openEditProfile","openAuth","setAuth","go"].forEach(fn=>{let old=window[fn]; if(typeof old==="function"&&!old.__fuFinalCompact){window[fn]=function(id){let r=old.apply(this,arguments); setTimeout(run,60); setTimeout(run,220); if(fn==="go"&&id==="me"){renderEvents();setTimeout(renderEvents,120)} return r}; window[fn].__fuFinalCompact=true}});
   let oldRM=window.renderMe; if(typeof oldRM==="function"&&!oldRM.__fuFinalCompact){window.renderMe=function(){let r=oldRM.apply(this,arguments); renderEvents(); setTimeout(run,60); return r}; oldRM.__fuFinalCompact=true}
   document.addEventListener("DOMContentLoaded",run); setTimeout(run,500); setTimeout(()=>{let me=document.getElementById("me"); if(me&&me.classList.contains("active"))renderEvents()},700); setInterval(clean,2000);
+})();
+</script>
+
+
+<script id="fuEventosVencidosYPerfilScroll">
+(function(){
+  function read(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+  function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+  const MONTHS = {
+    enero:0, ene:0, january:0, jan:0,
+    febrero:1, feb:1, february:1,
+    marzo:2, mar:2, march:2,
+    abril:3, abr:3, april:3, apr:3,
+    mayo:4, may:4,
+    junio:5, jun:5, june:5,
+    julio:6, jul:6, july:6,
+    agosto:7, ago:7, august:7, aug:7,
+    septiembre:8, setiembre:8, sep:8, september:8,
+    octubre:9, oct:9, october:9,
+    noviembre:10, nov:10, november:10,
+    diciembre:11, dic:11, december:11, dec:11
+  };
+
+  function cleanText(v){
+    return String(v||"")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g,"")
+      .replace(/[·,]/g," ")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function parseEventDate(value){
+    if(!value) return null;
+    const raw = cleanText(value);
+
+    // ISO / YYYY-MM-DD
+    let m = raw.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+    if(m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 23, 59, 59);
+
+    // DD/MM/YYYY
+    m = raw.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+    if(m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), 23, 59, 59);
+
+    // 05 mayo 2026 / 5 de mayo de 2026
+    m = raw.match(/(\d{1,2})\s*(?:de\s*)?([a-z]+)\s*(?:de\s*)?(\d{4})/);
+    if(m && MONTHS[m[2]] !== undefined){
+      return new Date(Number(m[3]), MONTHS[m[2]], Number(m[1]), 23, 59, 59);
+    }
+
+    // mayo 2026 -> último día aproximado del mes, no lo vencemos al inicio
+    m = raw.match(/([a-z]+)\s*(\d{4})/);
+    if(m && MONTHS[m[1]] !== undefined){
+      return new Date(Number(m[2]), MONTHS[m[1]] + 1, 0, 23, 59, 59);
+    }
+
+    return null;
+  }
+
+  function eventDateFromObject(ev){
+    return ev.date || ev.fecha || ev.when || ev.datetime || ev.day || ev.eventDate || ev.startDate || ev.start || "";
+  }
+
+  function isExpiredDate(v){
+    const d = parseEventDate(v);
+    if(!d) return false;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return d < today;
+  }
+
+  function isExpiredEvent(ev){
+    if(!ev) return false;
+    return isExpiredDate(eventDateFromObject(ev));
+  }
+
+  function purgeStorageEvents(){
+    const eventKeys = ["fu_created_events_v1","fu_events","events","fortyup_events"];
+    const expiredIds = new Set();
+
+    eventKeys.forEach(k=>{
+      const arr = read(k,null);
+      if(!Array.isArray(arr)) return;
+
+      const kept = arr.filter(ev=>{
+        const expired = isExpiredEvent(ev);
+        if(expired && ev && ev.id != null) expiredIds.add(String(ev.id));
+        return !expired;
+      });
+
+      if(kept.length !== arr.length) write(k, kept);
+    });
+
+    if(expiredIds.size){
+      ["fu_event_attendance","fu_joined_events","fortyup_attending","attendingEvents"].forEach(k=>{
+        const arr = read(k,null);
+        if(Array.isArray(arr)){
+          write(k, arr.filter(id=>!expiredIds.has(String(id))));
+        }
+      });
+    }
+  }
+
+  function hideExpiredDOMEvents(){
+    const selectors = [
+      ".plan-card",
+      ".plan-chip",
+      ".mp-item",
+      ".nova-plan-pill",
+      ".fu-profile-event-item"
+    ].join(",");
+
+    document.querySelectorAll(selectors).forEach(card=>{
+      const txt = card.textContent || "";
+      if(isExpiredDate(txt)){
+        card.classList.add("fu-event-expired");
+      }
+    });
+  }
+
+  function rerenderIfPossible(){
+    try{
+      if(typeof window.renderPlans === "function") window.renderPlans();
+    }catch(e){}
+    try{
+      if(typeof window.renderHome === "function") window.renderHome();
+    }catch(e){}
+    try{
+      if(typeof window.fuRenderPerfilEventosEstable === "function") window.fuRenderPerfilEventosEstable(true);
+    }catch(e){}
+  }
+
+  function run(){
+    purgeStorageEvents();
+    setTimeout(hideExpiredDOMEvents,80);
+  }
+
+  const oldGo = window.go;
+  if(typeof oldGo === "function" && !oldGo.__expiredEventsFix){
+    window.go = function(id){
+      run();
+      const r = oldGo.apply(this, arguments);
+      setTimeout(run,120);
+      return r;
+    };
+    window.go.__expiredEventsFix = true;
+  }
+
+  ["renderHome","renderPlans","renderMe"].forEach(fn=>{
+    const old = window[fn];
+    if(typeof old === "function" && !old.__expiredEventsFix){
+      window[fn] = function(){
+        run();
+        const r = old.apply(this, arguments);
+        setTimeout(hideExpiredDOMEvents,120);
+        return r;
+      };
+      window[fn].__expiredEventsFix = true;
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function(){
+    run();
+    setTimeout(function(){
+      hideExpiredDOMEvents();
+    },600);
+  });
+
+  setTimeout(run,500);
 })();
 </script>
 
