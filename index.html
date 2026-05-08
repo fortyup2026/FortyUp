@@ -1723,6 +1723,103 @@ pointer-events:none;
   display:none!important;
 }
 
+
+/* ===== EDITAR PERFIL: UBICACIÓN GOOGLE PLACES + FALLBACK ===== */
+.fu-location-block{
+  margin:.85rem 0;
+  border-radius:18px;
+  padding:.85rem;
+  background:rgba(126,232,126,.045);
+  border:1px solid rgba(126,232,126,.14);
+}
+.fu-location-block label{
+  display:block;
+  font-size:.72rem;
+  font-weight:700;
+  color:var(--gr2,#7EE87E);
+  margin-bottom:.35rem;
+}
+.fu-location-input-wrap{position:relative}
+.fu-location-input{width:100%!important}
+.fu-location-help{
+  margin-top:.45rem;
+  color:rgba(255,255,255,.52);
+  font-size:.68rem;
+  line-height:1.45;
+}
+.fu-location-selected{
+  margin-top:.5rem;
+  display:none;
+  border-radius:14px;
+  padding:.65rem .75rem;
+  background:rgba(82,196,82,.08);
+  border:1px solid rgba(82,196,82,.18);
+  color:#A2FFD0;
+  font-size:.72rem;
+  line-height:1.45;
+}
+.fu-location-selected.show{display:block}
+.fu-location-suggestions{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  right:0;
+  z-index:999999;
+  display:none;
+  max-height:230px;
+  overflow-y:auto;
+  border-radius:16px;
+  background:rgba(7,18,12,.98);
+  border:1px solid rgba(126,232,126,.18);
+  box-shadow:0 18px 45px rgba(0,0,0,.42);
+}
+.fu-location-suggestions.show{display:block}
+.fu-location-option{
+  padding:.78rem .9rem;
+  cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+.fu-location-option:last-child{border-bottom:0}
+.fu-location-option:hover,.fu-location-option:active{background:rgba(126,232,126,.08)}
+.fu-location-main{color:#fff;font-weight:800;font-size:.84rem}
+.fu-location-sub{color:rgba(255,255,255,.52);font-size:.68rem;margin-top:.14rem}
+.fu-location-api-note{
+  margin-top:.45rem;
+  color:rgba(255,255,255,.38);
+  font-size:.62rem;
+  line-height:1.4;
+}
+
+/* FIX: botón FortyUp sin foto y sin brillo que barre */
+.bn-c,.bn-center,.navCenter{
+  background-image:none!important;
+  color:#050A05!important;
+}
+.bn-c::after,.bn-c::before{
+  display:none!important;
+  animation:none!important;
+}
+.bn-c span,.bn-center span,.navCenter span{opacity:1!important}
+
+/* FIX: header nunca toma foto como banner */
+.tb,.topbar,.home-hdr,.homeHeader{
+  background-image:none!important;
+}
+
+/* FIX: menú no tapa botones swipe */
+#profiles .swipe-wrap,
+#profiles .swipeArea,
+#discover .swipe-shell{
+  padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))!important;
+}
+#profiles .sw-acts,
+#profiles .swipe-actions,
+#discover .swipe-actions{
+  position:relative!important;
+  z-index:250!important;
+  margin-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important;
+}
+
 </style>
 </head>
 <body>
@@ -3465,6 +3562,317 @@ window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.sh
       renderStableCard(true);
     }
   }, 500);
+})();
+</script>
+
+
+<script id="fortyupGooglePlacesLocation">
+(function(){
+  // Para activar Google real: reemplazá por tu API Key de Google Maps/Places.
+  window.FORTYUP_GOOGLE_MAPS_API_KEY = window.FORTYUP_GOOGLE_MAPS_API_KEY || "";
+
+  const FALLBACK_CITIES = [
+    {city:"Buenos Aires", country:"Argentina", region:"CABA", lat:-34.6037, lng:-58.3816},
+    {city:"Caseros", country:"Argentina", region:"Buenos Aires", lat:-34.6033, lng:-58.5658},
+    {city:"San Justo", country:"Argentina", region:"Buenos Aires", lat:-34.6813, lng:-58.5600},
+    {city:"La Plata", country:"Argentina", region:"Buenos Aires", lat:-34.9214, lng:-57.9544},
+    {city:"Rosario", country:"Argentina", region:"Santa Fe", lat:-32.9442, lng:-60.6505},
+    {city:"Córdoba", country:"Argentina", region:"Córdoba", lat:-31.4201, lng:-64.1888},
+    {city:"Mendoza", country:"Argentina", region:"Mendoza", lat:-32.8895, lng:-68.8458},
+    {city:"Mar del Plata", country:"Argentina", region:"Buenos Aires", lat:-38.0055, lng:-57.5426},
+    {city:"Zürich", country:"Suiza", region:"Cantón de Zúrich", lat:47.3769, lng:8.5417},
+    {city:"Zurich", country:"Suiza", region:"Cantón de Zúrich", lat:47.3769, lng:8.5417},
+    {city:"Geneva", country:"Suiza", region:"Ginebra", lat:46.2044, lng:6.1432},
+    {city:"Ginebra", country:"Suiza", region:"Ginebra", lat:46.2044, lng:6.1432},
+    {city:"Madrid", country:"España", region:"Comunidad de Madrid", lat:40.4168, lng:-3.7038},
+    {city:"Barcelona", country:"España", region:"Cataluña", lat:41.3874, lng:2.1686},
+    {city:"Roma", country:"Italia", region:"Lazio", lat:41.9028, lng:12.4964},
+    {city:"Milán", country:"Italia", region:"Lombardía", lat:45.4642, lng:9.1900},
+    {city:"Montevideo", country:"Uruguay", region:"Montevideo", lat:-34.9011, lng:-56.1645},
+    {city:"Santiago", country:"Chile", region:"Región Metropolitana", lat:-33.4489, lng:-70.6693},
+    {city:"São Paulo", country:"Brasil", region:"São Paulo", lat:-23.5505, lng:-46.6333},
+    {city:"Miami", country:"Estados Unidos", region:"Florida", lat:25.7617, lng:-80.1918},
+    {city:"New York", country:"Estados Unidos", region:"New York", lat:40.7128, lng:-74.0060},
+    {city:"London", country:"Reino Unido", region:"Inglaterra", lat:51.5072, lng:-0.1276},
+    {city:"Paris", country:"Francia", region:"Île-de-France", lat:48.8566, lng:2.3522}
+  ];
+
+  function read(key, fallback){
+    try{return JSON.parse(localStorage.getItem(key)) ?? fallback}catch(e){return fallback}
+  }
+  function write(key, value){
+    try{localStorage.setItem(key, JSON.stringify(value))}catch(e){}
+  }
+  function normalizeText(v){
+    return String(v||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  }
+  function saveLocationToLocalUser(loc){
+    ["fu_user","fu_me","user","fortyup_user"].forEach(function(k){
+      const u = read(k,null);
+      if(u && typeof u === "object"){
+        u.city = loc.city;
+        u.c = loc.city;
+        u.country = loc.country;
+        u.region = loc.region;
+        u.formattedLocation = loc.label;
+        u.location = {
+          lat:loc.lat,
+          lng:loc.lng,
+          city:loc.city,
+          country:loc.country,
+          region:loc.region,
+          label:loc.label,
+          provider:loc.provider || "manual"
+        };
+        u.loc = {lat:loc.lat, lng:loc.lng};
+        write(k,u);
+      }
+    });
+
+    window.fuSelectedLocation = loc;
+    document.dispatchEvent(new CustomEvent("fortyup:locationSelected", {detail:loc}));
+  }
+  function cityFromAddressComponents(components){
+    const get = type => {
+      const found = (components||[]).find(c => (c.types||[]).includes(type));
+      return found ? found.long_name : "";
+    };
+
+    return {
+      city: get("locality") || get("postal_town") || get("administrative_area_level_2") || get("administrative_area_level_1") || "",
+      country: get("country") || "",
+      region: get("administrative_area_level_1") || get("administrative_area_level_2") || ""
+    };
+  }
+  function selectedLabel(loc){
+    return [loc.city, loc.country].filter(Boolean).join(", ") || loc.label || "";
+  }
+  function showSelected(el, loc){
+    if(!el) return;
+    el.textContent = "✓ Zona seleccionada: " + selectedLabel(loc);
+    el.classList.add("show");
+  }
+  function fallbackSearch(q){
+    const nq = normalizeText(q);
+    if(nq.length < 2) return [];
+    return FALLBACK_CITIES.filter(c => {
+      const hay = normalizeText(c.city+" "+c.country+" "+c.region);
+      return hay.includes(nq);
+    }).slice(0,8).map(c => ({
+      label:`${c.city}, ${c.country}`,
+      city:c.city,
+      country:c.country,
+      region:c.region,
+      lat:c.lat,
+      lng:c.lng,
+      provider:"fallback"
+    }));
+  }
+  function renderFallback(input, list, selected){
+    const q = input.value.trim();
+    const results = fallbackSearch(q);
+
+    if(q.length < 2){
+      list.classList.remove("show");
+      list.innerHTML = "";
+      return;
+    }
+
+    if(!results.length){
+      list.innerHTML = '<div class="fu-location-option"><div class="fu-location-main">No encontré esa zona</div><div class="fu-location-sub">Podés escribirla manualmente o probar otra ciudad.</div></div>';
+      list.classList.add("show");
+      return;
+    }
+
+    list.innerHTML = results.map((r,i)=>`
+      <div class="fu-location-option" data-i="${i}">
+        <div class="fu-location-main">${r.label}</div>
+        <div class="fu-location-sub">${r.region || "Ubicación aproximada"} · fallback interno</div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".fu-location-option").forEach((el,i)=>{
+      el.onclick = function(){
+        const loc = results[i];
+        input.value = loc.label;
+        saveLocationToLocalUser(loc);
+        showSelected(selected, loc);
+        list.classList.remove("show");
+      };
+    });
+
+    list.classList.add("show");
+  }
+  function loadGoogleScript(){
+    return new Promise((resolve)=>{
+      if(window.google && google.maps && google.maps.places){
+        resolve(true);
+        return;
+      }
+
+      const key = String(window.FORTYUP_GOOGLE_MAPS_API_KEY || "").trim();
+      if(!key || key.includes("TU_API_KEY")){
+        resolve(false);
+        return;
+      }
+
+      if(document.getElementById("fuGooglePlacesScript")){
+        const check = setInterval(()=>{
+          if(window.google && google.maps && google.maps.places){
+            clearInterval(check);
+            resolve(true);
+          }
+        },200);
+        setTimeout(()=>{clearInterval(check);resolve(false)},8000);
+        return;
+      }
+
+      const s = document.createElement("script");
+      s.id = "fuGooglePlacesScript";
+      s.async = true;
+      s.defer = true;
+      s.src = "https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(key)+"&libraries=places";
+      s.onload = () => resolve(!!(window.google && google.maps && google.maps.places));
+      s.onerror = () => resolve(false);
+      document.head.appendChild(s);
+    });
+  }
+  function currentUser(){
+    return read("fu_user",null) || read("fu_me",null) || read("user",null) || {};
+  }
+  function enhanceInput(input, list, selected){
+    if(input.dataset.fuLocationEnhanced === "1") return;
+    input.dataset.fuLocationEnhanced = "1";
+
+    loadGoogleScript().then(function(googleReady){
+      if(googleReady){
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          fields:["address_components","geometry","formatted_address","name"],
+          types:["(cities)"]
+        });
+
+        autocomplete.addListener("place_changed", function(){
+          const place = autocomplete.getPlace();
+          if(!place || !place.geometry || !place.geometry.location) return;
+
+          const parts = cityFromAddressComponents(place.address_components || []);
+          const loc = {
+            label:place.formatted_address || place.name || input.value,
+            city:parts.city || place.name || input.value,
+            country:parts.country || "",
+            region:parts.region || "",
+            lat:place.geometry.location.lat(),
+            lng:place.geometry.location.lng(),
+            provider:"google"
+          };
+
+          input.value = selectedLabel(loc);
+          saveLocationToLocalUser(loc);
+          showSelected(selected, loc);
+        });
+      }else{
+        input.addEventListener("input", function(){renderFallback(input, list, selected)});
+        input.addEventListener("focus", function(){renderFallback(input, list, selected)});
+        document.addEventListener("click", function(e){
+          const wrap = input.closest(".fu-location-input-wrap");
+          if(wrap && !wrap.contains(e.target)) list.classList.remove("show");
+        });
+      }
+
+      const u = currentUser();
+      if(u && u.location && (u.location.city || u.location.label)){
+        showSelected(selected, {
+          label:u.location.label || "",
+          city:u.location.city || u.city || "",
+          country:u.location.country || u.country || ""
+        });
+      }
+    });
+  }
+  function findLocationInput(panel){
+    return document.getElementById("editCity") ||
+           (panel && panel.querySelector("input[placeholder*='Ciudad'],input[placeholder*='ciudad'],input[name*='city'],input[id*='City'],input[id*='city']"));
+  }
+  function ensureLocationBlock(){
+    const panel = document.querySelector(".panel-sheet,.auth-sheet,.sheet,.panel-ov.open .panel-sheet");
+    if(!panel) return;
+
+    const input = findLocationInput(panel);
+    if(!input) return;
+    if(input.closest(".fu-location-block")) return;
+
+    const block = document.createElement("div");
+    block.className = "fu-location-block";
+
+    const label = document.createElement("label");
+    label.textContent = "Ubicación";
+
+    const wrap = document.createElement("div");
+    wrap.className = "fu-location-input-wrap";
+
+    input.parentNode.insertBefore(block, input);
+    block.appendChild(label);
+    block.appendChild(wrap);
+    wrap.appendChild(input);
+
+    input.classList.add("fu-location-input");
+    input.autocomplete = "off";
+    input.placeholder = "Ej: Zürich, Suiza";
+
+    const list = document.createElement("div");
+    list.className = "fu-location-suggestions";
+    wrap.appendChild(list);
+
+    const selected = document.createElement("div");
+    selected.className = "fu-location-selected";
+    block.appendChild(selected);
+
+    const help = document.createElement("div");
+    help.className = "fu-location-help";
+    help.textContent = "Elegí ciudad o zona. Se guarda para mostrar personas y eventos cerca, por ciudad, país o global.";
+    block.appendChild(help);
+
+    const note = document.createElement("div");
+    note.className = "fu-location-api-note";
+    note.textContent = "Google Places funciona con API key. Si no está cargada, FortyUp usa una lista interna segura.";
+    block.appendChild(note);
+
+    enhanceInput(input, list, selected);
+  }
+  function cleanupVisualBugs(){
+    document.querySelectorAll(".tb,.topbar,.home-hdr,.homeHeader").forEach(el => {
+      el.style.backgroundImage = "none";
+      el.classList.remove("fu-photo-fix","fu-avatar-fix");
+    });
+
+    document.querySelectorAll(".bn-c,.bn-center,.navCenter").forEach(btn => {
+      btn.classList.remove("has-profile-photo","fu-photo-fix","fu-avatar-fix");
+      btn.style.backgroundImage = "none";
+      btn.style.color = "#050A05";
+      btn.querySelectorAll("span").forEach(s => s.style.opacity = "1");
+    });
+  }
+  function run(){
+    cleanupVisualBugs();
+    ensureLocationBlock();
+  }
+
+  ["openEditProfile","openAuth","setAuth","go"].forEach(function(fn){
+    const old = window[fn];
+    if(typeof old === "function" && !old.__fuGooglePlacesLocation){
+      window[fn] = function(){
+        const r = old.apply(this, arguments);
+        setTimeout(run,80);
+        setTimeout(run,300);
+        return r;
+      };
+      window[fn].__fuGooglePlacesLocation = true;
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded",run);
+  setTimeout(run,500);
+  setInterval(cleanupVisualBugs,2000);
 })();
 </script>
 
