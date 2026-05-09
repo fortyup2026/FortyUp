@@ -806,54 +806,106 @@ function allProfiles(){
   real.forEach(u=>{if(u.uid)map.set(u.uid,{...u,id:u.uid})});
   const arr=[...map.values()];
   const myLoc=myProfile()?.location;
-  if(myLoc)arr.sort((a,b)=>{const da=kmBetween(myLoc,a.location),db=kmBetween(myLoc,b.location);if(da==null&&db==null)return 0;if(da==null)return 1;if(db==null)return -1;return da-db});
+  if(myLoc){
+    // Perfiles reales con ubicación primero (por distancia), luego perfiles demo sin ubicación
+    arr.sort((a,b)=>{
+      const da=kmBetween(myLoc,a.location);
+      const db=kmBetween(myLoc,b.location);
+      // Ambos reales con ubicación: ordenar por distancia
+      if(da!=null&&db!=null) return da-db;
+      // Uno real sin ubicación y otro con: el sin ubicación va al final
+      if(da==null&&db!=null) return 1;
+      if(da!=null&&db==null) return -1;
+      // Ambos sin ubicación: los usuarios reales van antes que los demo
+      const aReal=a.uid!=null, bReal=b.uid!=null;
+      if(aReal&&!bReal)return -1;
+      if(!aReal&&bReal)return 1;
+      return 0;
+    });
+  }
   return arr;
 }
 function profileById(id){return allProfiles().find(p=>p.id===id||p.uid===id)??allUsersCache.find(u=>u.uid===id)??null}
 function allPlans(){const map=new Map();DE.forEach(p=>map.set(p.id,p));remoteEventsCache.forEach(p=>{if(p?.id)map.set(p.id,p)});return [...map.values()]}
 
 /* Diamonds */
-function getDiamonds(){const d=ls('fu_diamonds_'+myUid(),{});return{sent:Array.isArray(d.sent)?d.sent:[],received:Array.isArray(d.received)?d.received:[],matches:Array.isArray(d.matches)?d.matches:[]}}
+function getDiamonds(){
+  try{
+    const d=ls('fu_diamonds_'+myUid(),null);
+    if(!d||typeof d!=='object') return{sent:[],received:[],matches:[]};
+    return{
+      sent:    Array.isArray(d.sent)     ? d.sent     : [],
+      received:Array.isArray(d.received) ? d.received : [],
+      matches: Array.isArray(d.matches)  ? d.matches  : [],
+    };
+  }catch{ return{sent:[],received:[],matches:[]} }
+}
 function saveDiamonds(r){lss('fu_diamonds_'+myUid(),r);updateDiamondUI()}
 function todayKey(d=new Date()){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function sentToday(){const t=todayKey();return getDiamonds().sent.filter(x=>{const d=new Date(x.at);return !isNaN(d)&&todayKey(d)===t})}
+function sentToday(){const t=todayKey();return getDiamonds().sent.filter(x=>{try{const d=new Date(x.at);return !isNaN(d)&&todayKey(d)===t}catch{return false}})}
 function remainingDiamonds(){return Math.max(0,DAILY-sentToday().length)}
 function sentTo(pid){return sentToday().some(x=>x.to===pid)}
 function hasMatch(pid){return getDiamonds().matches.includes(pid)}
 
 function updateDiamondUI(){
-  const r=getDiamonds(),left=remainingDiamonds();
-  ['diamAvail','diamAvail2'].forEach(id=>{const e=$(id);if(e)e.textContent=left});
-  const ds=$('diamSent');if(ds)ds.textContent=r.sent.length;
-  const dr=$('diamReceived');if(dr)dr.textContent=r.received.length;
-  const dm=$('diamMatches');if(dm)dm.textContent=r.matches.length;
-  document.querySelectorAll('[data-diamond-btn]').forEach(btn=>{
-    const pid=btn.dataset.pid,sent=sentTo(pid);
-    btn.classList.toggle('sent',sent);
-    btn.textContent=sent?'✓ Enviado':(left>0?'💎 Diamante':'Sin 💎');
-  });
+  try{
+    const r=getDiamonds(),left=remainingDiamonds();
+    ['diamAvail','diamAvail2'].forEach(id=>{const e=$(id);if(e)e.textContent=left});
+    const ds=$('diamSent');if(ds)ds.textContent=r.sent.length;
+    const dr=$('diamReceived');if(dr)dr.textContent=r.received.length;
+    const dm=$('diamMatches');if(dm)dm.textContent=r.matches.length;
+    document.querySelectorAll('[data-diamond-btn]').forEach(btn=>{
+      const pid=btn.dataset.pid,sent=sentTo(pid);
+      btn.classList.toggle('sent',sent);
+      btn.textContent=sent?'✓ Enviado':(left>0?'💎 Diamante':'Sin 💎');
+    });
+  }catch{}
 }
-
-async function sendDiamond(pid){
   if(!myUid())return openAuth('log');
-  const p=profileById(pid);if(!p)return toast('No encontré el perfil');
+  const p=profileById(pid);
+  if(!p)return toast('No encontré el perfil');
   if(sentTo(pid))return toast('Ya le enviaste diamante a '+pName(p));
   if(remainingDiamonds()<=0)return toast('Sin diamantes disponibles. Volvé mañana 💎');
+
   const r=getDiamonds(),at=new Date().toISOString();
-  if(!r.sent.some(x=>x.to===pid))r.sent.push({to:pid,name:pName(p),at});
-  if(!r.received.some(x=>x.from===pid))r.received.push({from:pid,name:pName(p),at});
-  if(!r.matches.includes(pid))r.matches.push(pid);
+
+  // Agregar al registro local
+  if(!r.sent.some(x=>x.to===pid))     r.sent.push({to:pid,name:pName(p),at});
+  if(!r.received.some(x=>x.from===pid)) r.received.push({from:pid,name:pName(p),at});
+  if(!r.matches.includes(pid))          r.matches.push(pid);
   saveDiamonds(r);
+
+  // Guardar en Firebase
   try{
-    await set(ref(db,'diamondsSent/'+sk(myUid())+'/'+sk(pid)),{to:pid,name:pName(p),at,from:myUid()});
-    await set(ref(db,'diamondsReceived/'+sk(pid)+'/'+sk(myUid())),{from:myUid(),name:pName(myProfile()),at,to:pid});
-  }catch{}
-  toast('Diamante enviado a '+pName(p)+' 💎');
-  setTimeout(()=>showMatch(p,pid),300);
+    await set(ref(db,'diamondsSent/'+sk(myUid())+'/'+sk(pid)),
+      {to:pid,name:pName(p),at,from:myUid()});
+    await set(ref(db,'diamondsReceived/'+sk(pid)+'/'+sk(myUid())),
+      {from:myUid(),name:pName(myProfile()),at,to:pid});
+  }catch{/* sin conexión — guardado localmente */}
+
+  toast('💎 Diamante enviado a '+pName(p));
+
+  /* Verificar si el otro ya había enviado un diamante → match real.
+     Si no, igual mostramos el popup (Tinder-style: optimistic match).
+     El popup siempre aparece para dar sensación de éxito. */
+  try{
+    const theirSnap=await get(ref(db,'diamondsSent/'+sk(pid)+'/'+sk(myUid())));
+    const isMutual=theirSnap.exists();
+    setTimeout(()=>showMatch(p,pid,isMutual),350);
+  }catch{
+    // Sin conexión: mostrar popup de todas formas
+    setTimeout(()=>showMatch(p,pid,false),350);
+  }
 }
 
-function showMatch(p,pid){
-  $('matchText').innerHTML=`Vos y <strong style="color:var(--gr2)">${esc(pName(p))}</strong> tienen match. ¡Ya pueden chatear!`;
+function showMatch(p,pid,isMutual=false){
+  const name=esc(pName(p));
+  if(isMutual){
+    $('matchText').innerHTML=`¡Vos y <strong style="color:var(--gr2)">${name}</strong> se enviaron diamante mutuamente! Ya pueden chatear 💬`;
+  }else{
+    $('matchText').innerHTML=`Le enviaste un diamante a <strong style="color:var(--gr2)">${name}</strong>. Si te lo devuelve, ¡será un match!`;
+  }
+  $('matchChatBtn').style.display=isMutual?'block':'none';
   $('matchChatBtn').onclick=()=>{closeMatch();startChat(p,pid)};
   $('matchPopup').classList.add('show');
 }
@@ -984,7 +1036,8 @@ onAuthStateChanged(auth,async user=>{
     const cb=snap=>{
       allUsersCache=snap.exists()?Object.values(snap.val()??{}).filter(u=>u?.uid!==user.uid):[];
       const a=document.querySelector('.screen.active');
-      if(a?.id==='home')renderHome();if(a?.id==='profiles')initSwipe();
+      if(a?.id==='home')renderHome();
+      if(a?.id==='profiles')renderProfilesGrid();
     };
     onValue(usersRef(),cb);return()=>off(usersRef(),'value',cb);
   })();
@@ -993,15 +1046,29 @@ onAuthStateChanged(auth,async user=>{
     const a=document.querySelector('.screen.active');
     if(a?.id==='plans')renderPlans();if(a?.id==='home')renderPlansMini();
   });
-  if(!profileData?.location&&navigator.geolocation){
+  /* Geolocalización: siempre intentar actualizar en cada sesión.
+     maximumAge:600000 = acepta caché de hasta 10 min del SO (no molesta al usuario)
+     Si el perfil ya tiene ubicación, actualiza silenciosamente en background.
+     Si no tiene, actualiza y refresca la UI. */
+  if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(async pos=>{
       const location={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
-      const updated={...(profileData??{}),location};profileData=updated;
+      const hadLocation=!!(profileData?.location);
+      const updated={...(profileData??{}),location};
+      profileData=updated;
       lss('fu_profile_'+user.uid,updated);
       try{await set(userRef(user.uid),updated)}catch{}
-      const a=document.querySelector('.screen.active');
-      if(a?.id==='home')renderHome();if(a?.id==='profiles')initSwipe();
-    },()=>{},{timeout:8000,maximumAge:300000});
+      // Si no tenía ubicación antes, refrescar la UI para mostrar distancias
+      if(!hadLocation){
+        const a=document.querySelector('.screen.active');
+        if(a?.id==='home')renderHome();
+        if(a?.id==='profiles')renderProfilesGrid();
+      }
+    },()=>{/* permiso denegado, sin problema */},{
+      enableHighAccuracy:false, // false = más rápido, consume menos batería
+      timeout:10000,
+      maximumAge:600000 // usar caché del SO hasta 10 min
+    });
   }
 });
 
@@ -1375,17 +1442,23 @@ window._toggleFav=function(pid){
 };
 
 function updateGPS(){
-  if(!navigator.geolocation)return toast('Geolocalización no disponible');
+  if(!navigator.geolocation)return toast('Geolocalización no disponible en este dispositivo');
   toast('Obteniendo ubicación...');
   navigator.geolocation.getCurrentPosition(async pos=>{
     const location={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
-    const updated={...(profileData??{}),location};profileData=updated;lss('fu_profile_'+myUid(),updated);
+    const updated={...(profileData??{}),location};
+    profileData=updated;
+    lss('fu_profile_'+myUid(),updated);
     try{await set(userRef(myUid()),updated)}catch{}
-    toast('Ubicación actualizada 📍');
+    toast('📍 Ubicación actualizada — perfiles ordenados por distancia');
     const a=document.querySelector('.screen.active');
-    if(a?.id==='home')renderHome();if(a?.id==='profiles')initSwipe();
+    if(a?.id==='home')renderHome();
+    if(a?.id==='profiles')renderProfilesGrid();
     updateMeScreen();
-  },()=>toast('No pude obtener la ubicación. Revisá los permisos.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+  },err=>{
+    if(err.code===1)toast('Permiso de ubicación denegado. Activalo en configuración del navegador.');
+    else toast('No pude obtener la ubicación. Intentá de nuevo.');
+  },{enableHighAccuracy:true,timeout:14000,maximumAge:0});
 }
 
 window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.showEditPanel=showEditPanel;window.openTerms=openTerms;window.closeTerms=closeTerms;
