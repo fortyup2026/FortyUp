@@ -308,9 +308,11 @@ img{display:block}
   width:64px;height:64px;border-radius:50%;
   border:2px solid var(--gr2);background:var(--bg3);overflow:hidden;flex-shrink:0;
   box-shadow:0 0 0 3px var(--bg),0 6px 20px rgba(0,0,0,.5);
+  position:relative;cursor:pointer;
 }
 .me-av-wrap img{width:100%;height:100%;object-fit:cover}
 .me-av-init{width:100%;height:100%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gr2)}
+.me-av-plus{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--gr2);color:#051205;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;border:2px solid var(--bg);line-height:1}
 .me-hero-info{flex:1;min-width:0}
 .me-nm{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;letter-spacing:-.03em;color:var(--text);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me-cit{font-size:.72rem;color:var(--t3);margin-top:.2rem}
@@ -582,7 +584,7 @@ img{display:block}
   <div class="me-page">
     <!-- hero fijo arriba -->
     <div class="me-hero" id="meHero">
-      <div class="me-av-wrap" id="meAvWrap"><div class="me-av-init" id="meAvInit">?</div></div>
+      <div class="me-av-wrap" id="meAvWrap" onclick="window.showPhotoPanel()"><div class="me-av-init" id="meAvInit">?</div><div class="me-av-plus">+</div></div>
       <div class="me-hero-info">
         <div class="me-nm" id="meNm">—</div>
         <div class="me-cit" id="meCit"></div>
@@ -864,7 +866,32 @@ function allProfiles(){
   return arr;
 }
 function profileById(id){return allProfiles().find(p=>p.id===id||p.uid===id)??allUsersCache.find(u=>u.uid===id)??null}
-function allPlans(){const map=new Map();DE.forEach(p=>map.set(p.id,p));remoteEventsCache.forEach(p=>{if(p?.id)map.set(p.id,p)});return [...map.values()]}
+/* Best-effort: interpreta el campo "when" (texto libre en español) para saber
+   si un plan ya pasó. Si no hay mes/fecha específica ("Temporada 2026",
+   "Disponible 2026") lo tratamos como vigente y no lo ocultamos. */
+const MESES={enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,setiembre:8,octubre:9,noviembre:10,diciembre:11};
+function planEndDate(p){
+  const w=(p.when??'').toLowerCase();
+  const yearM=w.match(/\b(20\d{2})\b/);if(!yearM)return null;
+  const year=parseInt(yearM[1],10);
+  let month=null;
+  for(const name in MESES){if(w.includes(name)){month=MESES[name];break}}
+  if(month==null)return null; // sin mes claro -> se considera vigente
+  const dayNums=[...w.matchAll(/\b(\d{1,2})\b/g)].map(m=>parseInt(m[1],10)).filter(n=>n>=1&&n<=31);
+  const day=dayNums.length?Math.max(...dayNums):new Date(year,month+1,0).getDate(); // sin día -> fin de mes
+  return new Date(year,month,day,23,59,59);
+}
+function isPastPlan(p){
+  const end=planEndDate(p);
+  if(!end)return false;
+  return end.getTime()<Date.now();
+}
+function allPlans(){
+  const map=new Map();
+  DE.forEach(p=>map.set(p.id,p));
+  remoteEventsCache.forEach(p=>{if(p?.id)map.set(p.id,p)});
+  return [...map.values()].filter(p=>!isPastPlan(p));
+}
 
 /* Diamonds */
 function getDiamonds(){const d=ls('fu_diamonds_'+myUid(),{});return{sent:Array.isArray(d.sent)?d.sent:[],received:Array.isArray(d.received)?d.received:[],matches:Array.isArray(d.matches)?d.matches:[]}}
@@ -1361,9 +1388,9 @@ function updateMeScreen(){
   const wrap=$('meAvWrap');
   if(wrap){
     if(img){
-      wrap.innerHTML=`<img src="${esc(img)}" alt="${esc(name)}">`;
+      wrap.innerHTML=`<img src="${esc(img)}" alt="${esc(name)}"><div class="me-av-plus">+</div>`;
     }else{
-      wrap.innerHTML=`<div class="me-av-init">${esc(initials)}</div>`;
+      wrap.innerHTML=`<div class="me-av-init">${esc(initials)}</div><div class="me-av-plus">+</div>`;
     }
   }
   /* Nombre y datos */
@@ -1469,6 +1496,26 @@ window.showDiamondList=function(type){
     return `<div class="msg-item" onclick="window._openProfile('${esc(pid)}')"><img class="msg-av" src="${esc(pImg(p))}" alt=""><div class="msg-info"><div class="msg-name">${esc(pName(p))}</div><div class="msg-prev">${esc(p.city??p.c??'')}</div></div>${chatBtn}</div>`;
   }).join(''):`<div class="empty"><div class="empty-ico">💎</div><p>${empties[type]}</p></div>`}`;
   $('profilePanel').classList.add('open');
+};
+
+/* Ver foto de perfil en grande + cambiarla directo desde el avatar */
+window.showPhotoPanel=function(){
+  const p=myProfile(),img=pImg(p);
+  $('panelContent').innerHTML=`
+    <div class="panel-name" style="margin-bottom:1rem">Foto de perfil</div>
+    ${img?`<img class="panel-img" src="${esc(img)}" alt="Tu foto">`:'<div class="empty"><div class="empty-ico">🖼️</div><p>Todavía no subiste una foto.</p></div>'}
+    <div class="fg" style="margin-top:1rem"><label>Cambiar foto</label><input id="pPhoto" type="file" accept="image/*"></div>
+    <button class="auth-submit" onclick="window._savePhoto()">Guardar foto</button>`;
+  $('profilePanel').classList.add('open');
+};
+window._savePhoto=async function(){
+  const f=$('pPhoto')?.files?.[0];if(!f)return toast('Elegí una imagen primero');
+  const img=await readFile(f);
+  const p=myProfile();
+  const updated={...p,img,photo:img};
+  profileData=updated;lss('fu_profile_'+myUid(),updated);
+  try{await set(userRef(myUid()),updated);toast('Foto actualizada ✓')}catch{toast('Guardada localmente ✓')}
+  closePanel();updateMeScreen();
 };
 
 function showEditPanel(){
