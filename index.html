@@ -580,9 +580,9 @@ img{display:block}
           <div class="gems-badge"><span id="diamAvail2">5</span> disponibles</div>
         </div>
         <div class="gems-grid">
-          <div class="gems-stat"><strong id="diamSent">0</strong><span>Enviados</span></div>
-          <div class="gems-stat"><strong id="diamReceived">0</strong><span>Recibidos</span></div>
-          <div class="gems-stat"><strong id="diamMatches">0</strong><span>Matches</span></div>
+          <div class="gems-stat" onclick="window.showDiamondList('sent')" style="cursor:pointer"><strong id="diamSent">0</strong><span>Enviados</span></div>
+          <div class="gems-stat" onclick="window.showDiamondList('received')" style="cursor:pointer"><strong id="diamReceived">0</strong><span>Recibidos</span></div>
+          <div class="gems-stat" onclick="window.showDiamondList('matches')" style="cursor:pointer"><strong id="diamMatches">0</strong><span>Matches</span></div>
         </div>
       </div>
       <!-- ACCIONES RÁPIDAS -->
@@ -1344,6 +1344,23 @@ function showFavs(){
   $('panelContent').innerHTML=`<div class="panel-name" style="margin-bottom:1rem">⭐ Favoritos</div>${favs.length?favs.map(p=>`<div class="msg-item" onclick="window._openProfile('${esc(p.id??p.uid??'')}')"><img class="msg-av" src="${esc(pImg(p))}" alt=""><div class="msg-info"><div class="msg-name">${esc(pName(p))}</div><div class="msg-prev">${esc(p.city??p.c??'')}</div></div></div>`).join(''):'<div class="empty"><div class="empty-ico">⭐</div><p>No tenés favoritos todavía.</p></div>'}`;
   $('profilePanel').classList.add('open');
 }
+
+/* FIX: las tarjetas Enviados/Recibidos/Matches en "Mis Diamantes" no hacían
+   nada al tocarlas. Ahora abren un panel con la lista de perfiles de cada
+   categoría, reutilizando el mismo patrón que Favoritos. */
+window.showDiamondList=function(type){
+  const r=getDiamonds();
+  const ids=type==='sent'?r.sent.map(x=>x.to):type==='received'?r.received.map(x=>x.from):r.matches;
+  const list=[...new Set(ids)].map(profileById).filter(Boolean);
+  const titles={sent:'💎 Enviados',received:'💎 Recibidos',matches:'💎 Matches'};
+  const empties={sent:'Todavía no enviaste diamantes.',received:'Todavía no recibiste diamantes.',matches:'Todavía no tenés matches.'};
+  $('panelContent').innerHTML=`<div class="panel-name" style="margin-bottom:1rem">${titles[type]}</div>${list.length?list.map(p=>{
+    const pid=p.id??p.uid??'';
+    const chatBtn=type==='matches'?`<button class="mpc-btn mpc-btn-chat" onclick="event.stopPropagation();window._startChat('${esc(pid)}')">💬</button>`:'';
+    return `<div class="msg-item" onclick="window._openProfile('${esc(pid)}')"><img class="msg-av" src="${esc(pImg(p))}" alt=""><div class="msg-info"><div class="msg-name">${esc(pName(p))}</div><div class="msg-prev">${esc(p.city??p.c??'')}</div></div>${chatBtn}</div>`;
+  }).join(''):`<div class="empty"><div class="empty-ico">💎</div><p>${empties[type]}</p></div>`}`;
+  $('profilePanel').classList.add('open');
+};
 
 function showEditPanel(){
   const p=myProfile();
