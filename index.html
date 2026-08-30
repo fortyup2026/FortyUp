@@ -475,6 +475,7 @@ img{display:block}
       <div class="home-date" id="homeDate"></div>
       <div class="home-name">Hola, <span id="helloName">—</span></div>
       <div class="home-loc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="cityTop">Tu ciudad</span></div>
+      <div id="travelBanner" style="display:none;margin-top:.4rem;font-size:.7rem;color:var(--gr2)">✈️ Modo viaje activo · <span style="text-decoration:underline;cursor:pointer" onclick="window.showLocationPanel()">volver a mi ubicación</span></div>
       <div class="home-gems">💎 <span id="diamAvail">5</span> diamantes disponibles hoy</div>
     </div>
     <div style="margin-bottom:1.35rem">
@@ -551,6 +552,27 @@ img{display:block}
   </div>
 </div>
 
+<!-- CHAT GRUPAL DE EVENTO -->
+<div id="eventChat" class="screen">
+  <div class="chat-hd">
+    <button class="chat-back" onclick="go('plans')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <img id="evChatImg" class="chat-av" src="" alt="">
+    <div class="chat-hd-info">
+      <div id="evChatName" class="chat-hd-nm">—</div>
+      <div class="chat-hd-sub">Chat grupal del evento</div>
+    </div>
+  </div>
+  <div id="evChatBox" class="chat-box"></div>
+  <div class="chat-in-wrap">
+    <div class="chat-in-row">
+      <textarea id="evChatInput" rows="1" placeholder="Escribí algo al grupo..."
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.sendEventMsg()}"></textarea>
+      <button class="chat-send" onclick="window.sendEventMsg()"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+</div>
+
 <!-- MI PERFIL — layout fijo -->
 <div id="me" class="screen">
   <div class="tb">
@@ -588,7 +610,7 @@ img{display:block}
       <!-- ACCIONES RÁPIDAS -->
       <div class="me-quick">
         <div class="me-q" onclick="showFavs()"><div class="me-q-ico">⭐</div><div class="me-q-info"><div class="me-q-title">Favoritos</div><div class="me-q-sub" id="meqFavSub">0 guardados</div></div></div>
-        <div class="me-q" onclick="updateGPS()"><div class="me-q-ico">📍</div><div class="me-q-info"><div class="me-q-title">Ubicación</div><div class="me-q-sub" id="meqGpsSub">Activar</div></div></div>
+        <div class="me-q" onclick="window.showLocationPanel()"><div class="me-q-ico">📍</div><div class="me-q-info"><div class="me-q-title">Ubicación</div><div class="me-q-sub" id="meqGpsSub">Activar</div></div></div>
       </div>
       <!-- TARJETA MIS PLANES -->
       <div id="mePlansCard" style="margin-bottom:.6rem"></div>
@@ -760,6 +782,38 @@ const chatRef=(a,b)=>ref(db,'chats/'+[sk(a),sk(b)].sort().join('_'));
 const idxRef=(uid,pid)=>ref(db,'chatIndex/'+sk(uid)+'/'+sk(pid));
 const DAILY=5;
 
+/* Ciudades para "Modo viaje" — nombre, país y coordenadas aproximadas */
+const CITIES=[
+  {name:'Buenos Aires',country:'Argentina',lat:-34.6037,lng:-58.3816},
+  {name:'Córdoba',country:'Argentina',lat:-31.4201,lng:-64.1888},
+  {name:'Rosario',country:'Argentina',lat:-32.9468,lng:-60.6393},
+  {name:'Mendoza',country:'Argentina',lat:-32.8908,lng:-68.8272},
+  {name:'La Plata',country:'Argentina',lat:-34.9215,lng:-57.9545},
+  {name:'Mar del Plata',country:'Argentina',lat:-38.0055,lng:-57.5426},
+  {name:'Salta',country:'Argentina',lat:-24.7859,lng:-65.4117},
+  {name:'San Miguel de Tucumán',country:'Argentina',lat:-26.8083,lng:-65.2176},
+  {name:'Bariloche',country:'Argentina',lat:-41.1335,lng:-71.3103},
+  {name:'Villa Bosch',country:'Argentina',lat:-34.6031,lng:-58.5866},
+  {name:'Madrid',country:'España',lat:40.4168,lng:-3.7038},
+  {name:'Barcelona',country:'España',lat:41.3874,lng:2.1686},
+  {name:'Zurich',country:'Suiza',lat:47.3769,lng:8.5417},
+  {name:'Ginebra',country:'Suiza',lat:46.2044,lng:6.1432},
+  {name:'París',country:'Francia',lat:48.8566,lng:2.3522},
+  {name:'Roma',country:'Italia',lat:41.9028,lng:12.4964},
+  {name:'Milán',country:'Italia',lat:45.4642,lng:9.1900},
+  {name:'Lisboa',country:'Portugal',lat:38.7223,lng:-9.1393},
+  {name:'Londres',country:'Reino Unido',lat:51.5074,lng:-0.1278},
+  {name:'Berlín',country:'Alemania',lat:52.5200,lng:13.4050},
+  {name:'Ámsterdam',country:'Países Bajos',lat:52.3676,lng:4.9041},
+  {name:'Miami',country:'Estados Unidos',lat:25.7617,lng:-80.1918},
+  {name:'Nueva York',country:'Estados Unidos',lat:40.7128,lng:-74.0060},
+  {name:'Ciudad de México',country:'México',lat:19.4326,lng:-99.1332},
+  {name:'Santiago',country:'Chile',lat:-33.4489,lng:-70.6693},
+  {name:'Montevideo',country:'Uruguay',lat:-34.9011,lng:-56.1645},
+  {name:'San Pablo',country:'Brasil',lat:-23.5505,lng:-46.6333},
+  {name:'Río de Janeiro',country:'Brasil',lat:-22.9068,lng:-43.1729},
+];
+
 const DP=[
   {id:'p1',name:'Carmen',age:52,city:'Córdoba',img:'https://randomuser.me/api/portraits/women/68.jpg',tags:['Viajes','Cocina'],bio:'Me encanta cocinar y conocer gente nueva.',intent:'Hacer planes'},
   {id:'p2',name:'Roberto',age:58,city:'Córdoba',img:'https://randomuser.me/api/portraits/men/52.jpg',tags:['Música','Trekking'],bio:'Busco compañía para salidas al aire libre.',intent:'Amistad'},
@@ -863,7 +917,7 @@ window.closeMatch=()=>$('matchPopup').classList.remove('show');
 window.go=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id)?.classList.add('active');
-  $('bottomNav')?.classList.toggle('hidden',id==='landing'||id==='chat');
+  $('bottomNav')?.classList.toggle('hidden',id==='landing'||id==='chat'||id==='eventChat');
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('active'));
   $('bn-'+id)?.classList.add('active');
   if(id==='home'){renderHome();setDate()}
@@ -993,14 +1047,15 @@ onAuthStateChanged(auth,async user=>{
     const a=document.querySelector('.screen.active');
     if(a?.id==='plans')renderPlans();if(a?.id==='home')renderPlansMini();
   });
-  /* FIX: antes solo pedía ubicación si el perfil nunca tuvo una. Ahora la
-     refresca en cada inicio de sesión (en silencio), así detecta si el
-     usuario se conectó desde otro lugar. maximumAge:300000 evita spamear
-     al GPS si el navegador ya tiene una lectura reciente. */
+  /* Refresca la ubicación real en cada login (en silencio). Si el usuario
+     tiene Modo Viaje activo, no pisa la ubicación simulada — solo guarda
+     la posición real de fondo para cuando la desactive. */
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(async pos=>{
-      const location={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
-      const updated={...(profileData??{}),location};profileData=updated;
+      const realLocation={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
+      const travelOn=profileData?.travelMode?.active;
+      const updated={...(profileData??{}),realLocation,...(travelOn?{}:{location:realLocation})};
+      profileData=updated;
       lss('fu_profile_'+user.uid,updated);
       try{await set(userRef(user.uid),updated)}catch{}
       const a=document.querySelector('.screen.active');
@@ -1015,6 +1070,7 @@ function updateHeader(){
   if($('helloName'))$('helloName').textContent=name;
   if($('topAvatar'))$('topAvatar').src=pImg(p);
   if($('cityTop'))$('cityTop').textContent=p.city??p.c??'Tu ciudad';
+  const tb=$('travelBanner');if(tb)tb.style.display=p.travelMode?.active?'block':'none';
 }
 
 /* HOME */
@@ -1047,9 +1103,26 @@ function pcHTML(p){
 }
 
 /* PLANES */
+function myCityText(){
+  const p=myProfile();
+  return (p.travelMode?.active?p.travelMode.city:(p.city??p.c??'')).toLowerCase();
+}
+function plansNearMe(){
+  const my=myCityText();
+  const all=allPlans();
+  if(!my)return all;
+  return [...all].sort((a,b)=>{
+    const am=(a.city??'').toLowerCase().includes(my)?0:1;
+    const bm=(b.city??'').toLowerCase().includes(my)?0:1;
+    return am-bm;
+  });
+}
 function renderPlansMini(){
   const hp=$('homePlans');if(!hp)return;
-  hp.innerHTML=allPlans().map(p=>`<div class="plan-chip" onclick="window._openEvent('${esc(p.id)}')">
+  const my=myCityText(),near=plansNearMe();
+  const anyMatch=near.some(p=>(p.city??'').toLowerCase().includes(my));
+  hp.innerHTML=(my&&!anyMatch?`<div class="empty" style="padding:.5rem 0 1rem"><p>No hay planes cargados en ${esc(myProfile().travelMode?.active?myProfile().travelMode.city:myProfile().city??'')} todavía. Te mostramos los demás planes de la comunidad.</p></div>`:'')
+    +near.map(p=>`<div class="plan-chip" onclick="window._openEvent('${esc(p.id)}')">
     <div class="plan-chip-img" style="background-image:url('${esc(p.img??'')}')"><div class="plan-chip-cat">${esc(p.category??'')}</div></div>
     <div class="plan-chip-body"><div class="plan-chip-title">${esc(p.ico??'')} ${esc(p.title)}</div><div class="plan-chip-date">📅 ${esc(p.when??'')}</div></div>
   </div>`).join('');
@@ -1109,7 +1182,8 @@ window._openEvent=function(id){
     <div class="panel-bio">${esc(p.desc??'')}</div>
     <button class="btn-att ${going?'btn-att-in':'btn-att-go'}" style="width:100%;padding:.9rem;border-radius:14px" onclick="window._attendEvent('${esc(p.id)}');closePanel()">
       ${going?'✓ Vas a ir (cancelar)':'+ Sumarme a este plan'}
-    </button>`;
+    </button>
+    <button class="pa-btn pa-surface" style="width:100%;margin-top:.6rem" onclick="window._openEventChat('${esc(p.id)}')">💬 Chat grupal del evento</button>`;
   $('profilePanel').classList.add('open');
 };
 window.openCreateEvent=function(){
@@ -1217,6 +1291,41 @@ window.sendMsg=async function(){
   }catch{}
 };
 
+/* ── CHAT GRUPAL DE EVENTO ── */
+window.currentEventChat=null;
+let evChatUnsub=null;
+const evChatRef=eid=>ref(db,'eventChats/'+sk(eid)+'/messages');
+window._openEventChat=function(eventId){
+  if(!myUid())return openAuth('log');
+  const p=allPlans().find(x=>x.id===eventId);if(!p)return toast('No encontré el evento');
+  window.currentEventChat={id:eventId,title:p.title,img:p.img};
+  if($('evChatName'))$('evChatName').textContent=p.title;
+  if($('evChatImg'))$('evChatImg').src=p.img??'';
+  closePanel();go('eventChat');
+  if(evChatUnsub){try{evChatUnsub()}catch{}}
+  const cr=evChatRef(eventId);
+  const cb=snap=>{
+    const box=$('evChatBox');if(!box)return;
+    const msgs=snap.exists()?Object.values(snap.val()??{}).sort((a,b)=>String(a.at??'').localeCompare(String(b.at??''))):[];
+    if(!msgs.length){box.innerHTML='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t3);text-align:center;padding:2rem"><div style="font-size:2rem;opacity:.25;margin-bottom:.65rem">💬</div><p style="font-size:.82rem;line-height:1.6">Sé el primero en escribir.<br>Los que se suman a este plan pueden chatear acá.</p></div>';return}
+    box.innerHTML=msgs.map(m=>{
+      const mine=m.fromUid===myUid();
+      const head=mine?'':`<div class="ev-msg-name" onclick="window._openProfile('${esc(m.fromUid)}')" style="font-size:.7rem;font-weight:600;color:var(--gr2);margin-bottom:.15rem;cursor:pointer">${esc(m.fromName??'Alguien')}</div>`;
+      return `<div class="bubble ${mine?'mine':'theirs'}">${head}${esc(m.text??'')}<div class="btime">${esc(m.time??'')}</div></div>`;
+    }).join('');
+    requestAnimationFrame(()=>box.scrollTop=box.scrollHeight);
+  };
+  onValue(cr,cb);evChatUnsub=()=>off(cr,'value',cb);
+};
+window.sendEventMsg=async function(){
+  const chat=window.currentEventChat;if(!chat||!myUid())return;
+  if(!isAttending(chat.id))return toast('Sumate al plan primero para participar del chat 🎉');
+  const input=$('evChatInput'),text=san(input?.value??'',1000);if(!text)return;
+  const msg={fromUid:myUid(),fromName:pName(myProfile()),text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),at:new Date().toISOString()};
+  if(input){input.value='';input.style.height='auto'}
+  try{await push(evChatRef(chat.id),msg)}catch{toast('No se pudo enviar. Revisá tu conexión.')}
+};
+
 /* MENSAJES */
 function updateMsgDot(){const u=ls('fu_unread_'+myUid(),{});const dot=$('msgDot');if(dot)dot.classList.toggle('show',Object.values(u).some(Boolean))}
 function renderMessages(){
@@ -1273,7 +1382,7 @@ function updateMeScreen(){
   const favSub=$('meqFavSub');
   if(favSub)favSub.textContent=ls('fu_favs_'+myUid(),[]).length+' guardados';
   const gpsSub=$('meqGpsSub');
-  if(gpsSub)gpsSub.textContent=p.location?'Activa · actualizar':'Activar';
+  if(gpsSub)gpsSub.textContent=p.travelMode?.active?`✈️ Viaje: ${p.travelMode.city}`:(p.location?'Activa · cambiar':'Activar');
 
   /* Topbar */
   if($('topAvatar'))$('topAvatar').src=img;
@@ -1396,18 +1505,62 @@ window._toggleFav=function(pid){
   lss('fu_favs_'+myUid(),favs);
 };
 
+/* Vuelve a la ubicación real (GPS) y apaga el Modo Viaje si estaba activo */
 function updateGPS(){
   if(!navigator.geolocation)return toast('Geolocalización no disponible');
   toast('Obteniendo ubicación...');
   navigator.geolocation.getCurrentPosition(async pos=>{
     const location={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
-    const updated={...(profileData??{}),location};profileData=updated;lss('fu_profile_'+myUid(),updated);
+    const p=profileData??{};
+    const realCity=p.travelMode?.active?(p.realCity??p.city):p.city;
+    const updated={...p,location,realLocation:location,city:realCity,c:realCity,travelMode:{active:false}};
+    profileData=updated;lss('fu_profile_'+myUid(),updated);
     try{await set(userRef(myUid()),updated)}catch{}
     toast('Ubicación actualizada 📍');
     const a=document.querySelector('.screen.active');
     if(a?.id==='home')renderHome();if(a?.id==='profiles')initSwipe();
     updateMeScreen();
   },()=>toast('No pude obtener la ubicación. Revisá los permisos.'),{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+}
+
+/* ── Modo Viaje: simular ubicación en otra ciudad (afecta planes cerca y perfiles cerca) ── */
+window.showLocationPanel=function(cityFilter){
+  const p=myProfile();
+  const q=(cityFilter??'').trim().toLowerCase();
+  const results=q?CITIES.filter(c=>c.name.toLowerCase().includes(q)||c.country.toLowerCase().includes(q)).slice(0,8):[];
+  const travel=p.travelMode?.active;
+  $('panelContent').innerHTML=`
+    <div class="panel-name" style="margin-bottom:.3rem">📍 Ubicación</div>
+    ${travel?`<div class="panel-sub" style="margin-bottom:1rem;color:var(--gr2)">Modo viaje activo: viendo ${esc(p.travelMode.city)} como si estuvieras ahí.</div>
+       <button class="auth-submit" style="margin-bottom:1.1rem" onclick="window.updateGPS();closePanel()">Volver a mi ubicación real</button>`
+      :`<div class="panel-sub" style="margin-bottom:1rem">Tu ubicación real se usa para mostrarte planes y perfiles cerca tuyo.</div>`}
+    <div class="fg"><label>Activar modo viaje — buscá una ciudad</label>
+      <input id="travelCityInput" placeholder="Ej: Zurich" value="${esc(cityFilter??'')}" oninput="window.showLocationPanel(this.value)">
+    </div>
+    <div id="travelCityResults">
+      ${results.length?results.map(c=>`<div class="msg-item" onclick="window._activateTravelMode('${esc(c.name)}')">
+          <div class="msg-info"><div class="msg-name">${esc(c.name)}</div><div class="msg-prev">${esc(c.country)}</div></div>
+        </div>`).join(''):q?'<div class="empty"><p>No encontré esa ciudad.</p></div>':''}
+    </div>`;
+  $('profilePanel').classList.add('open');
+};
+window._activateTravelMode=function(cityName){
+  const c=CITIES.find(x=>x.name===cityName);if(!c)return;
+  activateTravelMode(c);
+};
+async function activateTravelMode(c){
+  const p=myProfile();
+  const realCity=p.travelMode?.active?(p.realCity??p.city):p.city;
+  const updated={...p,realCity,city:`${c.name}, ${c.country}`,c:`${c.name}, ${c.country}`,
+    location:{lat:c.lat,lng:c.lng,at:new Date().toISOString()},
+    travelMode:{active:true,city:c.name,country:c.country,at:new Date().toISOString()}};
+  profileData=updated;lss('fu_profile_'+myUid(),updated);
+  try{await set(userRef(myUid()),updated)}catch{}
+  toast(`✈️ Modo viaje: ahora ves ${c.name} como si estuvieras ahí`);
+  closePanel();
+  const a=document.querySelector('.screen.active');
+  if(a?.id==='home')renderHome();if(a?.id==='profiles')initSwipe();if(a?.id==='plans')renderPlans();
+  updateMeScreen();
 }
 
 window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.showEditPanel=showEditPanel;window.openTerms=openTerms;window.closeTerms=closeTerms;
