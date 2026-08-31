@@ -306,13 +306,16 @@ img{display:block}
 }
 .me-av-wrap{
   width:64px;height:64px;border-radius:50%;
-  border:2px solid var(--gr2);background:var(--bg3);overflow:hidden;flex-shrink:0;
-  box-shadow:0 0 0 3px var(--bg),0 6px 20px rgba(0,0,0,.5);
-  position:relative;cursor:pointer;
+  flex-shrink:0;position:relative;cursor:pointer;
 }
-.me-av-wrap img{width:100%;height:100%;object-fit:cover}
+.me-av-circle{
+  width:100%;height:100%;border-radius:50%;
+  border:2px solid var(--gr2);background:var(--bg3);overflow:hidden;
+  box-shadow:0 0 0 3px var(--bg),0 6px 20px rgba(0,0,0,.5);
+}
+.me-av-circle img{width:100%;height:100%;object-fit:cover}
 .me-av-init{width:100%;height:100%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gr2)}
-.me-av-plus{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--gr2);color:#051205;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;border:2px solid var(--bg);line-height:1}
+.me-av-plus{position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--gr2);color:#051205;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:800;border:2.5px solid var(--bg);line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:2}
 .me-hero-info{flex:1;min-width:0}
 .me-nm{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;letter-spacing:-.03em;color:var(--text);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me-cit{font-size:.72rem;color:var(--t3);margin-top:.2rem}
@@ -482,6 +485,7 @@ img{display:block}
     </div>
     <div style="margin-bottom:1.35rem">
       <div class="sh"><div class="st">Planes cerca</div><span class="sl" onclick="go('plans')">Ver todos</span></div>
+      <div id="homePlansNote" style="display:none;font-size:.78rem;color:var(--t3);line-height:1.55;margin-bottom:.7rem"></div>
       <div class="plans-row" id="homePlans"></div>
     </div>
     <div>
@@ -584,7 +588,7 @@ img{display:block}
   <div class="me-page">
     <!-- hero fijo arriba -->
     <div class="me-hero" id="meHero">
-      <div class="me-av-wrap" id="meAvWrap" onclick="window.showPhotoPanel()"><div class="me-av-init" id="meAvInit">?</div><div class="me-av-plus">+</div></div>
+      <div class="me-av-wrap" id="meAvWrap" onclick="window.showPhotoPanel()"><div class="me-av-circle" id="meAvCircle"><div class="me-av-init" id="meAvInit">?</div></div><div class="me-av-plus">+</div></div>
       <div class="me-hero-info">
         <div class="me-nm" id="meNm">—</div>
         <div class="me-cit" id="meCit"></div>
@@ -1146,16 +1150,28 @@ function plansNearMe(){
 }
 function renderPlansMini(){
   const hp=$('homePlans');if(!hp)return;
+  const note=$('homePlansNote');
   const my=myCityText(),near=plansNearMe();
   const anyMatch=near.some(p=>(p.city??'').toLowerCase().includes(my));
-  hp.innerHTML=(my&&!anyMatch?`<div class="empty" style="padding:.5rem 0 1rem"><p>No hay planes cargados en ${esc(myProfile().travelMode?.active?myProfile().travelMode.city:myProfile().city??'')} todavía. Te mostramos los demás planes de la comunidad.</p></div>`:'')
-    +near.map(p=>`<div class="plan-chip" onclick="window._openEvent('${esc(p.id)}')">
+  if(note){
+    if(my&&!anyMatch&&near.length){
+      note.style.display='block';
+      note.textContent=`No hay planes cargados en ${myProfile().travelMode?.active?myProfile().travelMode.city:myProfile().city??''} todavía. Te mostramos los demás planes de la comunidad.`;
+    }else{note.style.display='none';note.textContent=''}
+  }
+  hp.innerHTML=near.length?near.map(p=>`<div class="plan-chip" onclick="window._openEvent('${esc(p.id)}')">
     <div class="plan-chip-img" style="background-image:url('${esc(p.img??'')}')"><div class="plan-chip-cat">${esc(p.category??'')}</div></div>
     <div class="plan-chip-body"><div class="plan-chip-title">${esc(p.ico??'')} ${esc(p.title)}</div><div class="plan-chip-date">📅 ${esc(p.when??'')}</div></div>
-  </div>`).join('');
+  </div>`).join(''):'<div class="empty" style="padding:.5rem 0 1rem;width:100%"><p>Todavía no hay planes cargados en la comunidad.</p></div>';
 }
 const attKey=()=>'fu_att_'+myUid();
 const isAttending=id=>ls(attKey(),[]).includes(id);
+
+/* Link a entradas/página oficial: usa el que cargó quien creó el plan,
+   o arma una búsqueda genérica si no hay uno cargado */
+function planTicketsUrl(p){
+  return p.ticketsUrl||('https://www.google.com/search?q='+encodeURIComponent(p.title+' entradas '+(p.city??'')));
+}
 
 function renderPlans(){
   const mine=ls(attKey(),[]);
@@ -1186,6 +1202,7 @@ function renderPlans(){
         <button class="btn-att ${going?'btn-att-in':'btn-att-go'}" onclick="event.stopPropagation();window._attendEvent('${esc(p.id)}')">
           ${going?'✓ Vas a ir (cancelar)':'+ Sumarme'}
         </button>
+        <a class="pa-btn pa-outline" style="display:block;text-align:center;margin-top:.5rem;text-decoration:none" href="${esc(planTicketsUrl(p))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎟️ Entradas / página oficial</a>
       </div>
     </div>`;
   }).join('');
@@ -1210,6 +1227,7 @@ window._openEvent=function(id){
     <button class="btn-att ${going?'btn-att-in':'btn-att-go'}" style="width:100%;padding:.9rem;border-radius:14px" onclick="window._attendEvent('${esc(p.id)}');closePanel()">
       ${going?'✓ Vas a ir (cancelar)':'+ Sumarme a este plan'}
     </button>
+    <a class="pa-btn pa-outline" style="display:block;text-align:center;margin-top:.6rem;text-decoration:none" href="${esc(planTicketsUrl(p))}" target="_blank" rel="noopener">🎟️ Entradas / página oficial</a>
     <button class="pa-btn pa-surface" style="width:100%;margin-top:.6rem" onclick="window._openEventChat('${esc(p.id)}')">💬 Chat grupal del evento</button>`;
   $('profilePanel').classList.add('open');
 };
@@ -1223,13 +1241,16 @@ window.openCreateEvent=function(){
     <div class="fg"><label>Ciudad y lugar *</label><input id="evCity" placeholder="Ej: Buenos Aires · Bar El Federal"></div>
     <div class="fg"><label>Categoría</label><select id="evCat"><option>Gastronomía</option><option>Música</option><option>Arte y cultura</option><option>Deportes</option><option>Viajes</option><option>Teatro</option><option>Otro</option></select></div>
     <div class="fg"><label>Descripción</label><textarea id="evDesc" placeholder="Contá de qué se trata..."></textarea></div>
+    <div class="fg"><label>Link de entradas / página oficial (opcional)</label><input id="evTickets" placeholder="https://..."></div>
     <button class="auth-submit" style="margin-top:.5rem" onclick="window._saveEvent()">Publicar plan</button>`;
   $('profilePanel').classList.add('open');
 };
 window._saveEvent=async function(){
   const title=san($('evTitle')?.value??'',120),when=san($('evWhen')?.value??'',60),city=san($('evCity')?.value??'',120);
   if(!title||!when||!city)return toast('Completá los campos obligatorios');
-  const ev={id:'custom_'+Date.now(),title,when,city,category:$('evCat')?.value??'Otro',desc:san($('evDesc')?.value??'',400),img:'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop',ico:'📅',createdBy:myUid(),creatorName:pName(myProfile()),createdAt:new Date().toISOString()};
+  let ticketsUrl=san($('evTickets')?.value??'',300);
+  if(ticketsUrl&&!/^https?:\/\//i.test(ticketsUrl))ticketsUrl='https://'+ticketsUrl;
+  const ev={id:'custom_'+Date.now(),title,when,city,category:$('evCat')?.value??'Otro',desc:san($('evDesc')?.value??'',400),ticketsUrl:ticketsUrl||'',img:'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=900&auto=format&fit=crop',ico:'📅',createdBy:myUid(),creatorName:pName(myProfile()),createdAt:new Date().toISOString()};
   try{await set(ref(db,'events/'+sk(ev.id)),ev);toast('¡Plan publicado para la comunidad! 🎉')}
   catch{remoteEventsCache=[ev,...remoteEventsCache];toast('Plan creado (sin conexión)')}
   closePanel();renderPlans();renderPlansMini();
@@ -1385,12 +1406,12 @@ function updateMeScreen(){
   const initials=name.split(' ').map(w=>w[0]??'').join('').toUpperCase().slice(0,2)||'?';
 
   /* Avatar */
-  const wrap=$('meAvWrap');
+  const wrap=$('meAvCircle');
   if(wrap){
     if(img){
-      wrap.innerHTML=`<img src="${esc(img)}" alt="${esc(name)}"><div class="me-av-plus">+</div>`;
+      wrap.innerHTML=`<img src="${esc(img)}" alt="${esc(name)}">`;
     }else{
-      wrap.innerHTML=`<div class="me-av-init">${esc(initials)}</div><div class="me-av-plus">+</div>`;
+      wrap.innerHTML=`<div class="me-av-init">${esc(initials)}</div>`;
     }
   }
   /* Nombre y datos */
