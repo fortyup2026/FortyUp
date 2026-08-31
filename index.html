@@ -464,7 +464,7 @@ img{display:block}
     <div class="land-actions">
       <button class="land-btn land-btn-p" onclick="openAuth('reg')">Crear mi perfil</button>
       <button class="land-btn land-btn-s" onclick="openAuth('log')">Ya tengo cuenta</button>
-      <p class="land-legal">Al continuar aceptás los <a onclick="openTerms()">Términos y Condiciones</a> y la <a onclick="openTerms()">Política de Privacidad</a></p>
+      <p class="land-legal">Al continuar aceptás los <a onclick="openTerms()">Términos y Condiciones</a> y la <a onclick="openPrivacy()">Política de Privacidad</a></p>
     </div>
   </div>
 </div>
@@ -523,7 +523,7 @@ img{display:block}
     <div class="pgrid" id="profilesGrid"></div>
     <div id="profilesEmpty" style="display:none" class="empty">
       <div class="empty-ico">👤</div>
-      <p>No hay perfiles disponibles todavía.<br>¡Volvé pronto!</p>
+      <p>No hay perfiles compatibles en tu país todavía.<br>Probá nuevamente más tarde o usá Modo Viaje.</p>
     </div>
   </div>
 </div>
@@ -626,13 +626,17 @@ img{display:block}
           <div class="me-row-ico"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
           <span class="me-row-txt">Editar perfil</span><span class="me-row-arr">›</span>
         </div>
-        <div class="me-row" onclick="toast('Tu cuenta usa Firebase Auth 🔒')">
+        <div class="me-row" onclick="showSecurityPanel()">
           <div class="me-row-ico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
           <span class="me-row-txt">Seguridad</span><span class="me-row-arr">›</span>
         </div>
         <div class="me-row" onclick="openTerms()">
           <div class="me-row-ico"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
           <span class="me-row-txt">Términos y Condiciones</span><span class="me-row-arr">›</span>
+        </div>
+        <div class="me-row" onclick="openPrivacy()">
+          <div class="me-row-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <span class="me-row-txt">Política de Privacidad</span><span class="me-row-arr">›</span>
         </div>
         <div class="me-row" onclick="toast('📧 fortyup2026@gmail.com')">
           <div class="me-row-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
@@ -687,14 +691,18 @@ img{display:block}
     <div id="regFields">
       <div class="fg"><label>Nombre *</label><input id="rName" placeholder="Tu nombre" autocomplete="name"></div>
       <div class="fg"><label>Fecha de nacimiento *</label><input id="rBirth" type="date"></div>
-      <div class="fg"><label>Ciudad *</label><input id="rCity" placeholder="Ej: Buenos Aires" autocomplete="address-level2"></div>
-      <div class="fg"><label>Foto de perfil</label><input id="rPhoto" type="file" accept="image/*"></div>
+      <div class="fg"><label>Ciudad *</label><input id="rCity" placeholder="Ej: Berlín" autocomplete="address-level2" list="citySuggestions" onchange="fillCountryFromCity()" onblur="fillCountryFromCity()"></div>
+      <datalist id="citySuggestions"><option value="Buenos Aires"><option value="Córdoba"><option value="Madrid"><option value="Barcelona"><option value="Berlín"><option value="París"><option value="Roma"><option value="Londres"><option value="Miami"><option value="Nueva York"></datalist>
+      <div class="fg"><label>País *</label><input id="rCountry" placeholder="Ej: Alemania" autocomplete="country-name"></div>
+      <div class="fg"><label>Soy *</label><select id="rGender"><option value="">Elegí una opción</option><option value="hombre">Hombre</option><option value="mujer">Mujer</option><option value="otro">Otro / no binario</option></select></div>
+      <div class="fg"><label>Me interesa conocer *</label><select id="rInterested"><option value="">Elegí una opción</option><option value="hombre">Hombres</option><option value="mujer">Mujeres</option><option value="todos">Todos</option></select></div>
+      <div class="fg"><label>Foto de perfil *</label><input id="rPhoto" type="file" accept="image/jpeg,image/png,image/webp" required onchange="previewRegistrationPhoto(this.files?.[0])"><img id="rPhotoPreview" alt="Vista previa" style="display:none;width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--gr2);margin-top:.65rem"><div style="font-size:.62rem;color:var(--t3);margin-top:.3rem">JPG, PNG o WebP. La optimizamos antes de subirla.</div></div>
       <div class="fg"><label>Email *</label><input id="rEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
-      <div class="fg"><label>Contraseña * (mín. 6 caracteres)</label><input id="rPass" type="password" autocomplete="new-password" placeholder="············"></div>
+      <div class="fg"><label>Contraseña * (mín. 8 caracteres)</label><input id="rPass" type="password" autocomplete="new-password" placeholder="············"></div>
       <div class="fg"><label>Repetir contraseña *</label><input id="rPass2" type="password" autocomplete="new-password" placeholder="············"></div>
       <div class="fg"><label>¿Qué buscás?</label><select id="rIntent"><option>Conocer gente nueva</option><option>Hacer planes y salidas</option><option>Amistad</option><option>Algo romántico</option></select></div>
       <div class="fg"><label>Bio</label><textarea id="rBio" placeholder="Contá algo de vos..."></textarea></div>
-      <label class="terms-row"><input type="checkbox" id="termsCheck"><span>Acepto los <a onclick="event.stopPropagation();openTerms()">Términos y Condiciones</a> y la <a onclick="event.stopPropagation();openTerms()">Política de Privacidad</a> de FortyUp *</span></label>
+      <label class="terms-row"><input type="checkbox" id="termsCheck"><span>Acepto los <a onclick="event.stopPropagation();openTerms()">Términos y Condiciones</a> y la <a onclick="event.stopPropagation();openPrivacy()">Política de Privacidad</a> de FortyUp *</span></label>
       <button id="regBtn" class="auth-submit" onclick="doRegister()">Crear mi perfil</button>
     </div>
     <div id="logFields" style="display:none">
@@ -712,18 +720,39 @@ img{display:block}
     <div class="handle"></div>
     <div class="terms-title">Términos y Condiciones</div>
     <div class="terms-body">
-      <h4>1. Acerca de FortyUp</h4><p>FortyUp es una plataforma de encuentros sociales exclusiva para mayores de 40 años, diseñada para facilitar conexiones auténticas entre personas que comparten una etapa de vida similar.</p>
-      <h4>2. Requisitos de uso</h4><ul><li>Debés tener 40 años o más para registrarte.</li><li>Solo se permite una cuenta por persona.</li><li>Debés proporcionar información veraz y actualizada.</li><li>Está prohibido suplantar la identidad de otras personas.</li></ul>
-      <h4>3. Conducta en la plataforma</h4><ul><li>Tratá a otros usuarios con respeto y consideración.</li><li>Está prohibido el acoso, la discriminación y el lenguaje ofensivo.</li><li>No compartás contenido inapropiado, violento o ilegal.</li><li>No uses FortyUp con fines comerciales o de spam.</li></ul>
-      <h4>4. Privacidad y datos</h4><p>Tu información es tratada con la máxima confidencialidad. Usamos Firebase (Google) para autenticación y almacenamiento seguro. No vendemos ni compartimos tus datos personales con terceros.</p>
-      <h4>5. Mensajes y comunicaciones</h4><p>Las conversaciones entre usuarios son privadas. FortyUp no lee ni comparte el contenido de tus mensajes. Podés eliminar una conversación en cualquier momento.</p>
-      <h4>6. Sistema de Diamantes</h4><p>Los diamantes son expresiones de interés. Se otorgan 5 diamantes diarios por usuario. FortyUp se reserva el derecho de modificar este límite.</p>
-      <h4>7. Planes y eventos</h4><p>Los planes creados por usuarios son de su exclusiva responsabilidad. FortyUp no garantiza la realización de ningún evento publicado por terceros.</p>
-      <h4>8. Seguridad de la cuenta</h4><p>Tu contraseña se gestiona a través de Firebase Authentication. FortyUp nunca te pedirá tu contraseña por email o chat.</p>
-      <h4>9. Eliminación de cuenta</h4><p>Podés solicitar la eliminación de tu cuenta escribiendo a <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>. Procesamos las solicitudes en 7 días hábiles.</p>
-      <h4>10. Contacto y soporte</h4><p>Para consultas o soporte: <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong></p>
+      <h4>1. Acerca de FortyUp</h4><p>FortyUp es una plataforma de citas y encuentros sociales para personas de 40 años o más. Facilita que usuarios adultos se descubran, expresen interés, conversen y participen en planes o eventos.</p>
+      <h4>2. Requisitos de uso</h4><ul><li>Debés tener 40 años o más.</li><li>La información del perfil debe ser auténtica y actualizada.</li><li>No se permite suplantar identidades ni crear cuentas para engañar, acosar o realizar fraude.</li><li>Sos responsable de mantener segura tu cuenta y de no compartir tu contraseña.</li></ul>
+      <h4>3. Citas y encuentros</h4><p>FortyUp facilita el contacto entre adultos, pero no verifica de manera exhaustiva la identidad, antecedentes o intenciones de cada persona. Tomá precauciones al conversar y especialmente antes de encontrarte en persona.</p>
+      <h4>4. Conducta</h4><ul><li>No se permite acoso, amenazas, discriminación, contenido ilegal, spam ni solicitudes económicas engañosas.</li><li>No publiques información privada de terceros sin permiso.</li><li>Podemos limitar o suspender cuentas ante abuso o incumplimientos.</li></ul>
+      <h4>5. Diamantes, matches y chat</h4><p>Los diamantes expresan interés. Un match puede habilitar nuevas opciones de interacción. Los mensajes se almacenan en la infraestructura de FortyUp/Firebase y deben utilizarse de acuerdo con estas reglas.</p>
+      <h4>6. Planes y eventos</h4><p>Los planes creados por usuarios o enlazados desde terceros son responsabilidad de sus organizadores. FortyUp no garantiza disponibilidad, realización, precios ni condiciones de eventos externos.</p>
+      <h4>7. Seguridad</h4><p>La autenticación se realiza mediante Firebase Authentication. FortyUp nunca te pedirá tu contraseña por chat o email. Reportá cualquier actividad sospechosa a <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>.</p>
+      <h4>8. Cuenta y baja</h4><p>Podés cerrar sesión en cualquier momento y solicitar la eliminación de tu cuenta y datos escribiendo a <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>.</p>
+      <h4>9. Cambios</h4><p>Podemos actualizar estas condiciones cuando sea necesario. La versión vigente será la publicada dentro de FortyUp.</p>
+      <h4>10. Contacto</h4><p>Consultas y soporte: <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>.</p>
     </div>
     <button class="terms-close" onclick="closeTerms()">Entendido ✓</button>
+  </div>
+</div>
+
+<!-- PRIVACIDAD -->
+<div id="privacyModal" class="terms-modal" onclick="if(event.target===this)closePrivacy()">
+  <div class="terms-sheet">
+    <div class="handle"></div>
+    <div class="terms-title">Política de Privacidad</div>
+    <div class="terms-body">
+      <h4>1. Datos que utilizamos</h4><p>FortyUp puede tratar datos de registro y perfil como nombre, email, fecha de nacimiento, edad, ciudad, país, género, preferencias, bio y foto; además de ubicación aproximada, intereses, matches, favoritos, participación en planes y mensajes.</p>
+      <h4>2. Ubicación</h4><p>Si autorizás el GPS, usamos coordenadas para calcular cercanía y ordenar perfiles o planes. Los demás usuarios reciben una distancia aproximada o una ciudad; la interfaz no muestra tus coordenadas exactas.</p>
+      <h4>3. Para qué usamos los datos</h4><ul><li>Crear y mantener tu cuenta.</li><li>Mostrar perfiles compatibles del país en el que estás o del país elegido mediante Modo Viaje.</li><li>Calcular distancias aproximadas.</li><li>Gestionar diamantes, matches, favoritos, chats y planes.</li><li>Prevenir abuso y brindar soporte.</li></ul>
+      <h4>4. Proveedores tecnológicos</h4><p>FortyUp utiliza servicios de Firebase/Google para autenticación, base de datos y almacenamiento de imágenes. Esos proveedores pueden procesar datos técnicos necesarios para prestar el servicio.</p>
+      <h4>5. Fotos y contenido</h4><p>Tu foto de perfil y los datos que elegís publicar pueden ser visibles para otros usuarios compatibles. No publiques información que no quieras compartir dentro de la comunidad.</p>
+      <h4>6. Mensajes</h4><p>Los mensajes se guardan para permitir la conversación entre sus participantes. El acceso efectivo depende también de las reglas de seguridad configuradas en Firebase.</p>
+      <h4>7. Conservación y eliminación</h4><p>Conservamos la información mientras la cuenta esté activa o mientras sea necesaria para operar el servicio. Podés solicitar eliminación escribiendo a <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>.</p>
+      <h4>8. Tus decisiones</h4><p>Podés denegar el GPS, actualizar tu foto y datos de perfil, cerrar sesión o usar Modo Viaje. Algunas funciones de cercanía requieren ubicación.</p>
+      <h4>9. Seguridad</h4><p>Aplicamos autenticación y controles técnicos razonables. Ningún servicio conectado a Internet puede garantizar seguridad absoluta; usá una contraseña única y no compartas códigos o credenciales.</p>
+      <h4>10. Contacto</h4><p>Para privacidad, eliminación o soporte: <strong style="color:var(--gr2)">fortyup2026@gmail.com</strong>.</p>
+    </div>
+    <button class="terms-close" onclick="closePrivacy()">Entendido ✓</button>
   </div>
 </div>
 
@@ -752,10 +781,12 @@ img{display:block}
 'use strict';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signOut, onAuthStateChanged, sendPasswordResetEmail }
+         signOut, onAuthStateChanged, sendPasswordResetEmail, sendEmailVerification }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getDatabase, ref, set, get, push, remove, onValue, off }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
 const app  = initializeApp({
   apiKey:'AIzaSyDJbA3lzwsEDolwjiF0WulYIbp-p8pcXAY',
@@ -766,7 +797,7 @@ const app  = initializeApp({
   messagingSenderId:'649626072035',
   appId:'1:649626072035:web:694a3d054e4dc79a4ee6d6',
 });
-const auth=getAuth(app), db=getDatabase(app);
+const auth=getAuth(app), db=getDatabase(app), storage=getStorage(app);
 
 const $   = id => document.getElementById(id);
 const esc = v  => String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -820,16 +851,7 @@ const CITIES=[
   {name:'Río de Janeiro',country:'Brasil',lat:-22.9068,lng:-43.1729},
 ];
 
-const DP=[
-  {id:'p1',name:'Carmen',age:52,city:'Córdoba',img:'https://randomuser.me/api/portraits/women/68.jpg',tags:['Viajes','Cocina'],bio:'Me encanta cocinar y conocer gente nueva.',intent:'Hacer planes'},
-  {id:'p2',name:'Roberto',age:58,city:'Córdoba',img:'https://randomuser.me/api/portraits/men/52.jpg',tags:['Música','Trekking'],bio:'Busco compañía para salidas al aire libre.',intent:'Amistad'},
-  {id:'p3',name:'Silvia',age:45,city:'Mendoza',img:'https://randomuser.me/api/portraits/women/45.jpg',tags:['Yoga','Arte'],bio:'Artista y yoguini. Siempre tengo ganas de conocer gente.',intent:'Conocer gente'},
-  {id:'p4',name:'Gustavo',age:61,city:'Buenos Aires',img:'https://randomuser.me/api/portraits/men/61.jpg',tags:['Cine','Gastronomía'],bio:'Amante del buen cine y la buena mesa.',intent:'Algo romántico'},
-  {id:'p5',name:'Marta',age:49,city:'Rosario',img:'https://randomuser.me/api/portraits/women/49.jpg',tags:['Lectura','Natación'],bio:'Lectora voraz. Nado todos los días.',intent:'Amistad'},
-  {id:'p6',name:'Diego',age:55,city:'Córdoba',img:'https://randomuser.me/api/portraits/men/55.jpg',tags:['Fotografía','Viajes'],bio:'Fotógrafo amateur. Busco aventuras.',intent:'Hacer planes'},
-  {id:'p7',name:'Ana',age:47,city:'Buenos Aires',img:'https://randomuser.me/api/portraits/women/33.jpg',tags:['Teatro','Café'],bio:'Amante del teatro independiente.',intent:'Conocer gente'},
-  {id:'p8',name:'Marcelo',age:53,city:'Rosario',img:'https://randomuser.me/api/portraits/men/44.jpg',tags:['Ciclismo','Vino'],bio:'Ciclista de fines de semana.',intent:'Hacer planes'},
-];
+const DP=[]; // Producción: solo perfiles reales registrados en Firebase.
 const DE=[
   {id:'e1',title:'Jonas Brothers',when:'05 mayo 2026',desc:'Show internacional en Buenos Aires.',img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=900&auto=format&fit=crop',ico:'🎵',city:'Buenos Aires · Movistar Arena',category:'Recitales'},
   {id:'e2',title:'Ricardo Arjona',when:'Mayo 2026',desc:'Residencia en Movistar Arena.',img:'https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=900&auto=format&fit=crop',ico:'🎤',city:'Buenos Aires · Movistar Arena',category:'Recitales'},
@@ -859,15 +881,30 @@ function distLabel(p){
   if(km<10)return Math.round(km)+' km';
   return (Math.round(km/5)*5)+' km';
 }
+function normText(v){return String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function countryOf(p){
+  if(p?.travelMode?.active&&p.travelMode.country)return p.travelMode.country;
+  if(p?.country)return p.country;
+  const city=String(p?.city??p?.c??'').split(',')[0].trim();
+  const hit=CITIES.find(x=>normText(x.name)===normText(city));
+  return hit?.country??'';
+}
+function effectiveCountry(){return myProfile()?.travelMode?.active?(myProfile().travelMode.country??countryOf(myProfile())):countryOf(myProfile())}
+function preferenceAllows(viewer,target){
+  const want=viewer?.interestedIn??'todos',tg=target?.gender??'';
+  const targetWant=target?.interestedIn??'todos',vg=viewer?.gender??'';
+  const a=want==='todos'||!want||!tg||want===tg;
+  const b=targetWant==='todos'||!targetWant||!vg||targetWant===vg;
+  return a&&b;
+}
 function allProfiles(){
-  const real=allUsersCache.filter(u=>u.uid!==myUid());
-  const map=new Map();
-  DP.forEach(p=>map.set(p.id,p));
-  real.forEach(u=>{if(u.uid)map.set(u.uid,{...u,id:u.uid})});
-  const arr=[...map.values()];
-  const myLoc=myProfile()?.location;
+  const me=myProfile(),country=normText(effectiveCountry());
+  let arr=allUsersCache.filter(u=>u.uid!==myUid());
+  if(country)arr=arr.filter(u=>normText(countryOf(u))===country);
+  arr=arr.filter(u=>preferenceAllows(me,u));
+  const myLoc=me?.location;
   if(myLoc)arr.sort((a,b)=>{const da=kmBetween(myLoc,a.location),db=kmBetween(myLoc,b.location);if(da==null&&db==null)return 0;if(da==null)return 1;if(db==null)return -1;return da-db});
-  return arr;
+  return arr.map(u=>({...u,id:u.uid??u.id}));
 }
 function profileById(id){return allProfiles().find(p=>p.id===id||p.uid===id)??allUsersCache.find(u=>u.uid===id)??null}
 /* Best-effort: interpreta el campo "when" (texto libre en español) para saber
@@ -967,6 +1004,8 @@ function setDate(){const e=$('homeDate');if(!e)return;e.textContent=new Date().t
 /* Terms */
 window.openTerms=()=>$('termsModal').classList.add('open');
 window.closeTerms=()=>$('termsModal').classList.remove('open');
+window.openPrivacy=()=>$('privacyModal').classList.add('open');
+window.closePrivacy=()=>$('privacyModal').classList.remove('open');
 
 /* Auth */
 window.setAuth=function(mode){
@@ -983,27 +1022,66 @@ window.closeAuth=()=>{$('auth').classList.remove('open');clearErr()};
 
 function ageFromBirth(b){if(!b)return 0;const d=new Date(b);if(isNaN(d))return 0;const n=new Date();let a=n.getFullYear()-d.getFullYear();const m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate()))a--;return a}
 function readFile(f){return new Promise(res=>{if(!f)return res('');const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>res('');r.readAsDataURL(f)})}
+function compressImage(file,max=1080,quality=.82){
+  return new Promise((resolve,reject)=>{
+    if(!file)return resolve(null);
+    if(!/^image\/(jpeg|png|webp)$/i.test(file.type))return reject(new Error('Formato de foto no permitido'));
+    if(file.size>12*1024*1024)return reject(new Error('La foto es demasiado grande'));
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const scale=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      c.toBlob(blob=>{URL.revokeObjectURL(url);blob?resolve(blob):reject(new Error('No pude procesar la foto'))},'image/jpeg',quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Imagen inválida'))};img.src=url;
+  });
+}
+function blobToDataURL(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('No pude leer la foto'));r.readAsDataURL(blob)})}
+window.previewRegistrationPhoto=async function(file){
+  const pv=$('rPhotoPreview');if(!pv)return;
+  if(!file){pv.style.display='none';pv.removeAttribute('src');return}
+  try{const blob=await compressImage(file,500,.78);pv.src=await blobToDataURL(blob);pv.style.display='block'}catch(e){pv.style.display='none';showErr(e.message)}
+};
+window.fillCountryFromCity=function(){
+  const city=$('rCity')?.value??'',hit=CITIES.find(c=>normText(c.name)===normText(city));
+  if(hit&&$('rCountry')&&!$('rCountry').value.trim())$('rCountry').value=hit.country;
+};
+async function uploadProfilePhoto(uid,file){
+  if(!file)return '';
+  const blob=await compressImage(file);
+  const r=storageRef(storage,`profilePhotos/${uid}/avatar.jpg`);
+  await uploadBytes(r,blob,{contentType:'image/jpeg',cacheControl:'public,max-age=3600'});
+  return await getDownloadURL(r);
+}
 
 window.doRegister=async function(){
   clearErr();
-  const name=san($('rName')?.value,80),birth=$('rBirth')?.value,city=san($('rCity')?.value,80);
+  const name=san($('rName')?.value,80),birth=$('rBirth')?.value,city=san($('rCity')?.value,80),country=san($('rCountry')?.value,80);
+  const gender=$('rGender')?.value??'',interestedIn=$('rInterested')?.value??'';
   const email=$('rEmail')?.value.trim().toLowerCase(),pass=$('rPass')?.value,pass2=$('rPass2')?.value;
-  if(!name||!birth||!city||!email||!pass)return showErr('Completá todos los campos obligatorios (*)');
+  const photoFile=$('rPhoto')?.files?.[0];
+  if(!name||!birth||!city||!country||!gender||!interestedIn||!email||!pass||!photoFile)return showErr('Completá todos los campos obligatorios (*)');
   if(pass!==pass2)return showErr('Las contraseñas no coinciden');
-  if(pass.length<6)return showErr('La contraseña debe tener al menos 6 caracteres');
+  if(pass.length<8)return showErr('Usá una contraseña de al menos 8 caracteres');
   if(ageFromBirth(birth)<40)return showErr('FortyUp es para mayores de 40 años 🙌');
-  if(!$('termsCheck')?.checked)return showErr('Debés aceptar los Términos y Condiciones para continuar');
+  if(!$('termsCheck')?.checked)return showErr('Debés aceptar los Términos y la Política de Privacidad');
   setBtn('regBtn',true);
   try{
-    const photo=await readFile($('rPhoto')?.files?.[0]);
     const cred=await createUserWithEmailAndPassword(auth,email,pass);
-    const profile={uid:cred.user.uid,id:cred.user.uid,email,name,n:name,birth,age:ageFromBirth(birth),city,c:city,img:photo,photo,bio:san($('rBio')?.value,300),intent:$('rIntent')?.value,createdAt:new Date().toISOString()};
+    let photo='';
+    try{photo=await uploadProfilePhoto(cred.user.uid,photoFile)}catch(e){console.warn('Storage no disponible, uso foto optimizada en perfil:',e);const blob=await compressImage(photoFile,560,.72);photo=await blobToDataURL(blob)}
+    const cityHit=CITIES.find(c=>normText(c.name)===normText(city));
+    const location=cityHit&&normText(cityHit.country)===normText(country)?{lat:cityHit.lat,lng:cityHit.lng,at:new Date().toISOString()}:undefined;
+    const profile={uid:cred.user.uid,id:cred.user.uid,email,name,n:name,birth,age:ageFromBirth(birth),city,c:city,country,gender,interestedIn,img:photo,photo,bio:san($('rBio')?.value,300),intent:$('rIntent')?.value,createdAt:new Date().toISOString(),...(location?{location}:{})};
     lss('fu_profile_'+cred.user.uid,profile);profileData=profile;
-    try{await set(userRef(cred.user.uid),profile)}catch{}
+    await set(userRef(cred.user.uid),profile);
+    try{await sendEmailVerification(cred.user)}catch{}
+    toast('Perfil creado ✓ Revisá tu email para verificar la cuenta');
   }catch(e){
     setBtn('regBtn',false,'Crear mi perfil');
-    const msgs={'auth/email-already-in-use':'Ese email ya está registrado. Iniciá sesión.','auth/invalid-email':'Email inválido','auth/weak-password':'Contraseña muy débil'};
-    showErr(msgs[e.code]??'Error: '+e.message);
+    const msgs={'auth/email-already-in-use':'Ese email ya está registrado. Iniciá sesión.','auth/invalid-email':'Email inválido','auth/weak-password':'La contraseña es demasiado débil'};
+    showErr(msgs[e.code]??e.message??'No pude crear la cuenta');
   }
 };
 
@@ -1100,7 +1178,7 @@ function updateHeader(){
   const p=myProfile(),name=p.name??p.n??'';
   if($('helloName'))$('helloName').textContent=name;
   if($('topAvatar'))$('topAvatar').src=pImg(p);
-  if($('cityTop'))$('cityTop').textContent=p.city??p.c??'Tu ciudad';
+  if($('cityTop'))$('cityTop').textContent=[p.city??p.c,p.country].filter(Boolean).join(', ')||'Tu ciudad';
   const tb=$('travelBanner');if(tb)tb.style.display=p.travelMode?.active?'block':'none';
 }
 
@@ -1531,7 +1609,7 @@ window.showPhotoPanel=function(){
 };
 window._savePhoto=async function(){
   const f=$('pPhoto')?.files?.[0];if(!f)return toast('Elegí una imagen primero');
-  const img=await readFile(f);
+  let img;try{img=await uploadProfilePhoto(myUid(),f)}catch(e){try{const blob=await compressImage(f,560,.72);img=await blobToDataURL(blob)}catch{return toast(e.message||'No pude subir la foto')}}
   const p=myProfile();
   const updated={...p,img,photo:img};
   profileData=updated;lss('fu_profile_'+myUid(),updated);
@@ -1545,9 +1623,12 @@ function showEditPanel(){
     <div class="panel-name" style="margin-bottom:1rem">Editar perfil</div>
     <div class="fg"><label>Nombre</label><input id="eName" value="${esc(p.name??p.n??'')}"></div>
     <div class="fg"><label>Ciudad</label><input id="eCity" value="${esc(p.city??p.c??'')}"></div>
+    <div class="fg"><label>País</label><input id="eCountry" value="${esc(p.country??countryOf(p))}"></div>
+    <div class="fg"><label>Soy</label><select id="eGender"><option value="hombre"${p.gender==='hombre'?' selected':''}>Hombre</option><option value="mujer"${p.gender==='mujer'?' selected':''}>Mujer</option><option value="otro"${p.gender==='otro'?' selected':''}>Otro / no binario</option></select></div>
+    <div class="fg"><label>Me interesa conocer</label><select id="eInterested"><option value="hombre"${p.interestedIn==='hombre'?' selected':''}>Hombres</option><option value="mujer"${p.interestedIn==='mujer'?' selected':''}>Mujeres</option><option value="todos"${!p.interestedIn||p.interestedIn==='todos'?' selected':''}>Todos</option></select></div>
     <div class="fg"><label>Bio</label><textarea id="eBio">${esc(p.bio??'')}</textarea></div>
     <div class="fg"><label>¿Qué buscás?</label><select id="eIntent">${['Conocer gente nueva','Hacer planes y salidas','Amistad','Algo romántico'].map(o=>`<option${p.intent===o?' selected':''}>${o}</option>`).join('')}</select></div>
-    <div class="fg"><label>Foto de perfil</label><input id="ePhoto" type="file" accept="image/*"></div>
+    <div class="fg"><label>Foto de perfil</label><input id="ePhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
     <button class="auth-submit" onclick="window._saveEdit()">Guardar cambios</button>`;
   $('profilePanel').classList.add('open');
 }
@@ -1556,17 +1637,37 @@ window._saveEdit=async function(){
   const p=myProfile();
   const name=san($('eName')?.value??'',80)||p.name;
   const city=san($('eCity')?.value??'',80)||p.city;
+  const country=san($('eCountry')?.value??'',80)||p.country||countryOf(p);
+  const gender=$('eGender')?.value??p.gender??'';
+  const interestedIn=$('eInterested')?.value??p.interestedIn??'todos';
   const bio=san($('eBio')?.value??'',300);
   const intent=$('eIntent')?.value??p.intent;
   let img=p.img;
-  if($('ePhoto')?.files?.[0])img=await readFile($('ePhoto').files[0]);
-  const updated={...p,name,n:name,city,c:city,bio,intent,img,photo:img};
+  if($('ePhoto')?.files?.[0]){const f=$('ePhoto').files[0];try{img=await uploadProfilePhoto(myUid(),f)}catch{const blob=await compressImage(f,560,.72);img=await blobToDataURL(blob)}}
+  const updated={...p,name,n:name,city,c:city,country,gender,interestedIn,bio,intent,img,photo:img};
   profileData=updated;lss('fu_profile_'+myUid(),updated);
   try{await set(userRef(myUid()),updated);toast('Perfil actualizado ✓')}catch{toast('Guardado localmente ✓')}
   closePanel();updateMeScreen();
 };
 
 window._sendDiamond=pid=>sendDiamond(pid);
+window.showSecurityPanel=function(){
+  const u=currentUser;
+  $('panelContent').innerHTML=`
+    <div class="panel-name">🔒 Seguridad</div>
+    <div class="panel-sub" style="margin-bottom:1rem">Protegé tu cuenta y verificá tu email.</div>
+    <div class="me-list" style="margin-bottom:1rem">
+      <div class="me-row"><span class="me-row-txt">Email</span><span class="me-row-arr">${esc(u?.email??'')}</span></div>
+      <div class="me-row"><span class="me-row-txt">Estado</span><span class="me-row-arr" style="color:${u?.emailVerified?'var(--gr2)':'var(--amber)'}">${u?.emailVerified?'Verificado ✓':'Sin verificar'}</span></div>
+    </div>
+    ${!u?.emailVerified?'<button class="auth-submit" onclick="window.resendVerification()">Reenviar email de verificación</button>':''}
+    <button class="pa-btn pa-surface" style="margin-top:.6rem" onclick="window.sendSecurityReset()">Cambiar contraseña por email</button>
+    <p style="font-size:.68rem;color:var(--t3);line-height:1.55;margin-top:1rem">Nunca compartas tu contraseña ni códigos de acceso. FortyUp no te los pedirá por chat.</p>`;
+  $('profilePanel').classList.add('open');
+};
+window.resendVerification=async function(){try{if(!currentUser)return;await sendEmailVerification(currentUser);toast('Email de verificación enviado ✓')}catch(e){toast('No pude enviar el email ahora')}};
+window.sendSecurityReset=async function(){try{const email=currentUser?.email;if(!email)return;await sendPasswordResetEmail(auth,email);toast('Te enviamos un email para cambiar la contraseña ✓')}catch(e){toast('No pude enviar el email ahora')}};
+
 window._toggleFav=function(pid){
   const favs=ls('fu_favs_'+myUid(),[]),i=favs.indexOf(pid);
   if(i>=0){favs.splice(i,1);toast('Quitado de favoritos')}else{favs.push(pid);toast('⭐ Guardado en favoritos')}
@@ -1581,7 +1682,8 @@ function updateGPS(){
     const location={lat:pos.coords.latitude,lng:pos.coords.longitude,at:new Date().toISOString()};
     const p=profileData??{};
     const realCity=p.travelMode?.active?(p.realCity??p.city):p.city;
-    const updated={...p,location,realLocation:location,city:realCity,c:realCity,travelMode:{active:false}};
+    const inferred=countryOf({...p,city:realCity,c:realCity});
+    const updated={...p,location,realLocation:location,city:realCity,c:realCity,country:p.realCountry??p.country??inferred,travelMode:{active:false}};
     profileData=updated;lss('fu_profile_'+myUid(),updated);
     try{await set(userRef(myUid()),updated)}catch{}
     toast('Ubicación actualizada 📍');
@@ -1619,7 +1721,8 @@ window._activateTravelMode=function(cityName){
 async function activateTravelMode(c){
   const p=myProfile();
   const realCity=p.travelMode?.active?(p.realCity??p.city):p.city;
-  const updated={...p,realCity,city:`${c.name}, ${c.country}`,c:`${c.name}, ${c.country}`,
+  const realCountry=p.travelMode?.active?(p.realCountry??p.country):p.country;
+  const updated={...p,realCity,realCountry,country:c.country,city:c.name,c:c.name,
     location:{lat:c.lat,lng:c.lng,at:new Date().toISOString()},
     travelMode:{active:true,city:c.name,country:c.country,at:new Date().toISOString()}};
   profileData=updated;lss('fu_profile_'+myUid(),updated);
@@ -1631,7 +1734,7 @@ async function activateTravelMode(c){
   updateMeScreen();
 }
 
-window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.showEditPanel=showEditPanel;window.openTerms=openTerms;window.closeTerms=closeTerms;
+window.toast=toast;window.updateGPS=updateGPS;window.showFavs=showFavs;window.showEditPanel=showEditPanel;window.showSecurityPanel=showSecurityPanel;window.openTerms=openTerms;window.closeTerms=closeTerms;window.openPrivacy=openPrivacy;window.closePrivacy=closePrivacy;
 window.renderMePlansCard=renderMePlansCard;
 </script>
 </body>
